@@ -22,7 +22,8 @@ This makes the wiring extremely easy.
 A lot of examples show the usage of the library. They could be use as startup for own programs.
 
 
-This library is described in detail here: https://www.stummiforum.de/
+This library is described in detail here:
+https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sid=e3b7f6122766c330d04cecf18b7b4878
 
 
 Installation from the Arduino IDE:
