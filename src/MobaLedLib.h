@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,19 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  MobaLedLib.h
  ~~~~~~~~~~~~
+
  This is the main headder file for the MobaLedLib.
 
 */
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.7.0  // Adapt also library.properties if changed
+#define MobaLedLib_Ver  0.7.5  // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 
@@ -264,7 +266,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  House(         LED,InCh, On_Min,On_Limit, ...)                     HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,On_Limit,HOUSE_MIN_T,HOUSE_MAX_T,COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
 #define  HouseT(        LED,InCh, On_Min,On_Limit,Min_T,Max_T,...)          HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,On_Limit,Min_T,      Max_T,      COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
 #define  GasLights(     LED,InCh, ...)                                      HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),255,   255,     GAS_MIN_T,  GAS_MAX_T,  COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Gas lights
-#define  Fire(          LED,InCh, LedCnt, Brightnes)                        FIRE_T,      _CHKL(LED)+RAM1+RAMN(LedCnt),_ChkIn(InCh),LedCnt,Brightnes,
+#define  Fire(          LED,InCh, LedCnt, Brightness)                       FIRE_T,      _CHKL(LED)+RAM1+RAMN(LedCnt),_ChkIn(InCh),LedCnt,Brightness,
 #ifdef _NEW_ROOM_COL
  #define Set_ColTab(    r0,g0,b0,r1,g1,b1,r2,g2,b2,r3,g3,b3,r4,g4,b4,r5,g5,b5,r6,g6,b6,r7,g7,b7,r8,g8,b8,r9,g9,b9,r10,g10,b10,r11,g11,b11,r12,g12,b12,r13,g13,b13,r14,g14,b14) SET_COLTAB_T, r0,g0,b0,r1,g1,b1,r2,g2,b2,r3,g3,b3,r4,g4,b4,r5,g5,b5,r6,g6,b6,r7,g7,b7,r8,g8,b8,r9,g9,b9,r10,g10,b10,r11,g11,b11,r12,g12,b12,r13,g13,b13,r14,g14,b14,
 #endif
@@ -284,6 +286,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  New_Local_Var()                                                    NEW_LOCAL_VAR_T+RAM2,             // 07.11.18:
 #define  Use_GlobalVar( GlobVarNr)                                          USE_GLOBALVAR_T, GlobVarNr,
 #define  InCh_to_TmpVar(FirstInCh, InCh_Cnt)                                INCH_TO_TMPVAR_T, FirstInCh, InCh_Cnt,
+#define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                            BIN_INCH_TO_TMPVAR_T, FirstInCh, InCh_Cnt, // 18.01.19:
 
 #define  Button(        LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_W_ABORT+PF_SLOW,Duration/16,_Cx2P_BLINK(Cx))
 #define  Blinker(       LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,0,(Period)/2,                    _Cx2P_BLINK(Cx))     // Blinker
@@ -329,10 +332,50 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  T_FlipFlop2Reset(          DstVar0, DstVar1, T_InCh, R_InCh)            Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, 0,        DstVar0, DstVar1)  // Toggle Flip Flop with reset
 #define  T_FlipFlop2ResetTimeout(   DstVar0, DstVar1, T_InCh, R_InCh, Timeout)   Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, Timeout,  DstVar0, DstVar1)  // Toggle Flip Flop with restart and timeout
 
-#define  RGB_Heartbeat(LED)                                                 \
-             New_HSV_Group()                                                \
-             APatternT2(LED,192,SI_1,1,0,255,0,PM_HSV,60 Sek,0 ms,1) \
+#define  RGB_Heartbeat(LED)                                           \
+             New_HSV_Group()                                          \
+             APatternT2(LED,192,SI_1,1,0,255,0,PM_HSV,60 Sek,0 ms,1)  \
              APatternT1(LED, 194,SI_1,1,10,255,0,PM_HSV|PF_EASEINOUT,1 Sek,1)   // Nicht ganz aus gehen weil es sonst bei manchen Farben flackert
+
+#define  RGB_Heartbeat2(LED, MinBrightness, MaxBrightness)            \
+             New_HSV_Group()                                          \
+             APatternT2(LED,192,SI_1,1,0,255,0,PM_HSV,60 Sek,0 ms,1)  \
+             APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,1 Sek,1)            // 18.01.19:
+
+
+// Push Button functions which count the button press and activates temporary variables
+// The button flashes n times if the button was pressed n times.
+// Parameter:
+//   B_LED:    LED Number of the LED in the PUSH button (Example NUM_LEDS_1)
+//   B_LED_Cx: Channel of the LED (C1..C3)
+//   InNr:     Number of the input channel which is used to read in the button
+//   TmpNr:    First temporaty variable. There function PushButton_w_LED_0_2 uses 3 temporary variables. PushButton_w_LED_0_3 uses 4, ...
+//   Timeout:  Time when the push button action is disabled again
+//
+#define Status_Button_0_2(LED,Val1)  PatternT1(LED,232,SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,0  ,63,192,0,0,1,192,0,0,0,0,2)
+#define Status_Button_0_3(LED,Val1)  PatternT1(LED,232,SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3)
+#define Status_Button_0_4(LED,Val1)  PatternT1(LED,40, SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,142,227,56,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3,192,0,0,0,0,0,0,0,0,4)
+#define Status_Button_0_5(LED,Val1)  PatternT1(LED,168,SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,142,227,56,128,227,56,142,3,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3,192,0,0,0,0,0,0,0,0,4,192,0,0,0,0,0,0,0,0,0,0,5)
+
+#define PushButton_w_LED_0_2(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
+            Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2)                              \
+            InCh_to_TmpVar(TmpNr, 2+1)                                                                                                        \
+            Status_Button_0_2(B_LED, 255)
+
+#define PushButton_w_LED_0_3(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
+            Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3)                     \
+            InCh_to_TmpVar(TmpNr, 3+1)                                                                                                        \
+            Status_Button_0_3(B_LED, 255)
+
+#define PushButton_w_LED_0_4(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
+            Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4)            \
+            InCh_to_TmpVar(TmpNr, 4+1)                                                                                                        \
+            Status_Button_0_4(B_LED, 255)
+
+#define PushButton_w_LED_0_5(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
+            Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4, TmpNr+5)   \
+            InCh_to_TmpVar(TmpNr, 5+1)                                                                                                        \
+            Status_Button_0_5(B_LED, 255)
 
 
                                 //  ADKey1  ADKey2
@@ -487,7 +530,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define PM_MODE_MASK            0x07           // Defines the number of bits used for the modes (currently 3 => Modes 0..7)
 
 // Flags for the Pattern function
-#define _PF_XFADE               0x08           // Special fade mode which starts from the actual brightnes value instead of the value of the previous state
+#define _PF_XFADE               0x08           // Special fade mode which starts from the actual brightness value instead of the value of the previous state
 #define PF_NO_SWITCH_OFF        0x10           // Don't switch of the LEDs if the input is turned off. Useful if several effects use the same LEDs alternated by the input switch.
 #define PF_EASEINOUT            0x20           // Easing function (Uebergangsfunktion) is used because changes near 0 and 255 are noticed different than in the middle
 #define PF_SLOW                 0x40           // Slow timer (divided by 16) to be able to use longer durations
@@ -681,69 +724,70 @@ inline bool Inp_Changed(uint8_t Inp)
 
 
 // Die Verschiedenen Ausgangstypen:
-#define END_T               0
-#define CONST_T             1 // Die ersten Ausgangstypen haben als Parameter eine channel mask mit
-#define RANDMUX_T           2 // der ausgewaehlt wird welche LEDs angestuert werden
-#define SCHEDULE_T          3 // Bei diesen Typen steht InCh an Position 2
-#define PATTERNT1_T        10 // Muster mit einer Zeit fuer alle Zustaende
-#define PATTERNT2_T        11 // Muster mit zwei abwechselnd genutzten Zeiten
-#define PATTERNT3_T        12 //   "        drei     "
-#define PATTERNT4_T        13
-#define PATTERNT5_T        14
-#define PATTERNT6_T        15
-#define PATTERNT7_T        16
-#define PATTERNT8_T        17
-#define PATTERNT9_T        18
-#define PATTERNT10_T       19
-#define PATTERNT11_T       20
-#define PATTERNT12_T       21
-#define PATTERNT13_T       22
-#define PATTERNT14_T       23
-#define PATTERNT15_T       24
-#define PATTERNT16_T       25
-#define PATTERNT17_T       26
-#define PATTERNT18_T       27
-#define PATTERNT19_T       28
-#define PATTERNT20_T       29
-#define LAST_PATTERN_T     PATTERNT20_T
+#define END_T                  0
+#define CONST_T                1 // Die ersten Ausgangstypen haben als Parameter eine channel mask mit
+#define RANDMUX_T              2 // der ausgewaehlt wird welche LEDs angestuert werden
+#define SCHEDULE_T             3 // Bei diesen Typen steht InCh an Position 2
+#define PATTERNT1_T           10 // Muster mit einer Zeit fuer alle Zustaende
+#define PATTERNT2_T           11 // Muster mit zwei abwechselnd genutzten Zeiten
+#define PATTERNT3_T           12 //   "        drei     "
+#define PATTERNT4_T           13
+#define PATTERNT5_T           14
+#define PATTERNT6_T           15
+#define PATTERNT7_T           16
+#define PATTERNT8_T           17
+#define PATTERNT9_T           18
+#define PATTERNT10_T          19
+#define PATTERNT11_T          20
+#define PATTERNT12_T          21
+#define PATTERNT13_T          22
+#define PATTERNT14_T          23
+#define PATTERNT15_T          24
+#define PATTERNT16_T          25
+#define PATTERNT17_T          26
+#define PATTERNT18_T          27
+#define PATTERNT19_T          28
+#define PATTERNT20_T          29
+#define LAST_PATTERN_T        PATTERNT20_T
 
-#define APATTERNT1_T       30 // Muster mit einer Zeit fuer alle Zustaende mit analogen Uebergaengen
-#define APATTERNT2_T       31 // Muster mit zwei abwechselnd genutzten Zeiten
-#define APATTERNT3_T       32 //   "        drei    "
-#define APATTERNT4_T       33
-#define APATTERNT5_T       34
-#define APATTERNT6_T       35
-#define APATTERNT7_T       36
-#define APATTERNT8_T       37
-#define APATTERNT9_T       38
-#define APATTERNT10_T      39
-#define APATTERNT11_T      40
-#define APATTERNT12_T      41
-#define APATTERNT13_T      42
-#define APATTERNT14_T      43
-#define APATTERNT15_T      44
-#define APATTERNT16_T      45
-#define APATTERNT17_T      46
-#define APATTERNT18_T      47
-#define APATTERNT19_T      48
-#define APATTERNT20_T      49
+#define APATTERNT1_T          30 // Muster mit einer Zeit fuer alle Zustaende mit analogen Uebergaengen
+#define APATTERNT2_T          31 // Muster mit zwei abwechselnd genutzten Zeiten
+#define APATTERNT3_T          32 //   "        drei    "
+#define APATTERNT4_T          33
+#define APATTERNT5_T          34
+#define APATTERNT6_T          35
+#define APATTERNT7_T          36
+#define APATTERNT8_T          37
+#define APATTERNT9_T          38
+#define APATTERNT10_T         39
+#define APATTERNT11_T         40
+#define APATTERNT12_T         41
+#define APATTERNT13_T         42
+#define APATTERNT14_T         43
+#define APATTERNT15_T         44
+#define APATTERNT16_T         45
+#define APATTERNT17_T         46
+#define APATTERNT18_T         47
+#define APATTERNT19_T         48
+#define APATTERNT20_T         49
 #define LAST_APATTERN_T APATTERNT20_T
 
-#define HOUSE_T            50 // Erster Ausgangstyp ohne ChMsk (WITHOUT_CHANNEL_MASK). Hier steht InCh an Position 1. Bei den Typen davor steht InCh an Position 2.
-#define FIRE_T             51
-#define RANDOM_T           52
-#define WELDING_T          53
-#define COPYLED_T          54
-#define COUNTER_T          55
-#define NEW_HSV_GROUP_T    100  // Erster Ausgangstyp ohne InpCh (WITHOUT_INP_CH)
-#define NEW_LOCAL_VAR_T    101                                                                                   // 07.11.18:
-#define USE_GLOBALVAR_T    102
-#define INCH_TO_TMPVAR_T   103                                                                                   // 25.11.18:
+#define HOUSE_T               50 // Erster Ausgangstyp ohne ChMsk (WITHOUT_CHANNEL_MASK). Hier steht InCh an Position 1. Bei den Typen davor steht InCh an Position 2.
+#define FIRE_T                51
+#define RANDOM_T              52
+#define WELDING_T             53
+#define COPYLED_T             54
+#define COUNTER_T             55
+#define NEW_HSV_GROUP_T       100  // Erster Ausgangstyp ohne InpCh (WITHOUT_INP_CH)
+#define NEW_LOCAL_VAR_T       101                                                                             // 07.11.18:
+#define USE_GLOBALVAR_T       102
+#define INCH_TO_TMPVAR_T      103                                                                             // 25.11.18:
+#define BIN_INCH_TO_TMPVAR_T  104                                                                             // 18.01.19:
 #ifdef _NEW_ROOM_COL
- #define SET_COLTAB_T      105
+ #define SET_COLTAB_T         105
 #endif
 
-#define LOGIC_T            120
+#define LOGIC_T               120
 
 #define WITHOUT_CHANNEL_MASK  HOUSE_T
 #define WITHOUT_INP_CH        NEW_HSV_GROUP_T
@@ -751,7 +795,7 @@ inline bool Inp_Changed(uint8_t Inp)
 
 
 
-#define _TV_CHANNELS     2  // If changed adapt also the constants ROOM_TV0, COLOR_TV0_A... and the corrosponding switch case statements
+#define _TV_CHANNELS          2  // If changed adapt also the constants ROOM_TV0, COLOR_TV0_A... and the corrosponding switch case statements
 
 
 
@@ -810,6 +854,56 @@ inline bool Inp_Changed(uint8_t Inp)
 #define RAM48 RAM47+RAM1
 #define RAM49 RAM48+RAM1
 #define RAM50 RAM49+RAM1
+#define RAM51 RAM50+RAM1                                                                                      // 13.01.19:  Added 51-100
+#define RAM52 RAM51+RAM1
+#define RAM53 RAM52+RAM1
+#define RAM54 RAM53+RAM1
+#define RAM55 RAM54+RAM1
+#define RAM56 RAM55+RAM1
+#define RAM57 RAM56+RAM1
+#define RAM58 RAM57+RAM1
+#define RAM59 RAM58+RAM1
+#define RAM60 RAM59+RAM1
+#define RAM61 RAM60+RAM1
+#define RAM62 RAM61+RAM1
+#define RAM63 RAM62+RAM1
+#define RAM64 RAM63+RAM1
+#define RAM65 RAM64+RAM1
+#define RAM66 RAM65+RAM1
+#define RAM67 RAM66+RAM1
+#define RAM68 RAM67+RAM1
+#define RAM69 RAM68+RAM1
+#define RAM70 RAM69+RAM1
+#define RAM71 RAM70+RAM1
+#define RAM72 RAM71+RAM1
+#define RAM73 RAM72+RAM1
+#define RAM74 RAM73+RAM1
+#define RAM75 RAM74+RAM1
+#define RAM76 RAM75+RAM1
+#define RAM77 RAM76+RAM1
+#define RAM78 RAM77+RAM1
+#define RAM79 RAM78+RAM1
+#define RAM80 RAM79+RAM1
+#define RAM81 RAM80+RAM1
+#define RAM82 RAM81+RAM1
+#define RAM83 RAM82+RAM1
+#define RAM84 RAM83+RAM1
+#define RAM85 RAM84+RAM1
+#define RAM86 RAM85+RAM1
+#define RAM87 RAM86+RAM1
+#define RAM88 RAM87+RAM1
+#define RAM89 RAM88+RAM1
+#define RAM90 RAM89+RAM1
+#define RAM91 RAM90+RAM1
+#define RAM92 RAM91+RAM1
+#define RAM93 RAM92+RAM1
+#define RAM94 RAM93+RAM1
+#define RAM95 RAM94+RAM1
+#define RAM96 RAM95+RAM1
+#define RAM97 RAM96+RAM1
+#define RAM98 RAM97+RAM1
+#define RAM99 RAM98+RAM1
+#define RAM100 RAM99+RAM1
 
 #define RAMN(n) RAM ## n
 
@@ -1376,6 +1470,7 @@ private: // Variables
  void               Proc_New_Local_Var();                                                                     // 07.11.18:
  void               Proc_Use_GlobalVar();
  void               Proc_InCh_to_TmpVar();
+ void               Proc_Bin_InCh_to_TmpVar();                                                                // 18.01.19:
  void               Proc_Random();
  void               Proc_RandMux();
  void               Proc_Welding();

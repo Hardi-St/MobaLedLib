@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  CAN Bus from MS2 controlled Lights                                                        by Hardi   26.11.18
@@ -60,11 +61,11 @@
      |     |            +-----+            |               '--|SCK  ____           |
      '--B5-| [ ]D13/SCK        MISO/D12[ ] |---B4-----\/------|SI- |    |CAN     .-|
            | [ ]3.3V           MOSI/D11[ ]~|---B3-----/\------|SO- |    |      H |o|--- CAN H   to the Maerklin MS2
-           | [ ]V.ref     ___    SS/D10[ ]~|---B2-------------|CS- |    |      : |o|--- CAN L
-        C0 | [ ]A0       / N \       D9[ ]~|   B1             |GND |____|      L '-|
-        C1 | [ ]A1      /  A  \      D8[ ] |   B0         +5V-|VCC            .. J1|
-        C2 | [ ]A2      \  N  /      D7[ ] |   D7             +--------------------+
-        C3 | [ ]A3       \_0_/       D6[ ]~|---D6---> to the LED stripe.
+           | [ ]V.ref     ___    SS/D10[ ]~|---B2-------------|CS- |    |      : |o|--- CAN L   Attention: The CAN bus to the MS2 must be isolated !
+        C0 | [ ]A0       / N \       D9[ ]~|   B1             |GND |____|      L '-|                       Otherwise the components may be damaged.
+        C1 | [ ]A1      /  A  \      D8[ ] |   B0         +5V-|VCC            .. J1|                       It's also possible to use a common ground.
+        C2 | [ ]A2      \  N  /      D7[ ] |   D7             +--------------------+                       Don't connect the Arduino ground with one
+        C3 | [ ]A3       \_0_/       D6[ ]~|---D6---> to the LED stripe.                                   of the rails!
         C4 | [ ]A4/SDA               D5[ ]~|   D5
         C5 | [ ]A5/SCL               D4[ ] |   D4
            | [ ]A6              INT1/D3[ ]~|   D3
@@ -83,6 +84,12 @@
    http://www.skrauss.de/modellbahn/gboxcan.html
  in case the page has been moved here a link to the main page:
    http://www.skrauss.de/modellbahn/index.html sub page "Gleisbox als Zentrale" / "CAN-Anschluss"
+
+ Attention: The CAN bus to the MS2 must be isolated !
+            Otherwise the components may be damaged.
+            It's also possible to use a common ground.
+            Don't connect the Arduino ground with one
+            of the rails!
 */
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)

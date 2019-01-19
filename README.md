@@ -24,6 +24,8 @@ A lot of examples show the usage of the library. They could be use as startup fo
 
 This library is described in detail here:
 https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sid=e3b7f6122766c330d04cecf18b7b4878
+Several videos which demonstrate the library are available in the following pages in the forum
+You could also search for MobaLedLib in the internet.
 
 
 Installation from the Arduino IDE:
@@ -40,3 +42,22 @@ Installation in der deutschen Arduino IDE:
 
 Questions / suggestions / praise / ...
   MobaLedLib@gmx.de
+
+
+
+Revision History:
+Ver.: 0.7.0  20.12.18:
+- First released version
+
+Ver.: 0.7.5  19.01.19:
+- Added examples:
+  - Burning house (Push button action with fire, smoke, sound and fire truck). Shown in the video: https://vimeo.com/311006857
+  - DCC (Digital Command Control) decoder example with two Arduinos. Shown in the video: https://vimeo.com/311996452
+- Added function Bin_InCh_to_TmpVar() and RGB_Heartbeat2()
+- Added zip file with the RGB LED distribution PCBs
+- Improved the fire algorithm
+- Corrected the binary mode of the counter (CF_BINARY)
+- Corrected the initialization of the Pattern function if the Goto mode is used.
+- Updated the English documentation to the same state like the German.
+- Using the correct version of the Pattern_Configurator.xlsb
+

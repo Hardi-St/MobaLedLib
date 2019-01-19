@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,12 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
  This example demonstrates the usage of the MobaLedLib with one animated house.
  The house has 7 different rooms which are illuminated randomly to simulate a house
  where people live. There are different light types used:

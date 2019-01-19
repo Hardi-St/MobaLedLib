@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  Debug_Functions.h
@@ -54,25 +55,26 @@ void MobaLedLib_C::Print_Comment(uint8_t Type)
   switch (Type)
     {
   #ifdef _USE_SEP_CONST
-    case CONST_T:         Dprintf("Const");         break;
+    case CONST_T:             Dprintf("Const");             break;
   #endif
-    case END_T:           Dprintf("End");           break;
-    case HOUSE_T:         Dprintf("House");         break;
-    case FIRE_T:          Dprintf("Fire");          break;
+    case END_T:               Dprintf("End");               break;
+    case HOUSE_T:             Dprintf("House");             break;
+    case FIRE_T:              Dprintf("Fire");              break;
   #ifdef _NEW_ROOM_COL
-    case SET_COLTAB_T:    Dprintf("Set_ColTab");    break;
+    case SET_COLTAB_T:        Dprintf("Set_ColTab");        break;
   #endif
-    case LOGIC_T:         Dprintf("Logic");         break;
-    case NEW_HSV_GROUP_T: Dprintf("New_HSV_Group"); break;
-    case NEW_LOCAL_VAR_T: Dprintf("New_Local_Var"); break;                                                    // 07.11.18:
-    case USE_GLOBALVAR_T: Dprintf("Use_GlobalVar"); break;                                                    // 15.11.18:
-    case INCH_TO_TMPVAR_T:Dprintf("InCh_to_TmpVar");break;
-    case RANDOM_T:        Dprintf("Random");        break;
-    case RANDMUX_T:       Dprintf("RandMux");       break;
-    case WELDING_T:       Dprintf("Welding");       break;
-    case COPYLED_T:       Dprintf("CopyLED");       break;
-    case SCHEDULE_T:      Dprintf("Schedule");      break;
-    case COUNTER_T:       Dprintf("Counter");       break;
+    case LOGIC_T:             Dprintf("Logic");             break;
+    case NEW_HSV_GROUP_T:     Dprintf("New_HSV_Group");     break;
+    case NEW_LOCAL_VAR_T:     Dprintf("New_Local_Var");     break;                                            // 07.11.18:
+    case USE_GLOBALVAR_T:     Dprintf("Use_GlobalVar");     break;                                            // 15.11.18:
+    case INCH_TO_TMPVAR_T:    Dprintf("InCh_to_TmpVar");    break;
+    case BIN_INCH_TO_TMPVAR_T:Dprintf("Bin_InCh_to_TmpVar");break;                                            // 18.01.19:
+    case RANDOM_T:            Dprintf("Random");            break;
+    case RANDMUX_T:           Dprintf("RandMux");           break;
+    case WELDING_T:           Dprintf("Welding");           break;
+    case COPYLED_T:           Dprintf("CopyLED");           break;
+    case SCHEDULE_T:          Dprintf("Schedule");          break;
+    case COUNTER_T:           Dprintf("Counter");           break;
     default: if (pt)
                   Print_Pattern_Comment(Type, pt);
              else Dprintf("Unknown");

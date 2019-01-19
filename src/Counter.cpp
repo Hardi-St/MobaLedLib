@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  Counter Function
@@ -146,11 +147,13 @@ void MobaLedLib_C::Proc_Counter()
           {
           if (Enable == INP_TURNED_ON) // Enable Button pressed => Count Down
              {
+             //Dprintf("Count Down %i => ", dp->Counter);
              if   ( (((ModeL & _CF_ROT_SKIP0) == CF_ROTATE)    && dp->Counter == 0) ||
                     (((ModeL & _CF_ROT_SKIP0) ==_CF_ROT_SKIP0) && dp->Counter <= 1))
                   dp->Counter = MaxCnt;
              else if (dp->Counter >  0) dp->Counter--;
              dp->Last_t = t4w; // Reset timeout
+             //Dprintf("%i\n", dp->Counter);
              }
           }
 
@@ -179,25 +182,19 @@ void MobaLedLib_C::Proc_Counter()
 #endif
           {
           const uint8_t  *ip = cp+P_COUNT_FIRST_DEST;
-          uint32_t Mask = 1;
 
           uint8_t e = pgm_read_byte_near(cp+P_COUNT_DEST_COUNT);
-          // 05.11.18:  FF der einen inversen Ausgang hat. => Im Ausgangszustand und bei einem Reset ist der Ausgang aktiv
-          // Dazu wird er gleiche Ausgang zwei mal angegeben
-          // Im Programm werden die Inputs von hinten nach vorne gesetzt. Interessanterweise braucht die neue methode 2 bytes weniger FLASH
-          #if 1 // 06.11.18:
-            ip += e-1;
-            for (uint8_t i = e-1; i != 255; i--, ip--, Mask>>=1)
-          #else // 05.11.18:  Old (Uses 2 Bytes more FLASH)
-            for (uint8_t i = 0; i < e; i++, ip++, Mask<<=1)
-          #endif
+          uint32_t Mask;
+          if (ModeL & CF_BINARY) Mask = 1<<(DestCnt-1);                                                       // 05.01.19: Old: = 1;
+          ip += e-1;
+          for (uint8_t i = e-1; i != 255; i--, ip--)
                {
                uint8_t InpNr = pgm_read_byte_near(ip);
                //Dprintf("Inp[%i]=%i", InpNr, Get_Input(InpNr));
                if (ModeL & CF_BINARY)
-                    Set_Input(InpNr, Clean_Counter & Mask);   // Enable binary pattern
-               else Set_Input(InpNr, i == Clean_Counter);     // Enable only one
-               //Dprintf("=>%i ", Get_Input(InpNr));
+                    { Set_Input(InpNr, Clean_Counter & Mask); Mask>>=1;}  // Enable binary pattern
+               else Set_Input(InpNr, i == Clean_Counter);                 // Enable only one
+               //Dprintf("=>%i (M:%i)", Get_Input(InpNr), Mask);
                }
           //Dprintf("\n");
           }
