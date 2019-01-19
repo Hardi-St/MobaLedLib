@@ -20,19 +20,35 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Sound and Keyboard                                                                        by Hardi   24.11.18
- ~~~~~~~~~~~~~~~~~~
+ Burning House                                                                             by Hardi   12.01.19
+ ~~~~~~~~~~~~~
 
- This example demonstrates the usage of the MobaLedLib with a sound module together with the keyboard
- module "Keys_4017.h". For details see the sound example and the switches_80_and_more example.
+ This example demonstrates the usage of the MobaLedLib ...
 
- It was created to test the printed circuit board "S3PO-Module". It uses the keys read in with the CD4017
- to test the sound funktions.
+ ToDo...
 
- The first 14 keys could be used to play the different sounds.
+ Link zum Video einfuegen
 
- In the "extras" directory of the library there are the schematics and printed circuit boards for this example.
- */
+ ...
+
+ LED Kanaele:
+ 0:   Sound
+ 1:   Zusaetzliche Ausgaenge auf dem Sound Modul
+ 2-6: Feuer LEDs
+ 7:   Rauchgenerator (C1=Rauch, C3=Rote Status LED)
+ 8,9: Feuerwehr
+
+
+ Other examples:
+ ~~~~~~~~~~~~~~~
+ This example could be combined with other MobaLedLib examples. Just copy the configuration lines and
+ eventual the macros and adapt the first LED to avoid overlapping (First parameter in the configuration line).
+
+ Hardware:
+ ~~~~~~~~~
+ The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...), ...
+
+*/
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 #include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
@@ -42,52 +58,75 @@
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
-#define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
-#define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#define NUM_LEDS_1        32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#define LED_DO_PIN_1      6   // Pin D6 is connected to the LED stripe
 
-#define CTR_CHANNELS_1    10                   // Number of used counter channels for keyboard 1. Up to 10 if one 4017 is used, up to 18 if two CD4017 are used, ...
-#define BUTTON_INP_LIST_1 2,7,8,9,10,11,12,A1  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
-#define CLK_PIN           A4                   // Pin number used for the CD4017 clock (Example 18 = A4)
-#define RESET_PIN         A5                   // Pin number used for the CD4017 reset (Example 19 = A5)
-                                               // The digital pins D2..D13 could be used also.
-                                               // Attention the analog pins A6 & A7 of the Nano can't be used as digital input/output !
-                                               // => They can't be used for to read the keys
+#define NUM_LEDS_2        6   // Number WS2811 modules for the second "stripe"
+#define LED_DO_PIN_2      A2  // Pin A2 is connected to the LED stripe 2
+#define CTR_CHANNELS_1    8   // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, up to 18 if two CD4017 are used, ...
+#define BUTTON_INP_LIST_1 A0  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
+#define CLK_PIN           A4  // Pin number used for the CD4017 clock (Example 18 = A4)
+#define RESET_PIN         A5  // Pin number used for the CD4017 reset (Example 19 = A5)
+                              // The digital pins D2..D13 could be used also.
+                              // Attention the analog pins A6 & A7 of the Nano can't be used as digital input/output
+                              // => They can't be used for to read the keys
+#include "Keys_4017.h"        // Keyboard library which uses the CD4017 counter to save Arduino pins. Attention: The pins (CLK_PIN, ...) must be defined prior.
 
-#include "Keys_4017.h"   // Keyboard library which uses the CD4017 counter to save Arduino pins. Attention: The pins (CLK_PIN, ...) must be defined prior.
+#define NUM_LEDS         NUM_LEDS_1+NUM_LEDS_2 // Necessary for the checking of the LED count in the MobaLedLib
+
+// **** Macro definition: Fire truck with WS2811 module connected to separate LED's ****
+#define Fire_truck(LED,    InCh)                                                                                       \
+  Blink2    (LED+1, C2,    InCh, 500 ms, 500 ms, 50,  255) /* Vorderlicht Blinken Dunkel/Hell                       */ \
+  BlueLight1(LED+1, C1,    InCh)                           /* Blaulicht rechts                                      */ \
+  BlueLight2(LED+1, C3,    InCh)                           /* Blaulicht Links (Andere Periode damit nicht synchron) */ \
+  Blink2    (LED,   C3,    InCh, 500 ms, 500 ms,  0,  255) /* Blinker hinten                                        */ \
+  Const     (LED,   C1,    InCh,                  0,   25) /* Ruecklicht                                            */
+
+// 1. Tastendruck: Feuer LEDs
+// 2. Tastendruck: Rauch
+// 3. Tastendruck: Feuerwehr Sirene + Licht
+// 4. Tastendruck: Naechster Sound
+
+
+#define StatusLEDs 20
+
+// Dateien suf der SD-Karte
+// 1:  Martinshorn 1.wav
+// 2:  Sirene faehrt vorbei.mp3
+// 3:  salamisound-3902659-polizei-martinshorn-sirene-3.mp3
+// 4:  salamisound-1660551-brennendes-haus.mp3
+// 5:  salamisound-7047521-polizeisirene-martinshorn-6.mp3
+// 6:  006.mp3
+// 7:  007.mp3
+// 8:  Stille.mp3
+
+#define Burning_House(LED0, B_LED, B_LED_Cx, InNr, TmpNr, Timeout)                                                     \
+            PushButton_w_LED_0_3(B_LED, B_LED_Cx, InNr, TmpNr, 0, Timeout)                                             \
+            Logic      (TmpNr+4,    TmpNr+3 AND InNr)        /* Sound is active when TmpNr+3 and the input = 1 */      \
+            Logic      (TmpNr+2,    TmpNr+2 OR TmpNr+3)      /* TmpNr+2 is also active if TmpNr+3 is active */         \
+            Logic      (TmpNr+1,    TmpNr+1 OR TmpNr+2)      /* TmpNr+1 is also active if TmpNr+2 is active */         \
+            Fire       (LED0+1,     TmpNr+1, 5, 50)                                                                    \
+            Const      (LED0+7, C1, TmpNr+2, 0,255) /* Rauch */                                                        \
+            Const      (LED0+7, C3, TmpNr+2, 0,63)  /* Status LED Rauch */                                             \
+            Fire_truck (LED0+8,     TmpNr+3)                                                                           \
+          /*Sound_Next_of_N(LED0+0, TmpNr+4, 5)*/   /* Sound 1-5 nacheinander */                                       \
+            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufaellig */                                               \
+            Sound_Seq8(      LED0+0,TmpNr+0)        /* Sound aus (Stille.mp3) */
+#if 0
+            Const      (StatusLEDs+0,C_ALL,   TmpNr+0, 0, 10)                 /* Debug: */                             \
+            Const      (StatusLEDs+1,C_ALL,   TmpNr+1, 0, 10)                 /* Debug: */                             \
+            Const      (StatusLEDs+2,C_ALL,   TmpNr+2, 0, 10)                 /* Debug: */                             \
+            Const      (StatusLEDs+3,C_ALL,   TmpNr+3, 0, 10)                 /* Debug: */                             \
+            Const      (StatusLEDs+4,C_ALL,   TmpNr+4, 0, 10)                 /* Debug: */
+#endif
 
 
 //*******************************************************************
 // *** Configuration array which defines the behavior of the sound module which is addressed like a LED ***
 MobaLedLib_Configuration()
-  {//             LED:                "LED" number in the stripe which is used to control the sound module
-   //              |  InCh:           Input channel. The inputs are read in below using the digitalRead() function.
-   //              |  |
-  Sound_Seq1(      0, 0)           // Play sound file 1 if the button 0 is pressed.
-  Sound_Seq2(      0, 1)
-  Sound_Seq3(      0, 2)
-  Sound_Seq4(      0, 3)
-  Sound_Seq5(      0, 4)
-  Sound_Seq6(      0, 5)
-  Sound_Seq7(      0, 6)
-  Sound_Seq8(      0, 7)
-  Sound_Seq9(      0, 8)
-  Sound_Seq10(     0, 9)
-  Sound_Seq11(     0, 10)
-  Sound_Seq12(     0, 11)
-  Sound_Seq13(     0, 12)
-  Sound_Seq14(     0, 13)
-  // Button row 3
-  Sound_Prev(      0, 16)
-  Sound_Next(      0, 17)
-  Sound_Next_of_N( 0, 18, 5)       // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..14.
-  Sound_PlayRandom(0, 19, 14)      // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..14.
-  Sound_PausePlay( 0, 20)
-  Sound_Loop(      0, 21)
-  Sound_PlayMode(  0, 22)
-  // Button row 4
-  Sound_DecVol(    0, 24, 1)
-  Sound_IncVol(    0, 25, 1)
-
+  {
+  //               LED0, B_LED,        B_LED_Cx, InNr, TmpNr, Timeout)
+  Burning_House(   0,    NUM_LEDS_1+1, C1,       3,    200,    2 Min)
   EndCfg // End of the configuration
   };
 //*******************************************************************
@@ -104,7 +143,8 @@ void setup(){
 //----------
 // This function is called once to initialize the program
 //
-  FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
+  FastLED.addLeds<NEOPIXEL, LED_DO_PIN_1>(leds,            NUM_LEDS_1);
+  FastLED.addLeds<NEOPIXEL, LED_DO_PIN_2>(leds+NUM_LEDS_1, NUM_LEDS_2);
 
   Keys_4017_Setup(); // Initialize the keyboard scanning process
 }

@@ -3,7 +3,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  AnalogPattern.h
@@ -408,6 +409,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
      else Inp =  INP_INIT_OFF; // To initialize the LEDs to "Off" value
      dp->State = PT_INACTIVE;
      //Dprintf("Initialize1: Inp=%i\n", Inp); // Debug
+     //if (GotoMode) Dprintf("Initialize Goto: %i Changed %i\n", ActualVar_p->Val, ActualVar_p->Changed); // Debug
      }
 
   if (GotoMode)
@@ -454,9 +456,9 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
         GotoTable_p = cp + P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2 - (LastState+1);  // 10.11.18:
         if (ActualVar_p)
              {
-             if (ActualVar_p->Changed)
-                {
-                dp->State = Find_GotoState(ActualVar_p->Val, START_BIT, GotoTable_p, LastState);
+             if (ActualVar_p->Changed || Initialize)                                                          // 18.01.19:  Added: "|| Initialize" otherwise State is set to PT_INACTIVE
+                {                                                                                             //            which causes wring startup values because "L1 = p.LEDs * dp->State;"
+                dp->State = Find_GotoState(ActualVar_p->Val, START_BIT, GotoTable_p, LastState);              //            generates garbage
                 //if (dp->State > LastState) { dp->State = LastState; Dprintf("Goto state not found => Goto LastState\n");}
                 }
              }
@@ -546,6 +548,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
          #endif
                 L0 = p.LEDs * Calc_Prior_State(dp->State, LastState, Reverse);
          }
+     //Dprintf("State %i\n", dp->State);
      L1 = p.LEDs * dp->State;
      for (uint8_t L = 0; L < p.LEDs; L++, lp++) // Loop over all LEDs
          {

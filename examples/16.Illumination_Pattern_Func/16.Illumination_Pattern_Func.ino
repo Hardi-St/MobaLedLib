@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,12 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ -------------------------------------------------------------------------------------------------------------
 
 
  Illumination Pattern Function                                                             by Hardi   26.11.18
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
  This example demonstrates the usage of the MobaLedLib with the pattern function to generate
  fancy illuminations. The example also shows some complex macros. It uses the Logic() and the
  Counter() function.
@@ -131,7 +133,7 @@
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
-#define BUTTON_PIN   7   // Pin D7 is connected to the puh button
+#define BUTTON_PIN   7   // Pin D7 is connected to the push button
 
 // *** Macros ***
 
