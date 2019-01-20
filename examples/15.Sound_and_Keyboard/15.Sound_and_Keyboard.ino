@@ -40,6 +40,10 @@
                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
+#include <TimerOne.h>    // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+#include <DIO2.h>        // The library for fast digital I/O functions must be installed also
+                         // Installation see "FastLED" installation above
+
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)

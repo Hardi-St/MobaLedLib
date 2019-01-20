@@ -96,10 +96,11 @@
  directory of the library: "PushButtonAction_4017.zip". In the video it's shown on the right side.
  This module could read in up to 10 buttons. It could be cascaded to read in more buttons with
  additional PCBs. The modules are connected by 8 wires.
+
  But this additional hardware is not necessary to read in one button. The button could also be
- read in directly by the arduino. This is shown in the other examples which use a switch. The example
- "03.Switched_Houses.ino" for instance uses three switches to control the houses. The "PushButtonAction_4017"
- module is only needed if more buttons should be connected than Arduino pins are available.
+ read in directly by the arduino.
+ This method is enabled by default. To use the PushButtonAction_4017 module the compiler switch
+ USE_KEYS_4017 below must be activated.
 
 
  Video:
@@ -116,7 +117,17 @@
 
  Hardware:
  ~~~~~~~~~
- The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)...
+ The example is one of our "Push Button" actions. It is designed to work with our special hardware.
+ But it could without this.
+ All You need is an Arduino compatible board (Uno, Nano, Mega, ...) a WS281x LED stripe with
+ at least 16 LEDs and a push button connected to pin D7 and ground.
+
+ The DIN pin of the first LED must be connected to D6.
+
+ Without the special hardware the LEDs are flashing confusing. Check the video https://vimeo.com/311006857
+ to see how it should look like.
+
+ The following table helps to understand the LEDs
 
  LED Channels:
  0:   Sound
@@ -124,8 +135,17 @@
  2-6: Fire LEDs
  7:   Smoke generator (C1=Rauch, C3=Rote Status LED)
  8,9: Fire truck
+ 15:  Button LED (If used without the compiler switch USE_KEYS_4017)
 
+ The first LED normally triggers the sound module. If the example is used without the compiler
+ switch USE_KEYS_4017 the LED is turned on for a short moment in different colors if a new sound
+ should be played.
 */
+
+
+//#define USE_KEYS_4017  // Enable this line if you want to use this example with the PushButtonAction modul
+                         // like shown in the video https://vimeo.com/311006857
+                         // If the line is disabled a normal button is used which is connected to D7 and ground.
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 #include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
@@ -135,21 +155,35 @@
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
-#define NUM_LEDS_1        32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
-#define LED_DO_PIN_1      6   // Pin D6 is connected to the LED stripe
+#define NUM_LEDS_1           32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#define LED_DO_PIN_1         6   // Pin D6 is connected to the LED stripe
 
-#define NUM_LEDS_2        6   // Number WS2811 modules for the second "stripe"
-#define LED_DO_PIN_2      A2  // Pin A2 is connected to the LED stripe 2
-#define CTR_CHANNELS_1    8   // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, up to 18 if two CD4017 are used, ...
-#define BUTTON_INP_LIST_1 A0  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
-#define CLK_PIN           A4  // Pin number used for the CD4017 clock (Example 18 = A4)
-#define RESET_PIN         A5  // Pin number used for the CD4017 reset (Example 19 = A5)
-                              // The digital pins D2..D13 could be used also.
-                              // Attention the analog pins A6 & A7 of the Nano can't be used as digital input/output
-                              // => They can't be used for to read the keys
-#include "Keys_4017.h"        // Keyboard library which uses the CD4017 counter to save Arduino pins. Attention: The pins (CLK_PIN, ...) must be defined prior.
 
-#define NUM_LEDS         NUM_LEDS_1+NUM_LEDS_2 // Necessary for the checking of the LED count in the MobaLedLib
+#ifdef USE_KEYS_4017
+   #include <TimerOne.h> // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+   #include <DIO2.h>     // The library for fast digital I/O functions must be installed also
+                         // Installation see "FastLED" installation above
+
+   #define BUTTON_LED NUM_LEDS_1+1
+   #define NUM_LEDS_2           6   // Number WS2811 modules for the second "stripe"
+   #define LED_DO_PIN_2      A2  // Pin A2 is connected to the LED stripe 2
+   #define CTR_CHANNELS_1    8   // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, up to 18 if two CD4017 are used, ...
+   #define BUTTON_INP_LIST_1 A0  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
+   #define CLK_PIN           A4  // Pin number used for the CD4017 clock (Example 18 = A4)
+   #define RESET_PIN         A5  // Pin number used for the CD4017 reset (Example 19 = A5)
+                                 // The digital pins D2..D13 could be used also.
+                                 // Attention the analog pins A6 & A7 of the Nano can't be used as digital input/output
+                                 // => They can't be used for to read the keys
+   #include "Keys_4017.h"        // Keyboard library which uses the CD4017 counter to save Arduino pins. Attention: The pins (CLK_PIN, ...) must be defined prior.
+
+   #define NUM_LEDS         NUM_LEDS_1+NUM_LEDS_2 // Necessary for the checking of the LED count in the MobaLedLib
+
+#else // USE_KEYS_4017 not defines
+   #define SWITCH0_PIN      7    // Pin D7 is connected to push button 0
+   #define NUM_LEDS         NUM_LEDS_1
+   #define BUTTON_LED       15
+#endif
+
 
 // **** Macro definition: Fire truck with WS2811 module connected to separate LED's ****
 #define Fire_truck(LED,    InCh)                                                                                       \
@@ -203,11 +237,10 @@
 MobaLedLib_Configuration()
   {
   //               LED0, B_LED,        B_LED_Cx, InNr, TmpNr, Timeout)
-  Burning_House(   0,    NUM_LEDS_1+1, C1,       3,    200,    2 Min)
+  Burning_House(   0,    BUTTON_LED, C1,       3,    200,    2 Min)
   EndCfg // End of the configuration
   };
 //*******************************************************************
-
 
 CRGB leds[NUM_LEDS];     // Define the array of leds
 
@@ -221,9 +254,13 @@ void setup(){
 // This function is called once to initialize the program
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN_1>(leds,            NUM_LEDS_1);
-  FastLED.addLeds<NEOPIXEL, LED_DO_PIN_2>(leds+NUM_LEDS_1, NUM_LEDS_2);
 
+#ifdef USE_KEYS_4017
+  FastLED.addLeds<NEOPIXEL, LED_DO_PIN_2>(leds+NUM_LEDS_1, NUM_LEDS_2);
   Keys_4017_Setup(); // Initialize the keyboard scanning process
+#else
+  pinMode(SWITCH0_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin
+#endif
 }
 
 //---------
@@ -231,7 +268,11 @@ void loop(){
 //---------
 // This function contains the main loop which is executed continuously
 //
+#ifdef USE_KEYS_4017
   MobaLedLib_Copy_to_InpStruct(Keys_Array_1, KEYS_ARRAY_BYTE_SIZE_1, 0);  // Copy the key states to the input structure
+#else
+  MobaLedLib.Set_Input(3, !digitalRead(SWITCH0_PIN));
+#endif
 
   MobaLedLib.Update();    // Update the LEDs in the configuration
 
