@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.7.5  // Adapt also library.properties if changed
+#define MobaLedLib_Ver  0.7.6  // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 
@@ -549,9 +549,9 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  CF_BINARY               B00000100      // Maximal 8 outputs
 #define  CF_RESET_LONG           B00001000      // Taste Lang = Reset
 #define  CF_UP_DOWN              B00010000      // Ein RS-FlipFlop kann mit CM_UP_DOWN ohne CF_ROTATE gemacht werden
-#define  CF_ROTATE               B00100000      // Faengt am Ende wieder von vorne an
+#define  CF_ROTATE               B00100000      // Fängt am Ende wieder von vorne an
 #define  CF_PINGPONG             B01000000      // Wechselt am Ende die Richtung
-#define  CF_SKIP0                B10000000      // Ueberspringt die 0. Die 0 kommt nur bei einem Timeout oder wenn die Taste lange gerueckt wird
+#define  CF_SKIP0                B10000000      // Überspringt die 0. Die 0 kommt nur bei einem Timeout oder wenn die Taste lange gerückt wird
 #define  CF_RANDOM              (B00000001<<8)  // Generate random numbers                                                                               // 07.11.18:
 #define  CF_LOCAL_VAR           (B00000010<<8)  // Write the result to a local variable which must be created with New_Local_Var() prior
 #define _CF_NO_LEDOUTP          (B00000100<<8)  // Disable the LED output (the first DestVar contains the maximal counts-1 (counter => 0 .. n-1) )
@@ -633,8 +633,8 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 
 
 // Spezial Inputs
-#define SI_Enable_Sound    253  // Wird auf 1 initialisiert, kann aber vom der Konfigurarion veraendert werden
-#define SI_LocalVar        SI_0 // Input fuer Pattern Funktion zum einlesen der Localen Variable. Diese Nummer wird verwendet weil eine Konstante 0 als Eingang keinen Sinn macht
+#define SI_Enable_Sound    253  // Wird auf 1 initialisiert, kann aber vom der Konfigurarion verändert werden
+#define SI_LocalVar        SI_0 // Input für Pattern Funktion zum einlesen der Localen Variable. Diese Nummer wird verwendet weil eine Konstante 0 als Eingang keinen Sinn macht
 #define SI_0               254  // Immer 0
 #define SI_1               255  // Immer 1
 
