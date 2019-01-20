@@ -140,8 +140,8 @@
 
 #include <mcp_can.h>     // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can.h: No such file or directory" https://github.com/coryjfowler/MCP_CAN_lib
                          // Download the ZIP file from https://github.com/coryjfowler/MCP_CAN_lib
-                         // Arduino IDE: Sketch / Include library / Add .ZIP library...                 Deutsche IDE: Sketch / Bibliothek einbinden / .ZIP Bibliothek hinzufügen...
-                         //              Navigate to the download directory and select the file                       Zum Download Verzeichnis werchseln und die Datei auswählen
+                         // Arduino IDE: Sketch / Include library / Add .ZIP library...                 Deutsche IDE: Sketch / Bibliothek einbinden / .ZIP Bibliothek hinzufuegen...
+                         //              Navigate to the download directory and select the file                       Zum Download Verzeichnis werchseln und die Datei auswaehlen
                          //
                          // Attention: Disable the debug in mcp_can_dfs.h by setting the following define to 0:
                          //              #define DEBUG_MODE 0
@@ -248,8 +248,8 @@ void Proc_Accessoires(uint8_t *rxBuf)
 // Process accessoires CAN messages
 // See: https://www.maerklin.de/fileadmin/media/produkte/CS2_can-protokoll_1-0.pdf
 {
-  uint8_t Pos     = rxBuf[4];  // 0 = Aus, Rund, Rot, Rechts, HP0 / 1 = Ein, Grün, Gerade, HP1 / 2 = Gelb, Links, HP2 / 3 = Weiss, SH0
-  uint8_t Current = rxBuf[5];  // 0 = Ausschalten, 1-31 Einschalten mit Dimmwert (sofern Protokoll dies unterstützt), 1 = ein
+  uint8_t Pos     = rxBuf[4];  // 0 = Aus, Rund, Rot, Rechts, HP0 / 1 = Ein, Gruen, Gerade, HP1 / 2 = Gelb, Links, HP2 / 3 = Weiss, SH0
+  uint8_t Current = rxBuf[5];  // 0 = Ausschalten, 1-31 Einschalten mit Dimmwert (sofern Protokoll dies unterstuetzt), 1 = ein
   uint16_t Loc_ID = ((rxBuf[2]<<8) + rxBuf[3]) & 0x7FF;  // Adresses from 0 - 0x7FF are possible (2048 adresses)
 
   // The InpStructArray[] is enabled if Current is > 0, otherwise it's disabled

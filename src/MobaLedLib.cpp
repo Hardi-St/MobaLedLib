@@ -252,33 +252,45 @@
  05.01.19:  - Corrected the binary mode of the counter (CF_BINARY)
  13.01.19:  - Increased the number of possible allocated RAM for a macro from 50 to 100
  18.01.19:  - Added function Bin_InCh_to_TmpVar() and RGB_Heartbeat2()
-            - Corrected the initialisation of the Pattern function if the Goto mode is used.
+            - Corrected the initialization of the Pattern function if the Goto mode is used.
  19.01.19:  - Using Pattern_Configurator.xlsb instead of .xlsm in the library
             => Version 0.7.5
-
-
- Vorbereitungen fuer ein neues Release:
- - Versionsnummer anpassen
-   - MobaLedLib.h
-   - library.properties
- - Revision History in Readme.md
- - Aktuell ?
-   - keywords.txt
-   - Doku & PDF
-
+ 15.02.19:  - Corrected the random mode of the counter CF_RANDOM). The ActualVar_p->Changed
+              flag was not set if the same random number was generated than before. This caused problems
+              with the Sound_PlayRandom macro because in this case no sound was played.
+ 16.02.19:  - Changed the serial input debug function
+              - Moved to H-file to be able to enable it without change in the Lin_Config.h
+              - Using only lower case letters (Inputs are converted to lowercase)
+            - New example: 24.DCC_and_Sound.ino
+ 17.02.19:  - Moved the heartbeat function into a separate H-file. This file could be used
+              independent from the MobaLedLib by including "Serial_Inputs.h" only.
 
  ToDo:
  ~~~~~
+ - In dem Beispiel 23_B.DCC_Rail_Decoder_Receiver.ino wird ein Defaultwert fuer die
+   Signale in der setup() funktion vorgegeben. Es waere besser wenn solche dafault
+   Werte in der Konfiguration einstellbar waehren damit die Daten nicht so verstreut sind.
+ - Includes in die Beispiele einbauen damit eine bessere Fehlermeldung kommt.
+ - Pattern Configuration:
+   - Warnung in Excel generieren wenn in der Goto Tabelle in der ersten Spalte ein „S“ steht. Das fuehrt dazu, dass die erste Spalte mit der 0 und der 1 angesprungen werden kann.
+   - Breite des Flash Usage Fensters vergroessern (Zwei Zellen zusammenfassen)
+ - Die Ueberblendeffekte werden stufig wenn die Anzahl der Schritte klein ist
+ - Testprogramm fuer LEDs mit Tastern und ueber Serielle Schnittstelle auslagern und als Beispiel anhaengen
+   - Ergaenzen um Lauflicht Funktion mit der man unterbrechungen in der Kette Finden kann
+ - Testen ob man die LED Anzahl per interrupt ermitteln kann
+   Zunaechst mit Ossi messen => Sollte Funktionieren
+   Siehe "C:\Dat\Maerklin\Arduino\LEDs_Eisenbahn\Doc\WS2812 65 Datensaetze bei 64 LEDs.pdf"
+ - Video vom Darkness_Detection Beispiel
+ - Dummy Beispiel welches eine kurze Beschreibung aller Beispiele enthaelt
  - WS2811 als Empfangstest auf LED Platine vorsehen
- - Hardware Probleme:
-   bei den Miltenberg Haeusern ist eine LED kaputt. Das fuehrt dazu, dass ab und zu alle LEDs wild flackern
+ - Evtl. zweiten Arduino zum einlesen von DCC Signalen
  - Anschluss von Gluehlampen an WS2811 Modul im Forum dokumentieren
  - Sigrok Dekodiert auch WS281x signale mit Pikoskope:
    https://github.com/vooon/sigrok-rgb_led_ws281x/blob/master/README.md
    https://sigrok.org/
    => Anschauen
 
- - Mail an FastLED => Hab keine E-Mail adresse gefunden. Der Support ist momentan eingestellt
+ - Mail an FastLED => Hab keine E-Mail Adresse gefunden. Der Support ist momentan eingestellt
  - Achtung: Die Dateinamen in der Lib duerfen keine Sonderzeichen (Ue / Ue) enthalten sonst
    kann die Datei nicht von der Arduino IDE importiert werden. Ich dachte 2 Stunden lang,
    dass es an der Dateigroesse liegt...
@@ -338,7 +350,6 @@
      - CAN_INPUT
    - Diese Optionen bleiben in der Bibliothek:
      - _TEST_BUTTONS          Normaly disabled
-     - _READ_SERIAL_INPUTS    Normaly disabled
      - _PRINT_DEBUG_MESSAGES  Normaly disabled
      - _CHECK_UPD_RATE        Normaly disabled
 
@@ -605,7 +616,7 @@ uint8_t TestMode = 0;    // If this variable is set the normal update function o
  Zum initialisieren des Zufallszahlengenerators wird randomSeed() und random16_set_seed()
  mit einer Zufaelligen Zahl initialisiert. Normalerweise nimmt man dazu die Spannung an einem
  offenen Analogeingang. Dummerweise funktioniert die analogRead() Funktion nicht im Konstruktor
- eine Globalen Klasse weil ieser aufgerufen wird bevor die Hardware initialisiert ist ;-(
+ eine Globalen Klasse weil dieser aufgerufen wird bevor die Hardware initialisiert ist ;-(
    Siehe: https://forum.arduino.cc/index.php?topic=111463.0
  Leider geht auch das lesen der Internen Temperatur nicht im Konstruktor ;-(
 
@@ -685,7 +696,7 @@ MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned
   //  #ifdef _PRINT_DEBUG_MESSAGES
   //    Serial.begin(57600); //   Attention: The serial monitor in the Arduino IDE must use the same baudrate
   //  #endif
-  Dprintf("MobaLedLib_C Constructor\n");
+  //Dprintf("MobaLedLib_C Constructor\n");
 
   memset(TV_Dat, 0, sizeof(TV_Dat));
   memset(RAM,    0, RamSize);
@@ -707,10 +718,6 @@ MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned
   #endif
 
   TriggerCnt = 0;
-
-  #ifdef _READ_SERIAL_INPUTS
-    SwNr = 0;
-  #endif
 
   #ifdef _CHECK_UPD_RATE
     Upd_Cnt = 0;
@@ -1321,10 +1328,6 @@ void MobaLedLib_C::Update()
 // This function has to be called periodicly in the loop() function
 // to update all LEDs
 {
-  #ifdef  _READ_SERIAL_INPUTS
-    Proc_Serial_Input();
-  #endif
-
   #ifdef _TEST_BUTTONS
     Proc_Test_Buttons(); // Buttons to test the LEDs
   #endif

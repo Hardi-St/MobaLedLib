@@ -42,7 +42,7 @@
             Const      (LED0+7, C1, TmpNr+2, 0,255)                          // Rauch                                           \
             Const      (LED0+7, C3, TmpNr+2, 0,63)                           // Status LED Rauc                                 \
             Fire_truck (LED0+8,     TmpNr+3)                                                                                    \
-            Sound_PlayRandom(LED0+0,TmpNr+4, 5)                              // Sound zufällig                                  \
+            Sound_PlayRandom(LED0+0,TmpNr+4, 5)                              // Sound zufaellig                                  \
             Sound_Seq8(      LED0+0,TmpNr+0)                                 // Sound aus (Stille.mp3)
 
  The PushButton_w_LED_0_3 line uses a macro which uses one input to trigger a counter and drives
@@ -196,14 +196,14 @@
 // 1. Tastendruck: Feuer LEDs
 // 2. Tastendruck: Rauch
 // 3. Tastendruck: Feuerwehr Sirene + Licht
-// 4. Tastendruck: Nächster Sound
+// 4. Tastendruck: Naechster Sound
 
 
 #define StatusLEDs 20
 
 // Dateien auf der SD-Karte
 // 1:  Martinshorn 1.wav
-// 2:  Sirene fährt vorbei.mp3
+// 2:  Sirene faehrt vorbei.mp3
 // 3:  salamisound-3902659-polizei-martinshorn-sirene-3.mp3
 // 4:  salamisound-1660551-brennendes-haus.mp3
 // 5:  salamisound-7047521-polizeisirene-martinshorn-6.mp3
@@ -221,7 +221,7 @@
             Const      (LED0+7, C3, TmpNr+2, 0,63)  /* Status LED Rauch */                                             \
             Fire_truck (LED0+8,     TmpNr+3)                                                                           \
           /*Sound_Next_of_N(LED0+0, TmpNr+4, 5)*/   /* Sound 1-5 nacheinander */                                       \
-            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufällig */                                               \
+            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufaellig */                                               \
             Sound_Seq8(      LED0+0,TmpNr+0)        /* Sound aus (Stille.mp3) */
 #if 0
             Const      (StatusLEDs+0,C_ALL,   TmpNr+0, 0, 10)                 /* Debug: */                             \

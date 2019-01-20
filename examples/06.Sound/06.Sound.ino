@@ -27,6 +27,9 @@
  module MP3-TF-16P (1Eu from China) which could be controlled with a WS2811 module to play different sounds.
  In this case two "LED colors" trigger the inputs of the sound module.
 
+ The example could also be used with te JQ6500 sound module.
+ Enable / disable the "USE_MP3_TF_16P_SOUND_MODULE" line below to define the used module.
+
  In this way sounds could be controlled with the same single wire as all LED's on the model railway.
  Several sound modules could be placed in the model landscape and play atmospheric sounds. This could
  be animals, vehicles, church bells, railway station messages, ...
@@ -71,20 +74,23 @@
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...), a WS2811 module and a
  MP3-TF-16P sound module, a SD card, a speaker and three push buttons. In addition some electronic components
  are needed to filter the WS2811 signals:
-   2x 1.5 K 1% resistors
-   2x  33 ohm  resistors
-   1x   1 ohm  resistor
-   2x  22 uF   electrolyte capacitors
-   1x 470 uF   electrolyte capacitor
-   2x 0.1 uF   capacitor
-   1x L78L33   voltage regualtor
+   MP3-TF-16P                            JQ6500
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   2x 1.5 K 1% resistors                 1x 470 ohm 1% resistors
+   2x  33 ohm  resistors                 1x  33 ohm    resistors
+   1x   1 ohm  resistor                  1x   1 ohm    resistor
+   2x  22 uF   electrolyte capacitors    1x  22 uF     electrolyte capacitors
+   1x 470 uF   electrolyte capacitor     1x 470 uF     electrolyte capacitor
+   2x 0.1 uF   capacitor                 2x 0.1 uF     capacitor
+   1x L78L33   voltage regualtor         1x L78L33     voltage regualtor
 
  To test the software a LED stripe could be connected to pin D6. The first LED should flash briefly
  when a button is pressed.
 
- The sound module is connected to the WS2811 modules in the following way:
+ The sound modules are connected to the WS2811 module in the following way:
 
-                                               L78L33
+ MP3-TF-16P sound module:
+ ~~~~~~~~~~~~~~~~~~~~~~~~                      L78L33
                                                _____     3.3V
                                           +5V--\___/---o-----o-[1K5]----.
        .---[1ohm]--- +5V                         |     |     |          |
@@ -93,7 +99,7 @@
        o---o-------- +  MP3-TF-16P   +          ---   ---            |  |
        |   |         +  -----------  +          GND   GND            |  |
       ~~~ ===        + |           | +                               |  |       ------------
-470uF ###  |0.1uF    + |           | + ADKEY2---------.              |  |       +  ------  +-- +5V
+470uF ###  |0.1uF    + |           | + ADKEY2---------.              |  |       B  ------  +-- +5V
        |   |         + |           | +-ADKEY1---o-----------[33 ]----o----------R |WS2811| +-- DIN   -> Arduino D6
       --- ---   SPK_1+ |  SD-Card  | +          |     |                 |       + |  5V  | +-- DOut
       GND GND   GND  + |           | +          |     o-----[33 ]-------o-------G  ------  +-- GND
@@ -104,11 +110,36 @@
                                                ---   ---
                                                GND   GND
 
+
+ JQ6500 sound module:
+ ~~~~~~~~~~~~~~~~~~~~
+
+    +5V ---[1ohm]---.                         L78L33
+                    |                         _____     3.3V
+       .------------o--------------------o----\___/---o----[470]--.
+       |                                 |      |     |           |
+       |                                ===     |    ===          |
+       |                                 |0.1uF |     |0.1uF      |
+       |                                ---    ---   ---          |
+       |             ----------------   GND    GND   GND          |       ------------
+       |             +   JQ65000    +                             |       B  ------  +-- +5V
+       |             +   .-----.    +-ADKEY1---o-----------[33 ]--o-------R |WS2811| +-- DIN   -> Arduino D6
+       |        GND--+   |     |    +-GND      |                          + |  5V  | +-- DOut
+       o-------------+   |     |    +          |                          G  ------  +-- GND
+       |             +   '-----'    +          |                          ------------
+      ~~~            +              +         ~~~
+470uF ###       SPK_1+     ___      +         ### 22 uF
+       |        SPK_2+    |USB|     +          |
+      ---            ----------------         ---
+      GND                                     GND
+
  The buttons are connected to D7-D9. The DIN port of the WS2811 module is connected to D6.
 
  In the "extras" directory of the library there is a file S3PO_Modul_WS2811.zip which contains
  the schematic and printed circuit board for this example.
 */
+#define USE_MP3_TF_16P_SOUND_MODULE // Enable this line to use the MP3-TF-16P sound module
+                                    // If the line is disabled the JQ6500 sound module is used
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 #include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
@@ -128,13 +159,19 @@
 //*******************************************************************
 // *** Configuration array which defines the behavior of the sound module which is addressed like a LED ***
 MobaLedLib_Configuration()
-  {//             LED:                "LED" number in the stripe which is used to control the sound module
-   //              |  InCh:           Input channel. The inputs are read in below using the digitalRead() function.
-   //              |  |  MaxSoundNr:  Number of the maximal played sound file
-   //              |  |  |
-  Sound_Next_of_N( 0, 0, 5)        // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..14.
-  Sound_PlayRandom(0, 1, 14)       // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..14.
-  Sound_Seq7(      0, 2)           // Play sound file 7 if the button is pressed. Other files could be played by using the numbers 1..14 after "Sound_Seq" (See documentation)
+  {//                    LED:                "LED" number in the stripe which is used to control the sound module
+   //                     |  InCh:           Input channel. The inputs are read in below using the digitalRead() function.
+   //                     |  |  MaxSoundNr:  Number of the maximal played sound file
+   //                     |  |  |
+#ifdef USE_MP3_TF_16P_SOUND_MODULE
+  Sound_Next_of_N(        0, 0, 5)        // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..14.
+  Sound_PlayRandom(       0, 1, 14)       // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..14.
+  Sound_Seq7(             0, 2)           // Play sound file 7 if the button is pressed. Other files could be played by using the numbers 1..14 after "Sound_Seq" (See documentation)
+#else // JQ6500 sound module
+  Sound_JQ6500_Next_of_N( 0, 0, 3)        // Play the next sound file if the button is pressed. The 3  defines the maximal played sound number in the range of 1..5.
+  Sound_JQ6500_PlayRandom(0, 1, 5)        // Play a random sound file if the button is pressed. The 5 defines the maximal played sound number in the range of 1..5.
+  Sound_JQ6500_Seq2(      0, 2)           // Play sound file 2 if the button is pressed. Other files could be played by using the numbers 1..5 after "Sound_Seq" (See documentation)
+#endif
   EndCfg // End of the configuration
   };
 //*******************************************************************

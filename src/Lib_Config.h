@@ -34,8 +34,6 @@
 
 //#define _TEST_BUTTONS               // Enable this to use three buttons connected to the Arduino pins for testing (04.08.18: FLASH: 1390, RAM 18 without DEBUG_PRINT_BUTTONS())
 
-//#define _READ_SERIAL_INPUTS         // Read test commands from the serial input for color and brightnes tests and to simulate the inputs (Uses 1302 bytes Flash 24.03.18)
-
 //#define _PRINT_DEBUG_MESSAGES       // Enable this line to print debug messages to the PC (USB)
 
 //#define _FAST_TIMES                   // Enable this for debugging with fast timing for the houses

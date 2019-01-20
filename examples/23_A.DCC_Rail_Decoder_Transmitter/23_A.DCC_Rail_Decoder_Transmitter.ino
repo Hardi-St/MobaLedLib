@@ -27,7 +27,8 @@
  This example describes how to read DCC signals (Digital Command Control) from the rail signal
  of a model railway and transmit the accessory and the signalling commands to a second Arduino
  which runs the MobaLedLib. On the second Arduino two light signal are controlled with the
- received messages.
+ received messages. In addition two houses and a welding simulation could be activated with
+ DCC commands.
 
  This program is the part for the DCC-Arduino.
 
@@ -71,7 +72,7 @@
  Video:
  ~~~~~~
  This video demonstrates the example:
-   https://vimeo.com/311996452
+   https://vimeo.com/311996452          (Only the Light Signals are shown in the video)
 
  Hardware:
  ~~~~~~~~~

@@ -23,16 +23,33 @@
  Sound and Keyboard                                                                        by Hardi   24.11.18
  ~~~~~~~~~~~~~~~~~~
 
- This example demonstrates the usage of the MobaLedLib with a sound module together with the keyboard
- module "Keys_4017.h". For details see the sound example and the switches_80_and_more example.
+ This example demonstrates the usage of the MobaLedLib with a MP3-TF-16P or a JQ6500 sound module
+ together with the keyboard module "Keys_4017.h". For details see the sound example and the
+ switches_80_and_more example.
+ Enable / disable the "USE_MP3_TF_16P_SOUND_MODULE" line below to define the used module.
 
- It was created to test the printed circuit board "S3PO-Module". It uses the keys read in with the CD4017
- to test the sound funktions.
+ It uses the keys which are read in with the CD4017 to test the sound functions (PushButtonAction_4017.zip).
 
- The first 14 keys could be used to play the different sounds.
+ The first 14 keys (key 0 .. key 13) could be used to play the different sounds.
+ If the JQ6500 sound module is used only the first 5 keys (Key 0..4) could be used
+ to play the different sounds.
+ Other keys:
+   Key 16: Prev sound
+   Key 17: Next sound
+   Key 18: Next sound of 3
+   Key 19: Play Random sound
+   Key 20: Pause                 (Not with the JQ6500 sound modul)
+   Key 21: Loop                    "        "           "
+   Key 22: toggle the Play Mode    "        "           "
+   Key 24: Dec Volume
+   Key 25: Inc Volume
 
- In the "extras" directory of the library there are the schematics and printed circuit boards for this example.
+ In the "extras" directory of the library there are the schematics and printed circuit boards for
+ this example (S3PO_Modul_WS2811.zip).
  */
+
+#define USE_MP3_TF_16P_SOUND_MODULE // Enable this line to use the MP3-TF-16P sound module
+                                    // If the line is disabled the JQ6500 sound module is used
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 #include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
@@ -63,34 +80,52 @@
 //*******************************************************************
 // *** Configuration array which defines the behavior of the sound module which is addressed like a LED ***
 MobaLedLib_Configuration()
-  {//             LED:                "LED" number in the stripe which is used to control the sound module
-   //              |  InCh:           Input channel. The inputs are read in below using the digitalRead() function.
-   //              |  |
-  Sound_Seq1(      0, 0)           // Play sound file 1 if the button 0 is pressed.
-  Sound_Seq2(      0, 1)
-  Sound_Seq3(      0, 2)
-  Sound_Seq4(      0, 3)
-  Sound_Seq5(      0, 4)
-  Sound_Seq6(      0, 5)
-  Sound_Seq7(      0, 6)
-  Sound_Seq8(      0, 7)
-  Sound_Seq9(      0, 8)
-  Sound_Seq10(     0, 9)
-  Sound_Seq11(     0, 10)
-  Sound_Seq12(     0, 11)
-  Sound_Seq13(     0, 12)
-  Sound_Seq14(     0, 13)
+  {//                    LED:                "LED" number in the stripe which is used to control the sound module
+   //                     |  InCh:           Input channel. The inputs are read in below using the digitalRead() function.
+   //                     |  |
+#ifdef USE_MP3_TF_16P_SOUND_MODULE
+  Sound_Seq1(             0, 0)           // Play sound file 1 if the button 0 is pressed.
+  Sound_Seq2(             0, 1)
+  Sound_Seq3(             0, 2)
+  Sound_Seq4(             0, 3)
+  Sound_Seq5(             0, 4)
+  Sound_Seq6(             0, 5)
+  Sound_Seq7(             0, 6)
+  Sound_Seq8(             0, 7)
+  Sound_Seq9(             0, 8)
+  Sound_Seq10(            0, 9)
+  Sound_Seq11(            0, 10)
+  Sound_Seq12(            0, 11)
+  Sound_Seq13(            0, 12)
+  Sound_Seq14(            0, 13)
   // Button row 3
-  Sound_Prev(      0, 16)
-  Sound_Next(      0, 17)
-  Sound_Next_of_N( 0, 18, 5)       // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..14.
-  Sound_PlayRandom(0, 19, 14)      // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..14.
-  Sound_PausePlay( 0, 20)
-  Sound_Loop(      0, 21)
-  Sound_PlayMode(  0, 22)
+  Sound_Prev(             0, 16)
+  Sound_Next(             0, 17)
+  Sound_Next_of_N(        0, 18, 5)       // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..14.
+  Sound_PlayRandom(       0, 19, 14)      // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..14.
+  Sound_PausePlay(        0, 20)
+  Sound_Loop(             0, 21)
+  Sound_PlayMode(         0, 22)
   // Button row 4
-  Sound_DecVol(    0, 24, 1)
-  Sound_IncVol(    0, 25, 1)
+  Sound_DecVol(           0, 24, 1)
+  Sound_IncVol(           0, 25, 1)
+
+#else // JQ6500 sound modul
+  Sound_JQ6500_Seq1(      0, 0)           // Play sound file 1 if the button 0 is pressed.
+  Sound_JQ6500_Seq2(      0, 1)
+  Sound_JQ6500_Seq3(      0, 2)
+  Sound_JQ6500_Seq4(      0, 3)
+  Sound_JQ6500_Seq5(      0, 4)
+  // Button row 3
+  Sound_JQ6500_Prev(      0, 16)
+  Sound_JQ6500_Next(      0, 17)
+  Sound_JQ6500_Next_of_N( 0, 18, 3)       // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..5.
+  Sound_JQ6500_PlayRandom(0, 19, 5)       // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..5.
+  // Button row 4
+  Sound_JQ6500_DecVol(    0, 24, 1)
+  Sound_JQ6500_IncVol(    0, 25, 1)
+  Andreaskreuz(           0,C2,SI_1)      // Usage example of the remaining two outputs
+#endif
 
   EndCfg // End of the configuration
   };
@@ -134,9 +169,9 @@ void loop(){
         B5 | [ ]D13/SCK        MISO/D12[ ] |   B4
            | [ ]3.3V           MOSI/D11[ ]~|   B3
            | [ ]V.ref     ___    SS/D10[ ]~|   B2
-        C0 | [ ]A0       / N \       D9[ ]~|   B1   -> push button 2 --.
-        C1 | [ ]A1      /  A  \      D8[ ] |   B0   -> push button 1 --o-- GND
-        C2 | [ ]A2      \  N  /      D7[ ] |   D7   -> push button 0 --'
+        C0 | [ ]A0       / N \       D9[ ]~|   B1
+        C1 | [ ]A1      /  A  \      D8[ ] |   B0
+        C2 | [ ]A2      \  N  /      D7[ ] |   D7
         C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
         C4 | [ ]A4/SDA               D5[ ]~|   D5
         C5 | [ ]A5/SCL               D4[ ] |   D4
@@ -163,10 +198,10 @@ void loop(){
            | [ ]v.ref                 MISO/12[A] |   .
            | [ ]RST                   MOSI/11[A]~|   .
            | [ ]3V3    +---+               10[ ]~|   .
-           | [ ]5v     | A |                9[ ]~|   .   -> push button 2 (B)  --.
-           | [ ]GND   -| R |-               8[B] |   B0  -> push button 1 (G)  --o-- GND
-           | [ ]GND   -| D |-                    |                               |
-           | [ ]Vin   -| U |-               7[A] |   D7  -> push button 0 (R)  --'
+           | [ ]5v     | A |                9[ ]~|   .
+           | [ ]GND   -| R |-               8[B] |   B0
+           | [ ]GND   -| D |-                    |
+           | [ ]Vin   -| U |-               7[A] |   D7
            |          -| I |-               6[A]~|   .   -> WS281x LED stripe pin DIN
            | [ ]A0    -| N |-               5[C]~|   .
            | [ ]A1    -| O |-               4[A] |   .

@@ -36,28 +36,43 @@
  CPU module connected to the return signal of the LED stripe.
  Use the Blink() function in the configuration.
 
-*/
-#include "MobaLedLib.h"
+ FLASH usage: 146
 
-//---------------------------------------------
-LED_Heartbeat_C::LED_Heartbeat_C(uint8_t PinNr)
-//---------------------------------------------
-// The internal LED (13) can't be used if the CAN bus is enabled.
+*/
+
+//:::::::::::::::::::
+class LED_Heartbeat_C
+//:::::::::::::::::::
+{
+public:
+
+//----------------------------
+LED_Heartbeat_C(uint8_t PinNr) // Constructor
+//----------------------------
+// The internal LED (13) can't be used if the SPI bus is used (CAN bus)
   : LED_Pin(PinNr),
-    HB_State(0),
     HB_Time(0)
 {
   pinMode(LED_Pin, OUTPUT);
 }
 
-//----------------------------
-void LED_Heartbeat_C::Update()
-//----------------------------
+//-----------
+void Update()
+//-----------
 {
-    if ((millis() - HB_Time) >= 500)
-       {
-       HB_Time = millis();
-       HB_State = !HB_State;
-       digitalWrite(LED_Pin, HB_State);
-       }
+  uint8_t t4 = millis()>>2;
+  if ((uint8_t)(t4 - HB_Time) >= 500/4)
+     {
+     HB_Time = t4;
+     digitalWrite(LED_Pin, !digitalRead(LED_Pin));
+     }
 }
+
+private:
+  uint8_t     LED_Pin;      //  1 Byte
+  uint8_t     HB_Time;      //  1 Byte
+};                          // -------
+                            //  2 Byte
+
+
+

@@ -124,6 +124,7 @@ void MobaLedLib_C::Proc_Counter()
                                        if (ModeL & CF_SKIP0)
                                             dp->Counter = random8(1, MaxCnt+1);
                                        else dp->Counter = random8(0, MaxCnt+1);
+                                       OldCounter = dp->Counter+1; // To trigger the update below             // 15.02.19:
                                        }
                                   else
 #endif
