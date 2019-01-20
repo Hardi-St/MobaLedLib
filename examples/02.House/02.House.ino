@@ -59,6 +59,11 @@
  The "03.Switched_Houses" example demonstrates how several houses can be turned on and
  off with switches.
 
+ Video:
+ ~~~~~~
+ This video demonstrates the example:
+   https://vimeo.com/308722422
+
  Hardware:
  ~~~~~~~~~
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)

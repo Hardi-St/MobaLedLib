@@ -68,6 +68,11 @@
  - If the connection between the Adruinos is working the RX LED of the LED-Arduino generates two
    short flashes if a command from the DCC-Arduino is received.
 
+ Video:
+ ~~~~~~
+ This video demonstrates the example:
+   https://vimeo.com/311996452
+
  Hardware:
  ~~~~~~~~~
  The example can be used with two Arduino compatible boards (Uno, Nano, Mega, ...),

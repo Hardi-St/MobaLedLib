@@ -48,6 +48,11 @@
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
 
+ Video:
+ ~~~~~~
+ This video demonstrates the example:
+   https://vimeo.com/308719531
+
  Hardware:
  ~~~~~~~~~
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
