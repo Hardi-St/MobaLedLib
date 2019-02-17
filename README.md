@@ -61,3 +61,8 @@ Ver.: 0.7.5  19.01.19:
 - Updated the English documentation to the same state like the German.
 - Using the correct version of the Pattern_Configurator.xlsb
 
+Ver.: 0.7.7 17.02.19:
+- Added Support for Sound modul JQ6500
+- Corrected the random mode of the Counter() function
+- Improved the serial input debug function
+- Moved the Heartbeat function in own H-file"

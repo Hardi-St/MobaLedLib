@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.7.6   // Adapt also library.properties if changed
+#define MobaLedLib_Ver  0.7.7   // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
