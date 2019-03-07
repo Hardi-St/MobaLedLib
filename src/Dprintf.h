@@ -48,7 +48,7 @@
 
 
 #include <stdarg.h>
-#include <Wstring.h>
+#include <WString.h>
 
 void Dprintf_proc(const __FlashStringHelper *format, ...);
 
