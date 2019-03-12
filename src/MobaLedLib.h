@@ -82,7 +82,7 @@
 #define _RAND_MODE4(MinTime1, MaxTime1, MinTime2, MaxTime2) (_ALL_LT_MX4((MinTime1), (MaxTime1), MinTime2, MaxTime2)?0:RF_SLOW)
 #define _RAND_DIV2( MinTime,  MaxTime)                      (_ALL_LT_MX2((MinTime), (MaxTime)                          )?1L:16L)
 #define _RAND_DIV4( MinTime1, MaxTime1, MinTime2, MaxTime2) (_ALL_LT_MX4((MinTime1),(MaxTime1), (MinTime2), (MaxTime2) )?1L:16L)
-#define _Tx2B2(Time, OtherTime)                             _T2B((Time)/_RAND_DIV2((Time), (OtherTime)))                            // Hier darf aussen herum kleine Klammer hinzugefuegt werden weil as Ergebnis zwei durch Komma getrennte Bytes sind
+#define _Tx2B2(Time, OtherTime)                             _T2B((Time)/_RAND_DIV2((Time), (OtherTime)))                            // Hier darf aussen herum kleine Klammer hinzugefuegt werden weil das Ergebnis zwei durch Komma getrennte Bytes sind
 #define _Tx2B4(Time, OtherTime1, OtherTime2, OtherTime3)    _T2B((Time)/_RAND_DIV4((Time), (OtherTime1), (OtherTime2), (OtherTime3)))
 
 // Checking the leds[] array size. Therefore "NUM_LEDS" must be defined in the sketch.
@@ -90,7 +90,7 @@
                                                                // The warnung "warning: narrowing conversion of '512' from 'int' to 'const unsigned char' inside { } [-Wnarrowing]"
                                                                // is generated if the LED number is >= NUM_LEDS
 
-
+// Maximal time for one time interval 65.535 Sec
 #define PatternT1( LED,NStru,InCh,LEDs,Val0,Val1,Off,Mode,T1, ...)                                                                    PATTERNT1_T, _CHKL(LED)+RAM5,(NStru)&0xFF,_ChkIn(InCh),SI_1,LEDs,Val0,Val1,Off,Mode,_T2B(T1),_W2B(COUNT_VARARGS(__VA_ARGS__)), __VA_ARGS__,
 #define PatternT2( LED,NStru,InCh,LEDs,Val0,Val1,Off,Mode,T1,T2,...)                                                                  PATTERNT2_T, _CHKL(LED)+RAM5,(NStru)&0xFF,_ChkIn(InCh),SI_1,LEDs,Val0,Val1,Off,Mode,_T2B(T1),_T2B(T2),_W2B(COUNT_VARARGS(__VA_ARGS__)), __VA_ARGS__,
 #define PatternT3( LED,NStru,InCh,LEDs,Val0,Val1,Off,Mode,T1,T2,T3,...)                                                               PATTERNT3_T, _CHKL(LED)+RAM5,(NStru)&0xFF,_ChkIn(InCh),SI_1,LEDs,Val0,Val1,Off,Mode,_T2B(T1),_T2B(T2),_T2B(T3),_W2B(COUNT_VARARGS(__VA_ARGS__)), __VA_ARGS__,
@@ -291,6 +291,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                            BIN_INCH_TO_TMPVAR_T, FirstInCh, InCh_Cnt, // 18.01.19:
 
 #define  Button(        LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_W_ABORT+PF_SLOW,Duration/16,_Cx2P_BLINK(Cx))
+#define  ButtonNOff(    LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_NO_RESTART+PF_SLOW,Duration/16,_Cx2P_BLINK(Cx)) // 12.03.19:
 #define  Blinker(       LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,0,(Period)/2,                    _Cx2P_BLINK(Cx))     // Blinker
 #define  BlinkerInvInp( LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,PF_INVERT_INP,(Period)/2,        _Cx2P_BLINK(Cx))     // Blinker with inverse input
 #define  BlinkerHD(     LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),50,  255, 0,0,(Period)/2,                    _Cx2P_BLINK(Cx))     // Hell/Dunkel Blinken
@@ -354,30 +355,32 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 //   TmpNr:    First temporaty variable. There function PushButton_w_LED_0_2 uses 3 temporary variables. PushButton_w_LED_0_3 uses 4, ...
 //   Timeout:  Time when the push button action is disabled again
 //
-#define Status_Button_0_2(LED,Val1)  PatternT1(LED,232,SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,0  ,63,192,0,0,1,192,0,0,0,0,2)
-#define Status_Button_0_3(LED,Val1)  PatternT1(LED,232,SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3)
-#define Status_Button_0_4(LED,Val1)  PatternT1(LED,40, SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,142,227,56,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3,192,0,0,0,0,0,0,0,0,4)
-#define Status_Button_0_5(LED,Val1)  PatternT1(LED,168,SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,142,227,56,128,227,56,142,3,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3,192,0,0,0,0,0,0,0,0,4,192,0,0,0,0,0,0,0,0,0,0,5)
+
+// 10.03.19:  Added B_LED_Cx to be able to use the functions with all button LEDs
+#define Status_Button_0_2(LED,B_LED_Cx, Val1)  PatternT1(LED,232+_Cx2StCh(B_LED_Cx),SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,0  ,63,192,0,0,1,192,0,0,0,0,2)
+#define Status_Button_0_3(LED,B_LED_Cx, Val1)  PatternT1(LED,232+_Cx2StCh(B_LED_Cx),SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3)
+#define Status_Button_0_4(LED,B_LED_Cx, Val1)  PatternT1(LED,40 +_Cx2StCh(B_LED_Cx),SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,142,227,56,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3,192,0,0,0,0,0,0,0,0,4)
+#define Status_Button_0_5(LED,B_LED_Cx, Val1)  PatternT1(LED,168+_Cx2StCh(B_LED_Cx),SI_LocalVar,1,0,Val1,0,0,0.4 Sec,57,128,227,0,142,227,0,142,227,56,128,227,56,142,3,0  ,63,192,0,0,1,192,0,0,0,0,2,192,0,0,0,0,0,0,3,192,0,0,0,0,0,0,0,0,4,192,0,0,0,0,0,0,0,0,0,0,5)
 
 #define PushButton_w_LED_0_2(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
             Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2)                              \
             InCh_to_TmpVar(TmpNr, 2+1)                                                                                                        \
-            Status_Button_0_2(B_LED, 255)
+            Status_Button_0_2(B_LED, B_LED_Cx, 255)
 
 #define PushButton_w_LED_0_3(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
             Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3)                     \
             InCh_to_TmpVar(TmpNr, 3+1)                                                                                                        \
-            Status_Button_0_3(B_LED, 255)
+            Status_Button_0_3(B_LED, B_LED_Cx,255)
 
 #define PushButton_w_LED_0_4(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
             Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4)            \
             InCh_to_TmpVar(TmpNr, 4+1)                                                                                                        \
-            Status_Button_0_4(B_LED, 255)
+            Status_Button_0_4(B_LED, B_LED_Cx,255)
 
 #define PushButton_w_LED_0_5(B_LED, B_LED_Cx, InNr, TmpNr, Rotate, Timeout)                                                                   \
             Counter((Rotate?CF_ROTATE:0)|CF_SKIP0|CF_RESET_LONG, InNr, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4, TmpNr+5)   \
             InCh_to_TmpVar(TmpNr, 5+1)                                                                                                        \
-            Status_Button_0_5(B_LED, 255)
+            Status_Button_0_5(B_LED, B_LED_Cx,255)
 
 
 

@@ -37,7 +37,7 @@
    L+     => Next LED
    L-     => Previous LED
 
-   ENTER  => Repeat last input (Usefull with +, -, T or impuls)
+   ENTER  => Repeat last input (Useful with +, -, T or impulse)
 
    X      => Exit test mode
 
@@ -52,9 +52,9 @@
    G+     => Increment Green value
    B-3    => Decrement green value by 3
 
-   P50    => ImPuls with a value of 50 (Sound modul tests)
-   i100   => Impuls length [2ms]  i100 = 200 ms
-   M2     => Impuls mask 1 = Red, 2 = Green, 4 = Blue, 7 = white
+   P50    => ImPulse with a value of 50 (Sound module tests)
+   i100   => Impulse length [2ms]  i100 = 200 ms
+   M2     => Impulse mask 1 = Red, 2 = Green, 4 = Blue, 7 = white
 
    A      => All LEDs on (255)
    C      => All LEDs off
