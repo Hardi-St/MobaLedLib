@@ -27,6 +27,9 @@ https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sid=e3b7f6122766c330d04cec
 Several videos which demonstrate the library are available in the following pages in the forum
 You could also search for MobaLedLib in the internet.
 
+ATTENTION: Always use the actual Arduino IDE
+(Old versions 1.6.x and below don't support the directory structure used in the library examples)
+
 
 Installation from the Arduino IDE:
   Sketch / Include library / Manage libraries
@@ -66,3 +69,5 @@ Ver.: 0.7.7 17.02.19:
 - Corrected the random mode of the Counter() function
 - Improved the serial input debug function
 - Moved the Heartbeat function in own H-file"
+- 12.03.19:
+  - added ButtonNOff() macro
