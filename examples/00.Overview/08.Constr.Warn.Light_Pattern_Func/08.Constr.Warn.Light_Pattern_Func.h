@@ -20,35 +20,40 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Construction Warning Light Pattern Function                                               by Hardi   22.10.18:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- This example demonstrates the usage of the MobaLedLib with one animated house.
- The house has 7 different rooms which are illuminated randomly to simulate a house
- where people live. There are different light types used:
- There are rooms with
- - dark light
- - neon light
- - colored light
- - running TV
- - chimney
- - ...
+ This example describes the pattern function using a Construction Warning Light.
 
- Attention: It takes some time (up to 2.5 minutes) to see changes. The people in the houses
-            don't run from room to room and turnig the lights on and off.
-            Change the #defines HOUSE_MIN_T and HOUSE_MAX_T below to modify the update rates.
+ The pattern function is a very powerful tool which can be used to create arbitrary sequences.
 
- In this example the house is always active when the power is turned on. At the beginning
- one room is illuminated. After a random time the light in other rooms is turned on or off.
- The numbers in the "House()" line below define how many rooms are "used". The first number
- (On_Min = 2) controls the minimal number of illuminated rooms. If the number of illuminated
- rooms is below this value additional roomes are turned on. In this example there should
- be at least two active rooms after a while.
- The second number (On_Max = 5) defines how many LEDs are turned on maximal. The average
- number of active lights will be some where in the middle: (On_Min + On_Max) / 2 = 3.5.
+ On a model railway there are several sequences which could be implemented with the Pattern
+ function. This could be traffic lights, construction lightning, hazard lights,
+ fairground running lights, push button actions or many others.
 
- The number of rooms could be changed by adding or removing "ROOM_.." constants to the
- "House()" line. Several houses could be controlled by adding "House()" lines.
+ The Pattern function describes the actions with a table. This table defines when a certain output
+ should be enabled. The table is defined with the Excel file "Pattern_Configurator.xlsm".
+
+ For this example the following table is used:
+   LED 0   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   .   .   x   x
+   LED 1           x   x   x   x   x   x   x   x   x   x   x   x   x   x   x   x                   x   x
+   LED 2                   x   x   x   x   x   x   x   x   x   x   x   x   x   x                           x   x
+   LED 3                           x   x   x   x   x   x   x   x   x   x   x   x                                   x   x
+   LED 4                                   x   x   x   x   x   x   x   x   x   x                                           x   x
+   LED 5                                           x   x   x   x   x   x   x   x                                                   x   x
+   LED 6                                                   x   x   x   x   x   x                                                          x   x
+   LED 7                                                           x   x   x   x                                                                  x   x
+   LED 8                                                                   x   x                                                                          x   x
+
+ At this point we won't discribe the details. Just try it and have fun !
+
+ In the "09.TrafficLight_Pattern_Func" the details of the pattern function are explained.
+
+ Test with RGB LED Stripe:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+ To be able to test the example without special construction warning lights there is one
+ line in the configuration below which could be used with an RGB stripe.
+ To use the example with single LEDs enable the second line.
 
  Other examples:
  ~~~~~~~~~~~~~~~
@@ -56,23 +61,35 @@
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
 
- The "03.Switched_Houses" example demonstrates how several houses can be turned on and
- off with switches.
-
- Video:
- ~~~~~~
- This video demonstrates the example:
-   https://vimeo.com/308722422
-
  Hardware:
  ~~~~~~~~~
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
- and a WS2812 LED stripe.
- The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
+ and 3 WS2811 modules. For tests a LED stripe could also be used.
 
- All examples could also be used with the other LED stripe types which are supported
- by the FastLED library (See FastLED Blink example how to adapt the "FastLED.addLeds"
- line.).
+                            from Arduino pin D6
+                                  |
+                ------------      |
+   .-(LED2)--C3-+  ------  +-+5V  |
+   o-(LED0)--C1-+ |WS2811| +-DIN--'
+   o------------+ |  5V  | +-DOut-.
+   '-(LED1)--C2-+  ------  +-GND  |
+                ------------      |
+                                  |
+                ------------      |
+   .-(LED5)--C3-+  ------  +-+5V  |
+   o-(LED3)--C1-+ |WS2811| +-DIN--'
+   o------------+ |  5V  | +-DOut-.
+   '-(LED4)--C2-+  ------  +-GND  |
+                ------------      |
+                                  |
+                ------------      |
+   .-(LED8)--C3-+  ------  +-+5V  |
+   o-(LED6)--C1-+ |WS2811| +-DIN--'
+   o------------+ |  5V  | +-DOut-.
+   '-(LED7)--C2-+  ------  +-GND  |
+                ------------      |
+                            (to the next WS281x)
+
 */
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
@@ -81,25 +98,25 @@
                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-#define HOUSE_MIN_T  50  // Minimal time [s] to the next event (1..255)
-#define HOUSE_MAX_T 150  // Maximal random time [s]              "
-
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
 
 
+// *** Macro definitions ***
+#define RGB_ConstrWarnLight(LED,InNr)   APatternT2(LED,0,InNr,26,0,255,0,0,100 ms,200 ms,3,0,0,12,0,0,176,1,0,192,6,0,0,219,0,0,108,3,0,176,109,0,192,182,1,0,219,54,0,108,219,0,176,109,27,192,182,109,0,219,182,13,108,219,54,176,109,219,198,182,109,27,219,182,109,111,219,182,13,0,0,0,0,0,0,3,0,0,12,0,0,128,1,0,0,6,0,0,192,0,0,0,3,0,0,96,0,0,128,1,0,0,48,0,0,192,0,0,0,24,0,0,96,0,0,0,12,0,0,48,0,0,0,6,0,0,24,0,0,0,3,0,0,12,0,0,0,0,0,0)
+#define ConstrWarnLight(    LED,InNr)   APatternT2(LED,0,InNr,9, 0,255,0,0,100 ms,200 ms,1,2,12,24,112,224,192,131,7,31,62,252,248,241,231,207,191,127,255,255,3,0,16,32,128,0,1,4,8,32,64,0,1,2,8,16,64,128,0,2,4,16,32,0,0)
+
+
 //*******************************************************************
 // *** Configuration array which defines the behavior of the LEDs ***
 MobaLedLib_Configuration()
-  {//   LED:                   First LED number in the stripe
-   //    |    InCh:            Input channel. Here the special input 1 is used which is always on
-   //    |    |    On_Min:     Minimal number of active rooms. At least two rooms are illuminated.
-   //    |    |    |   On_Max: Number of maximal active lights.
-   //    |    |    |   |       rooms: List of room types (see documentation for possible types).
-   //    |    |    |   |       |
-  House(0,   SI_1, 2,  5,      ROOM_DARK, ROOM_BRIGHT, ROOM_WARM_W, ROOM_TV0, NEON_LIGHT, ROOM_D_RED, ROOM_COL2) // House with 7 rooms
+  {//                LED:       First LED number in the stripe
+   //                 |   InCh: Input channel (Special Input which is allways on)..
+   //                 |   |
+  RGB_ConstrWarnLight(0,  SI_1)  // Test with an RGB stripe
+//ConstrWarnLight(    0,  SI_1)  // Use this with separate LEDs controlled by WS2811 modules
   EndCfg // End of the configuration
   };
 //*******************************************************************
@@ -117,10 +134,6 @@ void setup(){
 // This function is called once to initialize the program
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
-
-  #ifdef _PRINT_DEBUG_MESSAGES
-    Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  #endif
 }
 
 //---------
@@ -135,7 +148,6 @@ void loop(){
   LED_Heartbeat.Update(); // Update the heartbeat LED. This must be called periodically in the loop() function.
 }
 
-
 /*
  Arduino Nano:          +-----+
            +------------| USB |------------+
@@ -146,7 +158,7 @@ void loop(){
         C0 | [ ]A0       / N \       D9[ ]~|   B1
         C1 | [ ]A1      /  A  \      D8[ ] |   B0
         C2 | [ ]A2      \  N  /      D7[ ] |   D7
-        C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
+        C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS2811 Modules pin DIN
         C4 | [ ]A4/SDA               D5[ ]~|   D5
         C5 | [ ]A5/SCL               D4[ ] |   D4
            | [ ]A6              INT1/D3[ ]~|   D3
@@ -176,7 +188,7 @@ void loop(){
            | [ ]GND   -| R |-               8[B] |   B0
            | [ ]GND   -| D |-                    |
            | [ ]Vin   -| U |-               7[A] |   D7
-           |          -| I |-               6[A]~|   .   -> WS281x LED stripe pin DIN
+           |          -| I |-               6[A]~|   .   -> WS2811 Modules pin DIN
            | [ ]A0    -| N |-               5[C]~|   .
            | [ ]A1    -| O |-               4[A] |   .
            | [ ]A2     +---+           INT1/3[A]~|   .
@@ -186,14 +198,6 @@ void loop(){
            |            [ ] [ ] [ ]              |
            |  UNO_R3    GND MOSI 5V  ____________/
             \_______________________/
+
 */
-
-
-
-
-
-
-
-
-
 

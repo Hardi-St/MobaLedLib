@@ -71,3 +71,8 @@ Ver.: 0.7.7 17.02.19:
 - Moved the Heartbeat function in own H-file"
 - 12.03.19:
   - added ButtonNOff() macro
+
+Ver.: 0.7.8 09.04.19:
+- Added examples
+  - 00.Overview
+  - 25.Analog_Push_Button

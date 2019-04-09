@@ -20,60 +20,36 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Sound and Keyboard                                                                        by Hardi   24.11.18
+ ~~~~~~~~~~~~~~~~~~
 
- This example demonstrates the usage of the MobaLedLib with one animated house.
- The house has 7 different rooms which are illuminated randomly to simulate a house
- where people live. There are different light types used:
- There are rooms with
- - dark light
- - neon light
- - colored light
- - running TV
- - chimney
- - ...
+ This example demonstrates the usage of the MobaLedLib with a MP3-TF-16P or a JQ6500 sound module
+ together with the keyboard module "Keys_4017.h". For details see the sound example and the
+ switches_80_and_more example.
+ Enable / disable the "USE_MP3_TF_16P_SOUND_MODULE" line below to define the used module.
 
- Attention: It takes some time (up to 2.5 minutes) to see changes. The people in the houses
-            don't run from room to room and turnig the lights on and off.
-            Change the #defines HOUSE_MIN_T and HOUSE_MAX_T below to modify the update rates.
+ It uses the keys which are read in with the CD4017 to test the sound functions (PushButtonAction_4017.zip).
 
- In this example the house is always active when the power is turned on. At the beginning
- one room is illuminated. After a random time the light in other rooms is turned on or off.
- The numbers in the "House()" line below define how many rooms are "used". The first number
- (On_Min = 2) controls the minimal number of illuminated rooms. If the number of illuminated
- rooms is below this value additional roomes are turned on. In this example there should
- be at least two active rooms after a while.
- The second number (On_Max = 5) defines how many LEDs are turned on maximal. The average
- number of active lights will be some where in the middle: (On_Min + On_Max) / 2 = 3.5.
+ The first 14 keys (key 0 .. key 13) could be used to play the different sounds.
+ If the JQ6500 sound module is used only the first 5 keys (Key 0..4) could be used
+ to play the different sounds.
+ Other keys:
+   Key 16: Prev sound
+   Key 17: Next sound
+   Key 18: Next sound of 3
+   Key 19: Play Random sound
+   Key 20: Pause                 (Not with the JQ6500 sound modul)
+   Key 21: Loop                    "        "           "
+   Key 22: toggle the Play Mode    "        "           "
+   Key 24: Dec Volume
+   Key 25: Inc Volume
 
- The number of rooms could be changed by adding or removing "ROOM_.." constants to the
- "House()" line. Several houses could be controlled by adding "House()" lines.
+ In the "extras" directory of the library there are the schematics and printed circuit boards for
+ this example (S3PO_Modul_WS2811.zip).
+ */
 
- Other examples:
- ~~~~~~~~~~~~~~~
- This example could be combined with other MobaLedLib examples. Just copy the configuration
- lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
- in the configuration line).
-
- The "03.Switched_Houses" example demonstrates how several houses can be turned on and
- off with switches.
-
- Video:
- ~~~~~~
- This video demonstrates the example:
-   https://vimeo.com/308722422
-
- Hardware:
- ~~~~~~~~~
- The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
- and a WS2812 LED stripe.
- The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
-
- All examples could also be used with the other LED stripe types which are supported
- by the FastLED library (See FastLED Blink example how to adapt the "FastLED.addLeds"
- line.).
-*/
+#define USE_MP3_TF_16P_SOUND_MODULE // Enable this line to use the MP3-TF-16P sound module
+                                    // If the line is disabled the JQ6500 sound module is used
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 #include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
@@ -81,25 +57,76 @@
                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-#define HOUSE_MIN_T  50  // Minimal time [s] to the next event (1..255)
-#define HOUSE_MAX_T 150  // Maximal random time [s]              "
+#include <TimerOne.h>    // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+#include <DIO2.h>        // The library for fast digital I/O functions must be installed also
+                         // Installation see "FastLED" installation above
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
 
+#define CTR_CHANNELS_1    10                   // Number of used counter channels for keyboard 1. Up to 10 if one 4017 is used, up to 18 if two CD4017 are used, ...
+#define BUTTON_INP_LIST_1 2,7,8,9,10,11,12,A1  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
+#define CLK_PIN           A4                   // Pin number used for the CD4017 clock (Example 18 = A4)
+#define RESET_PIN         A5                   // Pin number used for the CD4017 reset (Example 19 = A5)
+                                               // The digital pins D2..D13 could be used also.
+                                               // Attention the analog pins A6 & A7 of the Nano can't be used as digital input/output !
+                                               // => They can't be used for to read the keys
+
+#include "Keys_4017.h"   // Keyboard library which uses the CD4017 counter to save Arduino pins. Attention: The pins (CLK_PIN, ...) must be defined prior.
+
 
 //*******************************************************************
-// *** Configuration array which defines the behavior of the LEDs ***
+// *** Configuration array which defines the behavior of the sound module which is addressed like a LED ***
 MobaLedLib_Configuration()
-  {//   LED:                   First LED number in the stripe
-   //    |    InCh:            Input channel. Here the special input 1 is used which is always on
-   //    |    |    On_Min:     Minimal number of active rooms. At least two rooms are illuminated.
-   //    |    |    |   On_Max: Number of maximal active lights.
-   //    |    |    |   |       rooms: List of room types (see documentation for possible types).
-   //    |    |    |   |       |
-  House(0,   SI_1, 2,  5,      ROOM_DARK, ROOM_BRIGHT, ROOM_WARM_W, ROOM_TV0, NEON_LIGHT, ROOM_D_RED, ROOM_COL2) // House with 7 rooms
+  {//                    LED:                "LED" number in the stripe which is used to control the sound module
+   //                     |  InCh:           Input channel. The inputs are read in below using the digitalRead() function.
+   //                     |  |
+#ifdef USE_MP3_TF_16P_SOUND_MODULE
+  Sound_Seq1(             0, 0)           // Play sound file 1 if the button 0 is pressed.
+  Sound_Seq2(             0, 1)
+  Sound_Seq3(             0, 2)
+  Sound_Seq4(             0, 3)
+  Sound_Seq5(             0, 4)
+  Sound_Seq6(             0, 5)
+  Sound_Seq7(             0, 6)
+  Sound_Seq8(             0, 7)
+  Sound_Seq9(             0, 8)
+  Sound_Seq10(            0, 9)
+  Sound_Seq11(            0, 10)
+  Sound_Seq12(            0, 11)
+  Sound_Seq13(            0, 12)
+  Sound_Seq14(            0, 13)
+  // Button row 3
+  Sound_Prev(             0, 16)
+  Sound_Next(             0, 17)
+  Sound_Next_of_N(        0, 18, 5)       // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..14.
+  Sound_PlayRandom(       0, 19, 14)      // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..14.
+  Sound_PausePlay(        0, 20)
+  Sound_Loop(             0, 21)
+  Sound_PlayMode(         0, 22)
+  // Button row 4
+  Sound_DecVol(           0, 24, 1)
+  Sound_IncVol(           0, 25, 1)
+
+#else // JQ6500 sound modul
+  Sound_JQ6500_Seq1(      0, 0)           // Play sound file 1 if the button 0 is pressed.
+  Sound_JQ6500_Seq2(      0, 1)
+  Sound_JQ6500_Seq3(      0, 2)
+  Sound_JQ6500_Seq4(      0, 3)
+  Sound_JQ6500_Seq5(      0, 4)
+  // Button row 3
+  Sound_JQ6500_Prev(      0, 16)
+  Sound_JQ6500_Next(      0, 17)
+  Sound_JQ6500_Next_of_N( 0, 18, 3)       // Play the next sound file if the button is pressed. The 5  defines the maximal played sound number in the range of 1..5.
+  Sound_JQ6500_PlayRandom(0, 19, 5)       // Play a random sound file if the button is pressed. The 14 defines the maximal played sound number in the range of 1..5.
+  // Button row 4
+  Sound_JQ6500_DecVol(    0, 24, 1)
+  Sound_JQ6500_IncVol(    0, 25, 1)
+  Andreaskreuz(           0,C2,SI_1)      // Usage example of the remaining two outputs
+#endif
+
   EndCfg // End of the configuration
   };
 //*******************************************************************
@@ -118,9 +145,7 @@ void setup(){
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
 
-  #ifdef _PRINT_DEBUG_MESSAGES
-    Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  #endif
+  Keys_4017_Setup(); // Initialize the keyboard scanning process
 }
 
 //---------
@@ -128,13 +153,14 @@ void loop(){
 //---------
 // This function contains the main loop which is executed continuously
 //
+  MobaLedLib_Copy_to_InpStruct(Keys_Array_1, KEYS_ARRAY_BYTE_SIZE_1, 0);  // Copy the key states to the input structure
+
   MobaLedLib.Update();    // Update the LEDs in the configuration
 
   FastLED.show();         // Show the LEDs (send the leds[] array to the LED stripe)
 
   LED_Heartbeat.Update(); // Update the heartbeat LED. This must be called periodically in the loop() function.
 }
-
 
 /*
  Arduino Nano:          +-----+
@@ -187,13 +213,4 @@ void loop(){
            |  UNO_R3    GND MOSI 5V  ____________/
             \_______________________/
 */
-
-
-
-
-
-
-
-
-
 

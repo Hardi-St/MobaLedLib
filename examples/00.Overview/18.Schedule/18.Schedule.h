@@ -20,24 +20,23 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Darkness Detection                                                                        by Hardi   30.11.18:
- ~~~~~~~~~~~~~~~~~~
+ Schedule                                                                                  by Hardi   13.12.18
+ ~~~~~~~~
 
- This example shows the usage of the MobaLedLib to control different lights with a darkness sensor.
- An LDR (Light Dependent Resistor) is used in this example to detect the darkness.
+ This example shows the usage of Schedule() function of the MobaLedLib to control different lights
+ by an internal railway time.
 
- If the ambient light in your model railway room is slowly dimmed down the lights on the layout
- could be controlled automatically by the LDR.
-
- The lights in the houses are activated automatically when it's getting dark.
- In addition, the street lights go on at the beginning of the evening.
- There is also a traffic light which is influenced by the darkness. Late in the night the traffic
- light is switched from normal operation to flashing yellow light.
+ Other than the previous example the lights in the houses are activated by a timer.
+ In addition, the street lights go on at a certain time. There is also a traffic light which is
+ influenced by the timer. Late in the night the traffic light is switched from normal operation
+ to flashing yellow light.
  The lighting in the store is reduced at night when there are no more customers on the move.
 
 
- In the configuration below the Schedule() function is used to activate the lights at a random
- darkness value.
+ In the configuration below the Schedule() function is used to activate the lights at a random time.
+ The line is equal ti the line in the "Darkness_Detection" example. But here the input for the
+ Schedule() function is different. Here a timer is used instead of the darkness sensor. In the
+ following documentation "darkness" and "time" is used alternating.
 
    Schedule(INCH0, INCH2, SI_1, 60,  110) // Random activated houses
 
@@ -46,53 +45,22 @@
  the corresponding channel is activated.
  On the other hand if the "sun" rises the channels are deactivated again with a new threshold.
 
- To understand this it's recommended to open the serial monitor in the Arduino IDE (Use a baud rate of 9600).
- It will show a line like this:
+ The Schedule() function is controlled by two global variables:
+   - Darkness
+   - DayState
+ "Darkness" is a number between 0 and 255 which is used to control the lights.
+ The variable "DayState" could contain "SunSet" or "SunRise". Is "SunSet" is active the
+ outputs are activated by the Schedule() function if a certain "Darkness" value is reached.
+ And on the other hand the outputs are disabled if "SunRise" is active.
 
-   \ Inp: 70 damped: 30 LDR
+ Both variables are calculated by the function "Calc_Darkness()" below.
+ The "Darkness" value starts with 255 at 0:00 and it's ramped down to 0 at 12:00. In this
+ phase the "DayState" is "SunRise". From 12:00 to 23:59 the "Darkness" value is growing
+ again until it reaches 255 and "DayState" is "SunSet".
 
- The '\' sign in the front indicates that the program has detected that it's getting darker (Sunset).
- The '70' shows the actual value of the LDR. The second number shows the filtered value. The filtering
- is necessary that short fluctuations in brightness (shadows) do not trigger faulty switching operations.
- The 'LDR' at the end indicates that the algorithm has detected a connected LDR. It will show 'SW' in case
- a switch is detected.
-
- In the default configuration the example uses 6 RGB LEDs to represent the inputs of the houses and other
- lights so that the way of working is better understood.
- Four blue LEDs show the input of the houses and the shop. A white LED represents the street lights and
- a red LED indicate the input for the traffic light.
-
- When it gets darker, the first three blue LEDs are randomly activated. Then comes the fourth LED
- representing the store. When it is completely dark, the red LED indicates that the traffic light
- has been deactivated.
-
- If the following line is commented out, then instead of individual LEDs, the actual functions for
- controlling the houses, street lamps and the traffic light are used.
-   // #define SINGLE_LEDS_EXAMPLE
-
- But then it becomes quite unpredictable as in real life. Added to this is the random activation of
- the individual rooms.
-
- Use a switch
- ~~~~~~~~~~~~
- Instead of a LDR or in addition to the LDR a switch could be used. With a 3 way switch an automatic
- mode, a night mode and a day mode is available:
-
-                  3 pos. switch ...........
-    .----[LDR]-----o            :         :     Automatic  (Switch connected to the LDR)
-    |              -----o------>: Arduino :     Night      (   "   in middle position)
-    o--------------o            :         :     Day        (   "    connected to ground)
-    |                           ...........
-   GND
-
- If the LDR is omitted, you can switch between day and night with a single switch.
-
- Without a switch, the night starts with the application of the supply voltage and the
- lights are activated one after the other.
-
- Attention: It takes some time (up to 2.5 minutes) to see changes. The people in the houses
-            don't run from room to room and turning the lights on and off.
-            Change the #defines HOUSE_MIN_T and HOUSE_MAX_T below to modify the update rates.
+ The railroad time passes much faster than the normal time. For the example, a day only
+ takes 2.4 minutes. For an actual application on the system, you can slow down the time.
+ For this, the constant TIME_UPDATE_PERIOD can be adjusted.
 
 
  Other examples:
@@ -106,15 +74,15 @@
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
  and a WS2812 LED stripe.
  The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
- To detect the darkness an LDR and / or a switch is needed. If none is connected
- the "night" starts when the arduino is powered up.
 
  All examples could also be used with the other LED stripe types which are supported
  by the FastLED library (See FastLED Blink example how to adapt the "FastLED.addLeds"
  line.).
 */
 
-#define SINGLE_LEDS_EXAMPLE  // If this line is enabled single LEDs are used to demonstrate the Schedule() function. Otherwise "real" houses, lamps, ... are used
+#define TIME_UPDATE_PERIOD 100 // 100 => One railway model day is 2.4 minutes long, 625 => One day is 15 minutes long
+
+#define SINGLE_LEDS_EXAMPLE    // If this line is enabled single LEDs are used to demonstrate the Schedule() function. Otherwise "real" houses, lamps, ... are used
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
 #include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
@@ -124,14 +92,10 @@
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
-#define SWITCH_DAMPING_FACT   1  // 1 = Slow, 100 Fast (Normal 1)
-#include "Read_LDR.h"    // Darkness sensor
-
 #define SERIAL_BAUD 9600 // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
-#define LDR_PIN      A1  // Use A7 if the MobaLedLib "LEDs Main Module" is used
 
 #define INCH0        0   // Define names for the input channels to be able to change them easily.
 #define INCH1        1   // In this small example this is not necessary, but it's useful in a
@@ -233,9 +197,22 @@ void setup(){
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
 
-  Init_DarknessSensor(LDR_PIN); // Attention: The analogRead() function can't be used together with the darkness sensor !
-
   Serial.begin(SERIAL_BAUD); // Debug
+}
+
+uint8_t TimeI = 0;
+
+//-------------------------------------------
+void Calc_Darkness(uint8_t hour, uint8_t min)
+//-------------------------------------------
+// Calculate the global variables
+// Darkness and DayState
+{
+  int IncRes = 64; // scale the internal numbers to get a more precise calculation
+  TimeI = (map(hour, 0, 24, 0, 256*IncRes) + map(min, 0, 60, 0, 256*IncRes/24)) / IncRes; // Convert the time to a number between 0 and 255
+  if (TimeI <= 180)
+       { DayState = SunRise; Darkness = map(TimeI,   0, 128, 255,   0); }
+  else { DayState = SunSet;  Darkness = map(TimeI, 128, 255,   0, 255); }
 }
 
 //---------
@@ -249,20 +226,31 @@ void loop(){
 
   LED_Heartbeat.Update(); // Update the heartbeat LED. This must be called periodically in the loop() function.
 
-  // Debug
-  static uint32_t Next_LDR_Update = 1000;
-  if (millis() > Next_LDR_Update)
+
+  // Calculate the model time
+  static uint32_t Next_Time_Update = TIME_UPDATE_PERIOD;
+  static uint8_t hour = 12, min = 0;
+  if (millis() > Next_Time_Update)
      {
-     Next_LDR_Update = millis() + 1000;
-     char ds = '-';
-     switch (DayState)
-       {
-       case Unknown: ds ='-';  break;
-       case SunRise: ds ='/';  break;
-       case SunSet:  ds ='\\'; break;
-       }
+     Next_Time_Update += TIME_UPDATE_PERIOD;
+     min++;
+     if (min >= 60)
+        {
+        min = 0;
+        hour++;
+        if (hour >= 24) hour = 0;
+        }
+     Calc_Darkness(hour, min);
+     }
+
+
+  // Debug
+  static uint32_t Next_Update = 1000;
+  if (millis() > Next_Update)
+     {
+     Next_Update = millis() + 1000;
      char Buf[30];
-     sprintf(Buf, "%c Inp:%3i damped:%3i %s", ds, Get_Act_Darkness(), Darkness, AD_Flags.SwitchMode?"SW":"LDR");
+     sprintf(Buf, "%02i:%02i TimeI:%3i  Darkness:%3i", hour, min, TimeI, Darkness);
      Serial.println(Buf);
      }
 }
@@ -275,16 +263,16 @@ void loop(){
            | [ ]3.3V           MOSI/D11[ ]~|   B3
            | [ ]V.ref     ___    SS/D10[ ]~|   B2
            | [ ]A0       / N \       D9[ ]~|   B1
-    .------| [ ]A1      /  A  \      D8[ ] |   B0
-    |      | [ ]A2      \  N  /      D7[ ] |   D7
-    o      | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
-A   |   D  | [ ]A4/SDA               D5[ ]~|   D5
-    |      | [ ]A5/SCL               D4[ ] |   D4
-.-o | o-.  | [ ]A6              INT1/D3[ ]~|   D3
-|       |  | [ ]A7              INT0/D2[ ] |   D2
-|   N   |  | [ ]5V                  GND[ ] |
-|       |  | [ ]RST                 RST[ ] |   C6
-'-[LDR]-o--| [ ]GND   5V MOSI GND   TX1[ ] |   D0
+           | [ ]A1      /  A  \      D8[ ] |   B0
+           | [ ]A2      \  N  /      D7[ ] |   D7
+           | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
+           | [ ]A4/SDA               D5[ ]~|   D5
+           | [ ]A5/SCL               D4[ ] |   D4
+           | [ ]A6              INT1/D3[ ]~|   D3
+           | [ ]A7              INT0/D2[ ] |   D2
+           | [ ]5V                  GND[ ] |
+           | [ ]RST                 RST[ ] |   C6
+           | [ ]GND   5V MOSI GND   TX1[ ] |   D0
            | [ ]Vin   [ ] [ ] [ ]   RX1[ ] |   D1
            |          [ ] [ ] [ ]          |
            |          MISO SCK RST         |
@@ -309,17 +297,12 @@ A   |   D  | [ ]A4/SDA               D5[ ]~|   D5
            | [ ]Vin   -| U |-               7[A] |   D7
            |          -| I |-               6[A]~|   .   -> WS281x LED stripe pin DIN
            | [ ]A0    -| N |-               5[C]~|   .
-    .------| [ ]A1    -| O |-               4[A] |   .
-    |      | [ ]A2     +---+           INT1/3[A]~|   .
-    o      | [ ]A3                     INT0/2[ ] |   .
-A   |   D  | [ ]A4      RST SCK MISO     TX>1[ ] |   .
-    |      | [ ]A5      [ ] [ ] [ ]      RX<0[ ] |   D0
-.-o | o-.  |            [ ] [ ] [ ]              |
-|       |  |  UNO_R3    GND MOSI 5V  ____________/
-|   N   |   \_______________________/
-|       |
-'-[LDR]-o
-        |
-       ---
-       GND
+           | [ ]A1    -| O |-               4[A] |   .
+           | [ ]A2     +---+           INT1/3[A]~|   .
+           | [ ]A3                     INT0/2[ ] |   .
+           | [ ]A4      RST SCK MISO     TX>1[ ] |   .
+           | [ ]A5      [ ] [ ] [ ]      RX<0[ ] |   D0
+           |            [ ] [ ] [ ]              |
+           |  UNO_R3    GND MOSI 5V  ____________/
+            \_______________________/
 */

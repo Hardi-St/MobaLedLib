@@ -20,35 +20,27 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ St. Andrew's Cross                                                                        by Hardi   03.10.18
+ ~~~~~~~~~~~~~~~~~~
 
- This example demonstrates the usage of the MobaLedLib with one animated house.
- The house has 7 different rooms which are illuminated randomly to simulate a house
- where people live. There are different light types used:
- There are rooms with
- - dark light
- - neon light
- - colored light
- - running TV
- - chimney
- - ...
+ This example demonstrates the usage of the MobaLedLib to control the alternating flashing lights
+ for a St. Andrew's Cross (Andreaskreuz).
+ Railroad Crossings often use alternating flashing lights to warn crossing vehicles and pedestrians.
+ These lights are turned on and off slowly because of the used light bulb.
 
- Attention: It takes some time (up to 2.5 minutes) to see changes. The people in the houses
-            don't run from room to room and turnig the lights on and off.
-            Change the #defines HOUSE_MIN_T and HOUSE_MAX_T below to modify the update rates.
+ In the model railway LEDs are used in the St. Andrew's Cross. They could be powered with
+ WS2811 modules which have 3 outputs. Each of them could drive 20 mA.
 
- In this example the house is always active when the power is turned on. At the beginning
- one room is illuminated. After a random time the light in other rooms is turned on or off.
- The numbers in the "House()" line below define how many rooms are "used". The first number
- (On_Min = 2) controls the minimal number of illuminated rooms. If the number of illuminated
- rooms is below this value additional roomes are turned on. In this example there should
- be at least two active rooms after a while.
- The second number (On_Max = 5) defines how many LEDs are turned on maximal. The average
- number of active lights will be some where in the middle: (On_Min + On_Max) / 2 = 3.5.
+ In the configuration below there are to lines. The first one is used for the demonstration with
+ an RGB stripe. It uses the red LED of two RGB LEDs.
+ The second one is intended for WS2811 module which drives two LEDs pairs. Each pair consists of
+ two LEDs connected in series. This example line is designed for the real usage in the model railway.
+ Comment / un-comment the corresponding line.
 
- The number of rooms could be changed by adding or removing "ROOM_.." constants to the
- "House()" line. Several houses could be controlled by adding "House()" lines.
+ The example uses one switch to turn on / off the St. Andrew's Cross. The switch is connected to ground
+ because then the internal pull up resistor of the cpu could be used (No external resistor needed).
+ => The gas lights are turned on if the switch is open. This is also useful because the example
+ could be used without switches (St. Andrew's Cross is always on).
 
  Other examples:
  ~~~~~~~~~~~~~~~
@@ -56,23 +48,18 @@
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
 
- The "03.Switched_Houses" example demonstrates how several houses can be turned on and
- off with switches.
-
  Video:
  ~~~~~~
  This video demonstrates the example:
-   https://vimeo.com/308722422
+   https://vimeo.com/308719531
 
  Hardware:
  ~~~~~~~~~
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
- and a WS2812 LED stripe.
- The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
-
- All examples could also be used with the other LED stripe types which are supported
- by the FastLED library (See FastLED Blink example how to adapt the "FastLED.addLeds"
- line.).
+ and one WS2811 modules. For tests a LED stripe could also be used.
+ The DIN pin of the first WS2811 module is connected to pin D6 (LED_DO_PIN).
+ One toggle switch connected to D7 is used to turn on / off the St. Andrew's Cross. The other pin of the
+ switch is connected to ground.
 */
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
@@ -81,25 +68,22 @@
                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-#define HOUSE_MIN_T  50  // Minimal time [s] to the next event (1..255)
-#define HOUSE_MAX_T 150  // Maximal random time [s]              "
-
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#define SWITCH_PIN   7   // Pin D7 is connected to the switch
 
 
 //*******************************************************************
 // *** Configuration array which defines the behavior of the LEDs ***
 MobaLedLib_Configuration()
-  {//   LED:                   First LED number in the stripe
-   //    |    InCh:            Input channel. Here the special input 1 is used which is always on
-   //    |    |    On_Min:     Minimal number of active rooms. At least two rooms are illuminated.
-   //    |    |    |   On_Max: Number of maximal active lights.
-   //    |    |    |   |       rooms: List of room types (see documentation for possible types).
-   //    |    |    |   |       |
-  House(0,   SI_1, 2,  5,      ROOM_DARK, ROOM_BRIGHT, ROOM_WARM_W, ROOM_TV0, NEON_LIGHT, ROOM_D_RED, ROOM_COL2) // House with 7 rooms
+  {//         LED:          First LED number in the stripe
+   //          |  Cx:       First used channel of the WS2811 module (C1, C2, C3 or C_RED, C_GREEN, C_BLUE)
+   //          |  |   InCh: Input channel. The input is read in below using the digitalRead() function.
+   //          |  |   |
+  AndreaskrRGB(0,     0)    // St. Andrew's Cross demonstartion with a LED stripe
+//Andreaskreuz(0, C1, 0)    // St. Andrew's Cross for two channels of a WS2811 module (If used with RGB LEDs the Red and Green LED of one RGB LED is alternating flashing)
   EndCfg // End of the configuration
   };
 //*******************************************************************
@@ -118,9 +102,7 @@ void setup(){
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
 
-  #ifdef _PRINT_DEBUG_MESSAGES
-    Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  #endif
+  pinMode(SWITCH_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin
 }
 
 //---------
@@ -128,13 +110,14 @@ void loop(){
 //---------
 // This function contains the main loop which is executed continuously
 //
+  MobaLedLib.Set_Input(0, digitalRead(SWITCH_PIN));
+
   MobaLedLib.Update();    // Update the LEDs in the configuration
 
   FastLED.show();         // Show the LEDs (send the leds[] array to the LED stripe)
 
   LED_Heartbeat.Update(); // Update the heartbeat LED. This must be called periodically in the loop() function.
 }
-
 
 /*
  Arduino Nano:          +-----+
@@ -145,8 +128,8 @@ void loop(){
            | [ ]V.ref     ___    SS/D10[ ]~|   B2
         C0 | [ ]A0       / N \       D9[ ]~|   B1
         C1 | [ ]A1      /  A  \      D8[ ] |   B0
-        C2 | [ ]A2      \  N  /      D7[ ] |   D7
-        C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
+        C2 | [ ]A2      \  N  /      D7[ ] |   D7   -> toggle switch --- GND
+        C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS2811 Modules pin DIN
         C4 | [ ]A4/SDA               D5[ ]~|   D5
         C5 | [ ]A5/SCL               D4[ ] |   D4
            | [ ]A6              INT1/D3[ ]~|   D3
@@ -175,8 +158,8 @@ void loop(){
            | [ ]5v     | A |                9[ ]~|   .
            | [ ]GND   -| R |-               8[B] |   B0
            | [ ]GND   -| D |-                    |
-           | [ ]Vin   -| U |-               7[A] |   D7
-           |          -| I |-               6[A]~|   .   -> WS281x LED stripe pin DIN
+           | [ ]Vin   -| U |-               7[A] |   D7  -> toggle switch --- GND
+           |          -| I |-               6[A]~|   .   -> WS2811 Modules pin DIN
            | [ ]A0    -| N |-               5[C]~|   .
            | [ ]A1    -| O |-               4[A] |   .
            | [ ]A2     +---+           INT1/3[A]~|   .
@@ -186,14 +169,6 @@ void loop(){
            |            [ ] [ ] [ ]              |
            |  UNO_R3    GND MOSI 5V  ____________/
             \_______________________/
+
 */
-
-
-
-
-
-
-
-
-
 

@@ -439,7 +439,7 @@ void MobaLedLib_C::Proc_House()
 
   if (Initialize)
      {
-     Dprintf("Init Proc_House InCh:%i cnt:%i Led0:%i\n", pgm_read_byte_near(cp+P_HOUSE_INCH), LED_cnt, Led0);
+     //Dprintf("Init Proc_House InCh:%i cnt:%i Led0:%i\n", pgm_read_byte_near(cp+P_HOUSE_INCH), LED_cnt, Led0); // Debug
      if (Inp_Is_On(Inp))
           Inp = INP_TURNED_ON;
      else Inp = INP_TURNED_OFF;
