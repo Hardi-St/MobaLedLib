@@ -20,35 +20,41 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Advanced example                                                                          by .....    date...
+ ~~~~~~~~~~~~~~~~
+ This example demonstrates what ever you think is missing ...
 
- This example demonstrates the usage of the MobaLedLib with one animated house.
- The house has 7 different rooms which are illuminated randomly to simulate a house
- where people live. There are different light types used:
- There are rooms with
- - dark light
- - neon light
- - colored light
- - running TV
- - chimney
- - ...
 
- Attention: It takes some time (up to 2.5 minutes) to see changes. The people in the houses
-            don't run from room to room and turnig the lights on and off.
-            Change the #defines HOUSE_MIN_T and HOUSE_MAX_T below to modify the update rates.
+ Here a description can be inserted what the advanced example should do.
 
- In this example the house is always active when the power is turned on. At the beginning
- one room is illuminated. After a random time the light in other rooms is turned on or off.
- The numbers in the "House()" line below define how many rooms are "used". The first number
- (On_Min = 2) controls the minimal number of illuminated rooms. If the number of illuminated
- rooms is below this value additional roomes are turned on. In this example there should
- be at least two active rooms after a while.
- The second number (On_Max = 5) defines how many LEDs are turned on maximal. The average
- number of active lights will be some where in the middle: (On_Min + On_Max) / 2 = 3.5.
+ ...
 
- The number of rooms could be changed by adding or removing "ROOM_.." constants to the
- "House()" line. Several houses could be controlled by adding "House()" lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ This can be sent, along with the corresponding example configuration/program,
+ to MobaLedLib@gmx.de to be included to the next version of the library.
+
+ When we share our thoughts with others, everyone benefits !
+
+ If you are unsure about the implementation we can do it together.
+ => Mail to MobaLedLib@gmx.de
+
+
+
 
  Other examples:
  ~~~~~~~~~~~~~~~
@@ -56,18 +62,10 @@
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
 
- The "03.Switched_Houses" example demonstrates how several houses can be turned on and
- off with switches.
-
- Video:
- ~~~~~~
- This video demonstrates the example:
-   https://vimeo.com/308722422
-
  Hardware:
  ~~~~~~~~~
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
- and a WS2812 LED stripe.
+ and a WS2812 LED stripe with at least 32 LEDs (Adapt NUM_LEDS if an other stripe is used).
  The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
 
  All examples could also be used with the other LED stripe types which are supported
@@ -81,9 +79,6 @@
                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-#define HOUSE_MIN_T  50  // Minimal time [s] to the next event (1..255)
-#define HOUSE_MAX_T 150  // Maximal random time [s]              "
-
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
@@ -93,13 +88,10 @@
 //*******************************************************************
 // *** Configuration array which defines the behavior of the LEDs ***
 MobaLedLib_Configuration()
-  {//   LED:                   First LED number in the stripe
-   //    |    InCh:            Input channel. Here the special input 1 is used which is always on
-   //    |    |    On_Min:     Minimal number of active rooms. At least two rooms are illuminated.
-   //    |    |    |   On_Max: Number of maximal active lights.
-   //    |    |    |   |       rooms: List of room types (see documentation for possible types).
-   //    |    |    |   |       |
-  House(0,   SI_1, 2,  5,      ROOM_DARK, ROOM_BRIGHT, ROOM_WARM_W, ROOM_TV0, NEON_LIGHT, ROOM_D_RED, ROOM_COL2) // House with 7 rooms
+  {
+
+  // ToDo: Add configuration lines here
+
   EndCfg // End of the configuration
   };
 //*******************************************************************
@@ -117,10 +109,6 @@ void setup(){
 // This function is called once to initialize the program
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
-
-  #ifdef _PRINT_DEBUG_MESSAGES
-    Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  #endif
 }
 
 //---------
@@ -187,13 +175,3 @@ void loop(){
            |  UNO_R3    GND MOSI 5V  ____________/
             \_______________________/
 */
-
-
-
-
-
-
-
-
-
-

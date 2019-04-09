@@ -173,7 +173,7 @@ void TimerInt1()      // ~6 us per button input line
 // Wenn alle Kanaele abgefragt sind, dann wird RESET_PIN und nicht der CLK_PIN
 // auf 1 gesetzt.
 //
-// Zu Beginn des Programms steht Counter auf 0 und der Reset Pin wird activiert.
+// Zu Beginn des Programms steht Counter auf 0 und der Reset Pin wird aktiviert.
 {
   if (Counter == 0)
        digitalWrite2(RESET_PIN, 0); // End of the reset condition

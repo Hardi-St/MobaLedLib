@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.7.7   // Adapt also library.properties if changed
+#define MobaLedLib_Ver  0.7.8   // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
@@ -353,6 +353,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 //   B_LED_Cx: Channel of the LED (C1..C3)
 //   InNr:     Number of the input channel which is used to read in the button
 //   TmpNr:    First temporaty variable. There function PushButton_w_LED_0_2 uses 3 temporary variables. PushButton_w_LED_0_3 uses 4, ...
+//   Rotate:   If the buton is pressed n+1 times the first temporary variable is activated again
 //   Timeout:  Time when the push button action is disabled again
 //
 

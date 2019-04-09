@@ -20,35 +20,27 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Heartbeat                                                                                 by Hardi   13.10.18
+ ~~~~~~~~~
 
- This example demonstrates the usage of the MobaLedLib with one animated house.
- The house has 7 different rooms which are illuminated randomly to simulate a house
- where people live. There are different light types used:
- There are rooms with
- - dark light
- - neon light
- - colored light
- - running TV
- - chimney
- - ...
+ This example demonstrates the usage of the MobaLedLib to generate two different heartbeats.
 
- Attention: It takes some time (up to 2.5 minutes) to see changes. The people in the houses
-            don't run from room to room and turnig the lights on and off.
-            Change the #defines HOUSE_MIN_T and HOUSE_MAX_T below to modify the update rates.
+ A heartbeat is a flashing LED which indicates that the program is running.
+ On a micro controller this is the "Hello World" program. It's the first program compiled
+ on a new system. => This program tests the hardware and the libraries.
 
- In this example the house is always active when the power is turned on. At the beginning
- one room is illuminated. After a random time the light in other rooms is turned on or off.
- The numbers in the "House()" line below define how many rooms are "used". The first number
- (On_Min = 2) controls the minimal number of illuminated rooms. If the number of illuminated
- rooms is below this value additional roomes are turned on. In this example there should
- be at least two active rooms after a while.
- The second number (On_Max = 5) defines how many LEDs are turned on maximal. The average
- number of active lights will be some where in the middle: (On_Min + On_Max) / 2 = 3.5.
+ The MobaLedLib could generate two different heartbeats:
+   1. Flashing build in LED
+   2. Pulsating RGB LED with changing color (very nice)
 
- The number of rooms could be changed by adding or removing "ROOM_.." constants to the
- "House()" line. Several houses could be controlled by adding "House()" lines.
+ If the build in LED flashes the program is running. It's not flashing while the program is downloaded
+ or if the loop() function is not called regularly.
+
+ The second heartbeat tests the communication with the RGB stripe. If the last LED in the stripe pulsates
+ the whole stripe is working correctly. For this example we assume that the LED stripe has 32 LEDs.
+ Adapt the #define NUM_LEDS below if an other LED stripe is used.
+ The first RGB LED is also pulsating in this example in case a shorter stripe is used to check the
+ connection to the stripe.
 
  Other examples:
  ~~~~~~~~~~~~~~~
@@ -56,18 +48,10 @@
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
 
- The "03.Switched_Houses" example demonstrates how several houses can be turned on and
- off with switches.
-
- Video:
- ~~~~~~
- This video demonstrates the example:
-   https://vimeo.com/308722422
-
  Hardware:
  ~~~~~~~~~
  The example can be used with an Arduino compatible board (Uno, Nano, Mega, ...)
- and a WS2812 LED stripe.
+ and a WS2812 LED stripe with at least 32 LEDs (Adapt NUM_LEDS if an other stripe is used).
  The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
 
  All examples could also be used with the other LED stripe types which are supported
@@ -81,9 +65,6 @@
                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-#define HOUSE_MIN_T  50  // Minimal time [s] to the next event (1..255)
-#define HOUSE_MAX_T 150  // Maximal random time [s]              "
-
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
@@ -93,13 +74,10 @@
 //*******************************************************************
 // *** Configuration array which defines the behavior of the LEDs ***
 MobaLedLib_Configuration()
-  {//   LED:                   First LED number in the stripe
-   //    |    InCh:            Input channel. Here the special input 1 is used which is always on
-   //    |    |    On_Min:     Minimal number of active rooms. At least two rooms are illuminated.
-   //    |    |    |   On_Max: Number of maximal active lights.
-   //    |    |    |   |       rooms: List of room types (see documentation for possible types).
-   //    |    |    |   |       |
-  House(0,   SI_1, 2,  5,      ROOM_DARK, ROOM_BRIGHT, ROOM_WARM_W, ROOM_TV0, NEON_LIGHT, ROOM_D_RED, ROOM_COL2) // House with 7 rooms
+  {//           LED:   LED number in the stripe
+   //           |
+  RGB_Heartbeat(NUM_LEDS-1) // Use the last LED in the  stripe as heartbeat
+  RGB_Heartbeat(0)          // The first LED is also flashing
   EndCfg // End of the configuration
   };
 //*******************************************************************
@@ -117,10 +95,6 @@ void setup(){
 // This function is called once to initialize the program
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
-
-  #ifdef _PRINT_DEBUG_MESSAGES
-    Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  #endif
 }
 
 //---------

@@ -117,10 +117,6 @@ void setup(){
 // This function is called once to initialize the program
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
-
-  #ifdef _PRINT_DEBUG_MESSAGES
-    Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  #endif
 }
 
 //---------

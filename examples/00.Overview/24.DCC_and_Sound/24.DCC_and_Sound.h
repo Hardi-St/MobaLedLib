@@ -37,7 +37,7 @@
  In the "extras" directory of the library there are the schematics this example.
  */
 
-#define USE_MP3_TF_16P_SOUND_MODULE   // Enable this line to use the MP3-TF-16P sound module
+//#define USE_MP3_TF_16P_SOUND_MODULE // Enable this line to use the MP3-TF-16P sound module
                                       // If the line is disabled the JQ6500 sound module is used
 
 #define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)

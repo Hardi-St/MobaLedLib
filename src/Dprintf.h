@@ -26,7 +26,7 @@
  compiler switch _PRINT_DEBUG_MESSAGES.
 
 */
- #ifndef _Dprintf_h_
+#ifndef _Dprintf_h_
 #define _Dprintf_h_
 
 #include "Lib_Config.h"

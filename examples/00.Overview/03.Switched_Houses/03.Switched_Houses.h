@@ -223,8 +223,8 @@ void loop(){
            |            +-----+            |
         B5 | [ ]D13/SCK        MISO/D12[ ] |   B4
            | [ ]3.3V           MOSI/D11[ ]~|   B3
-           | [ ]V.ref     ___    SS/D10[ ]~|   B2   -> toggle switch 3  --.
-        C0 | [ ]A0       / N \       D9[ ]~|   B1   -> toggle switch 2  --o
+           | [ ]V.ref     ___    SS/D10[ ]~|   B2
+        C0 | [ ]A0       / N \       D9[ ]~|   B1   -> toggle switch 2  --.
         C1 | [ ]A1      /  A  \      D8[ ] |   B0   -> toggle switch 1  --o-- GND
         C2 | [ ]A2      \  N  /      D7[ ] |   D7   -> toggle switch 0  --'
         C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
@@ -252,8 +252,8 @@ void loop(){
            | [ ]N/C                    SCK/13[A] |   B5
            | [ ]v.ref                 MISO/12[A] |   .
            | [ ]RST                   MOSI/11[A]~|   .
-           | [ ]3V3    +---+               10[ ]~|   .   -> toggle switch 3  --.
-           | [ ]5v     | A |                9[ ]~|   .   -> toggle switch 2  --o
+           | [ ]3V3    +---+               10[ ]~|   .
+           | [ ]5v     | A |                9[ ]~|   .   -> toggle switch 2  --.
            | [ ]GND   -| R |-               8[B] |   B0  -> toggle switch 1  --o-- GND
            | [ ]GND   -| D |-                    |                             |
            | [ ]Vin   -| U |-               7[A] |   D7  -> toggle switch 0  --'
