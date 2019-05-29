@@ -453,39 +453,62 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 //---------------------------- JQ6500 Sound modul ---------------------------------                           // 13.02.19:
 
 // Sound functions could be disable / enabled with the variable SI_Enable_Sound
-#define _Sound_JQ6500_ADKey(    LED, InCh, ADKey)         PatternTE2(LED,28,InCh,SI_Enable_Sound,1,0,255,0,PM_SEQUENZ_NO_RESTART,400 ms,10 ms,ADKey,0)
+#define _Sound_JQ6500_ADKey(     LED, InCh, ADKey)         PatternTE2(LED,28,InCh,SI_Enable_Sound,1,0,255,0,PM_SEQUENZ_NO_RESTART,400 ms,10 ms,ADKey,0) // Normal WS2811 modul with G+RB outputs anf -O+ inputs
 
 // Volume changing is independent from SI_Enable_Sound
-#define _Sound_JQ6500_ADKeyTime(LED, InCh, ADKey, Time)   PatternT2( LED,28,InCh,                1,0,255,0,PM_SEQUENZ_NO_RESTART,Time,10 ms,ADKey,0)
+#define _Sound_JQ6500_ADKeyTime(     LED, InCh, ADKey, Time)   PatternT2( LED,28,InCh,                1,0,255,0,PM_SEQUENZ_NO_RESTART,Time,10 ms,ADKey,0)
 
-                                    //  ADKey1     400ms 470 Ohm
-#define SOUND_JQ6500_ADKEY1	29		//	1
-#define SOUND_JQ6500_ADKEY2	40		//	2
-#define SOUND_JQ6500_ADKEY3	50		//	3
-#define SOUND_JQ6500_ADKEY4	60		//	4
-#define SOUND_JQ6500_ADKEY5	80		//	5
-#define SOUND_JQ6500_ADKEY6	162		//	Prev/Vol-
-#define SOUND_JQ6500_ADKEY7	231		//	Next/Vol+
+                                        //  ADKey1     400ms 470 Ohm
+#define SOUND_JQ6500_ADKEY1_N   29      //  1
+#define SOUND_JQ6500_ADKEY2_N   40      //  2
+#define SOUND_JQ6500_ADKEY3_N   50      //  3
+#define SOUND_JQ6500_ADKEY4_N   60      //  4
+#define SOUND_JQ6500_ADKEY5_N   80      //  5
+#define SOUND_JQ6500_ADKEY6_N   162     //  Prev/Vol-
+#define SOUND_JQ6500_ADKEY7_N   231     //  Next/Vol+
+
+// WS2811 with swapped pins (R+GB/+O-)  //  ADKey1
+#define SOUND_JQ6500_ADKEY1_BG	32		//	1
+#define SOUND_JQ6500_ADKEY2_BG	44		//	2
+#define SOUND_JQ6500_ADKEY3_BG	56		//	3
+#define SOUND_JQ6500_ADKEY4_BG	68		//	4
+#define SOUND_JQ6500_ADKEY5_BG	90		//	5
+#define SOUND_JQ6500_ADKEY6_BG	183		//	Prev/Vol-
+#define SOUND_JQ6500_ADKEY7_BG	238		//	Next/Vol+
 
 
-#define Sound_JQ6500_Prev(      LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY6)
-#define Sound_JQ6500_Next(      LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY7)
+#define Sound_JQ6500_Prev(  LED, InCh)         _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY6_N)
+#define Sound_JQ6500_Next(  LED, InCh)         _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY7_N)
+
+#define Sound_JQ6500_BG_Prev(  LED, InCh)      _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY6_BG)
+#define Sound_JQ6500_BG_Next(  LED, InCh)      _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY7_BG)
 
 // Volume
 // First Volume change after ~1000 ms   ???
 // Then volume is changed every 150 ms  ???
 // 30 stepps ??
-#define Sound_JQ6500_DecVol(    LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6,   1000 ms + (Steps-1) * 150 ms)
-#define Sound_JQ6500_IncVol(    LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7,   1000 ms + (Steps-1) * 150 ms)
 
-#define Sound_JQ6500_Seq1( LED, InCh)    _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1)
-#define Sound_JQ6500_Seq2( LED, InCh)    _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2)
-#define Sound_JQ6500_Seq3( LED, InCh)    _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3)
-#define Sound_JQ6500_Seq4( LED, InCh)    _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4)
-#define Sound_JQ6500_Seq5( LED, InCh)    _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5)
+#define Sound_JQ6500_DecVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6_N,     1000 ms + (Steps-1) * 150 ms)
+#define Sound_JQ6500_IncVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7_N,     1000 ms + (Steps-1) * 150 ms)
+
+#define Sound_JQ6500_BG_DecVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6_BG, 1000 ms + (Steps-1) * 150 ms)
+#define Sound_JQ6500_BG_IncVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7_BG, 1000 ms + (Steps-1) * 150 ms)
 
 
-#define _LocalVar_Sound_JQ6500(LED)  PatternT1(LED,28,SI_LocalVar,1,0,255,0,0,400 ms,0,SOUND_JQ6500_ADKEY1,SOUND_JQ6500_ADKEY2,SOUND_JQ6500_ADKEY3,SOUND_JQ6500_ADKEY4,SOUND_JQ6500_ADKEY5,0,1,129,129,129,129,129,127)
+#define Sound_JQ6500_Seq1(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1_N)
+#define Sound_JQ6500_Seq2(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2_N)
+#define Sound_JQ6500_Seq3(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3_N)
+#define Sound_JQ6500_Seq4(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4_N)
+#define Sound_JQ6500_Seq5(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5_N)
+
+#define Sound_JQ6500_BG_Seq1(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1_BG)
+#define Sound_JQ6500_BG_Seq2(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2_BG)
+#define Sound_JQ6500_BG_Seq3(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3_BG)
+#define Sound_JQ6500_BG_Seq4(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4_BG)
+#define Sound_JQ6500_BG_Seq5(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5_BG)
+
+#define _LocalVar_Sound_JQ6500(   LED)    PatternT1(LED,28,SI_LocalVar,1,0,255,0,0,400 ms,0,SOUND_JQ6500_ADKEY1_N, SOUND_JQ6500_ADKEY2_N, SOUND_JQ6500_ADKEY3_N, SOUND_JQ6500_ADKEY4_N, SOUND_JQ6500_ADKEY5_N, 0,1,129,129,129,129,129,127)
+#define _LocalVar_Sound_JQ6500_BG(LED)    PatternT1(LED,28,SI_LocalVar,1,0,255,0,0,400 ms,0,SOUND_JQ6500_ADKEY1_BG,SOUND_JQ6500_ADKEY2_BG,SOUND_JQ6500_ADKEY3_BG,SOUND_JQ6500_ADKEY4_BG,SOUND_JQ6500_ADKEY5_BG,0,1,129,129,129,129,129,127)
 
 
 #define Sound_JQ6500_PlayRandom(LED, InCh, MaxSoundNr)                                                               \
@@ -501,6 +524,27 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define Sound_JQ6500_Next_of_N(LED, InCh, MaxSoundNr)                                                                \
              Sound_JQ6500_Next_of_N_Reset(LED, InCh, SI_0, MaxSoundNr)
 
+
+#define Sound_JQ6500_BG_PlayRandom(LED, InCh, MaxSoundNr)                                                            \
+              New_Local_Var()                                                                                        \
+              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, MaxSoundNr+1)                    \
+              _LocalVar_Sound_JQ6500_BG(LED)
+
+#define Sound_JQ6500_BG_Next_of_N_Reset(LED, InCh, InReset, MaxSoundNr)                                              \
+              New_Local_Var()                                                                                        \
+              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, MaxSoundNr+1) \
+              _LocalVar_Sound_JQ6500_BG(LED)
+
+#define Sound_JQ6500_BG_Next_of_N(LED, InCh, MaxSoundNr)                                                             \
+             Sound_JQ6500_BG_Next_of_N_Reset(LED, InCh, SI_0, MaxSoundNr)
+
+/*
+#define Sound_Seq( LED, InCh, SeqNr, SoundModul, WS2811_Typ) _Sound##SoundModul##_ADKey(    LED, InCh, SOUND##SoundModul##_ADKEY##SeqNr##WS2811_Typ)
+#define Sound_Pre( LED, InCh,        SoundModul, WS2811_Typ) _Sound##SoundModul##_ADKey(    LED, InCh, SOUND##SoundModul##_ADKEY6##WS2811_Typ)
+#define Sound_Nxt( LED, InCh,        SoundModul, WS2811_Typ) _Sound##SoundModul##_ADKey(    LED, InCh, SOUND##SoundModul##_ADKEY7##WS2811_Typ)
+#define Sound_DecV(LED, InCh, Steps, SoundModul, WS2811_Typ) _Sound##SoundModul##_ADKeyTime(LED, InCh, SOUND##SoundModul##_ADKEY6##WS2811_Typ, 1000 ms + (Steps-1) * 150 ms)
+#define Sound_IncV(LED, InCh, Steps, SoundModul, WS2811_Typ) _Sound##SoundModul##_ADKeyTime(LED, InCh, SOUND##SoundModul##_ADKEY7##WS2811_Typ, 1000 ms + (Steps-1) * 150 ms)
+*/
 
 #define EndCfg END_T
 

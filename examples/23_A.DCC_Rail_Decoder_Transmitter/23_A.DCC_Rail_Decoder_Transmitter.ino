@@ -227,6 +227,8 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
 //-------------------------------------------------------------------------------------
 // This function is called whenever a normal DCC Turnout Packet is received
 {
+  //if (!OutputPower) return ; // debug: Simulate the Lenz LZV100 behavior which doesn't send the button release signal
+
   char s[20];
   sprintf(s, "@%4i %02X %02X\n", Addr, Direction, OutputPower);
   AddToSendBuffer(s);

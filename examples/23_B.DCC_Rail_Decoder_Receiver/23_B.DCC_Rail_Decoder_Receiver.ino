@@ -130,10 +130,10 @@
 #define LED_DO_PIN            6   // Pin D6 is connected to the LED stripe
 
 // Define which accessoires CAN messages should be used.
-#define DCC_FIRST_LOC_ID      1   // First local ID which should be copied to the InpStructArray[] of the MobaLedLib
-#define DCC_FIRST_TOGGLE_ID   11  // DCC adresses greater equal this number are used to toggle an entry in the InpStructArray[]
-                                  // The DCC adresses smaller than this number are treated as momentarry events.
-#define DCC_LAST_LOC_ID       30  // Last local ID which should be copied to the InpStructArray[] of the MobaLedLib
+#define DCC_FIRST_LOC_ID      1                      // First local ID which should be copied to the InpStructArray[] of the MobaLedLib
+#define DCC_FIRST_TOGGLE_ID   (10+DCC_FIRST_LOC_ID)  // DCC adresses greater equal this number are used to toggle an entry in the InpStructArray[]
+                                                     // The DCC adresses smaller than this number are treated as momentarry events.
+#define DCC_LAST_LOC_ID       (29+DCC_FIRST_LOC_ID)  // Last local ID which should be copied to the InpStructArray[] of the MobaLedLib
 #define DCC_INPSTRUCT_START   0   // Start number in the InpStructArray[]
 
 #define SERIAL_BAUD      115200   // Should be equal to the DCC_Rail_Decoder_Transmitter.ino program
@@ -161,6 +161,7 @@
 // *** Configuration array which defines the behavior of the LEDs ***
 MobaLedLib_Configuration()
   {
+  // Attention if the signals are not used disable also the MobaLedLib.Set_Input(..) lines in the setup() funktion
   InCh_to_TmpVar(0, 3)    // Use 3 input channels starting with InpCh 0 to set a temporary variable which is used to controll the entry signal
   Entry_Signal3_RGB(4)    // Start LED 4: Demonstration with a LED stripe
 //Entry_Signal3(    0)    // Start LED channel 0: Real signal connected to a WS2811 module
@@ -240,13 +241,26 @@ MobaLedLib_Create(leds);   // Define the MobaLedLib instance
 LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
 
 char Buffer[12] = "";      // Store the received messages from the DCC-Arduino
+/*
+ Problem:
+ Bei der Lenz Zentrale LZV100 von Rolf wird keine Message beim
+ loslassen des Tasters geschickt ;-(
+ Das fuehrt dazu, dass die mit den Tasten verknuepften Ausgaenge nicht mehr aus gehen.
+ Als Abhilfe wird die letzte Taste und der Zeitpunkt zu dem sie empfangen wurde
+ gespeichert. Nach 400ms wird automatisch das Taste losgelassen Ereignis generiert.
+ Wenn eine andere Taste empfangen wird wird die alte Taste ebenfalls "losgelassen".
+*/
+#define GEN_BUTTON_RELEASE
+#ifdef GEN_BUTTON_RELEASE
+  uint8_t  LastChannel;
+  uint32_t LastTime = 0;
+#endif
 
 //----------------
 void Proc_Buffer()
 //----------------
 {
   uint16_t Addr, Direction, OutputPower, State;
-  char s[25];
   //Serial.println(Buffer); // Debug
   switch (*Buffer)
     {
@@ -257,10 +271,20 @@ void Proc_Buffer()
                     {
                     if (Addr < DCC_FIRST_TOGGLE_ID)
                          {
-                         //char s[30];                                                                              // Debug
-                         //sprintf(s, "InpNr %i", ((Addr - DCC_FIRST_LOC_ID)*2) + DCC_INPSTRUCT_START + Direction); // Debug
-                         //Serial.println(s);                                                                       // Debug
-                         MobaLedLib.Set_Input(((Addr - DCC_FIRST_LOC_ID)*2) + DCC_INPSTRUCT_START + Direction, OutputPower);
+                         uint8_t Channel = ((Addr - DCC_FIRST_LOC_ID)*2) + DCC_INPSTRUCT_START + Direction;
+                         //char s[30];                                      // Debug
+                         //sprintf(s, "InpNr %i %i", Channel, OutputPower); // Debug  23.05.19:  Added: OutputPower
+                         //Serial.println(s);                               // Debug
+                         MobaLedLib.Set_Input(Channel, OutputPower);
+
+                         #ifdef GEN_BUTTON_RELEASE                                                            // 23.05.19:
+                           if (OutputPower)
+                              {
+                              if (LastTime && LastChannel != Channel) MobaLedLib.Set_Input(LastChannel, 0); // Send release
+                              LastTime = millis();
+                              LastChannel = Channel;
+                              }
+                         #endif
                          }
                     else if (Addr <= DCC_LAST_LOC_ID) // Addr >= DCC_FIRST_TOGGLE_ID
                             {                                        // ~~~~~~~~~~~ 18 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -301,6 +325,16 @@ void Proc_Received_Char()
 // and DCC Signal Output messages:
 //  "$ 123 00\n":     Addr, State
 {
+  #ifdef GEN_BUTTON_RELEASE                                                                                   // 23.05.19:
+    if (LastTime && millis()-LastTime > 400) // Use 1100 if no repeat is wanted
+       {
+       MobaLedLib.Set_Input(LastChannel, 0); // Send release
+       LastTime = 0;
+       Serial.print(F("Timeout "));
+       Serial.println(millis());
+       }
+  #endif
+
   while (Serial.available() > 0)
      {
      char c = Serial.read();
