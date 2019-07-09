@@ -83,3 +83,5 @@ Ver.: 0.7.8 09.04.19:
   - Reduced the size by extracting the examples
   - Added a menu to save/load/delete example sheeds
   - User interface is automatically switched to English (Example descriptions still German)
+
+
