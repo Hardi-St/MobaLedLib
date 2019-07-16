@@ -76,7 +76,8 @@ Ver.: 0.7.8 09.04.19:
 - Added examples
   - 00.Overview
   - 25.Analog_Push_Button
-- 09.07.19:
+
+Ver.: 0.7.9 09.07.19:
   Moved the Pattern_Configurator to the "extras" directory
   and updated the excel version.
   - Nice graphical display of the LED brightness and the Goto mode
@@ -84,4 +85,5 @@ Ver.: 0.7.8 09.04.19:
   - Added a menu to save/load/delete example sheeds
   - User interface is automatically switched to English (Example descriptions still German)
 
-
+Ver.: 0.8.0 16.07.19:
+  - Added new assembly document for the main PCB from Alf and Armin
