@@ -193,8 +193,17 @@ uint8_t Calculate_V(uint8_t Val0, uint8_t Val1, uint16_t Duration, uint16_t Star
 {
   int16_t v = Val0 + Calc_dV(Timer - Start_t, Calc_m((int32_t)Val1 - Val0, Duration));
 
-  if (v > 255)    v = 255;
-  else if (v < 0) v = 0;
+  if (Val0 < Val1)
+       {
+       if      (v > Val1) v = Val1;
+       else if (v < Val0) v = Val0;
+       }
+  else {
+       if      (v > Val0) v = Val0;
+       else if (v < Val1) v = Val1;
+       }
+//  if (v > 255)    v = 255;
+//  else if (v < 0) v = 0;
   if (EaseInOut)
        return ease8InOutApprox(v);   // easing function (Uebergangsfunktion) is used because changes near 0 and 255 are noticed different than in the middle
   else return v;
