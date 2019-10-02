@@ -27,6 +27,7 @@
  Revision History:
  ~~~~~~~~~~~~~~~~~
  17.09.18:  - Extracted to a separate modul
+ 06.09.19:  - Added SINGLE_LEDxy
 
 */
 
@@ -89,9 +90,18 @@ uint8_t MobaLedLib_C::Is_Room_On(CRGB *lp, uint8_t RawNr)
       Dst->b = pgm_read_byte_near(p);
     }
 
+    //-----------------------------------------------------------------------------------
+    void MobaLedLib_C::Copy_Single_Room_Col(CRGB *Dst, uint8_t Channel, uint8_t ColorNr)                      // 06.09.19:
+    //-----------------------------------------------------------------------------------
+    {
+      const uint8_t *p = Room_ColP+(ColorNr)*3+Channel;
+      Dst->raw[Channel] = pgm_read_byte_near(p);
+    }
+
+
 #else
   #define Cmp_Room_Col(lp, ColorNr)        memcmp(lp,  &RoomCol[ColorNr], sizeof(CRGB))
-  #define Get_Room_Col1(ColorNr, Channel)  RoomCol[ColorNr][Channel]                                              // 07.12.18:
+  #define Get_Room_Col1(ColorNr, Channel)  RoomCol[ColorNr][Channel]                                          // 07.12.18:
   #define Copy_Room_Col(Dst, ColorNr)      memcpy(Dst, &RoomCol[ColorNr], sizeof(CRGB))
 #endif
 
@@ -144,15 +154,13 @@ uint8_t MobaLedLib_C::Get_RawNr(uint8_t Room_Typ)
 // For all other Room_Typ's 4 is returned
 {
   switch (Room_Typ)
-    {
-    case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: return 0;
-    case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: return 1;
-    case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: return 2;
-    default:                                                                                     return ALL_CHANNELS;
+    {                                                                                            // 06.09.19:  Added SINGLE_LEDxy
+    case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: case SINGLE_LED1: case SINGLE_LED1D: return 0;
+    case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: case SINGLE_LED2: case SINGLE_LED2D: return 1;
+    case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case SINGLE_LED3: case SINGLE_LED3D: return 2;
+    default:                                                                                                                          return ALL_CHANNELS;
     }
 }
-
-//static uint32_t Start;      // Debug
 
 
 //-------------------------------------------------------------
@@ -366,6 +374,12 @@ void MobaLedLib_C::TurnOnRoom(CRGB* lp, uint8_t Room_Typ)
     case GAS_LIGHT1: case GAS_LIGHT1D: case NEON_LIGHT1: case NEON_LIGHT1D: case NEON_LIGHT1M: case NEON_LIGHT1L: lp->r = 1;                 break;
     case GAS_LIGHT2: case GAS_LIGHT2D: case NEON_LIGHT2: case NEON_LIGHT2D: case NEON_LIGHT2M: case NEON_LIGHT2L: lp->g = 1;                 break;
     case GAS_LIGHT3: case GAS_LIGHT3D: case NEON_LIGHT3: case NEON_LIGHT3D: case NEON_LIGHT3M: case NEON_LIGHT3L: lp->b = 1;                 break;
+    case SINGLE_LED1     :                                                                                    // 06.09.19:
+    case SINGLE_LED2     :
+    case SINGLE_LED3     : Copy_Single_Room_Col(lp, Room_Typ-SINGLE_LED1,  COLOR_SINGLE);   break;
+    case SINGLE_LED1D    :
+    case SINGLE_LED2D    :
+    case SINGLE_LED3D    : Copy_Single_Room_Col(lp, Room_Typ-SINGLE_LED1D, COLOR_SINGLE_D); break;
     }
 }
 
@@ -377,7 +391,7 @@ void MobaLedLib_C::TurnOffRoom(CRGB* lp, uint8_t RawNr, uint8_t Room_Typ)
     {
     case GAS_LIGHT:   case GAS_LIGHTD :
     case GAS_LIGHT1:  case GAS_LIGHT1D: if (lp->r % 2) lp->r--;    break; // Ungerade Werte bedeuten LED wird heller, Gerade LED wird dunkler
-    case GAS_LIGHT2:  case GAS_LIGHT2D: if (lp->g % 2) lp->g--;    break;
+    case GAS_LIGHT2:  case GAS_LIGHT2D: if (lp->g % 2) lp->g--;    break; // => Wert gerade machen damit die LED dunkler wird
     case GAS_LIGHT3:  case GAS_LIGHT3D: if (lp->b % 2) lp->b--;    break;
     default: if (RawNr == ALL_CHANNELS)
                   lp->r = lp->g = lp->b = 0;
@@ -423,7 +437,7 @@ void MobaLedLib_C::Proc_House()
 // Einzelne Kanaele muessen nacheinander und in aufsteugender Reihenfolge angegeben werden.
 // Beipiel: GAS_LIGHT1, GAS_LIGHT2, GAS_LIGHT3, GAS_LIGHT, GAS_LIGHT1
 // Falsch:  GAS_LIGHT1D, GAS_LIGHTD, GAS_LIGHT2D, GAS_LIGHTD, GAS_LIGHT3D, GAS_LIGHTD,
-// Beim 2. Beispiel bbenutzt die dritte Lampe den gleichen Kanal wie Lampe 2 ;-(
+// Beim 2. Beispiel benutzt die dritte Lampe den gleichen Kanal wie Lampe 2 ;-(
 //
 {
   TimerData_T *tp = (TimerData_T*)rp; rp += sizeof(TimerData_T);
@@ -451,7 +465,7 @@ void MobaLedLib_C::Proc_House()
      uint8_t Min_T = pgm_read_byte_near(cp+P_HOUSE_MIN_T);
      uint8_t Max_T = pgm_read_byte_near(cp+P_HOUSE_MAX_T);
      tp->Last_t = t10;
-     tp->dt     = random8(Min_T, Max_T+1);
+     tp->dt     = random8(Min_T, Max_T+1); // Max_T Maximal 254 because random8(uint8_t, uint8_t)
      uint8_t On_LEDs = 0;
      lp = &leds[Led0];
      const uint8_t *cpr = cp+P_HOUSE_ROOM_0;

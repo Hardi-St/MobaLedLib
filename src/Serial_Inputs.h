@@ -167,6 +167,7 @@ class Serial_Input_C
    //Dprintf(" => %i\n", val); // Debug
   }
 
+#ifndef SERIAL_INP_WITHOUT_MOBALEDLIB                                                                         // 22.06.19:
   //-------------------------
   void Update_Sw(int8_t Mode)
   //-------------------------
@@ -183,6 +184,7 @@ class Serial_Input_C
         Dprintf("SwNr(%i)=%i\n", SwNr, Inp_Is_On(MobaLedLib.Get_Input(SwNr)));
         }
   }
+#endif // SERIAL_INP_WITHOUT_MOBALEDLIB
 
   //--------------
   void Proc_Line()
@@ -207,7 +209,9 @@ class Serial_Input_C
             case 'm': Update_Val(ImpMsk);    ProcTyp = 3; break;
             case 'e': // Enable input
             case 'd': // Disable input
+         #ifndef SERIAL_INP_WITHOUT_MOBALEDLIB                                                                // 22.06.19:
             case 't': EndLoop = 1; Update_Sw(*LinePtr); Clear_SerialInp(); break;
+         #endif
             case 'x': EndLoop = 1;                        break;
             case 'a': memset(leds, 255, NUM_LEDS*sizeof(CRGB)); // Turn on ALL LEDs
                       FastLED.show();

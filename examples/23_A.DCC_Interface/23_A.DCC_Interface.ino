@@ -166,9 +166,9 @@ uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port 1000 second
 #define QueueFill() ((sizemask + 1 + wp - rp) & sizemask)
 
 
-//---------------------------
-void AddToSendBuffer(char *s)
-//---------------------------
+//---------------------------------
+void AddToSendBuffer(const char *s)
+//---------------------------------
 // Attention this is called in the interrupt
 {
   if (DisableSerial == SERIAL_DISABLED)
@@ -285,6 +285,9 @@ void setup(){
 
   pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin
   pinMode(ERROR_LED_PIN,   OUTPUT);
+
+  EEPROM.read(0); // Prevent EEPROM warning: "EEPROM.h:145:20: warning: 'EEPROM' defined but not used "
+                  // Unfortunately there are some other signed/unsigned warnings in the lib which can't be disabled
 }
 
 //-----------
@@ -297,57 +300,4 @@ void loop(){
   LED_HeartBeat.Update();
 
 }
-
-/*
- Arduino Nano:          +-----+
-           +------------| USB |------------+
-           |            +-----+            |
-        B5 | [ ]D13/SCK        MISO/D12[ ] |   B4
-           | [ ]3.3V           MOSI/D11[ ]~|   B3
-           | [ ]V.ref     ___    SS/D10[ ]~|   B2
-        C0 | [ ]A0       / N \       D9[ ]~|   B1
-        C1 | [ ]A1      /  A  \      D8[ ] |   B0
-        C2 | [ ]A2      \  N  /      D7[ ] |   D7
-        C3 | [ ]A3       \_0_/       D6[ ]~|   D6
-        C4 | [ ]A4/SDA               D5[ ]~|   D5
-        C5 | [ ]A5/SCL               D4[ ] |   D4
-           | [ ]A6              INT1/D3[ ]~|   D3
-           | [ ]A7              INT0/D2[ ] |   D2
-           | [ ]5V                  GND[ ] |
-        C6 | [ ]RST                 RST[ ] |   C6
-           | [ ]GND   5V MOSI GND   TX1[ ] |   D0
-           | [ ]Vin   [ ] [ ] [ ]   RX1[ ] |   D1
-           |          [ ] [ ] [ ]          |
-           |          MISO SCK RST         |
-           | NANO-V3                       |
-           +-------------------------------+
-
- Arduino Uno:                           +-----+
-           +----[PWR]-------------------| USB |--+
-           |                            +-----+  |
-           |           GND/RST2  [ ] [ ]         |
-           |         MOSI2/SCK2  [ ] [ ]  SCL[ ] |   C5
-           |            5V/MISO2 [ ] [ ]  SDA[ ] |   C4
-           |                             AREF[ ] |
-           |                              GND[ ] |
-           | [ ]N/C                    SCK/13[A] |   B5
-           | [ ]v.ref                 MISO/12[A] |   .
-           | [ ]RST                   MOSI/11[A]~|   .
-           | [ ]3V3    +---+               10[ ]~|   .
-           | [ ]5v     | A |                9[ ]~|   .
-           | [ ]GND   -| R |-               8[B] |   B0
-           | [ ]GND   -| D |-                    |
-           | [ ]Vin   -| U |-               7[A] |   D7
-           |          -| I |-               6[A]~|   .
-           | [ ]A0    -| N |-               5[C]~|   .
-           | [ ]A1    -| O |-               4[A] |   .
-           | [ ]A2     +---+           INT1/3[A]~|   .
-           | [ ]A3                     INT0/2[ ] |   .
-      SDA  | [ ]A4      RST SCK MISO     TX>1[ ] |   .
-      SCL  | [ ]A5      [ ] [ ] [ ]      RX<0[ ] |   D0
-           |            [ ] [ ] [ ]              |
-           |  UNO_R3    GND MOSI 5V  ____________/
-            \_______________________/
-
-*/
 

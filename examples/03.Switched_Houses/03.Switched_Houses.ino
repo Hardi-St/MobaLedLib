@@ -158,7 +158,9 @@ MobaLedLib_Configuration()
               50,  50,  20,    // 11 TV0 and chimney color A randomly color A or B is used
               70,  70,  30,    // 12 TV0 and chimney color B
               50,  50,   8,    // 13 TV1 and chimney color A
-              50,  50,   8)    // 14 TV2 and chimney color B
+              50,  50,   8,    // 14 TV2 and chimney color B
+             255, 255, 255,    // 15 Single LED Room:      Fuer einzeln adressierte LEDs wird der individuelle Helligkeitswert verwendet (SINGLE_LED1,  SINGLE_LED2,  SINGLE_LED3)  // 06.09.19:
+              50,  50,  50)    // 16 Single dark LED Room: Fuer einzeln adressierte LEDs wird der individuelle Helligkeitswert verwendet (SINGLE_LED1D, SINGLE_LED2D, SINGLE_LED3D)
 
   //    LED:                                       First LED number in the stripe
   //     |            InCh:                        Input channel. The inputs are read in below using the digitalRead() function.

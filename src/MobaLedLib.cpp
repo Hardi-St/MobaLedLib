@@ -267,6 +267,15 @@
  10.03.19:  - Corrected the Status_Button_0_x() macros to be able to use the PushButton_w_LED_0_x()
               macros with all Button LEDs. Prior only C1 was working
  11.03.19:  - ToDo liste moved to private file
+ 01.06.19:  - Corrected the value limmitation of the pattern function in Calculate_V()
+              The values have been limmited to 0/255 and not to the given limmits Val0/Val1.
+              This caused wrong values if the gradient of the signal was to high. The problame came up
+              in the Servo_Ballet which uses the analog pattern function zo switch from 30 to 180 in
+              20 ms. The error genrerates intemideate values: 30, 30, 240, 240, 240, 240, 180, 180, 180, 180,
+              and also when switched back from 180 to 30: 180, 180, 180, 0, 0, 0, 0, 30, 30, 30,
+ 06.09.19:  - Added SINGLE_LEDxy
+            - Added two new colors to Default_Room_Col_Tab
+24.09.19:   - Added binary signals
 
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
@@ -468,7 +477,7 @@ uint8_t TestMode = 0;    // If this variable is set the normal update function o
    (https://www.nongnu.org/avr-libc/user-manual/mem_sections.html)
  Sie berechnet eine XOR Summe ueber den ganzen RAM. Einige Speicherstellen im RAM aendern ihren Wert
  beim einschalten zufaellig. (https://hackaday.com/2015/06/29/true-random-number-generator-for-a-true-hacker/)
- Es muessen so viele Speicherzellen wie moeglich berachtet werden weil die Meisten Speicherzellen nach
+ Es muessen so viele Speicherzellen wie moeglich berachtet werden weil die meisten Speicherzellen nach
  jedem einschalten den gleichen Wert haben. Nur ganz symetrisch aufgebaute Zellen haben zufaellige Werte.
 
  Das Funktioniert aber nur bei einem Kaltstart (Versorgungsspannung einschalten). Bei einem Warmstart
@@ -495,7 +504,7 @@ void __attribute__((naked, section(".init3"))) seed_from_ram()
 }
 
 #ifdef _NEW_ROOM_COL
-const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 45 Byte FLASH
+const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 51 Byte FLASH
                        {
                           15,  13,   3, // 0  ROOM_COL0 (very dark warm White)
                           22,  44,  27, // 1  ROOM_COL1 (cold dark White)
@@ -511,7 +520,9 @@ const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 45 Byte FLASH
                           50,  50,  20, // 11 TV0 and chimney color A randomly color A or B is used
                           70,  70,  30, // 12 TV0 and chimney color B
                           50,  50,   8, // 13 TV1 and chimney color A
-                          50,  50,   8  // 14 TV2 and chimney color B
+                          50,  50,   8, // 14 TV2 and chimney color B
+                         255, 255, 255, // 15 Single LED Room:      Fuer einzeln adressierte LEDs wird der individuelle Helligkeitswert verwendet (SINGLE_LED1,  SINGLE_LED2,  SINGLE_LED3)  // 06.09.19:
+                          50,  50,  50, // 16 Single dark LED Room: Fuer einzeln adressierte LEDs wird der individuelle Helligkeitswert verwendet (SINGLE_LED1D, SINGLE_LED2D, SINGLE_LED3D)
                        };
 #endif // _NEW_ROOM_COL
 

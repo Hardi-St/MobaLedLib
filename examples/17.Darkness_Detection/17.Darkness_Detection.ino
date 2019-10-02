@@ -131,7 +131,7 @@
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
-#define LDR_PIN      A1  // Use A7 if the MobaLedLib "LEDs Main Module" is used
+#define LDR_PIN      A7  // Use A7 if the MobaLedLib "LEDs Main Module" is used
 
 #define INCH0        0   // Define names for the input channels to be able to change them easily.
 #define INCH1        1   // In this small example this is not necessary, but it's useful in a

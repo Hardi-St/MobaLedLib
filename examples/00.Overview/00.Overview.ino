@@ -4,15 +4,27 @@
 #define EXAMPLE_NR 1
 
 /*
-Überblick aller Beispiele:  An English translation is available below.
+Überblick aller Beispiele:            An English translation is available below.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-Dieses Dokument enthält Liste aller Beispielprogramme und erklärt diese stichpunktartig. 
-Details findet man in den entsprechenden Programmen. 
-Dieses Beispiel wurde eingefügt, weil es manchmal schwierig zu verstehen ist was sich 
-unter den kurzen Namen im Menü der Arduino IDE verbirgt. 
-Es bietet außerdem die Möglichkeit die Programme ganz schnell zu testen ohne dass man 
-jedes einzelne Programm laden muss. Dazu trägt man einfach die Nummer des gewünschten 
-Beispiels in die "#define EXAMPLE_NR" Zeile ganz oben ein und startet das Programm mit 
+Dieses Dokument enthält Liste aller Beispielprogramme und erklärt diese stichpunktartig.
+Details findet man in den entsprechenden Programmen.
+
+Neu: Seit Version 0.9.0 der Bibliothek gibt es ein Excel Programm mit dem die Funktionen 
+     der MobaLedLib ohne zu programmieren genutzt werden können. Man füllt lediglich eine
+     Tabelle mit den gewünschten Effekten und schickt diese mit einem Knopfdruck zum Arduino. 
+     Das Excel Programm unterstützt den Benutzer mit verschiedenen Dialogen. Damit wird die 
+     Erstellung von Licht, Sound und Bewegungseffekten zum Kinderspiel.
+
+     Das Excel Programm wird geöffnet indem man die folgende Zeile in die Adresszeile des 
+     Windows Explorers kopiert:
+     %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\examples\23_B.LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
+
+
+Dieses Beispiel wurde eingefügt, weil es manchmal schwierig zu verstehen ist was sich
+unter den kurzen Namen im Menü der Arduino IDE verbirgt.
+Es bietet außerdem die Möglichkeit die Programme ganz schnell zu testen ohne dass man
+jedes einzelne Programm laden muss. Dazu trägt man einfach die Nummer des gewünschten
+Beispiels in die "#define EXAMPLE_NR" Zeile ganz oben ein und startet das Programm mit
 STRG+U.
 
 Achtung einige Beispiele benötigen neben mehreren RGB LEDs noch zusätzliche Komponenten.
@@ -20,34 +32,34 @@ Dies wird jeweils in Klammern unten angegeben.
 
 01.Heartbeat:     (Eine LED)
 ~~~~~~~~~~~~~
-Dieses Beispiel ist das "Hello World" Programm der WS281x LEDs. Es zeigt Eindrucksvoll 
-wie einfach man mit der Bibliothek eine LED mit wechselnden Farben sanft auf und 
-abblenden kann. Dieses Blinken kann auch in einem eignen Programm zur Funktionskontrolle 
+Dieses Beispiel ist das "Hello World" Programm der WS281x LEDs. Es zeigt Eindrucksvoll
+wie einfach man mit der Bibliothek eine LED mit wechselnden Farben sanft auf und
+abblenden kann. Dieses Blinken kann auch in einem eignen Programm zur Funktionskontrolle
 eingesetzt werden.
 
 02.House:         (7 LEDs)
 ~~~~~~~~~
-In einem "belebten" Haus sind nicht immer alle Zimmer beleuchtet. Je nachdem in welchen 
-Räumen sich die Benutzer aufhalten wird das Licht ein- und ausgeschaltet. Außerdem kann 
+In einem "belebten" Haus sind nicht immer alle Zimmer beleuchtet. Je nachdem in welchen
+Räumen sich die Benutzer aufhalten wird das Licht ein- und ausgeschaltet. Außerdem kann
 die Art der Beleuchtung ganz unterschiedlich sein. Mit der MobaLedLib können verschiedene
 Varianten simuliert werden. Räume mit warmem oder kalten Licht, Räume welche von Neonröhren
-beleuchtet werden und Zimmer in denen ein Fernseher läuft und vieles mehr. Das Beispiel 
+beleuchtet werden und Zimmer in denen ein Fernseher läuft und vieles mehr. Das Beispiel
 zeigt einen Teil davon.
 
 03.Switched_Houses:   (16 LEDs, opt. 4 Kippschalter)
 ~~~~~~~~~~~~~~~~~~~
-Mit diesem Beispiel wird gezeigt wie man mehrere Häuser über Kippschalter Ein- und 
+Mit diesem Beispiel wird gezeigt wie man mehrere Häuser über Kippschalter Ein- und
 Ausschaltet. Es zeigt, dass langsam nacheinander die verschiedenen Lichter aktiviert
-werden. Eigentlich benötigt man zum Test 4 Kippschalter. Wenn keine Schalter 
+werden. Eigentlich benötigt man zum Test 4 Kippschalter. Wenn keine Schalter
 angeschlossen sind, dann werden die Lichter in allen drei Häusern zufällig eingeschaltet.
 
 04.Gaslights:       (6 LEDs)
 ~~~~~~~~~~~~~
-Gas betriebene Straßenbeleuchtungen gehörten früher zum Straßenbild.  Sie wurden nicht 
-alle gleichzeitig angezündet, sondern nacheinander. Ursprünglich war das die Aufgabe 
+Gas betriebene Straßenbeleuchtungen gehörten früher zum Straßenbild.  Sie wurden nicht
+alle gleichzeitig angezündet, sondern nacheinander. Ursprünglich war das die Aufgabe
 eines "Laternenanzünders". Später wurden diese durch Zünduhren aktiviert. Auch heute noch
-werden Gaslampen nacheinander per Lichtsensor gestartet (http://www.gaswerk-augsburg.de/fernzuendung.html). 
-Dieses Beispiel zeigt wie das auf der Modelleisenbahn nachempfunden werden kann. 
+werden Gaslampen nacheinander per Lichtsensor gestartet (http://www.gaswerk-augsburg.de/fernzuendung.html).
+Dieses Beispiel zeigt wie das auf der Modelleisenbahn nachempfunden werden kann.
 Dabei werden auch das langsam heller werdende Licht und das Flackern mancher Lampen
 nachgebildet.
 
@@ -204,37 +216,6 @@ Feuerwehr mit Blaulicht und Martinshorn. Weil Kinder gerade an den Geräuschen S
 kann man mit jedem weiteren Tastendruck eine andere MP3 Datei abrufen. Das Video im Post
 #58: https://www.stummiforum.de/viewtopic.php?p=1924210#p1924210 zeigt das sehr schön. 
 
-23_A.DCC_Rail_Decoder_Transmitter:  (6N137)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Die Bibliothek kann auch Befehle einer Zentrale über das DCC Protokoll empfangen. Dazu 
-benötigt man allerdings zwei Arduinos. Das ist nötig, weil die Interrupts während der 
-Aktualisierung der LEDs für einige Millisekunden gesperrt werden müssen. In dieser Zeit 
-können DCC Pakete verloren gehen. Der erste Arduino empfängt die DCC Signale und sendet 
-sie "Häppchenweise" an den zweiten Arduino welcher die LEDs ansteuert. 
-Für den schnellen Test dieses Programms trägt man in die Zeile "#define EXAMPLE_NR" 
-oben 231 ein und lädt das Programm auf den ersten Arduino. Das zweite Programm wird mit 
-232 auf dem zweiten Prozessor gespielt. Die elektrische Verbindung der beiden Module 
-findet man im Programm als ASCII Grafik. 
-
-23_B.DCC_Rail_Decoder_Receiver:   (24-64 LEDs)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Auf dem zweiten Arduino läuft das Programm "23_B.DCC_Rail_Decoder_Receiver". Es zeigt wie 
-man verschiedene Verbraucher über DCC Zubehörbefehle schalten kann. Dabei gibt es zwei 
-verschiedene Modis. 
-Licht Signale werden über "Taster" gesteuert. Ein DCC Kanal steuert zwei Eingänge der 
-MobaLedLib. Diese Eingänge sind nur so lange aktiv wie die Taste der DCC Steuerung 
-gedrückt wird. Hier werden je nach Anzahl der Signal Aspekte mehrere DCC Kanäle belegt.
-Zum Ein- und Ausschalten von Häusern wird jeweils ein DCC Kanal benutzt. Mit "Rot" wird
-die Funktion Ausgeschaltet, mit "Grün" wird sie eingeschaltet.
-
-24.DCC_and_Sound:       (Sound Modul MP3-TF-16P oder JQ6500)
-~~~~~~~~~~~~~~~~~
-Dieses Beispiel erweitert das Programm "06.Sound" um eine Steuerung per DCC Zubehör 
-Befehle. Damit ist es möglich, dass man die verschiedenen Geräusche von einer Zentrale 
-aus steuert. Es kann entweder mit dem Sound Modul "MP3-TF-16P" oder dem Modul "JQ6500" 
-benutzt werden. Im "extras" Verzeichnis der Bibliothek findet man die dazu benötigten 
-Schaltungen und Platinen. Diese können auch über liebe Kollegen im Stummi Forum bestellt 
-werden.
 
 25.Analog_Push_Button:      (32 LEDs, Taster, Widerstände)
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -257,10 +238,21 @@ Feuerwehr Auto, Sound und Burg Beleuchtung)
 Overview of all examples:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 This document contains a list of all sample programs and explains them in a nutshell. 
-Details can be found in the corresponding programs. This example has been inserted 
-because it is sometimes difficult to understand what a short name means.
-It also offers the possibility to test the programs very fast without having to load 
-every single program. Just enter the number of the desired example in the 
+Details can be found in the corresponding programs. 
+
+New: Since version 0.9.0 of the library there is an Excel program with which the functions 
+     of the MobaLedLib can be used without programming. You simply fill a table with the 
+     desired effects and send them to the Arduino with the push of a button. The Excel 
+     program supports the user with various dialogs. This makes the creation of light, 
+     sound and motion effects a breeze.
+
+     The Excel program is opened by copying the following line into the address bar of 
+     Windows Explorer:
+     %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\examples\23_B.LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
+
+This example has been inserted because it is sometimes difficult to understand what a 
+short name means. It also offers the possibility to test the programs very fast without 
+having to load every single program. Just enter the number of the desired example in the 
 "#define EXAMPLE_NR" line at the top and start the program with CTRL + U.
 Please note that some examples require additional components in addition to several RGB 
 LEDs. This is indicated in brackets below.
@@ -438,37 +430,6 @@ activated with lights and sound. Because children just enjoy the sounds, you can
 another MP3 file each time you press the button. The video in post #58: 
 https://www.stummiforum.de/viewtopic.php?p=1924210#p1924210 shows that very nice.
 
-23_A.DCC_Rail_Decoder_Transmitter: (6N137)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The library can also receive commands from a control center via the DCC protocol. 
-Therefore, two Arduinos are used. This is necessary because the interrupts must be 
-disabled during the update of the LEDs for a few milliseconds. During this time DCC
-packets can be lost. The first Arduino receives the DCC signals and sends them to the 
-second Arduino which controls the LEDs. 
-For the quick test of this program, enter 231 in the line "#define EXAMPLE_NR" above 
-and load the program onto the first Arduino. The second program is loaded with the number
-232 on the second processor. The electrical connection of the two modules can be found in
-the program as ASCII graphics.
-
-23_B.DCC_Rail_Decoder_Receiver: (24-64 LEDs)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-On the second Arduino the program "23_B.DCC_Rail_Decoder_Receiver" is running. It shows 
-how to switch different consumers via DCC accessory commands. There are two different 
-modes.
-Light signals are controlled via "push buttons". A DCC channel controls two inputs of the 
-MobaLedLib. These inputs are only active as long as the button of the DCC control is 
-pressed. Depending on the number of signal aspects, several DCC channels are occupied 
-here.
-One DCC channel is used to switch houses on and off. With "Red" the function is switched 
-off, with "Green" it is switched on.
-
-24.DCC_and_Sound: (Sound module MP3-TF-16P or JQ6500)
-~~~~~~~~~~~~~~~~~
-This example extends the program "06.Sound" by a control via DCC accessory commands. This 
-makes it possible to control the different sounds from one control panel. It can be used 
-either with the sound module "MP3-TF-16P" or the module "JQ6500". In the "extras" 
-directory of the library you will find the required circuits and boards. These can also 
-be ordered through dear colleagues in the Stummi Forum.
 
 25.Analog_Push_Button: (32 LEDs, buttons, resistors)
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -545,12 +506,6 @@ Fire Department Auto, Sound and Castle Lighting)
    #include "21.Advanced\21.Advanced.h"
 #elif EXAMPLE_NR == 22
    #include "22.Burning_House\22.Burning_House.h"
-#elif EXAMPLE_NR == 231
-   #include "23_A.DCC_Rail_Decoder_Transmitter\23_A.DCC_Rail_Decoder_Transmitter.h"
-#elif EXAMPLE_NR == 232
-   #include "23_B.DCC_Rail_Decoder_Receiver\23_B.DCC_Rail_Decoder_Receiver.h"
-#elif EXAMPLE_NR == 24
-   #include "24.DCC_and_Sound\24.DCC_and_Sound.h"
 #elif EXAMPLE_NR == 25
    #include "25.Analog_Push_Button\25.Analog_Push_Button.h"
  #else
