@@ -74,6 +74,10 @@
 // Darum wurde die UND Funktion ueber eine Multiplikation geloest. Das Makro _LT_MX() liefert eine 1 wenn das Argument
 // kleiner als _MAX_TIMER_VAL ist. Mehere _LT_MX() Ausdruecke koennen miteinander multipliziert werden. Das Ergebnis
 // ist nur dann 1 wenn alle Teile zutreffen.
+
+// Disable warning in _ALL_LT_MX2 and _ALL_LT_MX4                                                             // 05.10.19:
+#pragma GCC diagnostic ignored "-Wint-in-bool-context"
+
 #define _MAX_TIMER_VAL 65536  // Could be chaged to test the automatic switching
 #define _LT_MX(MaxTime)                                     (((MaxTime)<_MAX_TIMER_VAL)?1:0)
 #define _ALL_LT_MX2(MinTime,MaxTime)                        ((_LT_MX(MinTime) * _LT_MX(MaxTime)  * _LT_MX((MinTime)+(MaxTime))))  // Die Multiplikation kann wie eine UND Verknuepfung verwendet werden
@@ -326,6 +330,8 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #else
  #define Const(         LED,Cx,InCh,Val0, Val1)               PatternT1(LED,_NStru(Cx,   1,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,0,0 Sec, _Cx2P_BLINK(Cx))
 #endif
+
+
 
 #define  House(         LED,InCh, On_Min,On_Limit, ...)                     HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,On_Limit,HOUSE_MIN_T,HOUSE_MAX_T,COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
 #define  HouseT(        LED,InCh, On_Min,On_Limit,Min_T,Max_T,...)          HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,On_Limit,Min_T,      Max_T,      COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
