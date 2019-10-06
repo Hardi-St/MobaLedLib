@@ -404,6 +404,59 @@ LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LE
 #endif // USE_CAN_AS_INPUT
 
 
+#ifdef TEST_TOGGLE_BUTTONS                                                                                    // 06.10.19:
+
+   #ifndef TOGGLE_BUTTONS_INCH
+     #define TOGGLE_BUTTONS_INCH 0
+   #endif
+
+   #define LED0_PIN    3
+   #define LED1_PIN    4
+   #define LED2_PIN    5
+   #define SWITCH0_PIN 7
+   #define SWITCH1_PIN 8
+   #define SWITCH2_PIN 9
+
+   //-------------------------
+   void Setup_Toggle_Buttons()
+   //-------------------------
+   {
+     pinMode(LED0_PIN,    OUTPUT);
+     pinMode(LED1_PIN,    OUTPUT);
+     pinMode(LED2_PIN,    OUTPUT);
+     pinMode(SWITCH0_PIN, INPUT_PULLUP);
+     pinMode(SWITCH1_PIN, INPUT_PULLUP);
+     pinMode(SWITCH2_PIN, INPUT_PULLUP);
+   }
+
+   //-------------------------
+   void Check_Toggle_Buttons()
+   //-------------------------
+   // Use the 3 buttons of the main board to toggle input channels
+   {
+     static uint32_t NextCheck = 0;
+     static uint8_t  LastKey   = 0xFF;
+     if (millis() >= NextCheck)
+        {
+        uint8_t Mask = 1;
+        NextCheck = millis() + 50;
+        for (uint8_t KeyNr = SWITCH0_PIN, LEDNr = LED0_PIN, InChNr = TOGGLE_BUTTONS_INCH; KeyNr <= SWITCH2_PIN; KeyNr++, LEDNr++, InChNr++)
+           {
+           uint8_t Key = digitalRead(KeyNr);
+           if (Key != (LastKey & Mask))
+              {
+              if (Key)
+                   { LastKey |=  Mask; }
+              else { LastKey &= ~Mask; digitalWrite(LEDNr, !digitalRead(LEDNr)); }
+              NextCheck = millis() + 300;
+              MobaLedLib.Set_Input(InChNr, digitalRead(LEDNr));
+              }
+           Mask <<= 1;
+           }
+        }
+   }
+#endif // TEST_TOGGLE_BUTTONS
+
 //-----------
 void setup(){
 //-----------
@@ -435,11 +488,19 @@ void setup(){
   #endif
 
   Set_Start_Values(MobaLedLib); // The start values are defined in the "MobaLedLib.h" file if entered by the user
+
+  #ifdef TEST_TOGGLE_BUTTONS
+    Setup_Toggle_Buttons();
+  #endif
 }
 
 //-----------
 void loop(){
 //-----------
+  #ifdef TEST_TOGGLE_BUTTONS
+    Check_Toggle_Buttons();
+  #endif
+
   LED_HeartBeat.Update();
 
   MobaLedLib.Update();                  // Update the LEDs in the configuration
@@ -456,7 +517,7 @@ void loop(){
   FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
 
   #ifdef USE_RS232_AS_INPUT
-    digitalWrite(SEND_DISABLE_PIN, 0);  // Allow the sanding of the DCC commands again
+    digitalWrite(SEND_DISABLE_PIN, 0);  // Allow the sending of the DCC commands again
   #endif
 }
 

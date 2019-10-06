@@ -28,6 +28,43 @@
  ~~~~~~~~~~~~~~~~~
  17.09.18:  - Extracted to a separate modul
  06.09.19:  - Added SINGLE_LEDxy
+ 05.10.19:  - Soved problem with single LEDs (See below)
+
+
+ Problem:                                                                            05.10.19:
+ ~~~~~~~~
+ Die Gaslights funktionieren nicht, wenn danach keine weiteren LEDs kommen
+  - GasLights(#LED, #InCh, GAS_LIGHT1, GAS_LIGHT1)                             => Nur die rote LED geht an
+  + GasLights(#LED, #InCh, GAS_LIGHT1, GAS_LIGHT2)                             => O.K.
+    // Reserve LEDs(1)                                                            wenn hier eine zusaetzliche LED reserviert wird
+  + GasLights(#LED, #InCh, GAS_LIGHT1, GAS_LIGHT2, GAS_LIGHT3, GAS_LIGHT1)     => O.K.
+  + GasLights(#LED, #InCh, SINGLE_LED1, SINGLE_LED2, SINGLE_LED3, SINGLE_LED1) => O.K.
+
+ Es Funktioniert auch schon, wenn man hier
+  CRGB leds[NUM_LEDS];
+ +1 einfuegt
+
+ Problem beim Zaehlen der aktiven Raeume erkannt.
+ lp wurde in der Schleife erhoeht wenn eine rote einzelne LED erkannt wurde.
+ Diese Erkennung wurde aber gemacht bevor die naechste LED mit Get_RawNr(Room_Typ)
+ ermittelt wurde. Dadurch wurde lp schon bei der ersten LED erhoeht. lp zeigt dann,
+ wenn nur 3 einzelne LEDs verwendet werden auf die naechste LED im leds[] Array.
+ Wenn aber keine weiteren LEDs benutzt werden, dann zeigt lp auf die folgende
+ Speicherstelle welche undefinierte Werte enthaelt ;-(
+ Wenn CRGB leds[NUM_LEDS+1] verwendet wird zeigt lp auf eine unbenutzte LED in dem Array.
+ Vermutlich wird diese LED irgend wo auf 0 initialisiert. Ich habe die Stelle aber nicht
+ gefunden. Mit Debugausgaben sieht man aber, das On_LEDs gleich zu begin 3 ist, wenn das
+ leds[] Array nicht um eins vergroessert wurde.
+
+ Jetzt habe ich die Zeile in der lp erhoeht wird NACH das die ermittlung des naechsten
+ Raumtyps verschoben. Damit wird lp erst dann erhoeht wenn die zweite Rote LED oder
+ eine RGB LED kommt. Damit Funktioniert das GasLight richtig.
+
+ Aber wirkt sich das auch auf andere House() Konfigurationen aus?
+
+ Bei Karl habe ich einen zweiten Fehler bemerkt: Die SINGLE_LEDs gehen nicht sofort aus
+ wenn man den Schalter ausschaltet.
+
 
 */
 
@@ -477,9 +514,10 @@ void MobaLedLib_C::Proc_House()
          if (Room_Typ != SKIP_ROOM)
               On_LEDs += Is_Room_On(lp, RawNr);
          else SkipCnt++;
-         if ((RawNr & 0x03) == 0) lp++; // If the single channels are used and the next LED is R (0) or not a single channel (4) then the LED pointer should not be incremented
+//       if ((RawNr & 0x03) == 0) lp++; // 05.10.19:  Old position
          Room_Typ = pgm_read_byte_near(++cpr); // Get the Room_Typ an RawNr of the next LED
          RawNr = Get_RawNr(Room_Typ);
+         if ((RawNr & 0x03) == 0) lp++; // If the single channels are used and the next LED is R (0) or not a single channel (4) then the LED pointer should not be incremented 05.10.19:  New position
          }
 
      #ifdef _PRINT_DEBUG_MESSAGES
@@ -507,6 +545,7 @@ void MobaLedLib_C::Proc_House()
    //if (IsOn && (On_LEDs <= On_Min || (On_LEDs < On_Max && random8(2) > 0)))
      if (IsOn && (On_LEDs <  On_Min ||                      random8(2) > 0 ))                                 // 19.10.18:
           { // turn on one LED
+          //Serial.print("On_LEDs:"); Serial.println(On_LEDs); // Debug
           if (LED_cnt - SkipCnt > On_LEDs && On_LEDs < On_Max)                                                // 19.10.18:  Added: && On_LEDs < On_Max
                {
                uint8_t Nr = random8(LED_cnt - SkipCnt - On_LEDs);

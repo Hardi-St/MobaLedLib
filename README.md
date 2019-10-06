@@ -55,10 +55,10 @@ Questions / suggestions / praise / ...
 
 **Revision History:**
 
-Ver.: 0.7.0  20.12.18:
+**Ver.: 0.7.0** 20.12.18:
 - First released version
 
-Ver.: 0.7.5  19.01.19:
+**Ver.: 0.7.5**  19.01.19:
 - Added examples:
   - Burning house (Push button action with fire, smoke, sound and fire truck). Shown in the video: https://vimeo.com/311006857
   - DCC (Digital Command Control) decoder example with two Arduinos. Shown in the video: https://vimeo.com/311996452
@@ -70,7 +70,7 @@ Ver.: 0.7.5  19.01.19:
 - Updated the English documentation to the same state like the German.
 - Using the correct version of the Pattern_Configurator.xlsb
 
-Ver.: 0.7.7 17.02.19:
+**Ver.: 0.7.7** 17.02.19:
 - Added Support for Sound modul JQ6500
 - Corrected the random mode of the Counter() function
 - Improved the serial input debug function
@@ -78,12 +78,12 @@ Ver.: 0.7.7 17.02.19:
 - 12.03.19:
   - added ButtonNOff() macro
 
-Ver.: 0.7.8 09.04.19:
+**Ver.: 0.7.8** 09.04.19:
 - Added examples
   - 00.Overview
   - 25.Analog_Push_Button
 
-Ver.: 0.7.9 09.07.19:
+**Ver.: 0.7.9** 09.07.19:
   Moved the Pattern_Configurator to the "extras" directory
   and updated the excel version.
   - Nice graphical display of the LED brightness and the Goto mode
@@ -91,11 +91,14 @@ Ver.: 0.7.9 09.07.19:
   - Added a menu to save/load/delete example sheeds
   - User interface is automatically switched to English (Example descriptions still German)
 
-Ver.: 0.8.0 16.07.19:
+**Ver.: 0.8.0** 16.07.19:
   - Added new assembly document for the main PCB from Alf and Armin
 
-Ver.: 0.9.0 27.09.19:
+**Ver.: 0.9.0** 27.09.19:
 - New Excel User interface to configure the LEDs
 - Single LED functions for the House() macro
 - Macros for Light signals, Construction lightning, ... added to the library
 
+**Ver.: 0.9.1** 06.10.19:
+- Corrected the functions Flash(), RandWelding() and PushButton_w_LED_0_? in the Prog_Generator
+- Corrected single LEDs in the House() and GasLights() function.
