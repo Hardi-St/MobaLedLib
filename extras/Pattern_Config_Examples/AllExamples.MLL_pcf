@@ -1,3 +1,31 @@
+SheetName¯Morsecode
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_SEQUENZ_NO_RESTART
+Analoges Überblenden: ¯0
+Goto Mode: ¯
+Grafische Anzeige: ¯
+Makro Name: ¯Morsecode
+Dauer¯240
+Goto Tabelle¯
+LED_Tab¯LED 1¯X¯¯X¯¯X¯¯X¯X¯X¯¯X¯X¯X¯¯X¯X¯X¯¯X¯¯X¯¯X¯¯¯¯¯X¯¯X¯X¯X¯¯X¯¯¯¯X¯¯¯¯X¯X¯X¯¯¯¯X¯X¯X¯¯¯¯X¯¯¯¯X¯X¯X¯¯¯¯¯¯¯¯X¯¯X¯¯X¯¯X¯¯¯¯X¯¯X¯X¯X¯¯¯¯X¯¯X¯X¯X¯¯X¯¯¯¯X¯X¯X¯¯X¯¯X¯¯¯¯X¯¯X¯.
+LED_Tab¯¯S¯¯S¯¯S¯¯O¯O¯O¯¯O¯O¯O¯¯O¯O¯O¯¯S¯¯S¯¯S¯¯¯¯¯R¯¯R¯R¯R¯¯R¯¯¯¯E¯¯¯¯T¯T¯T¯¯¯¯T¯T¯T¯¯¯¯E¯¯¯¯T¯T¯T¯¯¯¯¯¯¯¯H¯¯H¯¯H¯¯H¯¯¯¯A¯¯A¯A¯A¯¯¯¯R¯¯R¯R¯R¯¯R¯¯¯¯D¯D¯D¯¯D¯¯D¯¯¯¯I¯¯I
+LED_Tab¯¯.¯¯.¯¯.¯¯-¯-¯-¯¯-¯-¯-¯¯-¯-¯-¯¯.¯¯.¯¯.¯¯¯¯¯.¯¯-¯-¯-¯¯.¯¯¯¯.¯¯¯¯-¯-¯-¯¯¯¯-¯-¯-¯¯¯¯.¯¯¯¯-¯-¯-¯¯¯¯¯¯¯¯.¯¯.¯¯.¯¯.¯¯¯¯.¯¯-¯-¯-¯¯¯¯.¯¯-¯-¯-¯¯.¯¯¯¯-¯-¯-¯¯.¯¯.¯¯¯¯.¯¯.
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+msoFormControl¯535.8;86.4;76.8;16.8¯Code erstellen¯Make_Morsecode
+msoTextBox¯637.2;38.99992;522.3;162.3¯Mit diesem Blatt kann ein Morsecode als Konfiguration eines LED Musters erstellt werden. 
+Im Feld "Morsetext" wird die in Morsecode zu übersetzende Botschaft eingetragen. Wörter werden mit Leerzeichen getrennt. Das Feld "Dauer Dit in ms" gibt die Dauer eines Punktes in Millisekunden (ms) an. Das Senden eines Strichs dauert dreimal so lang wie das Senden eines Punktes. Nach jedem Punkt oder Strich ist eine Pause von der Dauer eines Punktes. Nach jedem Buchstaben ist eine Pause von der Dauer eines Striches. Nach jedem Wort ist eine Leerschritt-Pause von der Dauer von sieben Punkten. Ist "Spruchanfang/-ende senden" mit "Ja" ausgewählt, wird an den Anfang der gesamten Nachricht zusätzlich die Buchstabenfolge "KA" gesetzt (=Spruchanfang) und ans Ende die Buchstabenfolge "AR" (=Spruchende).
+Folgende besondere Signale werden unterstützt: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA} {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. Sie werden aus den entsprechenden Buchstaben ohne Trennzeichen generiert.{Attrib}B1,90 B93,93 B100,108 B222,236 B594,618
+msoTextBox¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
+
 SheetName¯AmpelX
 Erste RGB LED: ¯0
 Startkanal der RGB LED: ¯0
@@ -496,7 +524,7 @@ Makro Name: ¯_LocalVar_Sound_JQ6500
 Dauer¯400 ms
 Goto Tabelle¯G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯P E
 LED_Tab¯ADKey 1¯¯19¯26¯30¯36¯48¯0
-LED_Attr¯59.25¯i8696052
+LED_Attr¯59.3¯i8696052
 msoTextBox¯493.5;0;489;169.8678¯Dieses Beispiel ist die Vorlage für den Sound_JQ6500_PlayRandom und Sound_JQ6500_Next_of_N... Befehl. 
 Das JQ6500 Sound Modul hat einen analogen Eingang an den mehrere per Widerstand kodierte 
 Taster angeschlossen werden können. Mit einem WS2811 Modul und einem Tiefpassfilter kann

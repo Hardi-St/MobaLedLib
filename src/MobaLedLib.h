@@ -75,8 +75,12 @@
 // kleiner als _MAX_TIMER_VAL ist. Mehere _LT_MX() Ausdruecke koennen miteinander multipliziert werden. Das Ergebnis
 // ist nur dann 1 wenn alle Teile zutreffen.
 
-// Disable warning in _ALL_LT_MX2 and _ALL_LT_MX4                                                             // 05.10.19:
-#pragma GCC diagnostic ignored "-Wint-in-bool-context"
+// Disable warning in _ALL_LT_MX2 and _ALL_LT_MX4
+#define GCC_VERSION (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)
+#if GCC_VERSION >= 70300L     // Don't know exactly in which version this check was added                     // 07.10.19:
+  #pragma GCC diagnostic ignored "-Wint-in-bool-context"                                                      // 05.10.19:
+#endif
+// Todo: Noch mal mit logischer verknuepfung und nit mit "*" versuchen. Dann kann das #pragma wieder entfallen
 
 #define _MAX_TIMER_VAL 65536  // Could be chaged to test the automatic switching
 #define _LT_MX(MaxTime)                                     (((MaxTime)<_MAX_TIMER_VAL)?1:0)
@@ -817,7 +821,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define FIRE              (12 +RAM1) // Chimney fire   (RAM is used to store the Heat_p)
 #define FIRED             (13 +RAM1) // Dark chimney     "
 #define FIREB             (14 +RAM1) // Bright chimney   "
-// Resered don't remove    15
+// Reserved don't remove   15
 #define ROOM_CHIMNEY      (16 +RAM1) // With chimney fire or Light        (RAM is used to store the Heat_p for the chimney)
 #define ROOM_CHIMNEYD     (17 +RAM1) // With dark chimney fire or Light     "
 #define ROOM_CHIMNEYB     (18 +RAM1) // With bright chimney fire or Light   "
