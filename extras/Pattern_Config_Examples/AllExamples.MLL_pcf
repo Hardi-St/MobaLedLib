@@ -20,11 +20,13 @@ LED_Tab¯¯.¯¯.¯¯.¯¯-¯-¯-¯¯-¯-¯-¯¯-¯-¯-¯¯.¯¯.¯¯.¯¯¯¯¯.¯¯-¯-¯-¯¯.¯¯¯¯.¯¯¯¯-¯-¯-¯¯¯¯
 LED_Attr¯14.4¯
 LED_Attr¯14.4¯
 LED_Attr¯14.4¯
-msoFormControl¯535.8;86.4;76.8;16.8¯Code erstellen¯Make_Morsecode
 msoTextBox¯637.2;38.99992;522.3;162.3¯Mit diesem Blatt kann ein Morsecode als Konfiguration eines LED Musters erstellt werden. 
 Im Feld "Morsetext" wird die in Morsecode zu übersetzende Botschaft eingetragen. Wörter werden mit Leerzeichen getrennt. Das Feld "Dauer Dit in ms" gibt die Dauer eines Punktes in Millisekunden (ms) an. Das Senden eines Strichs dauert dreimal so lang wie das Senden eines Punktes. Nach jedem Punkt oder Strich ist eine Pause von der Dauer eines Punktes. Nach jedem Buchstaben ist eine Pause von der Dauer eines Striches. Nach jedem Wort ist eine Leerschritt-Pause von der Dauer von sieben Punkten. Ist "Spruchanfang/-ende senden" mit "Ja" ausgewählt, wird an den Anfang der gesamten Nachricht zusätzlich die Buchstabenfolge "KA" gesetzt (=Spruchanfang) und ans Ende die Buchstabenfolge "AR" (=Spruchende).
 Folgende besondere Signale werden unterstützt: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA} {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. Sie werden aus den entsprechenden Buchstaben ohne Trennzeichen generiert.{Attrib}B1,90 B93,93 B100,108 B222,236 B594,618
 msoTextBox¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
+msoPicture¯293.4;393.6;328.459;286.4642¯Insel_Lampe_Aus.jpg
+msoPicture¯293.4;393.6;328.459;286.4642¯Insel_Lampe_An.jpg
+msoFormControl¯535.8;90;80;20¯Code erstellen¯Make_Morsecode
 
 SheetName¯AmpelX
 Erste RGB LED: ¯0
