@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.9.1   // Adapt also library.properties if changed
+#define MobaLedLib_Ver  0.9.2   // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
@@ -412,32 +412,32 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define ConstrWarnLight15(     LED,InCh, MinBrightness, MaxBrightness, OnT, WaitE)             PatternT16(LED,0,  InCh,15,MinBrightness,MaxBrightness,0,0,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,WaitE,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0)
 
 // Entry signal with 3 aspects
-#define EntrySignal3_RGB(LED, InCh)     InCh_to_TmpVar(InCh, 3)                                                      \
-                                        XPatternT1(LED,160,SI_LocalVar,9,0,128,0,0,500 ms,64,4,104,0  ,63,191,191)
+#define EntrySignal3_RGB(LED, InCh)     InCh_to_TmpVar(InCh, 3)      /* 29.10.19:  Old: 500 ms */                    \
+                                        XPatternT1(LED,160,SI_LocalVar,9,0,128,0,0,125 ms,64,4,104,0  ,63,191,191)
 
-#define EntrySignal3(LED, InCh)         InCh_to_TmpVar(InCh, 3)                                                      \
-                                        XPatternT1(LED,224,SI_LocalVar,3,0,128,0,0,500 ms,145,1  ,63,191,191)
+#define EntrySignal3(LED, InCh)         InCh_to_TmpVar(InCh, 3)      /* 29.10.19:  Old: 500 ms */                    \
+                                        XPatternT1(LED,224,SI_LocalVar,3,0,128,0,0,125 ms,145,1  ,63,191,191)
 
 // Departure signal with 4 aspects
-#define DepSignal4_RGB(LED, InCh)       InCh_to_TmpVar(InCh, 7)                                                      \
-                                        XPatternT1(LED,12,SI_LocalVar,18,0,128,0,0,500 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
+#define DepSignal4_RGB(LED, InCh)       InCh_to_TmpVar(InCh, 4)      /* 29.10.19:  Old: 7 Input channels, 500 ms */  \
+                                        XPatternT1(LED,12,SI_LocalVar,18,0,128,0,0,125 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
 
-#define DepSignal4(LED, InCh)           InCh_to_TmpVar(InCh, 7)                                                      \
-                                        XPatternT1(LED,12,SI_LocalVar,5,0,128,0,0,500 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
+#define DepSignal4(LED, InCh)           InCh_to_TmpVar(InCh, 4)      /* 29.10.19:  Old: 7 Input channels, 500 ms */  \
+                                        XPatternT1(LED,12,SI_LocalVar,5,0,128,0,0,125 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
 
 // Entry signal with 3 aspects
-#define EntrySignal3Bin_RGB(LED, InCh)  Bin_InCh_to_TmpVar(InCh, 2)                                                  \
+#define EntrySignal3Bin_RGB(LED, InCh)  Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
                                         XPatternT1(LED,160,SI_LocalVar,9,0,128,0,0,500 ms,64,4,104,0  ,63,191,191)
 
-#define EntrySignal3Bin(LED, InCh)      Bin_InCh_to_TmpVar(InCh, 2)                                                  \
-                                        XPatternT1(LED,224,SI_LocalVar,3,0,128,0,0,500 ms,145,1  ,63,191,191)
+#define EntrySignal3Bin(LED, InCh)      Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                        XPatternT1(LED,224,SI_LocalVar,3,0,128,0,0,125 ms,145,1  ,63,191,191)
 
 // Departure signal with 4 aspects
-#define DepSignal4Bin_RGB(LED, InCh)    Bin_InCh_to_TmpVar(InCh, 2)                                                  \
-                                        XPatternT1(LED,12,SI_LocalVar,18,0,128,0,0,500 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
+#define DepSignal4Bin_RGB(LED, InCh)    Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                        XPatternT1(LED,12,SI_LocalVar,18,0,128,0,0,125 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
 
-#define DepSignal4Bin(LED, InCh)        Bin_InCh_to_TmpVar(InCh, 2)                                                  \
-                                        XPatternT1(LED,12,SI_LocalVar,5,0,128,0,0,500 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
+#define DepSignal4Bin(LED, InCh)        Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                        XPatternT1(LED,12,SI_LocalVar,5,0,128,0,0,125 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
 
 
 
@@ -821,7 +821,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define FIRE              (12 +RAM1) // Chimney fire   (RAM is used to store the Heat_p)
 #define FIRED             (13 +RAM1) // Dark chimney     "
 #define FIREB             (14 +RAM1) // Bright chimney   "
-// Reserved don't remove   15
+// Resered don't remove    15
 #define ROOM_CHIMNEY      (16 +RAM1) // With chimney fire or Light        (RAM is used to store the Heat_p for the chimney)
 #define ROOM_CHIMNEYD     (17 +RAM1) // With dark chimney fire or Light     "
 #define ROOM_CHIMNEYB     (18 +RAM1) // With bright chimney fire or Light   "

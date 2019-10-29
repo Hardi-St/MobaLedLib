@@ -345,7 +345,7 @@ uint8_t Find_GotoState(uint8_t Nr, uint8_t Search, const uint8_t *GotoTable_p, u
 {
   const uint8_t *tp = GotoTable_p;
   uint8_t State = 0;
-  //Dprintf("Find_GotoState(%i) ", Nr); // Debug
+  // Dprintf("Find_GotoState(%i) ", Nr); // Debug
   if (Nr > 0)
      {
      for (State = 0; State <= LastState; State++)
@@ -359,10 +359,10 @@ uint8_t Find_GotoState(uint8_t Nr, uint8_t Search, const uint8_t *GotoTable_p, u
   if (State > LastState)
        {
        State = PT_INACTIVE;
-       //Dprintf("\nGotoEnd\n"); // Debug
+       // Dprintf("\nGotoEnd\n"); // Debug
        }
   else {
-       //Dprintf("\nGoto Pos %i\n", State); // Deug
+       // Dprintf("\nGoto Pos %i\n", State); // Deug
        }
   return State;
 }
@@ -467,7 +467,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
         if (ActualVar_p)
              {
              if (ActualVar_p->Changed || Initialize)                                                          // 18.01.19:  Added: "|| Initialize" otherwise State is set to PT_INACTIVE
-                {                                                                                             //            which causes wring startup values because "L1 = p.LEDs * dp->State;"
+                {                                                                                             //            which causes wrong startup values because "L1 = p.LEDs * dp->State;"
                 dp->State = Find_GotoState(ActualVar_p->Val, START_BIT, GotoTable_p, LastState);              //            generates garbage
                 //if (dp->State > LastState) { dp->State = LastState; Dprintf("Goto state not found => Goto LastState\n");}
                 }
@@ -523,7 +523,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
                                if (XFade)                                                                     // 11.10.18:
                                   {
                                   LEDRamP = LEDRamStart;
-                                  for (uint8_t led; led < p.LEDs; led++)
+                                  for (uint8_t led = 0; led < p.LEDs; led++)                                  // 20.10.19:  Initialisation led = 0 was missing ;-(
                                     *(LEDRamP++) = lp[led];
                                   }
                              #endif
@@ -538,7 +538,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
                                    return ;     // Don't update the LEDs and the state if Run2endAndWait is active and StateP != PT_INACTIVE
                              else dp->State = PT_INACTIVE;  // Stop
                              if (ModeAFlag & PF_NO_SWITCH_OFF) return ;                                       // 08.09.18:
-                             //Dprintf("Turned Off\n");
+                             // Dprintf("Turned Off\n");
                              break;
         }
 
@@ -575,11 +575,13 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
                         v0 = ScaleValue(GetLEDVal(L0++, BitsPerChannel, PatternP),BitsPerChannel,p.Val0,p.Val1);
                  }
               v1           = ScaleValue(GetLEDVal(L1++, BitsPerChannel, PatternP),BitsPerChannel,p.Val0,p.Val1);
+              //if (!Initialize && AnalogMode) Dprintf("%i %i", (int)v0, (int)v1); // Debug 24.10.19:
               }
          // Update one LED
-         if (AnalogMode && (Inp_Is_On(Inp) || HSV_mode)) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added:  HSV_mode to correctly turn off the LEDs
-              {
+         if (AnalogMode && (Inp_Is_On(Inp) || (HSV_mode && !Initialize))) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added: HSV_mode to correctly turn off the LEDs
+              {                                                                                                                // 20.10.19:  Added: !Initialize because otherwise the Cave_Illumination shows random colors at startup
               v1 = Calculate_V(v0, v1, Duration, dp->Start_t, Timer, EaseInOut); // Calculate the analog value and write it to lp
+              //if (!Initialize && AnalogMode) Dprintf(" %i\n", v1); // Debug 24.10.19:
               if (HSV_mode)
                    {
                    uint8_t LEDCh = (L + (NStru & 0x03)) % 3;
@@ -615,6 +617,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
              uint8_t GotoNr = (GotoTabVal & GOTO_MASK);
              if (GotoNr)
                 {
+                // Dprintf("GotoNr %i\n", GotoNr); // Debug
                 dp->State = Find_GotoState(GotoNr, POS_M_BIT, GotoTable_p, LastState);
                 Jump = true;
                 }
@@ -634,20 +637,43 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
              {
              dp->dt = max(20, Duration>>8); // Eigentlich haengt dt von der Anzahl der Schritte ab (abs(Val1-Val0)) aber das macht sich erst ab einer Dauer > 5.4 Sekunden bemerkbar
              //Dprintf("dt=%i State %i\n", dp->dt, dp->State+1); // Debug
-             }
-          #ifdef USE_XFADE
-            if (XFade)
-               {
-               LEDRamP = LEDRamStart;
-               lp = lp0;
-               for (uint8_t led; led < p.LEDs; led++)
-                 *(LEDRamP++) = *(lp++);
-               }
-          #endif
+//             }  // 24.10.19:  Old Position
+             #ifdef USE_XFADE
+               if (XFade)
+                  {
+                  LEDRamP = LEDRamStart;
+                  lp = lp0;
+                  for (uint8_t led = 0; led < p.LEDs; led++)                                                  // 20.10.19:  Initialisation led = 0 was missing ;-(
+                    *(LEDRamP++) = *(lp++);
+                  }
+             #endif
+             } // 24.10.19:  New position
           }
      else dp->dt = Duration;
      }
 }
+
+/*
+ Fehler in X-Mode:                                                                                            24.10.19:
+ ~~~~~~~~~~~~~~~~~
+ Die Überblendkurve hat nicht gestimmt. Das Überblenden ging viel schneller als im A-Mode.
+ Problem: Der Startwert LEDRamP wurde berits beim überblenden neu gesetzt. Eigentlich hätte er erst
+ am Ende der Überblendphase auf den endwert gesetzt werden sollen.
+ Dadurch war die Überblendfunktion keine Gerade sondern eine abgerundete Rechteck Funktion.
+ Der Fehler war eine falsch gesetzte Klammer welche wegen der falschen Einrückung nicht aufgefallen ist.
+ Achtung: Davon sind alle XPattern Effekte betroffen.
+
+ Fehlerhaftes überblenden         So hätte es sein sollen
+          _-------                             ---------
+         '                                    /
+        |                                    /
+        |                                   /
+        |                                  /
+       |                                  /
+ ____-'                             _____/
+
+*/
+
 
 // Reducing the updatetime by limmiting the minimal dt:        But not faster than 20 ms = 50 Hz
 // max(30,... 447 Lauflicht, 555 All  (15 channels, 200ms)

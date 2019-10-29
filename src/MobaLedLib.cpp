@@ -275,7 +275,21 @@
               and also when switched back from 180 to 30: 180, 180, 180, 0, 0, 0, 0, 30, 30, 30,
  06.09.19:  - Added SINGLE_LEDxy
             - Added two new colors to Default_Room_Col_Tab
-24.09.19:   - Added binary signals
+ 24.09.19:  - Added binary signals
+ 20.10.19:  - Corrected problems in the pattern function
+            - XPattern:
+              Added missing initialization in two for() loops which cause random errors in the XPattern mode
+              Problem was detected in the "KellerLicht()". Here the start value was wrong when the function
+              was turned on. It starts fading from a different color than expected ;-(
+            - HSV Mode:
+              Corrected the initialization of the HSV mode.
+              Problem was detected in the "Cave_Illumination()". Here the LEDs started with random color
+              at power on. The Cave_Illumination is not active at power on.
+ 24.10.19:  - Corrected XPattern function
+ 29.10.19:  - Corrected number of input chanels in the DepSignal4() and DepSignal4_RGB() macros. (Old 7: => 4)
+              This error created strange effects. In the example from Thomas the prior called Flash()
+              function stopped the fading in the XPattern() function. This was caused because the
+              InCh_to_TmpVar() macro used the temporary input channel by mistake ;-(
 
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
@@ -549,6 +563,7 @@ MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned
   //  #endif
   //Dprintf("MobaLedLib_C Constructor\n");
 
+  //memset(_leds, 3, sizeof(CRGB)*Num_Leds); // Debug line to find initialization problems
   memset(TV_Dat, 0, sizeof(TV_Dat));
   memset(RAM,    0, RamSize);
 

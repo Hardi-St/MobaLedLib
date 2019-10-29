@@ -102,3 +102,7 @@ Questions / suggestions / praise / ...
 **Ver.: 0.9.1** 06.10.19:
 - Corrected the functions Flash(), RandWelding() and PushButton_w_LED_0_? in the Prog_Generator
 - Corrected single LEDs in the House() and GasLights() function.
+
+**Ver.: 0.9.2** 30.10.19:
+- Corrected the XPattern function (used in the Light signals)
+- Corrected the Excel Programs
