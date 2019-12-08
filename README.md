@@ -109,7 +109,7 @@ Questions / suggestions / praise / ...
 - Corrected the XPattern function (used in the Light signals)
 - Corrected the Excel Programs
 
-**Ver.: 0.9.2** 08.12.19:
+**Ver.: 0.9.3** 08.12.19:
 - Engagement of Pattern_Configurator and Program_Generator => Easy exchange between the tools
 - CheckColors function: Live view of the colors and brightens of the LEDs
 - Existing lines could be edited in the Prog_Generator
