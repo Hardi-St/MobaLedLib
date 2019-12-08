@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.9.2   // Adapt also library.properties if changed
+#define MobaLedLib_Ver  0.9.3   // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
@@ -821,7 +821,7 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define FIRE              (12 +RAM1) // Chimney fire   (RAM is used to store the Heat_p)
 #define FIRED             (13 +RAM1) // Dark chimney     "
 #define FIREB             (14 +RAM1) // Bright chimney   "
-// Resered don't remove    15
+// Reserved don't remove   15
 #define ROOM_CHIMNEY      (16 +RAM1) // With chimney fire or Light        (RAM is used to store the Heat_p for the chimney)
 #define ROOM_CHIMNEYD     (17 +RAM1) // With dark chimney fire or Light     "
 #define ROOM_CHIMNEYB     (18 +RAM1) // With bright chimney fire or Light   "

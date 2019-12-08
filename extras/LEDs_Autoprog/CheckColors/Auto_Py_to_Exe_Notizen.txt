@@ -1,0 +1,23 @@
+Konvertieren in eine Exce mit dem Programm auto-py-to-exe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Download:
+https://pypi.org/project/auto-py-to-exe/
+
+Start mit C:\Users\Hardi\AppData\Local\Programs\Python\Python37-32\Scripts\auto-py-to-exe.exe
+
+- Der Pfad macht dem Programm Probleme. Vermutlich wegen dem Umlaut in Märklin
+  In C:\Temp\CheckColors hat es funktioniert
+  => Mit Subst ein eigenes LW generieren vielleicht geht es dann.
+
+- Un der Web Oberfläche muss der Schalter "--noupx" aktiviert werden sonst
+  kommt die Fehlermeldung:
+   "VCRUNTIME140.dll" is either not designed to run on Windows or it contains an error
+  (Siehe: https://nitratine.net/blog/post/issues-when-using-auto-py-to-exe/)
+
+- Es lief Anfangs nicht mit der Python Version 3.8.0.
+  Hier Findet man das es (noch) nicht mit der Version 3.8.0 läuft:
+  https://github.com/pyinstaller/pyinstaller/issues/4265
+  Danach habe ich die 3.7.5 Installiert. Dann ging es.
+
+- Konfiguration für auto-py-to-exe ist in der Datei: Auto_Py_to_Exe_Configuration.json
+  Gespeichert. Hier ist aber noch der Pfad "C:\Temp\CheckColors" drinnen.

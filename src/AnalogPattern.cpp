@@ -656,14 +656,14 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
 /*
  Fehler in X-Mode:                                                                                            24.10.19:
  ~~~~~~~~~~~~~~~~~
- Die Überblendkurve hat nicht gestimmt. Das Überblenden ging viel schneller als im A-Mode.
- Problem: Der Startwert LEDRamP wurde berits beim überblenden neu gesetzt. Eigentlich hätte er erst
- am Ende der Überblendphase auf den endwert gesetzt werden sollen.
- Dadurch war die Überblendfunktion keine Gerade sondern eine abgerundete Rechteck Funktion.
- Der Fehler war eine falsch gesetzte Klammer welche wegen der falschen Einrückung nicht aufgefallen ist.
+ Die Ueberblendkurve hat nicht gestimmt. Das Ueberblenden ging viel schneller als im A-Mode.
+ Problem: Der Startwert LEDRamP wurde berits beim ueberblenden neu gesetzt. Eigentlich haette er erst
+ am Ende der Ueberblendphase auf den endwert gesetzt werden sollen.
+ Dadurch war die Ueberblendfunktion keine Gerade sondern eine abgerundete Rechteck Funktion.
+ Der Fehler war eine falsch gesetzte Klammer welche wegen der falschen Einrueckung nicht aufgefallen ist.
  Achtung: Davon sind alle XPattern Effekte betroffen.
 
- Fehlerhaftes überblenden         So hätte es sein sollen
+ Fehlerhaftes ueberblenden         So haette es sein sollen
           _-------                             ---------
          '                                    /
         |                                    /

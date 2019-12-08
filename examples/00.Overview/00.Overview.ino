@@ -9,15 +9,26 @@
 Dieses Dokument enthält Liste aller Beispielprogramme und erklärt diese stichpunktartig.
 Details findet man in den entsprechenden Programmen.
 
+
 Neu: Seit Version 0.9.0 der Bibliothek gibt es ein Excel Programm mit dem die Funktionen 
      der MobaLedLib ohne zu programmieren genutzt werden können. Man füllt lediglich eine
      Tabelle mit den gewünschten Effekten und schickt diese mit einem Knopfdruck zum Arduino. 
      Das Excel Programm unterstützt den Benutzer mit verschiedenen Dialogen. Damit wird die 
      Erstellung von Licht, Sound und Bewegungseffekten zum Kinderspiel.
 
-     Das Excel Programm wird geöffnet indem man die folgende Zeile in die Adresszeile des 
-     Windows Explorers kopiert:
-     %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\examples\23_B.LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
+     Das Excel Programm wird geöffnet indem man die Tasten Win+R gleichzeitig drückt und die 
+     folgende Zeile in den "Start" Dialog kopiert: 
+       %USERPROFILE%\Documents\Arduino\libraries\MobaLedLib\extras\Prog_Generator_MobaLedLib.xlsm
+     
+     Beim ersten Start des Programms wird es in das Verzeichnis 
+       %USERPROFILE%\Documents\Arduino\MobaLedLib_ <Lib Version> 
+     kopiert damit es verändert und gespeichert werden kann ohne dass die Bibliothek
+     beeinflusst wird. 
+     Es wird ein Link auf dem Windows Desktop angelegt über den das Programm danach 
+     gestartet wird:
+         Prog_Generator
+         MobaLedLib
+
 
 
 Dieses Beispiel wurde eingefügt, weil es manchmal schwierig zu verstehen ist was sich
@@ -240,15 +251,27 @@ Overview of all examples:
 This document contains a list of all sample programs and explains them in a nutshell. 
 Details can be found in the corresponding programs. 
 
+
 New: Since version 0.9.0 of the library there is an Excel program with which the functions 
      of the MobaLedLib can be used without programming. You simply fill a table with the 
      desired effects and send them to the Arduino with the push of a button. The Excel 
      program supports the user with various dialogs. This makes the creation of light, 
      sound and motion effects a breeze.
 
-     The Excel program is opened by copying the following line into the address bar of 
-     Windows Explorer:
-     %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\examples\23_B.LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
+     To start the excel program press Win+r key together and copy the following line 
+     into the "Run" dialog and press enter:
+       %USERPROFILE%\Documents\Arduino\libraries\MobaLedLib\extras\Prog_Generator_MobaLedLib.xlsm
+
+     The first time you start the program it will be copied in the directory 
+       %USERPROFILE%\Documents\Arduino\MobaLedLib_ <Lib Version> 
+     so it can be changed and saved without the library being affected.
+     A link will be created on the Windows desktop via the program afterwards
+     is started:
+         Prog_Generator
+         MobaLedLib
+
+
+
 
 This example has been inserted because it is sometimes difficult to understand what a 
 short name means. It also offers the possibility to test the programs very fast without 

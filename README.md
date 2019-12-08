@@ -2,9 +2,11 @@
 ###Arduino library for controlling LEDs and other components on a model railway.
 
 
-**New: Excel User interface to configure the LEDs without programming at all!**
-Copy the following line to open the Excel sheet after the library is installed:
- %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\examples\23_B.LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
+**New: Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
+
+To start the excel program press the Win+r key together and copy the following line
+into the "Run" dialog and press enter:
+  %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\extras\LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
 
 **The use of RGB LEDs offers fascinating possibilities for lighting a model railway:**
 - **Infinite number of lighting effects** - Brightness and color of each LED can be
@@ -106,3 +108,8 @@ Questions / suggestions / praise / ...
 **Ver.: 0.9.2** 30.10.19:
 - Corrected the XPattern function (used in the Light signals)
 - Corrected the Excel Programs
+
+**Ver.: 0.9.2** 08.12.19:
+- Engagement of Pattern_Configurator and Program_Generator => Easy exchange between the tools
+- CheckColors function: Live view of the colors and brightens of the LEDs
+- Existing lines could be edited in the Prog_Generator

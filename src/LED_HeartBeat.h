@@ -56,12 +56,12 @@ LED_Heartbeat_C(uint8_t PinNr) // Constructor
   pinMode(LED_Pin, OUTPUT);
 }
 
-//-----------
-void Update()
-//-----------
+//---------------------------------
+void Update(uint16_t Period = 1000)                                                                           // 03.11.19:  Added: Period
+//---------------------------------
 {
   uint8_t t4 = millis()>>2;
-  if ((uint8_t)(t4 - HB_Time) >= 500/4)
+  if ((uint8_t)(t4 - HB_Time) >= Period/8)
      {
      HB_Time = t4;
      digitalWrite(LED_Pin, !digitalRead(LED_Pin));

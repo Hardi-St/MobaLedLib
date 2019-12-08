@@ -1,4 +1,3 @@
-
 # Dokumente zur MobaLedLib
 
 Dieses Dokument enthält Links zu allen wichtigen Dokumenten der MobaLedLib. Mit einem Klick auf die unterstrichenen Überschriften kommt man direkt zu dem entsprechenden Dokument. Dort kann man es lesen oder herunter laden.
@@ -7,9 +6,7 @@ Das Hauptverzeichnis aller Dokumente erreicht man über diesen Link: [MobaLedLib_
 
 Meldet euch bitte bei fehlerhaften Links, wenn Ihr Verbesserungsvorschläge habt, wenn Ihr an der Dokumentation mitarbeiten wollt, wenn es Probleme gibt, ….
 
-bei:
-
-[MobaLedLib@gmx.de](mailto:MobaLedLib@gmx.de)
+bei:  [MobaLedLib@gmx.de](mailto:MobaLedLib@gmx.de)
 
 # Software Dokumentation
 
@@ -77,9 +74,11 @@ Auf der Servo LED Platine wird der kleine, 8-polige Arduino Bruder ATTiny85 verw
 
 Mit dieser Schaltung können bis zu 80 Schalter eingelesen werden. Das kann noch erweitert werden indem die Platinen kaskadiert werden. Sie kann außerdem zum einlesen von „Knopfdruck Aktionen“ an Anlagenrand eingesetzt werden. Dazu enthält sie WS2811 Chips mit denen die LEDs in den Tastern angesteuert werden. Das tolle daran ist, dass fast beliebig viele Taster über eine 8-polige Leitung mit dem Arduino verbunden werden können.
 
-**Anwendungsbeispiele**
+# Anwendungsbeispiele
 
 [Straßenlaternen](https://github.com/Hardi-St/MobaLedLib_Docu/blob/master/Anwendungsbeispiele/Strassenlaternen.pdf)
+
 Hier beschreibt Armin den Anschluss von Straßenlaternen über WS2811 und was man dabei beachten muss. Er zeigt auch anhand von Bildern wie das aussehen kann.
+
 > Written with [StackEdit](https://stackedit.io/).
 
