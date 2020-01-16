@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  0.9.3   // Adapt also library.properties if changed
+#define MobaLedLib_Ver  1.0.0   // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
@@ -337,17 +337,33 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 
 
 
-#define  House(         LED,InCh, On_Min,On_Limit, ...)                     HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,On_Limit,HOUSE_MIN_T,HOUSE_MAX_T,COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
-#define  HouseT(        LED,InCh, On_Min,On_Limit,Min_T,Max_T,...)          HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,On_Limit,Min_T,      Max_T,      COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
-#define  GasLights(     LED,InCh, ...)                                      HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),255,   255,     GAS_MIN_T,  GAS_MAX_T,  COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Gas lights
+#define  House(         LED,InCh, On_Min,On_Limit, ...)                     HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,     On_Limit,HOUSE_MIN_T,HOUSE_MAX_T,COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
+#define  HouseT(        LED,InCh, On_Min,On_Limit,Min_T,Max_T,...)          HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min,     On_Limit,Min_T,      Max_T,      COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
+#define  GasLights(     LED,InCh, ...)                                      HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),127,        255,     GAS_MIN_T,  GAS_MAX_T,  COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Gas lights
+#define  House_Inv(     LED,InCh, On_Min,On_Limit, ...)                     HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min|0x80,On_Limit,HOUSE_MIN_T,HOUSE_MAX_T,COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
+#define  HouseT_Inv(    LED,InCh, On_Min,On_Limit,Min_T,Max_T,...)          HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),On_Min|0x80,On_Limit,Min_T,      Max_T,      COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Room types
+#define  GasLights_Inv( LED,InCh, ...)                                      HOUSE_T,     _CHKL(LED)+RAMH,_ChkIn(InCh),127   |0x80,255,     GAS_MIN_T,  GAS_MAX_T,  COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,  // Variable number of Gas lights
 #define  Fire(          LED,InCh, LedCnt, Brightness)                       FIRE_T,      _CHKL(LED)+RAM1+RAMN(LedCnt),_ChkIn(InCh),LedCnt,Brightness,
 #ifdef _NEW_ROOM_COL
  #define Set_ColTab(    r0,g0,b0,r1,g1,b1,r2,g2,b2,r3,g3,b3,r4,g4,b4,r5,g5,b5,r6,g6,b6,r7,g7,b7,r8,g8,b8,r9,g9,b9,r10,g10,b10,r11,g11,b11,r12,g12,b12,r13,g13,b13,r14,g14,b14,r15,g15,b15,r16,g16,b16) SET_COLTAB_T, r0,g0,b0,r1,g1,b1,r2,g2,b2,r3,g3,b3,r4,g4,b4,r5,g5,b5,r6,g6,b6,r7,g7,b7,r8,g8,b8,r9,g9,b9,r10,g10,b10,r11,g11,b11,r12,g12,b12,r13,g13,b13,r14,g14,b14,r15,g15,b15,r16,g16,b16,
 #endif
+#if _USE_SET_TVTAB                                                                                            // 10.01.20:
+  #define Set_TV_COL1(  InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max)   SET_TV_TAB_T, InCh, 0x00, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max,
+  #define Set_TV_COL2(  InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max)   SET_TV_TAB_T, InCh, 0x01, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max,
+  #define Set_TV_BW1(   InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,            G,            B)              SET_TV_TAB_T, InCh, 0x00, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,     R,     G,     G,     B,     B,
+  #define Set_TV_BW2(   InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,            G,            B)              SET_TV_TAB_T, InCh, 0x01, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,     R,     G,     G,     B,     B,
+#endif
+
+#if _USE_DEF_NEON                                                                                             // 12.01.20:
+  #define Set_Def_Neon( InCh, Rand_On, RandOff, Min_Def)                    SET_DEF_NEON_T, InCh, Rand_On, RandOff, Min_Def,
+#endif
+
+#define _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) (((Mode)&RF_NOT_SAME) && (DstVarN) - (DstVar1) == 0) ? ((Mode) & ~RF_NOT_SAME) : (Mode) // Prevent endless loop if DstVar1 == DstVarN     // 13.01.20:
 
 #define  Logic(         DstVar, ...)                                        LOGIC_T,     DstVar, COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,
 #define  Counter(       Mode, InCh, Enable, TimeOut, ...)                   COUNTER_T,   _W2B(Mode), InCh+RAM3, Enable, _T2B((TimeOut)/16), COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,      // TimeOut maximal 17 Min
-#define  RandMux(       DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RANDMUX_T,   DstVar1+RAM4, DstVarN, InCh, (Mode) | _RAND_MODE2((MinTime), (MaxTime)),                   _Tx2B2(MinTime, MaxTime),               _Tx2B2(MaxTime, MinTime),
+#define  RandMux(       DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RANDMUX_T,   DstVar1+RAM4, DstVarN, InCh, _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) | _RAND_MODE2((MinTime), (MaxTime)),                   _Tx2B2(MinTime, MaxTime),               _Tx2B2(MaxTime, MinTime),
+#define  RandCntMux(    DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RandMux(DstVar1, DstVarN, InCh, Mode|RF_SEQ, MinTime, MaxTime)
 #define  Random(        DstVar, InCh, Mode, MinTime, MaxTime, MinOn, MaxOn) RANDOM_T,    DstVar +RAM4,          InCh, (Mode) | _RAND_MODE4((MinTime), (MaxTime), (MinOn), (MaxOn)), _Tx2B4(MinTime, MaxTime, MinOn, MaxOn), _Tx2B4(MaxTime, MinTime, MinOn, MaxOn), _Tx2B4(MinOn, MaxOn, MinTime, MaxTime), _Tx2B4(MaxOn, MinOn, MinTime, MaxTime),
 #define  Welding(       LED, InCh)                                          WELDING_T,   _CHKL(LED)+RAM5, InCh,
 #define  RandWelding(   LED, InCh, Var, MinTime, MaxTime, MinOn, MaxOn)     Random(Var, InCh, RM_NORMAL, MinTime, MaxTime, MinOn, MaxOn) Welding(LED, Var)
@@ -381,6 +397,11 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  AmpelX(        LED,InCh)                             PatternT4(LED,0,InCh,6,0, 255,0,0,3 Sec,1 Sec,10 Sec,3 Sec,201,194,40,73,22,70)                                       // Ampel fuer Kreuzung mit 6 einzelnen LEDs (Achtung keine RGB LEDs)
 #define  Flash(         LED, Cx, InCh, Var, MinTime, MaxTime) Random(Var, InCh, RM_NORMAL, MinTime, MaxTime, 30 ms, 30 ms) Const(LED, Cx, Var, 0, 255)                                         // Zufaelliges Blitzlicht (Fotograf)
 
+#define  Def_Neon_Misha(LED, InCh, Var, Min_Delay, Max_Delay) Random(Var, InCh, RM_NORMAL, Min_Delay, Max_Delay, 500 ms, 2000 ms)  \
+                                                              PatternT8(LED,8, Var,3,1,128,0,0,300 ms,100 ms,300 ms,100 ms,4 sec,400 ms,100 ms,100 ms,0,254,3,248,191,136,17,128,100)
+
+
+
 #define ConstrWarnLightRGB6(   LED,InCh, MinBrightness, MaxBrightness, OnT, WaitT, WaitE)      PatternT12(LED,28,InCh,18,0,255,0,0,OnT,WaitT,OnT,WaitT,OnT,WaitT,OnT,WaitT,OnT,WaitT,OnT,WaitE,MaxBrightness,MaxBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MaxBrightness,MaxBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MaxBrightness,MaxBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MaxBrightness,MaxBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MaxBrightness,MaxBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MaxBrightness,MaxBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0,MinBrightness,MinBrightness,0)
 
 #define ConstrWarnLightFlash3( LED,InCh, MinBrightness, MaxBrightness, OnT, WaitT, WaitE)      PatternT6( LED,128,InCh,3, MinBrightness,MaxBrightness,0,0,OnT,WaitT,OnT,WaitT,OnT,WaitE,129,64,0,0,0)
@@ -410,6 +431,15 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define ConstrWarnLight13(     LED,InCh, MinBrightness, MaxBrightness, OnT, WaitE)             PatternT14(LED,64, InCh,13,MinBrightness,MaxBrightness,0,0,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,WaitE,1,64,0,16,0,4,0,1,64,0,16,0,4,0,1,64,0,16,0,4,0,1,0)
 #define ConstrWarnLight14(     LED,InCh, MinBrightness, MaxBrightness, OnT, WaitE)             PatternT15(LED,192,InCh,14,MinBrightness,MaxBrightness,0,0,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,WaitE,1,128,0,64,0,32,0,16,0,8,0,4,0,2,0,1,128,0,64,0,32,0,16,0,8,0,0)
 #define ConstrWarnLight15(     LED,InCh, MinBrightness, MaxBrightness, OnT, WaitE)             PatternT16(LED,0,  InCh,15,MinBrightness,MaxBrightness,0,0,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,OnT,WaitE,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0)
+
+// Control the charlieplexing Modul
+#define Charlie_Buttons(LED, InCh, States)    InCh_to_TmpVar(InCh, States) \
+                                              PatternT1(LED,29,SI_LocalVar,2,0,255,0,0,1 ms,15,15,35,35,55,55,75,75,95,95,115,115,135,135,155,155,175,175,195,195,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+
+#define _GET_BIN_SIZE(n)  (n<=1?0:(n<=2?1:(n<=4)?2:(n<=8?3:(n<=16?4:999)))) // Number of bits needed for n states (n up to 16)
+#define Charlie_Binary(LED, InCh, BinStates)  Bin_InCh_to_TmpVar(InCh, _GET_BIN_SIZE((BinStates))) \
+                                              PatternT1(LED,29,SI_LocalVar,2,0,255,0,0,1 ms,15,15,35,35,55,55,75,75,95,95,115,115,135,135,155,155,175,175,195,195,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+
 
 // Entry signal with 3 aspects
 #define EntrySignal3_RGB(LED, InCh)     InCh_to_TmpVar(InCh, 3)      /* 29.10.19:  Old: 500 ms */                    \
@@ -534,39 +564,39 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 
 
 // Sound functions could be disable / enabled with the variable SI_Enable_Sound
-#define _Sound_ADKey(    LED, InCh, ADKey1, ADKey2)         PatternTE2(LED,28,InCh,SI_Enable_Sound,2,0,255,0,PM_SEQUENZ_NO_RESTART,200 ms,10 ms,ADKey1,ADKey2,0,0)
+#define Sound_ADKey(    LED, InCh, ADKey1, ADKey2)         PatternTE2(LED,28,InCh,SI_Enable_Sound,2,0,255,0,PM_SEQUENZ_NO_RESTART,200 ms,10 ms,ADKey1,ADKey2,0,0)
 
 // Volume changing is independent from SI_Enable_Sound
-#define _Sound_ADKeyTime(LED, InCh, ADKey1, ADKey2, Time)   PatternT2( LED,28,InCh,                  2,0,255,0,PM_SEQUENZ_NO_RESTART,Time,10 ms,ADKey1,ADKey2,0,0)
+#define Sound_ADKeyTime(LED, InCh, ADKey1, ADKey2, Time)   PatternT2( LED,28,InCh,                  2,0,255,0,PM_SEQUENZ_NO_RESTART,Time,10 ms,ADKey1,ADKey2,0,0)
 
-#define Sound_Prev(      LED, InCh)         _Sound_ADKey(LED, InCh, SOUND_ADKEY5,  0)
-#define Sound_Next(      LED, InCh)         _Sound_ADKey(LED, InCh, SOUND_ADKEY6,  0)
-#define Sound_PausePlay( LED, InCh)         _Sound_ADKey(LED, InCh, SOUND_ADKEY7,  0)
-#define Sound_Loop(      LED, InCh)         _Sound_ADKey(LED, InCh, SOUND_ADKEY8,  0)
-#define Sound_USDSPI(    LED, InCh)         _Sound_ADKey(LED, InCh, SOUND_ADKEY9,  0)  // ? U / SD / SPI
-#define Sound_PlayMode(  LED, InCh)         _Sound_ADKey(LED, InCh, SOUND_ADKEY10, 0)  // If Loop is active the button toggles between  Sequence, Sequence, Repeat same, Random, Loop off
+#define Sound_Prev(      LED, InCh)         Sound_ADKey(LED, InCh, SOUND_ADKEY5,  0)
+#define Sound_Next(      LED, InCh)         Sound_ADKey(LED, InCh, SOUND_ADKEY6,  0)
+#define Sound_PausePlay( LED, InCh)         Sound_ADKey(LED, InCh, SOUND_ADKEY7,  0)
+#define Sound_Loop(      LED, InCh)         Sound_ADKey(LED, InCh, SOUND_ADKEY8,  0)
+#define Sound_USDSPI(    LED, InCh)         Sound_ADKey(LED, InCh, SOUND_ADKEY9,  0)  // ? U / SD / SPI
+#define Sound_PlayMode(  LED, InCh)         Sound_ADKey(LED, InCh, SOUND_ADKEY10, 0)  // If Loop is active the button toggles between  Sequence, Sequence, Repeat same, Random, Loop off
 
 // Volume
 // First Volume change after 1000 ms
 // Then volume is changed every 150 ms
 // According to the documentation there are 30 stepps
-#define Sound_DecVol(    LED, InCh, Steps)  _Sound_ADKeyTime(LED, InCh, SOUND_ADKEY5,  0, 850 ms - 75 ms + (Steps-1) * 150 ms)
-#define Sound_IncVol(    LED, InCh, Steps)  _Sound_ADKeyTime(LED, InCh, SOUND_ADKEY6,  0, 850 ms - 75 ms + (Steps-1) * 150 ms)
+#define Sound_DecVol(    LED, InCh, Steps)  Sound_ADKeyTime(LED, InCh, SOUND_ADKEY5,  0, 850 ms - 75 ms + (Steps-1) * 150 ms)
+#define Sound_IncVol(    LED, InCh, Steps)  Sound_ADKeyTime(LED, InCh, SOUND_ADKEY6,  0, 850 ms - 75 ms + (Steps-1) * 150 ms)
 
-#define Sound_Seq1( LED, InCh)    _Sound_ADKey(LED, InCh, SOUND_ADKEY1, 0)
-#define Sound_Seq2( LED, InCh)    _Sound_ADKey(LED, InCh, SOUND_ADKEY2, 0)
-#define Sound_Seq3( LED, InCh)    _Sound_ADKey(LED, InCh, SOUND_ADKEY3, 0)
-#define Sound_Seq4( LED, InCh)    _Sound_ADKey(LED, InCh, SOUND_ADKEY4, 0)
-#define Sound_Seq5( LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY1)
-#define Sound_Seq6( LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY2)
-#define Sound_Seq7( LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY3)
-#define Sound_Seq8( LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY4)
-#define Sound_Seq9( LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY5)
-#define Sound_Seq10(LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY6)
-#define Sound_Seq11(LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY7)
-#define Sound_Seq12(LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY8)
-#define Sound_Seq13(LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY9)
-#define Sound_Seq14(LED, InCh)    _Sound_ADKey(LED, InCh, 0, SOUND_ADKEY10)
+#define Sound_Seq1( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_ADKEY1, 0)
+#define Sound_Seq2( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_ADKEY2, 0)
+#define Sound_Seq3( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_ADKEY3, 0)
+#define Sound_Seq4( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_ADKEY4, 0)
+#define Sound_Seq5( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY1)
+#define Sound_Seq6( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY2)
+#define Sound_Seq7( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY3)
+#define Sound_Seq8( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY4)
+#define Sound_Seq9( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY5)
+#define Sound_Seq10(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY6)
+#define Sound_Seq11(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY7)
+#define Sound_Seq12(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY8)
+#define Sound_Seq13(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY9)
+#define Sound_Seq14(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_ADKEY10)
 
 #define _LocalVar_Sound(LED)  PatternT1(LED,28,SI_LocalVar,2,0,255,0,0,200 ms,0,0,SOUND_ADKEY1,0,SOUND_ADKEY2,0,SOUND_ADKEY3,0,SOUND_ADKEY4,0,0,SOUND_ADKEY1,0,SOUND_ADKEY2,0,SOUND_ADKEY3,0,SOUND_ADKEY4,0,SOUND_ADKEY5,0,SOUND_ADKEY6,0,SOUND_ADKEY7,0,SOUND_ADKEY8,0,SOUND_ADKEY9,0,SOUND_ADKEY10,0,0  ,1,129,129,129,129,129,129,129,129,129,129,129,129,129,129,127)
 
@@ -586,10 +616,10 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 //---------------------------- JQ6500 Sound modul ---------------------------------                           // 13.02.19:
 
 // Sound functions could be disable / enabled with the variable SI_Enable_Sound
-#define _Sound_JQ6500_ADKey(     LED, InCh, ADKey)         PatternTE2(LED,28,InCh,SI_Enable_Sound,1,0,255,0,PM_SEQUENZ_NO_RESTART,400 ms,10 ms,ADKey,0) // Normal WS2811 modul with G+RB outputs anf -O+ inputs
+#define Sound_JQ6500_ADKey(     LED, InCh, ADKey)         PatternTE2(LED,28,InCh,SI_Enable_Sound,1,0,255,0,PM_SEQUENZ_NO_RESTART,400 ms,10 ms,ADKey,0) // Normal WS2811 modul with G+RB outputs anf -O+ inputs
 
 // Volume changing is independent from SI_Enable_Sound
-#define _Sound_JQ6500_ADKeyTime(     LED, InCh, ADKey, Time)   PatternT2( LED,28,InCh,                1,0,255,0,PM_SEQUENZ_NO_RESTART,Time,10 ms,ADKey,0)
+#define Sound_JQ6500_ADKeyTime(     LED, InCh, ADKey, Time)   PatternT2( LED,28,InCh,                1,0,255,0,PM_SEQUENZ_NO_RESTART,Time,10 ms,ADKey,0)
 
                                         //  ADKey1     400ms 470 Ohm
 #define SOUND_JQ6500_ADKEY1_N   29      //  1
@@ -610,35 +640,35 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define SOUND_JQ6500_ADKEY7_BG	238		//	Next/Vol+
 
 
-#define Sound_JQ6500_Prev(  LED, InCh)         _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY6_N)
-#define Sound_JQ6500_Next(  LED, InCh)         _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY7_N)
+#define Sound_JQ6500_Prev(  LED, InCh)         Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY6_N)
+#define Sound_JQ6500_Next(  LED, InCh)         Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY7_N)
 
-#define Sound_JQ6500_BG_Prev(  LED, InCh)      _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY6_BG)
-#define Sound_JQ6500_BG_Next(  LED, InCh)      _Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY7_BG)
+#define Sound_JQ6500_BG_Prev(  LED, InCh)      Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY6_BG)
+#define Sound_JQ6500_BG_Next(  LED, InCh)      Sound_JQ6500_ADKey(     LED, InCh, SOUND_JQ6500_ADKEY7_BG)
 
 // Volume
 // First Volume change after ~1000 ms   ???
 // Then volume is changed every 150 ms  ???
 // 30 stepps ??
 
-#define Sound_JQ6500_DecVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6_N,     1000 ms + (Steps-1) * 150 ms)
-#define Sound_JQ6500_IncVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7_N,     1000 ms + (Steps-1) * 150 ms)
+#define Sound_JQ6500_DecVol(LED, InCh, Steps)  Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6_N,     1000 ms + (Steps-1) * 150 ms)
+#define Sound_JQ6500_IncVol(LED, InCh, Steps)  Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7_N,     1000 ms + (Steps-1) * 150 ms)
 
-#define Sound_JQ6500_BG_DecVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6_BG, 1000 ms + (Steps-1) * 150 ms)
-#define Sound_JQ6500_BG_IncVol(LED, InCh, Steps)  _Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7_BG, 1000 ms + (Steps-1) * 150 ms)
+#define Sound_JQ6500_BG_DecVol(LED, InCh, Steps)  Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY6_BG, 1000 ms + (Steps-1) * 150 ms)
+#define Sound_JQ6500_BG_IncVol(LED, InCh, Steps)  Sound_JQ6500_ADKeyTime(LED, InCh, SOUND_JQ6500_ADKEY7_BG, 1000 ms + (Steps-1) * 150 ms)
 
 
-#define Sound_JQ6500_Seq1(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1_N)
-#define Sound_JQ6500_Seq2(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2_N)
-#define Sound_JQ6500_Seq3(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3_N)
-#define Sound_JQ6500_Seq4(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4_N)
-#define Sound_JQ6500_Seq5(  LED, InCh)         _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5_N)
+#define Sound_JQ6500_Seq1(  LED, InCh)         Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1_N)
+#define Sound_JQ6500_Seq2(  LED, InCh)         Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2_N)
+#define Sound_JQ6500_Seq3(  LED, InCh)         Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3_N)
+#define Sound_JQ6500_Seq4(  LED, InCh)         Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4_N)
+#define Sound_JQ6500_Seq5(  LED, InCh)         Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5_N)
 
-#define Sound_JQ6500_BG_Seq1(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1_BG)
-#define Sound_JQ6500_BG_Seq2(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2_BG)
-#define Sound_JQ6500_BG_Seq3(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3_BG)
-#define Sound_JQ6500_BG_Seq4(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4_BG)
-#define Sound_JQ6500_BG_Seq5(  LED, InCh)      _Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5_BG)
+#define Sound_JQ6500_BG_Seq1(  LED, InCh)      Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY1_BG)
+#define Sound_JQ6500_BG_Seq2(  LED, InCh)      Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY2_BG)
+#define Sound_JQ6500_BG_Seq3(  LED, InCh)      Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY3_BG)
+#define Sound_JQ6500_BG_Seq4(  LED, InCh)      Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY4_BG)
+#define Sound_JQ6500_BG_Seq5(  LED, InCh)      Sound_JQ6500_ADKey(LED, InCh, SOUND_JQ6500_ADKEY5_BG)
 
 #define _LocalVar_Sound_JQ6500(   LED)    PatternT1(LED,28,SI_LocalVar,1,0,255,0,0,400 ms,0,SOUND_JQ6500_ADKEY1_N, SOUND_JQ6500_ADKEY2_N, SOUND_JQ6500_ADKEY3_N, SOUND_JQ6500_ADKEY4_N, SOUND_JQ6500_ADKEY5_N, 0,1,129,129,129,129,129,127)
 #define _LocalVar_Sound_JQ6500_BG(LED)    PatternT1(LED,28,SI_LocalVar,1,0,255,0,0,400 ms,0,SOUND_JQ6500_ADKEY1_BG,SOUND_JQ6500_ADKEY2_BG,SOUND_JQ6500_ADKEY3_BG,SOUND_JQ6500_ADKEY4_BG,SOUND_JQ6500_ADKEY5_BG,0,1,129,129,129,129,129,127)
@@ -776,7 +806,9 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define  RM_NORMAL               B00000000
 #define  RF_SLOW                 B00000001      // Time base is divided by 16 This Flag is set automatically if the time is > 65535 ms
 #define  RF_SEQ                  B00000010      // Switch the outputs of the RandMux() function sequential and not random
-#define  RF_STAY_ON              RF_SEQ         // Flag for the Ranom() function. The Output stays on until the input is turned off. MinOn, MaxOn define how long it stays on.
+#define  RF_STAY_ON              B00000100      // Flag for the Ranom() function. The Output stays on until the input is turned off. MinOn, MaxOn define how long it stays on.
+                                                // 12.01.20:  For some reasons RF_STAY_ON was equal RF_SEQ
+#define  RF_NOT_SAME             B00001000      // Prevent, that the same output is used two times in sequence                                           // 13.01.20:
 
 // Flags for the Counter() function
 #define  CM_NORMAL               0              // Normal Counter mode
@@ -857,13 +889,17 @@ Globale Variablen verwenden 786 Bytes (38%) des dynamischen Speichers, 1262 Byte
 #define NEON_LIGHT1L       48        // Large room Neon light using one channel (R)
 #define NEON_LIGHT2L       49        // Large room Neon light using one channel (G)
 #define NEON_LIGHT3L       50        // Large room Neon light using one channel (B)
-#define SINGLE_LED1        51        // Single LED connected with a WS2811 module to channel (R)              // 06.09.19:
-#define SINGLE_LED2        52        // Single LED connected with a WS2811 module to channel (G)
-#define SINGLE_LED3        53        // Single LED connected with a WS2811 module to channel (B)
-#define SINGLE_LED1D       54        // Single dark LED connected with a WS2811 module to channel (R)
-#define SINGLE_LED2D       55        // Single dark LED connected with a WS2811 module to channel (G)
-#define SINGLE_LED3D       56        // Single dark LED connected with a WS2811 module to channel (B)         // 06.09.19:  End of new block
-#define SKIP_ROOM          57        // Room which is not controlled with by the house() function (Usefull for Shops in a house becaue this lights are always on at night)
+#define NEON_DEF_D         51        // Decective Neon light using all channels.
+#define NEON_DEF1D         52        // Decective Neon light using one channel (R)
+#define NEON_DEF2D         53        // Decective Neon light using one channel (G)
+#define NEON_DEF3D         54        // Decective Neon light using one channel (B)
+#define SINGLE_LED1        55        // Single LED connected with a WS2811 module to channel (R)              // 06.09.19:
+#define SINGLE_LED2        56        // Single LED connected with a WS2811 module to channel (G)
+#define SINGLE_LED3        57        // Single LED connected with a WS2811 module to channel (B)
+#define SINGLE_LED1D       58        // Single dark LED connected with a WS2811 module to channel (R)
+#define SINGLE_LED2D       59        // Single dark LED connected with a WS2811 module to channel (G)
+#define SINGLE_LED3D       60        // Single dark LED connected with a WS2811 module to channel (B)         // 06.09.19:  End of new block
+#define SKIP_ROOM          61        // Room which is not controlled with by the house() function (Usefull for Shops in a house becaue this lights are always on at night)
 
 #if ((FIRE              & 0x03) != 0) || ((FIRED             & 0x03) != 1) || ((FIREB             & 0x03) != 2) ||   \
     ((ROOM_CHIMNEY      & 0x03) != 0) || ((ROOM_CHIMNEYD     & 0x03) != 1) || ((ROOM_CHIMNEYB     & 0x03) != 2) ||   \
@@ -1048,8 +1084,20 @@ inline bool Inp_Changed(uint8_t Inp)
 #ifdef _NEW_ROOM_COL
  #define SET_COLTAB_T         105
 #endif
+#if _USE_SET_TVTAB                                                                                            // 10.01.20:
+ #define SET_TV_TAB_T         106
+#endif
+
+#if _USE_DEF_NEON                                                                                             // 12.01.20:
+ #define SET_DEF_NEON_T       107
+#endif
 
 #define LOGIC_T               120
+
+// Only used in the Charliplexing modul
+#define CPX_LED_ASSIGNEMENT   140  // Define the LED assignement
+#define CPX_ANALOG_INPUT      141  // Enable the analog input
+#define CPX_ANALOG_LIMMITS    142  // Table with analog limits which defines the Goto Nr levels
 
 #define WITHOUT_CHANNEL_MASK  HOUSE_T
 #define WITHOUT_INP_CH        NEW_HSV_GROUP_T
@@ -1059,531 +1107,23 @@ inline bool Inp_Changed(uint8_t Inp)
 
 #define _TV_CHANNELS          2  // If changed adapt also the constants ROOM_TV0, COLOR_TV0_A... and the corrosponding switch case statements
 
+#include "Macros.h"
 
-
-// Using the __COUNTER__ function to calculate the RAM usage at compile time.
-// Advantages:
-// - Memory consumption is known at compile time and printed => No Out of memory risk at runtime
-// - Individual RAM for each function
-#define RAM0  0
-#define RAM1  1 + __COUNTER__ - __COUNTER__
-#define RAM2  RAM1+RAM1
-#define RAM3  RAM2+RAM1
-#define RAM4  RAM3+RAM1
-#define RAM5  RAM4+RAM1
-#define RAM6  RAM5+RAM1
-#define RAM7  RAM6+RAM1
-#define RAM8  RAM7+RAM1
-#define RAM9  RAM8+RAM1
-#define RAM10 RAM9+RAM1
-#define RAM11 RAM10+RAM1
-#define RAM12 RAM11+RAM1
-#define RAM13 RAM12+RAM1
-#define RAM14 RAM13+RAM1
-#define RAM15 RAM14+RAM1
-#define RAM16 RAM15+RAM1
-#define RAM17 RAM16+RAM1
-#define RAM18 RAM17+RAM1
-#define RAM19 RAM18+RAM1
-#define RAM20 RAM19+RAM1
-#define RAM21 RAM20+RAM1
-#define RAM22 RAM21+RAM1
-#define RAM23 RAM22+RAM1
-#define RAM24 RAM23+RAM1
-#define RAM25 RAM24+RAM1
-#define RAM26 RAM25+RAM1
-#define RAM27 RAM26+RAM1
-#define RAM28 RAM27+RAM1
-#define RAM29 RAM28+RAM1
-#define RAM30 RAM29+RAM1
-#define RAM31 RAM30+RAM1
-#define RAM32 RAM31+RAM1
-#define RAM33 RAM32+RAM1
-#define RAM34 RAM33+RAM1
-#define RAM35 RAM34+RAM1
-#define RAM36 RAM35+RAM1
-#define RAM37 RAM36+RAM1
-#define RAM38 RAM37+RAM1
-#define RAM39 RAM38+RAM1
-#define RAM40 RAM39+RAM1
-#define RAM41 RAM40+RAM1
-#define RAM42 RAM41+RAM1
-#define RAM43 RAM42+RAM1
-#define RAM44 RAM43+RAM1
-#define RAM45 RAM44+RAM1
-#define RAM46 RAM45+RAM1
-#define RAM47 RAM46+RAM1
-#define RAM48 RAM47+RAM1
-#define RAM49 RAM48+RAM1
-#define RAM50 RAM49+RAM1
-#define RAM51 RAM50+RAM1                                                                                      // 13.01.19:  Added 51-100
-#define RAM52 RAM51+RAM1
-#define RAM53 RAM52+RAM1
-#define RAM54 RAM53+RAM1
-#define RAM55 RAM54+RAM1
-#define RAM56 RAM55+RAM1
-#define RAM57 RAM56+RAM1
-#define RAM58 RAM57+RAM1
-#define RAM59 RAM58+RAM1
-#define RAM60 RAM59+RAM1
-#define RAM61 RAM60+RAM1
-#define RAM62 RAM61+RAM1
-#define RAM63 RAM62+RAM1
-#define RAM64 RAM63+RAM1
-#define RAM65 RAM64+RAM1
-#define RAM66 RAM65+RAM1
-#define RAM67 RAM66+RAM1
-#define RAM68 RAM67+RAM1
-#define RAM69 RAM68+RAM1
-#define RAM70 RAM69+RAM1
-#define RAM71 RAM70+RAM1
-#define RAM72 RAM71+RAM1
-#define RAM73 RAM72+RAM1
-#define RAM74 RAM73+RAM1
-#define RAM75 RAM74+RAM1
-#define RAM76 RAM75+RAM1
-#define RAM77 RAM76+RAM1
-#define RAM78 RAM77+RAM1
-#define RAM79 RAM78+RAM1
-#define RAM80 RAM79+RAM1
-#define RAM81 RAM80+RAM1
-#define RAM82 RAM81+RAM1
-#define RAM83 RAM82+RAM1
-#define RAM84 RAM83+RAM1
-#define RAM85 RAM84+RAM1
-#define RAM86 RAM85+RAM1
-#define RAM87 RAM86+RAM1
-#define RAM88 RAM87+RAM1
-#define RAM89 RAM88+RAM1
-#define RAM90 RAM89+RAM1
-#define RAM91 RAM90+RAM1
-#define RAM92 RAM91+RAM1
-#define RAM93 RAM92+RAM1
-#define RAM94 RAM93+RAM1
-#define RAM95 RAM94+RAM1
-#define RAM96 RAM95+RAM1
-#define RAM97 RAM96+RAM1
-#define RAM98 RAM97+RAM1
-#define RAM99 RAM98+RAM1
-#define RAM100 RAM99+RAM1
-
-#define RAMN(n) RAM ## n
-
-// https://codecraft.co/2014/11/25/variadic-macros-tricks/
-// Accept any number of args >= N, but expand to just the Nth one.
-// Note that this macro is preceded by an underscore--it's an
-// implementation detail, not something we expect people to call
-// directly.
-#define _GET_NTH_ARG(        _1,   _2,   _3,   _4,   _5,   _6,   _7,   _8,   _9, \
-                      _10,  _11,  _12,  _13,  _14,  _15,  _16,  _17,  _18,  _19, \
-                      _20,  _21,  _22,  _23,  _24,  _25,  _26,  _27,  _28,  _29, \
-                      _30,  _31,  _32,  _33,  _34,  _35,  _36,  _37,  _38,  _39, \
-                      _40,  _41,  _42,  _43,  _44,  _45,  _46,  _47,  _48,  _49, \
-                      _50,  _51,  _52,  _53,  _54,  _55,  _56,  _57,  _58,  _59, \
-                      _60,  _61,  _62,  _63,  _64,  _65,  _66,  _67,  _68,  _69, \
-                      _70,  _71,  _72,  _73,  _74,  _75,  _76,  _77,  _78,  _79, \
-                      _80,  _81,  _82,  _83,  _84,  _85,  _86,  _87,  _88,  _89, \
-                      _90,  _91,  _92,  _93,  _94,  _95,  _96,  _97,  _98,  _99, \
-                     _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, \
-                     _110, _111, _112, _113, _114, _115, _116, _117, _118, _119, \
-                     _120, _121, _122, _123, _124, _125, _126, _127, _128, _129, \
-                     _130, _131, _132, _133, _134, _135, _136, _137, _138, _139, \
-                     _140, _141, _142, _143, _144, _145, _146, _147, _148, _149, \
-                     _150, _151, _152, _153, _154, _155, _156, _157, _158, _159, \
-                     _160, _161, _162, _163, _164, _165, _166, _167, _168, _169, \
-                     _170, _171, _172, _173, _174, _175, _176, _177, _178, _179, \
-                     _180, _181, _182, _183, _184, _185, _186, _187, _188, _189, \
-                     _190, _191, _192, _193, _194, _195, _196, _197, _198, _199, \
-                     _200, _201, _202, _203, _204, _205, _206, _207, _208, _209, \
-                     _210, _211, _212, _213, _214, _215, _216, _217, _218, _219, \
-                     _220, _221, _222, _223, _224, _225, _226, _227, _228, _229, \
-                     _230, _231, _232, _233, _234, _235, _236, _237, _238, _239, \
-                     _240, _241, _242, _243, _244, _245, _246, _247, _248, _249, \
-                     _250, _251, _252, _253, _254, _255, _256, _257, _258, _259, \
-                     _260, _261, _262, _263, _264, _265, _266, _267, _268, _269, \
-                     _270, _271, _272, _273, _274, _275, _276, _277, _278, _279, \
-                     _280, _281, _282, _283, _284, _285, _286, _287, _288, _289, \
-                     _290, _291, _292, _293, _294, _295, _296, _297, _298, _299, \
-                     _300, _301, _302, _303, _304, _305, _306, _307, _308, _309, \
-                     _310, _311, _312, _313, _314, _315, _316, _317, _318, _319, \
-                     _320, _321, _322, _323, _324, _325, _326, _327, _328, _329, \
-                     _330, _331, _332, _333, _334, _335, _336, _337, _338, _339, \
-                     _340, _341, _342, _343, _344, _345, _346, _347, _348, _349, \
-                     _350, _351, _352, _353, _354, _355, _356, _357, _358, _359, \
-                     _360, _361, _362, _363, _364, _365, _366, _367, _368, _369, \
-                     _370, _371, _372, _373, _374, _375, _376, _377, _378, _379, \
-                     _380, _381, _382, _383, _384, _385, _386, _387, _388, _389, \
-                     _390, _391, _392, _393, _394, _395, _396, _397, _398, _399, \
-                     _400, _401, _402, _403, _404, _405, _406, _407, _408, _409, \
-                     _410, _411, _412, _413, _414, _415, _416, _417, _418, _419, \
-                     _420, _421, _422, _423, _424, _425, _426, _427, _428, _429, \
-                     _430, _431, _432, _433, _434, _435, _436, _437, _438, _439, \
-                     _440, _441, _442, _443, _444, _445, _446, _447, _448, _449, \
-                     _450, _451, _452, _453, _454, _455, _456, _457, _458, _459, \
-                     _460, _461, _462, _463, _464, _465, _466, _467, _468, _469, \
-                     _470, _471, _472, _473, _474, _475, _476, _477, _478, _479, \
-                     _480, _481, _482, _483, _484, _485, _486, _487, _488, _489, \
-                     _490, _491, _492, _493, _494, _495, _496, _497, _498, _499, \
-                     _500, _501, _502, _503, _504, _505, _506, _507, _508, _509, \
-                     _510, _511, _512, _513, _514, _515, _516, _517, _518, _519, \
-                     _520, _521, _522, _523, _524, _525, _526, _527, _528, _529, \
-                     _530, _531, _532, _533, _534, _535, _536, _537, _538, _539, \
-                     _540, _541, _542, _543, _544, _545, _546, _547, _548, _549, \
-                     _550, _551, _552, _553, _554, _555, _556, _557, _558, _559, \
-                     _560, _561, _562, _563, _564, _565, _566, _567, _568, _569, \
-                     _570, _571, _572, _573, _574, _575, _576, _577, _578, _579, \
-                     _580, _581, _582, _583, _584, _585, _586, _587, _588, _589, \
-                     _590, _591, _592, _593, _594, _595, _596, _597, _598, _599, \
-                     _600, _601, _602, _603, _604, _605, _606, _607, _608, _609, \
-                     _610, _611, _612, _613, _614, _615, _616, _617, _618, _619, \
-                     _620, _621, _622, _623, _624, _625, _626, _627, _628, _629, \
-                     _630, _631, _632, _633, _634, _635, _636, _637, _638, _639, \
-                     _640, _641, _642, _643, _644, _645, _646, _647, _648, _649, \
-                     _650, _651, _652, _653, _654, _655, _656, _657, _658, _659, \
-                     _660, _661, _662, _663, _664, _665, _666, _667, _668, _669, \
-                     _670, _671, _672, _673, _674, _675, _676, _677, _678, _679, \
-                     _680, _681, _682, _683, _684, _685, _686, _687, _688, _689, \
-                     _690, _691, _692, _693, _694, _695, _696, _697, _698, _699, \
-                     _700, _701, _702, _703, _704, _705, _706, _707, _708, _709, \
-                     _710, _711, _712, _713, _714, _715, _716, _717, _718, _719, \
-                     _720, _721, _722, _723, _724, _725, _726, _727, _728, _729, \
-                     _730, _731, _732, _733, _734, _735, _736, _737, _738, _739, \
-                     _740, _741, _742, _743, _744, _745, _746, _747, _748, _749, \
-                     _750, _751, _752, _753, _754, _755, _756, _757, _758, _759, \
-                     _760, _761, _762, _763, _764, _765, _766, _767, _768, _769, \
-                     _770, _771, _772, _773, _774, _775, _776, _777, _778, _779, \
-                     _780, _781, _782, _783, _784, _785, _786, _787, _788, _789, \
-                     _790, _791, _792, _793, _794, _795, _796, _797, _798, _799, \
-                     _800, _801, _802, _803, _804, _805, _806, _807, _808, _809, \
-                     _810, _811, _812, _813, _814, _815, _816, _817, _818, _819, \
-                     _820, _821, _822, _823, _824, _825, _826, _827, _828, _829, \
-                     _830, _831, _832, _833, _834, _835, _836, _837, _838, _839, \
-                     _840, _841, _842, _843, _844, _845, _846, _847, _848, _849, \
-                     _850, _851, _852, _853, _854, _855, _856, _857, _858, _859, \
-                     _860, _861, _862, _863, _864, _865, _866, _867, _868, _869, \
-                     _870, _871, _872, _873, _874, _875, _876, _877, _878, _879, \
-                     _880, _881, _882, _883, _884, _885, _886, _887, _888, _889, \
-                     _890, _891, _892, _893, _894, _895, _896, _897, _898, _899, \
-                     _900, _901, _902, _903, _904, _905, _906, _907, _908, _909, \
-                     _910, _911, _912, _913, _914, _915, _916, _917, _918, _919, \
-                     _920, _921, _922, _923, _924, _925, _926, _927, _928, _929, \
-                     _930, _931, _932, _933, _934, _935, _936, _937, _938, _939, \
-                     _940, _941, _942, _943, _944, _945, _946, _947, _948, _949, \
-                     _950, _951, _952, _953, _954, _955, _956, _957, _958, _959, \
-                     _960, _961, _962, _963, _964, _965, _966, _967, _968, _969, \
-                     _970, _971, _972, _973, _974, _975, _976, _977, _978, _979, \
-                     _980, _981, _982, _983, _984, _985, _986, _987, _988, _989, \
-                     _990, _991, _992, _993, _994, _995, _996, _997, _998, _999, \
-                    _1000,_1001,_1002,_1003,_1004,_1005,_1006,_1007,_1008,_1009, \
-                    _1010,_1011,_1012,_1013,_1014,_1015,_1016,_1017,_1018,_1019, \
-                    _1020,_1021,_1022,_1023,_1024,_1025,_1026,_1027,_1028,_1029, \
-                    _1030,_1031,_1032,_1033,_1034,_1035,_1036,_1037,_1038,_1039, \
-                    _1040,_1041,_1042,_1043,_1044,_1045,_1046,_1047,_1048,_1049, \
-                    _1050,_1051,_1052,_1053,_1054,_1055,_1056,_1057,_1058,_1059, \
-                    _1060,_1061,_1062,_1063,_1064,_1065,_1066,_1067,_1068,_1069, \
-                    _1070,_1071,_1072,_1073,_1074,_1075,_1076,_1077,_1078,_1079, \
-                    _1080,_1081,_1082,_1083,_1084,_1085,_1086,_1087,_1088,_1089, \
-                    _1090,_1091,_1092,_1093,_1094,_1095,_1096,_1097,_1098,_1099, \
-                    _1100,_1101,_1102,_1103,_1104,_1105,_1106,_1107,_1108,_1109, \
-                    _1110,_1111,_1112,_1113,_1114,_1115,_1116,_1117,_1118,_1119, \
-                    _1120,_1121,_1122,_1123,_1124,_1125,_1126,_1127,_1128,_1129, \
-                    _1130,_1131,_1132,_1133,_1134,_1135,_1136,_1137,_1138,_1139, \
-                    _1140,_1141,_1142,_1143,_1144,_1145,_1146,_1147,_1148,_1149, \
-                    _1150,_1151,_1152,_1153,_1154,_1155,_1156,_1157,_1158,_1159, \
-                    _1160,_1161,_1162,_1163,_1164,_1165,_1166,_1167,_1168,_1169, \
-                    _1170,_1171,_1172,_1173,_1174,_1175,_1176,_1177,_1178,_1179, \
-                    _1180,_1181,_1182,_1183,_1184,_1185,_1186,_1187,_1188,_1189, \
-                    _1190,_1191,_1192,_1193,_1194,_1195,_1196,_1197,_1198,_1199, \
-                    _1200,_1201,_1202,_1203,_1204,_1205,_1206,_1207,_1208,_1209, \
-                    _1210,_1211,_1212,_1213,_1214,_1215,_1216,_1217,_1218,_1219, \
-                    _1220,_1221,_1222,_1223,_1224,_1225,_1226,_1227,_1228,_1229, \
-                    _1230,_1231,_1232,_1233,_1234,_1235,_1236,_1237,_1238,_1239, \
-                    _1240,_1241,_1242,_1243,_1244,_1245,_1246,_1247,_1248,_1249, \
-                    _1250,_1251,_1252,_1253,_1254,_1255,_1256,_1257,_1258,_1259, \
-                    _1260,_1261,_1262,_1263,_1264,_1265,_1266,_1267,_1268,_1269, \
-                    _1270,_1271,_1272,_1273,_1274,_1275,_1276,_1277,_1278,_1279, \
-                    _1280,_1281,_1282,_1283,_1284,_1285,_1286,_1287,_1288,_1289, \
-                    _1290,_1291,_1292,_1293,_1294,_1295,_1296,_1297,_1298,_1299, \
-                    _1300,_1301,_1302,_1303,_1304,_1305,_1306,_1307,_1308,_1309, \
-                    _1310,_1311,_1312,_1313,_1314,_1315,_1316,_1317,_1318,_1319, \
-                    _1320,_1321,_1322,_1323,_1324,_1325,_1326,_1327,_1328,_1329, \
-                    _1330,_1331,_1332,_1333,_1334,_1335,_1336,_1337,_1338,_1339, \
-                    _1340,_1341,_1342,_1343,_1344,_1345,_1346,_1347,_1348,_1349, \
-                    _1350,_1351,_1352,_1353,_1354,_1355,_1356,_1357,_1358,_1359, \
-                    _1360,_1361,_1362,_1363,_1364,_1365,_1366,_1367,_1368,_1369, \
-                    _1370,_1371,_1372,_1373,_1374,_1375,_1376,_1377,_1378,_1379, \
-                    _1380,_1381,_1382,_1383,_1384,_1385,_1386,_1387,_1388,_1389, \
-                    _1390,_1391,_1392,_1393,_1394,_1395,_1396,_1397,_1398,_1399, \
-                    _1400,_1401,_1402,_1403,_1404,_1405,_1406,_1407,_1408,_1409, \
-                    _1410,_1411,_1412,_1413,_1414,_1415,_1416,_1417,_1418,_1419, \
-                    _1420,_1421,_1422,_1423,_1424,_1425,_1426,_1427,_1428,_1429, \
-                    _1430,_1431,_1432,_1433,_1434,_1435,_1436,_1437,_1438,_1439, \
-                    _1440,_1441,_1442,_1443,_1444,_1445,_1446,_1447,_1448,_1449, \
-                    _1450,_1451,_1452,_1453,_1454,_1455,_1456,_1457,_1458,_1459, \
-                    _1460,_1461,_1462,_1463,_1464,_1465,_1466,_1467,_1468,_1469, \
-                    _1470,_1471,_1472,_1473,_1474,_1475,_1476,_1477,_1478,_1479, \
-                    _1480,_1481,_1482,_1483,_1484,_1485,_1486,_1487,_1488,_1489, \
-                    _1490,_1491,_1492,_1493,_1494,_1495,_1496,_1497,_1498,_1499, \
-                    _1500,_1501,_1502,_1503,_1504,_1505,_1506,_1507,_1508,_1509, \
-                    _1510,_1511,_1512,_1513,_1514,_1515,_1516,_1517,_1518,_1519, \
-                    _1520,_1521,_1522,_1523,_1524,_1525,_1526,_1527,_1528,_1529, \
-                    _1530,_1531,_1532,_1533,_1534,_1535,_1536,_1537,_1538,_1539, \
-                    _1540,_1541,_1542,_1543,_1544,_1545,_1546,_1547,_1548,_1549, \
-                    _1550,_1551,_1552,_1553,_1554,_1555,_1556,_1557,_1558,_1559, \
-                    _1560,_1561,_1562,_1563,_1564,_1565,_1566,_1567,_1568,_1569, \
-                    _1570,_1571,_1572,_1573,_1574,_1575,_1576,_1577,_1578,_1579, \
-                    _1580,_1581,_1582,_1583,_1584,_1585,_1586,_1587,_1588,_1589, \
-                    _1590,_1591,_1592,_1593,_1594,_1595,_1596,_1597,_1598,_1599, \
-                    _1600,_1601,_1602,_1603,_1604,_1605,_1606,_1607,_1608,_1609, \
-                    _1610,_1611,_1612,_1613,_1614,_1615,_1616,_1617,_1618,_1619, \
-                    _1620,_1621,_1622,_1623,_1624,_1625,_1626,_1627,_1628,_1629, \
-                    _1630,_1631,_1632,_1633,_1634,_1635,_1636,_1637,_1638,_1639, \
-                    _1640,_1641,_1642,_1643,_1644,_1645,_1646,_1647,_1648,_1649, \
-                    _1650,_1651,_1652,_1653,_1654,_1655,_1656,_1657,_1658,_1659, \
-                    _1660,_1661,_1662,_1663,_1664,_1665,_1666,_1667,_1668,_1669, \
-                    _1670,_1671,_1672,_1673,_1674,_1675,_1676,_1677,_1678,_1679, \
-                    _1680,_1681,_1682,_1683,_1684,_1685,_1686,_1687,_1688,_1689, \
-                    _1690,_1691,_1692,_1693,_1694,_1695,_1696,_1697,_1698,_1699, \
-                    _1700,_1701,_1702,_1703,_1704,_1705,_1706,_1707,_1708,_1709, \
-                    _1710,_1711,_1712,_1713,_1714,_1715,_1716,_1717,_1718,_1719, \
-                    _1720,_1721,_1722,_1723,_1724,_1725,_1726,_1727,_1728,_1729, \
-                    _1730,_1731,_1732,_1733,_1734,_1735,_1736,_1737,_1738,_1739, \
-                    _1740,_1741,_1742,_1743,_1744,_1745,_1746,_1747,_1748,_1749, \
-                    _1750,_1751,_1752,_1753,_1754,_1755,_1756,_1757,_1758,_1759, \
-                    _1760,_1761,_1762,_1763,_1764,_1765,_1766,_1767,_1768,_1769, \
-                    _1770,_1771,_1772,_1773,_1774,_1775,_1776,_1777,_1778,_1779, \
-                    _1780,_1781,_1782,_1783,_1784,_1785,_1786,_1787,_1788,_1789, \
-                    _1790,_1791,_1792,_1793,_1794,_1795,_1796,_1797,_1798,_1799, \
-                    _1800,_1801,_1802,_1803,_1804,_1805,_1806,_1807,_1808,_1809, \
-                    _1810,_1811,_1812,_1813,_1814,_1815,_1816,_1817,_1818,_1819, \
-                    _1820,_1821,_1822,_1823,_1824,_1825,_1826,_1827,_1828,_1829, \
-                    _1830,_1831,_1832,_1833,_1834,_1835,_1836,_1837,_1838,_1839, \
-                    _1840,_1841,_1842,_1843,_1844,_1845,_1846,_1847,_1848,_1849, \
-                    _1850,_1851,_1852,_1853,_1854,_1855,_1856,_1857,_1858,_1859, \
-                    _1860,_1861,_1862,_1863,_1864,_1865,_1866,_1867,_1868,_1869, \
-                    _1870,_1871,_1872,_1873,_1874,_1875,_1876,_1877,_1878,_1879, \
-                    _1880,_1881,_1882,_1883,_1884,_1885,_1886,_1887,_1888,_1889, \
-                    _1890,_1891,_1892,_1893,_1894,_1895,_1896,_1897,_1898,_1899, \
-                    _1900,_1901,_1902,_1903,_1904,_1905,_1906,_1907,_1908,_1909, \
-                    _1910,_1911,_1912,_1913,_1914,_1915,_1916,_1917,_1918,_1919, \
-                    _1920,_1921,_1922,_1923,_1924,_1925,_1926,_1927,_1928,_1929, \
-                    _1930,_1931,_1932,_1933,_1934,_1935,_1936,_1937,_1938,_1939, \
-                    _1940,_1941,_1942,_1943,_1944,_1945,_1946,_1947,_1948,_1949, \
-                    _1950,_1951,_1952,_1953,_1954,_1955,_1956,_1957,_1958,_1959, \
-                    _1960,_1961,_1962,_1963,_1964,_1965,_1966,_1967,_1968,_1969, \
-                    _1970,_1971,_1972,_1973,_1974,_1975,_1976,_1977,_1978,_1979, \
-                    _1980,_1981,_1982,_1983,_1984,_1985,_1986,_1987,_1988,_1989, \
-                    _1990,_1991,_1992,_1993,_1994,_1995,_1996,_1997,_1998,_1999, _2000, _2001, N, ...) N
-
-// Count how many args are in a variadic macro. Only works for up to N-1 args.
-#define COUNT_VARARGS(...) _GET_NTH_ARG(__VA_ARGS__,                        \
-                     2001, 2000,                                            \
-                     1999,1998,1997,1996,1995,1994,1993,1992,1991,1990,     \
-                     1989,1988,1987,1986,1985,1984,1983,1982,1981,1980,     \
-                     1979,1978,1977,1976,1975,1974,1973,1972,1971,1970,     \
-                     1969,1968,1967,1966,1965,1964,1963,1962,1961,1960,     \
-                     1959,1958,1957,1956,1955,1954,1953,1952,1951,1950,     \
-                     1949,1948,1947,1946,1945,1944,1943,1942,1941,1940,     \
-                     1939,1938,1937,1936,1935,1934,1933,1932,1931,1930,     \
-                     1929,1928,1927,1926,1925,1924,1923,1922,1921,1920,     \
-                     1919,1918,1917,1916,1915,1914,1913,1912,1911,1910,     \
-                     1909,1908,1907,1906,1905,1904,1903,1902,1901,1900,     \
-                     1899,1898,1897,1896,1895,1894,1893,1892,1891,1890,     \
-                     1889,1888,1887,1886,1885,1884,1883,1882,1881,1880,     \
-                     1879,1878,1877,1876,1875,1874,1873,1872,1871,1870,     \
-                     1869,1868,1867,1866,1865,1864,1863,1862,1861,1860,     \
-                     1859,1858,1857,1856,1855,1854,1853,1852,1851,1850,     \
-                     1849,1848,1847,1846,1845,1844,1843,1842,1841,1840,     \
-                     1839,1838,1837,1836,1835,1834,1833,1832,1831,1830,     \
-                     1829,1828,1827,1826,1825,1824,1823,1822,1821,1820,     \
-                     1819,1818,1817,1816,1815,1814,1813,1812,1811,1810,     \
-                     1809,1808,1807,1806,1805,1804,1803,1802,1801,1800,     \
-                     1799,1798,1797,1796,1795,1794,1793,1792,1791,1790,     \
-                     1789,1788,1787,1786,1785,1784,1783,1782,1781,1780,     \
-                     1779,1778,1777,1776,1775,1774,1773,1772,1771,1770,     \
-                     1769,1768,1767,1766,1765,1764,1763,1762,1761,1760,     \
-                     1759,1758,1757,1756,1755,1754,1753,1752,1751,1750,     \
-                     1749,1748,1747,1746,1745,1744,1743,1742,1741,1740,     \
-                     1739,1738,1737,1736,1735,1734,1733,1732,1731,1730,     \
-                     1729,1728,1727,1726,1725,1724,1723,1722,1721,1720,     \
-                     1719,1718,1717,1716,1715,1714,1713,1712,1711,1710,     \
-                     1709,1708,1707,1706,1705,1704,1703,1702,1701,1700,     \
-                     1699,1698,1697,1696,1695,1694,1693,1692,1691,1690,     \
-                     1689,1688,1687,1686,1685,1684,1683,1682,1681,1680,     \
-                     1679,1678,1677,1676,1675,1674,1673,1672,1671,1670,     \
-                     1669,1668,1667,1666,1665,1664,1663,1662,1661,1660,     \
-                     1659,1658,1657,1656,1655,1654,1653,1652,1651,1650,     \
-                     1649,1648,1647,1646,1645,1644,1643,1642,1641,1640,     \
-                     1639,1638,1637,1636,1635,1634,1633,1632,1631,1630,     \
-                     1629,1628,1627,1626,1625,1624,1623,1622,1621,1620,     \
-                     1619,1618,1617,1616,1615,1614,1613,1612,1611,1610,     \
-                     1609,1608,1607,1606,1605,1604,1603,1602,1601,1600,     \
-                     1599,1598,1597,1596,1595,1594,1593,1592,1591,1590,     \
-                     1589,1588,1587,1586,1585,1584,1583,1582,1581,1580,     \
-                     1579,1578,1577,1576,1575,1574,1573,1572,1571,1570,     \
-                     1569,1568,1567,1566,1565,1564,1563,1562,1561,1560,     \
-                     1559,1558,1557,1556,1555,1554,1553,1552,1551,1550,     \
-                     1549,1548,1547,1546,1545,1544,1543,1542,1541,1540,     \
-                     1539,1538,1537,1536,1535,1534,1533,1532,1531,1530,     \
-                     1529,1528,1527,1526,1525,1524,1523,1522,1521,1520,     \
-                     1519,1518,1517,1516,1515,1514,1513,1512,1511,1510,     \
-                     1509,1508,1507,1506,1505,1504,1503,1502,1501,1500,     \
-                     1499,1498,1497,1496,1495,1494,1493,1492,1491,1490,     \
-                     1489,1488,1487,1486,1485,1484,1483,1482,1481,1480,     \
-                     1479,1478,1477,1476,1475,1474,1473,1472,1471,1470,     \
-                     1469,1468,1467,1466,1465,1464,1463,1462,1461,1460,     \
-                     1459,1458,1457,1456,1455,1454,1453,1452,1451,1450,     \
-                     1449,1448,1447,1446,1445,1444,1443,1442,1441,1440,     \
-                     1439,1438,1437,1436,1435,1434,1433,1432,1431,1430,     \
-                     1429,1428,1427,1426,1425,1424,1423,1422,1421,1420,     \
-                     1419,1418,1417,1416,1415,1414,1413,1412,1411,1410,     \
-                     1409,1408,1407,1406,1405,1404,1403,1402,1401,1400,     \
-                     1399,1398,1397,1396,1395,1394,1393,1392,1391,1390,     \
-                     1389,1388,1387,1386,1385,1384,1383,1382,1381,1380,     \
-                     1379,1378,1377,1376,1375,1374,1373,1372,1371,1370,     \
-                     1369,1368,1367,1366,1365,1364,1363,1362,1361,1360,     \
-                     1359,1358,1357,1356,1355,1354,1353,1352,1351,1350,     \
-                     1349,1348,1347,1346,1345,1344,1343,1342,1341,1340,     \
-                     1339,1338,1337,1336,1335,1334,1333,1332,1331,1330,     \
-                     1329,1328,1327,1326,1325,1324,1323,1322,1321,1320,     \
-                     1319,1318,1317,1316,1315,1314,1313,1312,1311,1310,     \
-                     1309,1308,1307,1306,1305,1304,1303,1302,1301,1300,     \
-                     1299,1298,1297,1296,1295,1294,1293,1292,1291,1290,     \
-                     1289,1288,1287,1286,1285,1284,1283,1282,1281,1280,     \
-                     1279,1278,1277,1276,1275,1274,1273,1272,1271,1270,     \
-                     1269,1268,1267,1266,1265,1264,1263,1262,1261,1260,     \
-                     1259,1258,1257,1256,1255,1254,1253,1252,1251,1250,     \
-                     1249,1248,1247,1246,1245,1244,1243,1242,1241,1240,     \
-                     1239,1238,1237,1236,1235,1234,1233,1232,1231,1230,     \
-                     1229,1228,1227,1226,1225,1224,1223,1222,1221,1220,     \
-                     1219,1218,1217,1216,1215,1214,1213,1212,1211,1210,     \
-                     1209,1208,1207,1206,1205,1204,1203,1202,1201,1200,     \
-                     1199,1198,1197,1196,1195,1194,1193,1192,1191,1190,     \
-                     1189,1188,1187,1186,1185,1184,1183,1182,1181,1180,     \
-                     1179,1178,1177,1176,1175,1174,1173,1172,1171,1170,     \
-                     1169,1168,1167,1166,1165,1164,1163,1162,1161,1160,     \
-                     1159,1158,1157,1156,1155,1154,1153,1152,1151,1150,     \
-                     1149,1148,1147,1146,1145,1144,1143,1142,1141,1140,     \
-                     1139,1138,1137,1136,1135,1134,1133,1132,1131,1130,     \
-                     1129,1128,1127,1126,1125,1124,1123,1122,1121,1120,     \
-                     1119,1118,1117,1116,1115,1114,1113,1112,1111,1110,     \
-                     1109,1108,1107,1106,1105,1104,1103,1102,1101,1100,     \
-                     1099,1098,1097,1096,1095,1094,1093,1092,1091,1090,     \
-                     1089,1088,1087,1086,1085,1084,1083,1082,1081,1080,     \
-                     1079,1078,1077,1076,1075,1074,1073,1072,1071,1070,     \
-                     1069,1068,1067,1066,1065,1064,1063,1062,1061,1060,     \
-                     1059,1058,1057,1056,1055,1054,1053,1052,1051,1050,     \
-                     1049,1048,1047,1046,1045,1044,1043,1042,1041,1040,     \
-                     1039,1038,1037,1036,1035,1034,1033,1032,1031,1030,     \
-                     1029,1028,1027,1026,1025,1024,1023,1022,1021,1020,     \
-                     1019,1018,1017,1016,1015,1014,1013,1012,1011,1010,     \
-                     1009,1008,1007,1006,1005,1004,1003,1002,1001,1000,     \
-                      999, 998, 997, 996, 995, 994, 993, 992, 991, 990,     \
-                      989, 988, 987, 986, 985, 984, 983, 982, 981, 980,     \
-                      979, 978, 977, 976, 975, 974, 973, 972, 971, 970,     \
-                      969, 968, 967, 966, 965, 964, 963, 962, 961, 960,     \
-                      959, 958, 957, 956, 955, 954, 953, 952, 951, 950,     \
-                      949, 948, 947, 946, 945, 944, 943, 942, 941, 940,     \
-                      939, 938, 937, 936, 935, 934, 933, 932, 931, 930,     \
-                      929, 928, 927, 926, 925, 924, 923, 922, 921, 920,     \
-                      919, 918, 917, 916, 915, 914, 913, 912, 911, 910,     \
-                      909, 908, 907, 906, 905, 904, 903, 902, 901, 900,     \
-                      899, 898, 897, 896, 895, 894, 893, 892, 891, 890,     \
-                      889, 888, 887, 886, 885, 884, 883, 882, 881, 880,     \
-                      879, 878, 877, 876, 875, 874, 873, 872, 871, 870,     \
-                      869, 868, 867, 866, 865, 864, 863, 862, 861, 860,     \
-                      859, 858, 857, 856, 855, 854, 853, 852, 851, 850,     \
-                      849, 848, 847, 846, 845, 844, 843, 842, 841, 840,     \
-                      839, 838, 837, 836, 835, 834, 833, 832, 831, 830,     \
-                      829, 828, 827, 826, 825, 824, 823, 822, 821, 820,     \
-                      819, 818, 817, 816, 815, 814, 813, 812, 811, 810,     \
-                      809, 808, 807, 806, 805, 804, 803, 802, 801, 800,     \
-                      799, 798, 797, 796, 795, 794, 793, 792, 791, 790,     \
-                      789, 788, 787, 786, 785, 784, 783, 782, 781, 780,     \
-                      779, 778, 777, 776, 775, 774, 773, 772, 771, 770,     \
-                      769, 768, 767, 766, 765, 764, 763, 762, 761, 760,     \
-                      759, 758, 757, 756, 755, 754, 753, 752, 751, 750,     \
-                      749, 748, 747, 746, 745, 744, 743, 742, 741, 740,     \
-                      739, 738, 737, 736, 735, 734, 733, 732, 731, 730,     \
-                      729, 728, 727, 726, 725, 724, 723, 722, 721, 720,     \
-                      719, 718, 717, 716, 715, 714, 713, 712, 711, 710,     \
-                      709, 708, 707, 706, 705, 704, 703, 702, 701, 700,     \
-                      699, 698, 697, 696, 695, 694, 693, 692, 691, 690,     \
-                      689, 688, 687, 686, 685, 684, 683, 682, 681, 680,     \
-                      679, 678, 677, 676, 675, 674, 673, 672, 671, 670,     \
-                      669, 668, 667, 666, 665, 664, 663, 662, 661, 660,     \
-                      659, 658, 657, 656, 655, 654, 653, 652, 651, 650,     \
-                      649, 648, 647, 646, 645, 644, 643, 642, 641, 640,     \
-                      639, 638, 637, 636, 635, 634, 633, 632, 631, 630,     \
-                      629, 628, 627, 626, 625, 624, 623, 622, 621, 620,     \
-                      619, 618, 617, 616, 615, 614, 613, 612, 611, 610,     \
-                      609, 608, 607, 606, 605, 604, 603, 602, 601, 600,     \
-                      599, 598, 597, 596, 595, 594, 593, 592, 591, 590,     \
-                      589, 588, 587, 586, 585, 584, 583, 582, 581, 580,     \
-                      579, 578, 577, 576, 575, 574, 573, 572, 571, 570,     \
-                      569, 568, 567, 566, 565, 564, 563, 562, 561, 560,     \
-                      559, 558, 557, 556, 555, 554, 553, 552, 551, 550,     \
-                      549, 548, 547, 546, 545, 544, 543, 542, 541, 540,     \
-                      539, 538, 537, 536, 535, 534, 533, 532, 531, 530,     \
-                      529, 528, 527, 526, 525, 524, 523, 522, 521, 520,     \
-                      519, 518, 517, 516, 515, 514, 513, 512, 511, 510,     \
-                      509, 508, 507, 506, 505, 504, 503, 502, 501, 500,     \
-                      499, 498, 497, 496, 495, 494, 493, 492, 491, 490,     \
-                      489, 488, 487, 486, 485, 484, 483, 482, 481, 480,     \
-                      479, 478, 477, 476, 475, 474, 473, 472, 471, 470,     \
-                      469, 468, 467, 466, 465, 464, 463, 462, 461, 460,     \
-                      459, 458, 457, 456, 455, 454, 453, 452, 451, 450,     \
-                      449, 448, 447, 446, 445, 444, 443, 442, 441, 440,     \
-                      439, 438, 437, 436, 435, 434, 433, 432, 431, 430,     \
-                      429, 428, 427, 426, 425, 424, 423, 422, 421, 420,     \
-                      419, 418, 417, 416, 415, 414, 413, 412, 411, 410,     \
-                      409, 408, 407, 406, 405, 404, 403, 402, 401, 400,     \
-                      399, 398, 397, 396, 395, 394, 393, 392, 391, 390,     \
-                      389, 388, 387, 386, 385, 384, 383, 382, 381, 380,     \
-                      379, 378, 377, 376, 375, 374, 373, 372, 371, 370,     \
-                      369, 368, 367, 366, 365, 364, 363, 362, 361, 360,     \
-                      359, 358, 357, 356, 355, 354, 353, 352, 351, 350,     \
-                      349, 348, 347, 346, 345, 344, 343, 342, 341, 340,     \
-                      339, 338, 337, 336, 335, 334, 333, 332, 331, 330,     \
-                      329, 328, 327, 326, 325, 324, 323, 322, 321, 320,     \
-                      319, 318, 317, 316, 315, 314, 313, 312, 311, 310,     \
-                      309, 308, 307, 306, 305, 304, 303, 302, 301, 300,     \
-                      299, 298, 297, 296, 295, 294, 293, 292, 291, 290,     \
-                      289, 288, 287, 286, 285, 284, 283, 282, 281, 280,     \
-                      279, 278, 277, 276, 275, 274, 273, 272, 271, 270,     \
-                      269, 268, 267, 266, 265, 264, 263, 262, 261, 260,     \
-                      259, 258, 257, 256, 255, 254, 253, 252, 251, 250,     \
-                      249, 248, 247, 246, 245, 244, 243, 242, 241, 240,     \
-                      239, 238, 237, 236, 235, 234, 233, 232, 231, 230,     \
-                      229, 228, 227, 226, 225, 224, 223, 222, 221, 220,     \
-                      219, 218, 217, 216, 215, 214, 213, 212, 211, 210,     \
-                      209, 208, 207, 206, 205, 204, 203, 202, 201, 200,     \
-                      199, 198, 197, 196, 195, 194, 193, 192, 191, 190,     \
-                      189, 188, 187, 186, 185, 184, 183, 182, 181, 180,     \
-                      179, 178, 177, 176, 175, 174, 173, 172, 171, 170,     \
-                      169, 168, 167, 166, 165, 164, 163, 162, 161, 160,     \
-                      159, 158, 157, 156, 155, 154, 153, 152, 151, 150,     \
-                      149, 148, 147, 146, 145, 144, 143, 142, 141, 140,     \
-                      139, 138, 137, 136, 135, 134, 133, 132, 131, 130,     \
-                      129, 128, 127, 126, 125, 124, 123, 122, 121, 120,     \
-                      119, 118, 117, 116, 115, 114, 113, 112, 111, 110,     \
-                      109, 108, 107, 106, 105, 104, 103, 102, 101, 100,     \
-                       99,  98,  97,  96,  95,  94,  93,  92,  91,  90,     \
-                       89,  88,  87,  86,  85,  84,  83,  82,  81,  80,     \
-                       79,  78,  77,  76,  75,  74,  73,  72,  71,  70,     \
-                       69,  68,  67,  66,  65,  64,  63,  62,  61,  60,     \
-                       59,  58,  57,  56,  55,  54,  53,  52,  51,  50,     \
-                       49,  48,  47,  46,  45,  44,  43,  42,  41,  40,     \
-                       39,  38,  37,  36,  35,  34,  33,  32,  31,  30,     \
-                       29,  28,  27,  26,  25,  24,  23,  22,  21,  20,     \
-                       19,  18,  17,  16,  15,  14,  13,  12,  11,  10,     \
-                        9,   8,   7,   6,   5,   4,   3,   2,   1)
 
 typedef struct
     {
-    uint8_t         r, g, b;
-    uint8_t         Last_t;
-    uint8_t         dt;
+    #if _USE_SET_TVTAB                                                                                        // 10.01.20:
+      union {
+            struct {
+                   uint8_t r, g, b;
+                   };
+            uint8_t raw [3];
+            };
+    #else
+      uint8_t         r, g, b;
+    #endif
+      uint8_t         Last_t;
+      uint8_t         dt;
     } TV_Dat_T;     // 5 Byte
 
 #ifdef _USE_LOCAL_TX
@@ -1679,6 +1219,11 @@ private: // Variables
                                                                        // -------
                                                                        //154 Byte
 
+#if _USE_DEF_NEON                                                                                             // 12.01.20:
+ uint8_t            Rand_On_DefNeon; // probability that the neon light starts.             0 = don't start, 1 start seldom,  255 = Start immediately
+ uint8_t            RandOff_DefNeon; // probability that the light goes off after a while.  0 = Always on,   1 = shot flash,  255 = very long time active
+ uint8_t            Min_DefNeon;     // red glow of the starter.                            1 = minimal value,  5 = maximal value
+#endif
 
 
  // Private functions
@@ -1690,6 +1235,7 @@ private: // Variables
  void               Update_Neon_Light(uint8_t Room_Typ, CRGB *lp);
  void               TurnOnRoom(CRGB* lp, uint8_t Room_Typ);
  void               TurnOffRoom(CRGB* lp, uint8_t RawNr, uint8_t Room_Typ);
+ void               Set_Default_TV_Dat_p();                                                                   // 09.01.20:
  void               Update_TV_Data();
  void               Random_Const_Light(CRGB *lp, uint8_t TVNr);
  void               Enable_Light_or_TV(CRGB *lp, uint8_t TVNr);
@@ -1723,6 +1269,8 @@ private: // Variables
  #ifdef _NEW_ROOM_COL
   void              Proc_Set_ColTab();
  #endif
+ void               Proc_Set_TV_Tab();                                                                        // 09.01.20:
+ void               Proc_Set_Def_Neon();                                                                      // 12.01.20:
  void               Proc_Logic();
  void               Proc_New_HSV_Group();
  void               Proc_New_Local_Var();                                                                     // 07.11.18:
@@ -1746,6 +1294,8 @@ private: // Variables
    void             Copy_Room_Col(CRGB *Dst, uint8_t ColorNr);
    void             Copy_Single_Room_Col(CRGB *Dst, uint8_t Channel, uint8_t ColorNr);                        // 06.09.19:
  #endif
+ void               IncCP_Set_TV_Tab();                                                                       // 10.01.20:
+ void               IncCP_Set_Def_Neon();                                                                     // 12.01.20:
  void               IncCP_Pattern(uint8_t TimeCnt);
  void               IncCP_Logic();
  void               IncCP_New_HSV_Group() { }
@@ -1766,7 +1316,11 @@ private: // Variables
 
 #ifdef _NEW_ROOM_COL
    const uint8_t     *Room_ColP;
- #endif
+#endif
+
+#if _USE_SET_TVTAB                                                                                            // 09.01.20:
+   const uint8_t     *TV_Dat_p[_TV_CHANNELS];
+#endif
 
 }; // class MobaLedLib_C
 

@@ -1,0 +1,72 @@
+# * V1.00 23.11.2019 - Harold Linke - first release
+# * V1.09 29.11.2019
+# * V1.10 03.12.2019 - Hardi
+# *                  - Brightness could be shown in pecent if the constant PERCENT_BRIGHTNESS is set to 1
+# *                  - Write a finish file at the end of the program. This is needed by the calling excel program.
+# *                    Harold: Is this file also written in case of a crash ?
+# *                  - Some more detailed error messages
+# *       04.12.2019 - Added COM Ports 7..40 because on some systems such high com ports are used (Hardi: COM12)
+# *                    Hint: For test purposes the COM Port could be changed in the device manager: "devmgmt.msc" in windows
+# *                  - Send "#End" when the program is closed to restart the arduino. Prior if was still in the ColorChecker mode (LED was flashing fast)
+# *                  - Moved the sending og the "#BEGIN" command down because the Arduino is restarted if the serial connection is opened
+# *                    => The "#BEGIN" command was not received
+# *                    With this change the first press to a color button is raccepted (Prior a second press was needed)
+# *                  - The serial monitor could be started in the json file with "startpage": 2,
+# *                  - Increased the size of the serial monitor window
+# *                  - Added "End" button to the serial monitor
+# * V1.13 13.12.2019 - Harold
+# *                  - corrector error in reset color palette procedure, color palette was not copied correctly
+# *                  - corrected old_color behavior, stores now the current color when a new color is selected from the palette
+# *                  - color correction moved to configuration page to reduce size of window for smaller screens
+# * V1.14 15.12.2019 - Harold
+# *                  - program was nearly unreactiv, when ARDUINO connection was disconnected, corrected
+# * V1.15 16.12.2019 - Harold
+# *                  - Baudrate can be configured
+# *                  - Collorcorrection moved to config page
+# *                  - HSV is using English terms
+# * V1.16 26-12-2019 - Harold
+# *                  - complete restructuring of all parts
+# *                  - check for response of ARDUINO - first response must include "MobaLedLib"
+# *                  - use tabs to switch between pages
+# *                  - menu for accessing functions
+# *                  - right-click menu for palette colors
+# *                  - reset to standard color isnow possible for each palette entry seperately
+# *                  - Palette can now be saved to file and read back
+# *                  - Baudrate fixed to 115000
+# *                  - reduced size to comply with smaller screens
+# *                  - colorwheel changed to conform with Philips Hue colorwheel
+# *                  - tooltips added
+# *                  - LED(s) now blinks in White when selected
+# *                  - All colors for the LEDs are saved in an LED list. The list is send to the ARDUINO when the color is changed.
+# * V1.17 28-12-2019 - BLINKFRQ changed to 1 Hz
+# *                  - deleted Baudrate selection - fixed to 115000
+# *                  - LEDListPage now shows the colors of the LEDs
+# *                   
+# * V1.18 28-12-2019 - Checks now for "#Color Test LED" during connection - if not received after 5 seocnds connection is interrupted (may be wrong ARDUINO answering
+# *                  - receive max LED count from ARDUINO - only in ConfigPage - not dynamically updated in ColorCheckPage yet
+# *                  - corrected calculation of BLINKFRQ
+# *                  - Colorcorrection vaules are now taken into account immediatly without restart
+# *                  - Colorsquare removed
+# *                  - Shortcut key hints moved to tooltips
+# *                  - new Status line at the bottom shows ARDUINO Status
+# * V1.19 29-12-2019 - Neue Datei-Menu  Option „Beenden und Änderungen verwerfen.
+# *                  - Colorcheckpage als Startseite wenn nichts angegeben ist
+# *                  - Blinkende LED anpassen, wenn Anzahl geändert wird
+# *                  - Bei Click auf die Aktuelle Farbe sollte die LED die aktuelle Farbe auch anzeigen.
+# *                  - Vertausche Cursortasten für Startadresse und Anzahl 
+# *                  - add button for blinking off
+# *                  - CTRL-Right Mousebutton for save color in palette
+# * V1.20 30-12-2019 - replace old_color with undo feature
+# *                  - Abfrage beim Benenden ohne Speichern geändert - Soll die Palette (ColTab) gesichert werden?
+# *                  - all LEDs are switched off at start-up
+# *                  - error when ARDUINO connection to possible during startup with shortcuts and text entry not working corrected
+# *                  - help page updated
+# *                  - ERROR: LED selected after start of program automatically gets the current color - corrected
+# * V1.21 01-01-2020 - ColTab Parameter von MobaLedLib wurden nicht richtig gelesen
+# *                  - Fehlerkorrektur in V1.19 "LED selected after start of program automatically gets the current color - corrected" führte zu dem Fehler, dass die Anfangshelligkeit auf 0 gesetzt war - korrigiert
+# * V1.22 02-01-2020 - Switch to HSV square did not work correctly
+# *                  - Hue can now turnaround (after 360 it switches to 0)
+# * V1.23 02-01-2020 - reads ledcnt_max from ARDUINO and checks if led-number + led count < ledcnt_max
+# * V1.24 03-01-2020 - question to save palette only when palette ws changed
+# *                  - window position will be saved correctly after cancel without save
+# *                  - Buttob blinking off changed to on and off switch

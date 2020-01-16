@@ -304,6 +304,22 @@
  30.10.19:  => Released Ver. 0.9.2
  08.12.19:  - Engagement of Pattern_Configurator and Program_Generator finished
             => Released Ver. 0.9.3
+ 09.01.20:  - Started the black and white TV
+            - New compiler switch TEST_PUSH_BUTTONS in "LEDs_AutoProg.ino" to use the buttons as push button
+ 10.01.20:  - Finished the B&W TV (Additional menory: FLASH: 176 byte, RAM: 4 byte)
+              New macros: Set_TV_COL1(), Set_TV_COL2(), Set_TV_BW1(), Set_TV_BW2()
+              It's possible to change the "program" by using several Set_TV... commands and enable them
+              with a switch (DCC, ...)
+              Football: Set_TV_COL1(#InCh, 500/16, 2500/16, 40,65,   2,2, 200,255, 3,10)
+            - Prevent disabling the TV in case the color is equal to one of the room colors
+ 12.01.20:  - "LEDs_AutoProg.ino": Improved the Check_Mainboard_Buttons() function
+            - For some reasons RF_STAY_ON was equal RF_SEQ
+            - New function Set_Def_Neon(SI_1, 1, 255, 1) which defines the propabilitys for the defective neon light
+            - New Room types: NEON_DEF_D, NEON_DEF1D, NEON_DEF2D, NEON_DEF3D
+ 13.01.20:  - RandMux(): RF_NOT_SAME added
+            - House(): Using the upper bit (0x80) of ON_MIN to invert the input
+            - Added: House_Inv() , HouseT_Inv(), GasLights_Inv(), RandCntMux()
+
 
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
@@ -554,6 +570,19 @@ const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 51 Byte FLASH
                        };
 #endif // _NEW_ROOM_COL
 
+#if _USE_SET_TVTAB                                                                                           // 09.01.20:
+  const PROGMEM uint8_t Default_TV_Dat[] =
+                     {
+                     500/16, 2500/16, // Update_t_Min, Update_t_Max,
+                     40, 65,          // Min_Brightness, Max_Brightness,
+                     0,  85,          // R_Min, R_Max,
+                     70, 210,         // G_Min, G_Max,
+                     60, 150          // B_Min, B_Max
+                     };
+#endif // 09.01.20:  _USE_SET_TVTAB
+
+
+
 //------------------------------------------------------------------------------------------------------------------------------
 MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned char Config[], uint8_t RAM[], uint16_t RamSize) // Constructor
 //------------------------------------------------------------------------------------------------------------------------------
@@ -584,6 +613,8 @@ MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned
   memset(InpStructArray, 0x00, _INP_STRUCT_ARRAY_SIZE);
   Set_Input(SI_1, 1);            // Special input which is always 1
   Set_Input(SI_Enable_Sound, 1); // Could be changed by the configuration
+
+  Set_Default_TV_Dat_p();                                                                                     // 09.01.20:
 
   Inp_Processed();        // Clear the Old_Inp[] array
 
@@ -757,7 +788,49 @@ void MobaLedLib_C::Proc_Set_ColTab()                                            
 }
 #endif
 
+#if _USE_SET_TVTAB                                                                                            // 09.01.20:
+//----------------------------------
+void MobaLedLib_C::Proc_Set_TV_Tab()
+//----------------------------------
+{
+  uint8_t Inp = Get_Input(pgm_read_byte_near(cp));
+  if (Inp)
+     {
+     uint8_t Channel = pgm_read_byte_near(cp+1);
+     TV_Dat_p[Channel] = cp+2; // Skip InCh and Channel
+     }
+}
 
+//-----------------------------------
+void MobaLedLib_C::IncCP_Set_TV_Tab()
+//-----------------------------------
+{
+  cp += 12;
+}
+#endif
+
+#if _USE_DEF_NEON                                                                                             // 12.01.20:
+//------------------------------------
+void MobaLedLib_C::Proc_Set_Def_Neon()
+//------------------------------------
+{
+  uint8_t Inp = Get_Input(pgm_read_byte_near(cp));
+  if (Inp)
+     {
+     Rand_On_DefNeon = pgm_read_byte_near(cp+1); // (Def=10)  probability that the neon light starts.             0 = don't start, 1 start seldom, 255 = Start immediately
+     RandOff_DefNeon = pgm_read_byte_near(cp+2); // (Def=200) probability that the light goes off after a while.  0 = Always on,   1 = shot flash, 255 = very long time active
+     Min_DefNeon     = pgm_read_byte_near(cp+3); // (Def=1)   red glow of the starter.                            1 = minimal value,  5 = maximal value
+     }
+}
+
+//-------------------------------------
+void MobaLedLib_C::IncCP_Set_Def_Neon()
+//-------------------------------------
+{
+  cp += 4;
+}
+
+#endif
 //-------------------------------------
 void MobaLedLib_C::Proc_New_HSV_Group()                                                                       // 13.10.18:
 //-------------------------------------
@@ -877,28 +950,84 @@ void MobaLedLib_C::Proc_CopyLED()
   else lp->r = lp->g = lp->b = 0;
 }
 
+//---------------------------------------
+void MobaLedLib_C::Set_Default_TV_Dat_p()                                                                     // 09.01.20:
+//---------------------------------------
+{
+  #if _USE_SET_TVTAB
+    for (uint8_t i = 0; i < _TV_CHANNELS; i++)
+       TV_Dat_p[i] = Default_TV_Dat;
+  #endif
+}
+
+#if 0
+uint8_t Debug_read_byte = 10;                                                                                 // 09.01.20:
+//------------------------------------------------
+uint8_t pgm_read_byte_near_Debug(const uint8_t *p)
+//------------------------------------------------
+{
+  uint8_t b = pgm_read_byte_near(p);
+  if (Debug_read_byte) { Serial.print(b); Serial.print(", "); }
+  return b;
+}
+#else
+  #define pgm_read_byte_near_Debug pgm_read_byte_near
+#endif
+
 //---------------------------------
 void MobaLedLib_C::Update_TV_Data()
 //---------------------------------
 // Algorithm from: https://www.stummiforum.de/viewtopic.php?f=7&t=154443
 {
   CALCULATE_t4; // Calculate the local variable t4 if _USE_LOCAL_TX is defined                                // 22.11.18:
+
   for (TV_Dat_T *p = TV_Dat, *e = p + _TV_CHANNELS; p < e; p++)
     {
     if ((uint8_t)(t4 - p->Last_t) >= p->dt)
        {
        p->Last_t = t4;
-       p->dt     = random8(500/16, 2500/16);      // Naechsten update Zeitpunkt bestimmen
-       uint8_t brightnes = random8(40, 65);       // sorgt fuer das schwanken der Helligkeit      Old: 40, 65
-       p->r = brightnes * random8(0, 85)   / 256; // diese Einstellung erzeugt weitgehend
-       p->g = brightnes * random8(70, 210) / 256; // ein Weisses Licht mit Blau und Gruen Stich   Old: 70, 210
-       p->b = brightnes * random8(60, 150) / 256; // Rot tritt eher selten auf                    Old: 60, 150
-
-       if (p->r >= p->b) p->r = p->b++;           // r < b indicate TV activ. Normal room light has equal r and g values
-
+       CRGB *lp;
+       do
+         {
+         #if _USE_SET_TVTAB                                                                                   // 10.01.20:
+            uint8_t TVNr = p - TV_Dat;
+            //if (Debug_read_byte) { Serial.print("Update_TV_Data "); Serial.print(TVNr); Serial.print(": ");} // Debug
+            const uint8_t *tp = TV_Dat_p[TVNr];
+            uint8_t r1 = pgm_read_byte_near_Debug(tp++); // Use temp variables to make shure that the sequence is correct
+            uint8_t r2 = pgm_read_byte_near_Debug(tp++);
+            p->dt = random8(r1, r2);              // Naechsten update Zeitpunkt bestimmen
+            //if (p==TV_Dat) Dprintf("%i\n", p->dt); // Debug
+            r1 = pgm_read_byte_near_Debug(tp++);
+            r2 = pgm_read_byte_near_Debug(tp++);
+            uint8_t brightnes = random8(r1, r2);  // sorgt fuer das schwanken der Helligkeit
+            //if (p==TV_Dat) Dprintf("%i\n", brightnes); // Debug
+            for (uint8_t i = 0; i < 3; i++)
+                {
+                r1 = pgm_read_byte_near_Debug(tp++);
+                r2 = pgm_read_byte_near_Debug(tp++);
+                p->raw[i] = ((int)brightnes * random8(r1, r2)) / 265;
+                }
+            //if (p==TV_Dat) Dprintf("%i: %i %i %i\n", brightnes, p->r, p->g, p->b); // Debug
+            //if (Debug_read_byte) { Debug_read_byte--; Serial.println(""); } // Debug
+         #else
+            p->dt = random8(500/16, 2500/16);           // Naechsten update Zeitpunkt bestimmen
+            uint8_t brightnes = random8(40, 65);        // sorgt fuer das schwanken der Helligkeit      Old: 40, 65
+            p->r  = brightnes * random8(0, 85)   / 256; // Diese Einstellung erzeugt weitgehend
+            p->g  = brightnes * random8(70, 210) / 256; // ein Weisses Licht mit Blau und Gruen Stich   Old: 70, 210
+            p->b  = brightnes * random8(60, 150) / 256; // Rot tritt eher selten auf                    Old: 60, 150
+         #endif
+         if (p->r >= p->b)      // r < b indicates TV activ. => Make sure that r < b (Fire uses r > b)
+            {                   // If the TV color matches with the room color the TV is disabled and the room is constant lightned ;-(
+            if (p->r == 255)                                                                                    // 10.01.20:
+                 p->r--;
+            else p->r = p->b++;
+            }
+         lp->r = p->r; lp->g = p->g; lp->b = p->b;                       // Prevent that the TV color is equal to one of the const room          // 10.01.20:
+         } while (Cmp_Room_Col(lp, 0) == 0 || Cmp_Room_Col(lp, 1) == 0); // colors because in this case the TV would be disabled in all houses.
        //Dprintf("TV%i %ims  %i %i %i\n", p - TV_Dat, p->dt*16, p->r, p->g, p->b);
        }
     }
+  Set_Default_TV_Dat_p(); // Reset the pointer for the next loop in case they are not set in the loop (SET_TV_... is disabled)  // 10.01.20:
 }
 
 
@@ -912,7 +1041,6 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
   t   = Time;
   #ifndef _USE_LOCAL_TX                                                                                       // 22.11.18:
     t4w = (t>>4)  & 0xFFFF; // Time divided by 16
-  //t4  = t4w & 0xFF;       // Time divided by 16                                                             // 22.11.18:  Disabled
     t10 = (t>>10) & 0xFF;   // Time divided by 1024
   #endif
   if ((uint8_t)((t & 0xFF) - Last_20) >= 50)
@@ -927,6 +1055,12 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
 
   #ifdef _NEW_ROOM_COL
     Room_ColP = Default_Room_Col_Tab;
+  #endif
+
+  #if _USE_DEF_NEON                                                                                           // 12.01.20:
+    Rand_On_DefNeon = 10;
+    RandOff_DefNeon = 200;
+    Min_DefNeon     = 1;
   #endif
 
   for (cp = Config, rp = RAM; !End; )
@@ -945,6 +1079,12 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
 #                                                                                                                 endif
 #                                                                                                                 if _USE_SET_COLTAB
       case SET_COLTAB_T         : Proc_Set_ColTab();        IncCP_Set_ColTab();    break;
+#                                                                                                                 endif
+#                                                                                                                 if _USE_SET_TVTAB        // 10.01.20:
+      case SET_TV_TAB_T         : Proc_Set_TV_Tab();        IncCP_Set_TV_Tab();    break;
+#                                                                                                                 endif
+#                                                                                                                 if _USE_DEF_NEON         // 12.01.20:
+      case SET_DEF_NEON_T       : Proc_Set_Def_Neon();      IncCP_Set_Def_Neon();  break;
 #                                                                                                                 endif
 #                                                                                                                 if _USE_HSV_GROUP
       case NEW_HSV_GROUP_T      : Proc_New_HSV_Group();     IncCP_New_HSV_Group(); break;
@@ -1024,6 +1164,12 @@ void MobaLedLib_C::Inc_cp(uint8_t Type)
 #                                                                                                                 endif
 #                                                                                                                 if _USE_HOUSE
      case HOUSE_T              : IncCP_House();         break;
+#                                                                                                                 endif
+#                                                                                                                 if _USE_SET_TVTAB        // 10.01.20:
+     case SET_TV_TAB_T         : IncCP_Set_TV_Tab();    break;
+#                                                                                                                 endif
+#                                                                                                                 if _USE_DEF_NEON         // 12.01.20:
+     case SET_DEF_NEON_T       : IncCP_Set_Def_Neon();  break;
 #                                                                                                                 endif
 #                                                                                                                 if _USE_FIRE
      case FIRE_T               : IncCP_Fire();          break;

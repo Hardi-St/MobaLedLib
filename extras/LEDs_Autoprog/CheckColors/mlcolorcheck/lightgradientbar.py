@@ -92,7 +92,7 @@ class LightGradientBar(tk.Canvas):
             self._variable.trace_add("write", self._update_value)
         except Exception:
             self._variable.trace("w", self._update_value)
-
+        
         self.gradient = tk.PhotoImage(master=self, width=width, height=height)
 
         self.bind('<Configure>', lambda e: self._draw_gradient(value))
@@ -149,7 +149,7 @@ class LightGradientBar(tk.Canvas):
         self.event_generate("<<HueChanged>>")
 
     def get(self):
-        """Return hue of color under cursor."""
+        """Return value of color under cursor."""
         coords = self.coords('cursor')
         return round2(max_value * coords[0] / self.winfo_width())
 

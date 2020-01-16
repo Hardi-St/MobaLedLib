@@ -13,6 +13,7 @@
 # *
 # * History of Change
 # * V1.00 23.11.2019 - Harold Linke - first release
+# * V1.13 14.12.2019 - Harold Linke - added correction factors
 # *
 # * MobaLedCheckColors supports the MobaLedLib by Hardi Stengelin
 # * https://github.com/Hardi-St/MobaLedLib
@@ -53,15 +54,15 @@
 # * License: http://creativecommons.org/licenses/by-sa/3.0/	
 # ***************************************************************************
 
+COLORCOR_MAX = 255
 
-
-from tkcolorpicker.functions import tk, round2, rgb_to_hexa, hue2col, rgb_to_hsv
+from tkcolorpicker.functions import tk, round2, rgb_to_hexa, hue2col, rgb_to_hsv, hsv_to_rgb
 
 
 class ColorSquare(tk.Canvas):
     """Square color gradient with selection cross."""
 
-    def __init__(self, parent, hue, color=None, height=256, width=256, **kwargs):
+    def __init__(self, parent, hue, color=None, cr=COLORCOR_MAX, cg=int(69*COLORCOR_MAX/100), cb=int(94*COLORCOR_MAX/100), height=256, width=256, **kwargs):
         """
         Create a ColorSquare.
 
@@ -77,6 +78,10 @@ class ColorSquare(tk.Canvas):
         self._hue = hue
         if not color:
             color = hue2col(self._hue)
+            
+        self.cr = cr
+        self.cg = cg
+        self.cb = cb
         self.bind('<Configure>', lambda e: self._draw(color))
         self.bind('<ButtonPress-1>', self._on_click)
         self.bind('<B1-Motion>', self._on_move)
@@ -140,7 +145,7 @@ class ColorSquare(tk.Canvas):
         self.cg = int(cg)
         self.cb = int(cb)
         
-        # self._fill()
+        self._fill()
         self.event_generate("<<ColorChanged>>")            
 
     def _on_click(self, event):
@@ -167,15 +172,14 @@ class ColorSquare(tk.Canvas):
         y = self.coords('cross_h')[1]
         xp = min(x, self.bg.width() - 1)
         yp = min(y, self.bg.height() - 1)
-        try:
-            r, g, b = self.bg.get(round2(xp), round2(yp))
-        except ValueError:
-            r, g, b = self.bg.get(round2(xp), round2(yp)).split()
-            r, g, b = int(r), int(g), int(b)
-        hexa = rgb_to_hexa(r, g, b)
+        
+        
         h = self.get_hue()
         s = round2((1 - float(y) / self.winfo_height()) * 100)
         v = round2(100 * float(x) / self.winfo_width())
+        
+        r,g,b = hsv_to_rgb(h,s,v)
+        hexa = rgb_to_hexa(r, g, b)
         return (r, g, b), (h, s, v), hexa
 
     def set_rgb(self, sel_color):

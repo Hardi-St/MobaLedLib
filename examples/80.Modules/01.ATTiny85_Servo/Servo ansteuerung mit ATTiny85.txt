@@ -1,0 +1,615 @@
+
+ToDo Tiny_UniProg:
+~~~~~~~~~~~~~~~~~~
+- Die Programmierung funktioniert auch dann noch wenn vor dem "start_pmode()" Befehl
+  ein Delay vom 5 Sekunden eingefügt wird.
+  => Es sollte möglich sen, dass man die Reset Fuse ändert bevor das Programm geschickt wird.
+- Button Reset Target erweitern so dass man damit auch die Versorgung des Tinys vom UniProg aus
+  aktivieren kann. Das braucht man aber eigentlich nur zu Testzwecken
+- Tastenkombination mit dem die Standard Fuses gesetzt werden können
+  Taste halten während der Uno neu gestartet wird
+  Das sollte auch dann funktionieren wenn der Tiny auf 128 KHz programmiert wurde
+- Wenn man den Tiny auf 128KHz programmiert, dann funktioniert die SPI kommunikation
+  nicht mehr mit dem Programm
+
+- ATTiny84: Auf der Debug Platine funktioniert das Einlesen der Reset Fuse nicht immer.
+  => Laut dem Datenblatt auf Seite 167 u 168 müssen die Pins PA0-PA2 (Pin 11-13) zum programmieren
+    im HV-Mode auf Masse gelegt werden. Im TinyUniProg sind die Pins unbenutzt
+    Warum geht es trotzdem beim zweiten Versuch?
+    - Der ATTiny88 hat 4 Prog_Enable pins
+    - Beim ATTiny861 habe ich keine Prog_Enable pins gefunden
+  - Wenn man die abfrage zwei mal nacheinander macht, dann funktioniert es beim
+    zweiten mal zumindest bei zwei ATTiny84
+  - Das ändern der Reset Fuse geht auch nicht immer
+  - Die Platine von Kai geht nicht mit dem ATTiny84. Zumindest nicht das einlesen der Fuses
+  - Wenn man die ATTinys von Debug und Kais Platine tauscht, dann geht es bei beiden Platinen nicht mehr
+- Setzen der Fuses per serieller Schnittstelle:
+  - EEPROM preserve Flag
+
+
+- Signatur speichern und Anzeigen wenn falsche Signatur gelesen wird
+- Mit ATTiny84 testen
+  - Fuses ändern
+- SPI Speed erhöhen wenn 8 MHz Tiny => Untersucht, Die erhöhung der Gesschw. geht aber nicht wenn der ATTiny mit 1 MHz läuft.
+- Serielle übertragung vom ATTiny84 zum UNO geht nicht so richtig
+  Der eine ATTiny musste in Daves HV Resetter gelöscht werden. Jetzt geht er wieder.
+  Im Fehlerfall war auch der Reset Pin auf Masse gezogen. Vom Uno oder ATTiny?
+
+- Auto Mode
+- Das Flashen des ATTiny84 funktioniert nicht immer auf Anhieb
+
+Done Tiny_UniProg:
+- Fuses im Klartext anzeigen                                                                           22.07.19:
+- Relais werden nach dem HV-Programmieren nicht angeschaltet                                           10.07.19:
+- PROG_FLICKER ohne Delay implementiern                                                                13.07.19:
+- Error soll an sein bleiben wenn falscher Processor gefunden wird                                     13.07.19:
+- Untersuchen ob das Flashen schneller wird wenn der LED Interrupt mit 200 läuft => Nein               15.07.19:
+- Status LEDs Blau/Weis beim Start lesen                                                               16.07.19:
+
+
+ToDo Servo_Pos:
+~~~~~~~~~~~~~~~
++ Trinär Test: Servo mit den drei Tasten  ansteuern
+  - Aktivieren mit langem druck auf Mittlere Taste (alle LEDs blinken zu beginn)
+  - Mit den Tastern kann man die Servo Positionen setzen.
+    Jeder Tastendruck invertiert die Position. Die entsprechende LED leuchtet dann Lang wenn der Servo auf "1" steht
+    und kurz wenn der Servo auf "0" steht.
+- wenn der "Wackel" Bereich außerhalb des Erlaubten Bereichs liegt, dann sieht man nicht welcher Servo
+  ausgewählt ist. Evtl. könnte man in Servoprogramm das "Wackeln" erkennen und entsprechend reagieren
+- Soll der Servo beim einstellen der min/Max Position zu beginn oder per Tastendruck
+  an die Min/Max Position fahren?
+- LED Test Mode (Linke Taste Lang drücken)
+  - was passiert wenn LED 255 an Servo geschickt wird?
+- Sound Test Mode ? (Rechte Taste Lang drücken)
+- Warum zucken die Servos im Test Servo_Pos Program beim umschalten von einem auf den anderen Servo
+  => Tritt nicht mehr auf
+- Manchmal spinnt das Servo_Pos Program. Dann zucken alle Servos beim Tastendrücken. Erst mit einem
+  Reset des Nanos ist es wieder gut?
+- Prog. In Bibliothek einbinden und als Beispiel compilieren und testen
++ Was passiert wenn Min Größer als Max ist?
+  => Min/Max wird getauscht  -> Hier könnte man noch das invertieren der Drehrichting einbauen
++ Wenn man nur die Min oder Max Position ändert, dann soll auch nur diese verändert werden
+- Tasten vielleicht doch wieder "selber" einlesen
++ Unabhängig von MobaLedLib machen (Weniger Speicher, Unabhängig von Änderungen an der Lib)
+- Testen
+- Evtl. währe es sinnvoll, wenn man eine bestimmte Geschwindigkeit vorgeben kann
+- Später
+  - RBB LEDs blinken zur Identifikation (Nicht nötig da die LED ja Rot Leuchtet)
+  - Abbruch Taste?
+
+
+
+ToDo ATTiny85_Servo:
+~~~~~~~~~~~~~~~~~~~~
+- Für den Nano compilieren
+- Speicher wird voll => Untersuchen
+- Nachwippen
+  - Liste abarbeiten welche folgende Daten enthält:
+    - Zielposition
+    - Geschwindigkeit Start
+    - Beschleunigung
+    - Flags:
+      - Ende (Zielposition = 32767)
+      - Stop
+      - GotoStart
+  Nachwippen von Schranke Zu: 1:40 - 2:00, Auf: 4:58 - 5:05 https://www.youtube.com/watch?v=0aPjY0klSko
+  Signal 1:17, 1:40, Starkes Wippen mit Vorsignal (nur beim öffnen) 2:35 https://www.youtube.com/watch?v=fonHwCmLgl4
+         12:20, 13:14 https://www.youtube.com/watch?v=HwEgexuFK_k
+         Märklin mit Modell und orginal und Text: https://www.youtube.com/watch?v=xa7jAfaMExU
+         Nachwippen mer CS3 konfigurierbar am 5:53
+
+- Servo Balett verbessern
+  - Keine Langsame bewegung
+  - Unterschiedliche Zeiten im Makro damit die Bewegungen zufällig erscheinen
+  - Zwischenpositionen anfahren
+  - Umschalten auf langsame Bewegung
+
+Done ATTiny85_Servo:
+~~~~~~~~~~~~~~~~~~~~
+- Wenn beim einstellen der Min/Max Position die Servo Geschwindigkeit zu langsam ist, dann kommt       10.07.19:
+  der Servo nicht nach wenn eine Taste gedrückt wird. Sobald die Taste losgelassen wird bleibt der
+  Servo stehen. Intern hat er aber eine andere Endposition gespeichert. Diese fährt er an, wenn die
+  Max Position eingegeben wird.
+  Im Tiny Prog beim verstellen von Min/Max eine höhere Geschwindigkeit benutzen
+
+
+Testen ob man die PulUp Widerstände der WS2811 Ausgänge auch mit 180 Ohm
+anstelle von 1K bestücken kann da 180 Ohm für die Charliplexing LED gebraucht wird
+=> Das wird nicht gehen denn der Strom ist bei 180 Ohm schon bei 28 mA -> Es wird nicht mehr
+   die volle Spannung ereicht
+
+Stecker für Stepper
+
+
+- Beschriftungen
+  + Datum, by Hardi, Tiny UniProg
+  - LEDs, Taster Funktionen
++ 3 LEDs optional ohne Charliplexing ?      => Nein, kann auch für 2 LEDs per SW gemacht werden
+- Reihenfolge der LEDs ? und Beschriftungen
++ Größere Pads für Transistoren ? => Nein
+- Schaltplan prüfen
+- Prog-Adapter
+  + 20 und 28 Pol
+  + Zusätzliche Pins für Ossi
+  - mit Nullkraft Fassung
+- Widerstände der Taster berechnen
+- Zweiten Mode Jumper ?
+- Board Abmessungen der Adapter
+- Masse Flächen
++ Nano ? => Nein
+- Dave zeigen ?
+- Doku
+- Lochrasterplatine anpassen
+
+
+
+Probleme:
+- Es könnten immer fehlerhafte PWM Signale kommen. Auch durch falsche LED programmierung
+  => Schutz gegen versehentliches aktivieren der Spezialmodes einbauen
+     Die Spezialmodes sollen nur dann aktiviert werden wenn ein bestimmtes PWM Muster
+     empfangen wird: 1, 225, 1, 225
+- Timing?
+   3*2.5 ms Servo
+   5.8 ms LED PWM lesen?
+   => 13.3
+- Ausgabe eines Zeichens bei 9600 Baud dauert 1ms
+  => Debugausgaben der PWM Werte sollten möglich sein
+- Dokumentation des Servo Programms / Protokolls
+
+
+
+
+Probleme (Inzwischen behoben):
+- Die Pattern Funktion macht Mist ;-(
+  - Beim Umschalten von 30 nach 180 kommt 4 mal ein falscher Wert: 210, 255, 202, 255, 255
+  - Beim Umschalten von 180 nach 30 kommt 4-55 mal ein falscher Wert: 0, 0, 0
+  =>> Fehler in der Pattern Funktion !!!
+- Manchmal werden nicht mehr alle Servos angesteuert. Das gibt sich gewissen zeit wieder
+- Im langsamen Betrieb ruckeln die Servos. Es sieht so aus, als würden sie nicht synchron ruckeln
+  Vielleicht währe es gur, wenn man die Geschwindigkeiten einfach umstellen kann
+  => Ausprobieren ob man das mit Der Pattern Funktion schön hinkriegt
+- Wenn der Reset aktiv ist, dann bewegt sich der 3. Servo manchmal (Geschwindigkeit ?)
+- Beobachtung:
+  - Es bewegt sich nur der Gelbe Servo, das Rote  Servosignal kommt ist aber konstant. das Grüne fehlt
+  - Es bewegt sich nur der Gelbe Servo, das Grüne Servosignal kommt ist aber konstant 1 ms. das Rote  fehlt
+  - Es Bewegt sich nur Grün, Rot und Gelb sind 0V
+  - Es Bewegt sich nur Gelb, Rot und Grün sind 0V
+  - Jetzt bewegen sich wieder alle. Es gab kein zucken am Anfang
+  - Wann klinken sich die Servos aus ? Wann wieder ein ?
+    - Wieder aktiv beim einschalten der LEDs
+    - Deaktiviert am ende des Schnellen Wipes wenn LEDs aus sind
+  - Bei dem schnellen wipe werden die Signale an den Endpositionen abgeschaltet,
+    bei den langsamen Bewegungen nicht
+  - Kann man einen Reset ausschließen ?
+    Ja, wenn man die Resettaste am HV-Programmer drückt zucken die Zervos beim wiedereinschalten
+  - Es geht immer mindestens ein Servo
+    => Nein gerade stehen alle, der Gelbe bekommt aber einen 1ms Impuls.
+       Jetzt arbeitet der Grüne, kurz waren Signale von Gelb und Rot zu sehen, jetzt nur noch Grün
+  - Tritt das Problem auch auf wenn der Reset kein Eingang ist?
+  - Gerade spinnt der Gelbe Servo ganz. Er bewegt sich schnell von einer zur anderen Position
+    Das Servo Signal hat dabei 2.1 ms und später 1.7ms
+
+
+
+Reset Pin Nutzen:
+~~~~~~~~~~~~~~~~~
+-  High Fuse 0x5F anstelle von 0xDF = RSTDISBL fuse   (5x = 0101xxxx  Dx = 1101xxxx)
+   Tabelle "20-4. Fuse High Byte" auf Seite 148 in C:\Dat\Märklin\Datenblätter\atmel-2586-avr-8-bit-microcontroller-attiny25-attiny45-attiny85_datasheet.pdf
+
+   Fuse High Byte   Bit No Description                                  Default Value
+   ~~~~~~~~~~~~~~   ~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~                  ~~~~~~~~~~~~~
+   RSTDISBL         7      External reset disabled                      1 (unprogrammed)
+   DWEN             6      DebugWIRE enabled                            1 (unprogrammed)
+   SPIEN            5      Serial program and data download enabled     0 (programmed) (SPI prog. enabled)
+   WDTON            4      Watchdog timer always on                     1 (unprogrammed)
+   EESAVE           3      EEPROM preserves chip erase                  1 (unprogrammed) (EEPROM not preserved)
+   BODLEVEL2        2      Brown-out Detector trigger level             1 (unprogrammed)
+   BODLEVEL1        1      Brown-out Detector trigger level             1 (unprogrammed)
+   BODLEVEL0        0      Brown-out Detector trigger level             1 (unprogrammed)
+
+   Fuse Low Byte    Bit No Description                                  Default Value
+   ~~~~~~~~~~~~~~   ~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~                  ~~~~~~~~~~~~~
+   CKDIV8           7      Clock divided by 8                           0 (programmed)
+   CKOUT            6      Clock output enabled                         1 (unprogrammed)
+   SUT1             5      Start-up time setting                        1 (unprogrammed)
+   SUT0             4      Start-up time setting                        0 (programmed)
+   CKSEL3           3      Clock source setting                         0 (programmed)
+   CKSEL2           2      Clock source setting                         0 (programmed)
+   CKSEL1           1      Clock source setting                         1 (unprogrammed)
+   CKSEL0           0      Clock source setting                         0 (programmed)
+
+- C:\Dat\Märklin\Arduino\ATTinyFuseReset2
+- Wenn ein HiTec Servo an Pin 6 (MISO) angeschlossen ist, dann funktioniert das lesen der Fuses nicht.
+  Mit dem 9g Servo geht es.
+  => Am besten alle Servos ausstecken
+- Ursprüngliche Fuses:
+   avrdude.exe: safemode: lfuse reads as E2
+   avrdude.exe: safemode: hfuse reads as D5
+   avrdude.exe: safemode: efuse reads as FF
+   => E2 D5 FF = Brown out Detection level 2.7V, 8MHz, Preserve EEPROM
+
+- Vom Arduino umprogrammiert auf BOD 4.3V
+   avrdude.exe: safemode: lfuse reads as E2
+   avrdude.exe: safemode: hfuse reads as D4
+   avrdude.exe: safemode: efuse reads as FF
+   => E2 D4 FF = Brown out Detection level 4.3V, 8MHz, Preserve EEPROM
+   Achtung: Dabei wird das Programm im Flash gelöscht !
+
+ - Reset als IOPin:
+    lfuse E2
+    hfuse 55
+
+ - Das HV Programmiertool benutzt den ATTiny pin 2 => Hier darf nichts angeschlossen sein
+   Die HV Platine solle diesen Pin abschalten können
+
+ - Zum Flashen C:\Dat\Märklin\Arduino\ArduinoISP_Hardi\ArduinoISP_Hardi.ino
+   und nicht   C:\Dat\Märklin\Arduino\LEDs_Eisenbahn\Prog_ATTiny85\ISP_mit_Serial_print\ISP_mit_Serial_Print.ino
+   verwenden !!
+
+
+- Problem bei exterm kurzen Impulsen
+- Timeout darf nicht größer als 65xxx werden
+- Timeout Zeit prüfen mit Ossi
+- Länger messen (5ms) Pro Zyklus nur eien oder zwei Kanähle messen
+- Servos nacheinender oder gleichzeitig in einem Interrupt generieren
+
+
+
+Gedanken zum ansteuern eines Servos mit dem ATTiny85
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Das einlesen der LED PWM Signale funktioniert nicht sehr genau. Die Messwerte schwanken
+manchmal zwischen zwei Werten. Momentan wird ein Tiefpass Filter zur Stabilisierung verwendet.        => Alt
+Dieser hat aber den nachteil, dass bei einen Sprung des LED Signals zwischenwerte erzeugt werden
+welche die Bewegung des Servos stören. Wenn der Servo auf 100 steht und nach 150 fahren soll
+und das LED Signal vorher 0 ist, dann generiert der Tiefpass zunächst einen kleinen Wert.
+=> Das Servo zuckt kurz Richtung 0 bevor es sich in die Richtige Richtung bewegt.
+
+Darum soll eine Andere Filterrung implementiert werden.                                               => Ist Implementiert
+Das PWM Signal soll, wenn es zwischen zwei Werten hin und her springt einen Wert behalten.
+Das kann der Größere der beiden Werte sein (Achtung bei 0).
+Es soll aber auch gewährleistet sein, das eine Änderung des LED PWM Signals um 1 erkannt wird.
+Beispiel:
+  PWM wechselt zwischen 34 und 35   => 35 wird ausgegeben
+         "              35 und 36   => 36   "
+         "              34 und 35   => 35
+         "              20 und 21   => 21
+         "              18 und 20   => Abwechselnd 18 und 20 ausgeben
+         "               0 und  1   => ?  Das sollte nicht passieren
+
+Momentan werden die PulsIn Werte und nicht LED PWM Signale im Programm benutzt. Evtl.
+ist es Einfacher, wenn die PulsIn Werte zunächst umgerechnet werden.                                  => Ist Implementiert
+
+Eigentlich erzeugt die Tiefpassfilterrung künstliche Zwischenwerte. Das ist ja gar nicht so
+schlecht, aber diese Zwischenwerte sind nicht gewollt. das LED PWM Signal kennt ja keinen Zwischenwert.
+
+
+
+Serien Terminierung auf der Platine kann über einen Widerstand an der verbindung zur nächsten
+Platine gemacht werden. Das muss im Schaltplan und auf der Platine Dokumentirt werden.
+Das ist aber bei den WS281x Platinen auch nicht vorgesehen. Ich erinnere mich wage, dass
+das im Chip über einen größeren Ausgangswiderstand gemacht ist.
+
+
+Trinärmode:
+~~~~~~~~~~~
+Alle 3 Servos sollen mit einem LED PWM Signal gesteuert werden können.
+Das kann
+- per Compiler Schalter dauerhaft aktiviert werden
+- mit der 250 aktiviert werden
+
+
+Servo zucken:
+~~~~~~~~~~~~~
+HiTec HS311
+- Ist eignentlich der beste Servo (Leise, Ruckelt nicht) aber
+- Zuckt wenn von 5V auf Impuls geschaltet wird.
+- Kein Zucken wenn 0V -> Impuls
+- Fährt ein Stück (5°) wenn von 5V nach 0 geschaltet wird ohne dass Impulse kommen !!!
+  Das ist ganz Fatal damit
+Tower Pro Micro Servo 9g (Billigservo)
+- Kein Zucken
+Carson CS3
+- Kein Zucken wenn Pullup 1K bei einem 10K Widerstand Zuckt es wenn Reset gedrückt wird.
+  Dummerweise funktioniert dann das Programmieren nicht mehr ;-( Das liegt evtl. an den Schutzwiderständen im HV Programmer.
+  Mit 4.7K get das Programmieren und er Zukt nicht
+
+
+Control_Servo() wird an verschiedenen Stellen benutzt:
+- Set_All_Servos() per Trinär Mode
+- ReadMinMax()
+- Proc_Mode_Server() bei Mode 225, 230, 235
+- Main loop im idle zustand
+
+Im Zustand ReadMinMax soll man mit 250 den Tastenmode aktivieren können.
+Dann wird die Position von 6 "Tasten" gesteuert
+--  -  0  +  ++  Ok
+
+
+ToDo:
+~~~~~
+- Immer nur ein LED PWM Signal einlesen weil sonst die Zeit nicht reicht
+  - 5.2 ms PWM_in()
+  - 2.5 ms Servo
+    ======
+    7.7 ms * 3 = 23.1 ms
+  Das kann dan auch auf weitere Eingänge erweitert werden.
+
+- Timer Interrupt soll alle 20ms kommen. Hier werden dann alle 3 Servos Signale
+  nacheinander generiert. Auch dann wenn ein Servo aus ist wird entsprechend
+  gewartet damit sich die Zeiten des folgenden Servos nicht verschieben.
+  => 7.5 ms zum generieren der Servosignale
+    +5.2 ms
+    =======
+    12.7 ms => es sind 7.3 ms für Berechnungen übrig
+  Wenn weitere Servod angesteuert werden sollen, dann müssen die Signale gleichzeitig generiert werden.
+  Das kann dan evtl. zu Jidder führen.
+
+- Übrige Zeit messen
+
+
+
+- LTO (Link-Time-Optimization) Untersuchen
+  => Spart viel speicher, aber die PWM Erkennung scheint nicht so gut zu gehen
+     Mal sehen was passiert wenn das Programm als Assembler code ist
+
+Ohne LTO c++
+Der Sketch verwendet 6138 Bytes (74%) des Programmspeicherplatzes. Das Maximum sind 8192 Bytes.
+Globale Variablen verwenden 137 Bytes (26%) des dynamischen Speichers, 375 Bytes fÃ¼r lokale Variablen verbleiben. Das Maximum sind 512 Bytes.
+
+Ohne LTO Asm
+Der Sketch verwendet 6174 Bytes (75%) des Programmspeicherplatzes. Das Maximum sind 8192 Bytes.
+Globale Variablen verwenden 137 Bytes (26%) des dynamischen Speichers, 375 Bytes fÃ¼r lokale Variablen verbleiben. Das Maximum sind 512 Bytes.
+
+
+Mit LTO
+Der Sketch verwendet 5320 Bytes (64%) des Programmspeicherplatzes. Das Maximum sind 8192 Bytes.
+Globale Variablen verwenden 135 Bytes (26%) des dynamischen Speichers, 377 Bytes fÃ¼r lokale Variablen verbleiben. Das Maximum sind 512 Bytes.
+                     818
+
+Mit LTO Asm:
+Der Sketch verwendet 5434 Bytes (66%) des Programmspeicherplatzes. Das Maximum sind 8192 Bytes.
+Globale Variablen verwenden 135 Bytes (26%) des dynamischen Speichers, 377 Bytes fÃ¼r lokale Variablen verbleiben. Das Maximum sind 512 Bytes.
+
+=> Saved 740 Bytes
+
+LED PWM 100:
+
+Mit LTO                Ohne LTO              Ohne LTO ASM               Mit LTO ASM
+659 264 1925 100 0     672 607 2096 97 0      659 383 1923 100 0        659 466 1926 100 0
+659 284 1925 100 0     672 610 2094 97 0      659 397 1922 100 0        659 476 1924 100 0
+659 303 1921 100 0     672 613 2097 97 0      659 410 1922 100 0        660 485 1924 100 0
+660 320 1921 100 0     672 616 2100 97 0      659 422 1924 100 0        659 494 1924 100 0
+660 337 1923 100 0     669 619 2106 97 0      659 434 1921 100 0        659 502 1922 100 0
+659 353 1922 100 0     669 621 2106 97 0      659 445 1924 100 0        660 510 1923 100 0
+659 369 1921 100 0     672 624 2097 97 0      659 456 1921 100 0        659 517 1923 100 0
+659 383 1922 100 0     672 626 2095 97 0      659 466 1921 100 0        659 524 1923 100 0
+                               !!!! !!
+
+Das C++ Programm läuft mit LTO schneller. Dummerweise sitmmt dann das PWM signal nicht mehr.
+Wenn das ASM Modul verwendet wird macht as aber nicht mehr aus.
+Das verhält sich ähnlich wie das ASM Programm welches mit -O2 generiert wurde.
+=> Zum testen der PWM Routinen in c++ muss LTO abgeschaltet werden.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- Kennlinie Stimmt nicht mehr mit der neuen PulsIn10 Funktion
+  => Anpassen
+  Evtl. muss man die Tolleranzen größer machen damit es auch bei anderen Bausteienen geht
+  10 PWM Steps unterschied ?
+- 1K in LED Impuls Leitung damit die Flanken steiler werden  o.k.
+
+- map() Funktion durch IntMap() ersetzen
+- Control_Servo() braucht viel zu viel Speicher ?
+- Untersuchen InPuls() : C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\wiring_pulse.c
+  => countPulseASM misst in 1/16 us !
+
+- Warum wird der Servo of +5V geschaltet wenn er aus sein soll. DisableServo müsste doch reichen
+- Bei 0 und evtl. bei 254 wird die Enposition nicht bespeichert.
+  Problem tritt auf, wenn der WipeMode mit 0 beendet wird
+ - Ramp-Up des PWM Signals soll nichts verändern => Untersuchen- Zoom
+ - Beim Einstellen von MinMax soll mit 250 ein Zoom Mode ein und ausgeschaltet werden
+
+- Andere Methode zur Eingabe von Min und Max:
+  - Zum Verstellen der Min und Max Werte ist evtl. eine Bestätigung hilfreich:
+    - Wert verstellen
+    - Taste drücken: Minwert Speichern
+    - Wert verstellen
+    - Taste drücken: Maxwert speichern
+      Die „Taste“ könnte man mit der 254 kodieren
+  - Steuerung mit 3 Tastern (Links / OK / Rechts)  Lang = Abbruch:
+    - Auswahl des Servos mit Links / Rechts. Auswahl mit OK. Das aktuelle Servo „Wackelt“ geringfügig um die aktuelle Position
+      => zusätzliche Funktion zum „Wackeln“, oder Wackeln um die Mittelstellung
+      Eine LED blinkt die Nummer des Servos
+    - Auswahl des einen Anschlags mit den Tasten ausgehend von der aktuellen Position.
+      Mit einem Spezialbefehl wird das Servo um ein Stückchen nach links oder rechts gedreht.
+      Wenn die Links/Rechts Taste längere Zeit gedrückt wird, dann bewegt sich das Servo schneller.
+      LED zeigt „Kurz an / Lang aus“ für Linken Anschlag, und „Lang an / Kurz aus“ für Rechten Anschlag.
+    - Nach dem Druck auf OK kann die Geschwindigkeit eingestellt werden. Das Servo ist im Wipe Mode.
+      Mit den Tasten Links / Rechts wird die Geschwindigkeit verstellt.
+
+- Prüfen ob der Reset Pin auch einen Pull Up hat !!!
+- Binär Mode
+- Ausgabe der EEPROM Werte als PWM Werte
+  - Vielleicht sollte man gleich die PWM Werte im EEPROM Ablegen
+    Dann würde man sich die Rückrechnung sparen
+- Warum wird realloc() und free() benutzt wenn S_DEBUG activ ist?
+  Das braucht viel Speicher:
+    382 T realloc
+    304 T malloc
+    274 T free
+    960 Summe
+- Testen ob das Timing noch passt
+  Auch wenn MAX_SERVO auf 2700 gesetzt wird
+  => Debug Ausgabe Wenn Timing nicht passt einbauen
+- 16 MHz Testen
+- Mit Nano testen
+- Die aktuelle Position wird zu oft gespeichert weil Störungen kommen
+- Bestätiugung durch kurzes zucken wenn der Mode ReadMinMax aktiviert wird
+- Programm aufräumen
+
+Done:
+~~~~~
+- MinMax nicht Speichen wenn keine Änderung
+  - Der MinMax Wert soll nur dann gespeichert werden wenn er verändert wurde Delta > 5°
+  - Dann kann der unlogische Sprung von 245 zurück zu 240 entfallen
+- Braucht man überhaupt eine CRC Prüfsumme für den EEPROM ?
+  - Bei einem Fehler werden alle werte Gelöscht
+  - Die Prüfsumme wird am häufigsten geschrieben
+  - Es kostet viel FLASH
+- Wenn man den 245 Mode verlässt und das PWM signal ist 0, dann fährt der Servo auf 0
+    Test: B230 B245 B240 B0
+  Der Fehler tritt nur dann auf wenn G = 0 ist
+  Beim anderen Kanal tritt er auch auf:
+    G225 G245 G240 G0
+  - Das Servo Signal hat eine Ipmulslänge von 4.5ms Blau, 3.9ms bei Grün, dann wieder 4.48,
+  - Wenn man anschließend B230 B245 eingibt, dann läuft der Wipe mode sofort los ohne dass B240 eingegeben werden muss?
+  => Fehler ist schon mindestens seit dem 2.5.19 drinnen
+  - Beim Wipe wird Act_pwmTime nicht verändert ? es ist immer 9771
+  - 9771 = PWM 80
+  ==> Problem wird von dieser Zeile erzeugt:
+      799: ; ///digitalWrite(Outp_PBx[ChannelNr], 1); // Disable the Servo
+- Abschaltung der Servo Signale geht nicht nach dem ändern von Speed
+- Untersuchen welchen Wert die Servoleitung haben soll wenn er aus ist.
+  - Wenn die Leitung 0 ist, dann Funktioniert die RS232 nicht mehr
+- Kennlinie erweitern, so das Steuerwerte für Eingangssignale > 220 generiert werden
+   7 Werte: 225, 230, 235, 240, 245, 250, 254
+  11 Werte: 223, 226, 229, 232, 235, 238, 241, 244, 247, 250, 253
+- Befehle:
+  - Min/Max
+  - Speed
+  - Invers ?
+  - ...
+- Zur definition von Min/Max wird der Minimale und der Maximale Wert nacheinander vorgegeben
+  in dem Werte zwischen 1 und 220 geschickt werden.
+- Zur definition der Geschwindigkeit könnte das Servo in den Wipe Mode gebracht werden und
+  man kann über 1-220 die Geschwindigleit einstellen.
+  Eine Andere Möglichkeit währe das anfahren der beiden Endpositionen.
+  Daraus könnte das Programm die Geschwindigkeit ermitteln
+- Warum bewegt sich der Servo 0 wenn B230 eingegeben wurde
+- Wenn der andere Servo gesteiert wird (vorher B230), dann zuckt dieser beim ersten Wert
+  Evtl. liegt das an dem Tiefpass von Puls_Filter
+- Endpos speichern
+- Die Geschwindigkeit soll nicht immer sofort im EEPROM gespeichert werden
+  Erst wenn M_SaveEEPROM aufgerufen wird. Das kann für komplexe Bewegungen genutzt werden
+- Beenden mit 0 ohne Speichern
+- Die Wipe Bewegung des Servos zum einstellen der Geschwindigkeit soll nur dann kommen
+  wenn vorher MinMax verändert wurde
+- ReadMinMax interpretiert PWM sign. > 220 falsch
+- Das beenden von ReadMinMax() und ReadSpeed() mit 255 geht nicht
+- ReadMinMax speichert den MinWert nicht oder ReadSpeed() verwendet ihn nicht
+  => Jetzt gehz es wiederr ?!?
+- Zum einlesen der Kommandos den Ungefilterten Wert PulsIn Wert verwenden
+  Dann sollte es keine Probleme mit dem Tiefpass verhalten des Filters geben
+- Kennlinien
+  PWM_in_us => PWM LED (Debug)
+  PWM_in_us => us_Servo
+
+
+Das Servo Signal hat eine Periode vom 20ms. Das High Signal ist zwischen 1ms und 2ms lang
+
+
+- Benötigte auflösung fr einen langsame Drehung ?
+- Auflösung der MobaTools 1/8us
+- Der ATTiny85 hat nur zwei 8-Bit Timer.
+=> Die Impulse werden über eine Bussy Wait delay routine erzeugt weil diese genauer ist
+   als eine Interrupt Routine
+
+
+  Links:
+  https://arduino-projekte.webnode.at/registerprogrammierung/timer-interrupt/attiny/
+
+  Servo Lib:
+    https://arduino-projekte.webnode.at/meine-projekte/servosteuerung/
+    arduino.cc SoftwareServo Library
+    https://github.com/fri000/Servo8Bit
+    https://hackaday.com/2011/09/25/attiny-hacks-attiny4585-servo-library/
+    http://projectsfromtech.blogspot.com/2013/03/attiny85-servo-softwareservo-library.html
+    http://www.cunningturtle.com/servo8bit-library-version-0-6-released/
+    https://codebender.cc/sketch:374359#ATtiny85%20servo%20code%20updated%20Arduino%20sketch%20with%20SoftwareServo%20library.ino
+
+
+
+pulseIn() liest die Dauer eines Pulses mit einer Aufösung von einer us
+
+Die WS2811 erzeugen ein 420Hz PWM Signal => Periode ist 2.3809 ms
+Mit einer Auflösung von 1us können 2381 verschieden PWM Signale erfasst werden.
+
+PWM = (pulseIn()+1190) * 256 / 2381
+
+Die Messdauer ist maximal 4.8 ms (im Mittel 3.6ms)
+
+Zum Ausgeben des PWM Signals werden 1 – 2 ms benötigt
+
+Die Periode des PWM Signal kann zwischen 40 und 200 Hz liegen (https://en.wikipedia.org/wiki/Servo_control)
+=> 25 ms sind möglich
+
+Für die Verarbeitung eines Servos braucht man Maximal 4.8 + 2 ms = 20.34 ms => 3 Servos können verarbeitet werden
+Während Der Messung werden die Interrupts abgeschaltet
+
+Endstellung wird im EEProm gespeichert
+- wenn das Servo länger als 5 Sekunden nicht bewegt wird (Oder nur minimal)
+- keine Automatische speicherung beim Spannungsausfall
+
+Varianten:
+Unabhängiges Modul mit 3 Servos:
+- Reset pin per Fuse zum Input machen
+- Werte zwischen 1 und 220
+- 0 Keine Änderung, Stop
+- Die Ansteuerung könnte evtl. auch so gemacht werden wie im S3PO Modul
+
+S3PO Modul
+- Ein PWM Eingang
+- Variante1:
+  Zwei nacheinander geschickte PWM Zahlen (1. Zahl Auswahl des Kanals, 2.Zahl PWM Wert. Dazwischen 0)
+- Variante 2: „Bit“ Kodierte Werte mit denen nur die Endpositionen angefahren werden
+  Die Endpositionen und Geschwindigkeiten können über Variante 1 einmalig im EEPROM abgespeichert werden
+
+16MHz: https://www.hackster.io/porrey/attiny-16mhz-610d41
+
+
+Serial.print für ATTiny:
+- https://www.arduinoforum.de/arduino-Thread-Serial-Monitor-als-Debughilfe-f%C3%BCr-den-ATtiny85-und-andere-ATMEL-Mikrocontroller
+- https://www.hackster.io/porrey/easy-serial-on-the-attiny-2676e6
+
+
+Die Servo PWN Signale haben einen Jidder von 2us => Es bringt nichts wenn man
+eine feinere Auflösung mit nop's generiert
+
+__asm__("nop\n\t"); erze
+Nop 0.125 us:  1/ 8MHz
+1/8 us
+
+https://books.google.de/books?id=U6EtJwBzY1oC&pg=PA64&lpg=PA64&dq=Arduino+nop+duration&source=bl&ots=EdDgSTl2rM&sig=ACfU3U3IAVv51qeeUPzMYgaMZb_V9nnP9A&hl=de&sa=X&ved=2ahUKEwi8kdrK3dbhAhU0pHEKHY2DBtI4ChDoATACegQICRAB#v=onepage&q=Arduino%20nop%20duration&f=false
+
+
+
+- Warum braucht die PulseIn() Funktion im Timeout 6.8ms obwohl 4 ms eingestellt sind
+  Eigentlich sollte der Timeout 2.5ms sein 1/420Hz = 2.38ms
+  4000 => 6.8ms
+  2000 => 3.4ms
+  1500 => 2.6ms
+  1400 => 2.45
+
+
+  Zum abschalten auf Hi schalten
+
+Preise:
+DirtyPCBs: 30 Platinen: Eur 10,6844    0.356 Eu / Stück    8 Wochen
+Aisler:                 Eur 65,00      2.166 Eu / Stück
+Eurocirquits:           Eur 85,09      2.836 Eu / Stück    7 Werktage
+
+WS2811: 0.24€ https://www.tme.eu/de/details/ws2811-d/led-treiber/worldsemi/ws2811/?brutto=1&gclid=EAIaIQobChMIk6S9mKf34QIVR-N3Ch2__wUmEAQYASABEgIrcPD_BwE

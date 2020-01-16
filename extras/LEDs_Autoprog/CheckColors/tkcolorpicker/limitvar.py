@@ -24,11 +24,12 @@ from tkcolorpicker.functions import tk
 
 
 class LimitVar(tk.StringVar):
-    def __init__(self, from_, to, master=None, value=None, name=None):
+    def __init__(self, from_, to, master=None, value=None, name=None, turnaround=False):
         tk.StringVar.__init__(self, master, value, name)
         try:
             self._from = int(from_)
             self._to = int(to)
+            self.turnaround = turnaround
         except ValueError:
             raise ValueError("from_ and to should be integers.")
         if self._from >= self._to:
@@ -52,11 +53,19 @@ class LimitVar(tk.StringVar):
         try:
             val = int(val)
             if val < self._from:
-                val = self._from
-                self.set(val)
+                if self.turnaround:
+                    val = self._to
+                    self.set(val)
+                else:
+                    val = self._from
+                    self.set(val)
             elif val > self._to:
-                val = self._to
-                self.set(val)
+                if self.turnaround:
+                    val = self._from
+                    self.set(val)
+                else:
+                    val = self._to
+                    self.set(val)
         except ValueError:
             val = 0
             self.set(0)

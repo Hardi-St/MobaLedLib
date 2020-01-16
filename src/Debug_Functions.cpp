@@ -63,6 +63,13 @@ void MobaLedLib_C::Print_Comment(uint8_t Type)
   #ifdef _NEW_ROOM_COL
     case SET_COLTAB_T:        Dprintf("Set_ColTab");        break;
   #endif
+  #if _USE_SET_TVTAB
+    case SET_TV_TAB_T:        Dprintf("Set_TV_TAB");        break;                                            // 10.01.20:
+  #endif
+  #if _USE_DEF_NEON                                                                                           // 12.01.20:
+    case SET_DEF_NEON_T:      Dprintf("Set_Def_Neon");      break;
+  #endif
+
     case LOGIC_T:             Dprintf("Logic");             break;
     case NEW_HSV_GROUP_T:     Dprintf("New_HSV_Group");     break;
     case NEW_LOCAL_VAR_T:     Dprintf("New_Local_Var");     break;                                            // 07.11.18:

@@ -28,8 +28,9 @@
  ~~~~~~~~~~~~~~~~~
  17.09.18:  - Extracted to a separate modul
  06.09.19:  - Added SINGLE_LEDxy
- 05.10.19:  - Soved problem with single LEDs (See below)
-
+ 05.10.19:  - Solved problem with single LEDs (See below)
+ 13.01.20:  - New room types NEON_DEF_D, NEON_DEF1D, NEON_DEF2D, NEON_DEF3D
+            - Using the upper bit (0x80) of ON_MIN to invert the input
 
  Problem:                                                                            05.10.19:
  ~~~~~~~~
@@ -98,6 +99,13 @@ uint8_t MobaLedLib_C::Is_Room_On(CRGB *lp, uint8_t RawNr)
  TV Program / Feuer zu konstantem Licht gewechselt wird. Aber das ist nicht so schlimm.
  Das wird relativ selten passieren. Und wenn dann haben die Preiserlein es sich anders
  ueberlegt.
+
+ Es tritt immer wieder auf. Dann schalten alle Preiser die diesen Kanal geschaut haben                        // 10.01.20:
+ gleichzeitig das TV aus ;-(
+ Das ist nicht schîn.
+ => Das wird jetzt in Update_TV_Data() abgefangen
+ Bei dem Kamin kann das immer noch auftreten. Aber hier betrifft es nur ein einziges Zimmer.
+ Darum Ñndere ich das erst mal nicht.
 */
 #ifdef _NEW_ROOM_COL
     //--------------------------------------------------------
@@ -149,7 +157,7 @@ void MobaLedLib_C::Update_TV_or_Chimney(uint8_t TVNr, CRGB *lp, uint8_t Room_Typ
   if (Is_Room_On(lp, ALL_CHANNELS))                                                                           // 25.10.18:  Old: Get_RawNr(Room_Typ)))
      {
      uint8_t ColNr = COLOR_TV0_A + 2 * TVNr;
-     if (Cmp_Room_Col(lp, ColNr) == 0 || Cmp_Room_Col(lp, ColNr+1) == 0) return ;
+     if (Cmp_Room_Col(lp, ColNr) == 0 || Cmp_Room_Col(lp, ColNr+1) == 0) return ; // Constant light is active
 
      if (lp->r < lp->b)  //TV aktiv?
           {
@@ -195,6 +203,9 @@ uint8_t MobaLedLib_C::Get_RawNr(uint8_t Room_Typ)
     case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: case SINGLE_LED1: case SINGLE_LED1D: return 0;
     case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: case SINGLE_LED2: case SINGLE_LED2D: return 1;
     case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case SINGLE_LED3: case SINGLE_LED3D: return 2;
+#if _USE_DEF_NEON                                                                                             // 13.01.20:
+    case NEON_DEF1D:  case NEON_DEF2D:  case NEON_DEF3D:  return Room_Typ - NEON_DEF1D; // ToDo: Integerate to the lines above if _USE_DEF_NEON is always active
+#endif
     default:                                                                                                                          return ALL_CHANNELS;
     }
 }
@@ -274,6 +285,20 @@ void MobaLedLib_C::Update_Neon_Light(uint8_t Room_Typ, CRGB *lp)                
 {
   #define MAX_FLICKER_CNT  5
 
+  #if _USE_DEF_NEON                                                                                           // 12.01.20:
+     uint8_t Def_Neon = (Room_Typ >= NEON_DEF_D && Room_Typ <= NEON_DEF3D);
+     uint8_t RandOff;
+     uint8_t Rand_On;
+
+     if (Def_Neon)
+          { Rand_On = Rand_On_DefNeon; RandOff = RandOff_DefNeon;}
+     else { Rand_On = 100;             RandOff = 80; }
+  #else
+     #define Def_Neon 0
+     #define RandOff 80
+     #define Rand_On 100
+  #endif
+
   if (Trigger20fps > 0)
      {
      uint8_t RawNr = Get_RawNr(Room_Typ); // Return 0, 1, 2 for single LEDs and 4 for all channels
@@ -283,7 +308,7 @@ void MobaLedLib_C::Update_Neon_Light(uint8_t Room_Typ, CRGB *lp)                
         uint8_t MinVal = 1, MaxVal, ColorNr;
         if (Room_Typ < NEON_LIGHTD)
              ColorNr = COLOR_NEON_B; // Helligkeit der normalen Lampen
-        else if (Room_Typ < NEON_LIGHTM || Room_Typ >= NEON_LIGHTL)
+        else if (Room_Typ < NEON_LIGHTM || Room_Typ >= NEON_LIGHTL || Def_Neon)                               // 12.01.20:  Added: Def_Neon
              ColorNr = COLOR_NEON_D; // Helligkeit der dunklen Lampen
         else ColorNr = COLOR_NEON_M; // Helligkeit der mittleren Lampen
         MaxVal = Get_Room_Col1(ColorNr, RawNr & 0x03);
@@ -306,18 +331,24 @@ void MobaLedLib_C::Update_Neon_Light(uint8_t Room_Typ, CRGB *lp)                
 //           else if (Val >= Get_Room_Col1(COLOR_NEON_D, RawNr & 0x03)) { MinVal = Get_Room_Col1(COLOR_NEON_D, RawNr & 0x03) + 1; MaxVal = Get_Room_Col1(COLOR_NEON_M, RawNr & 0x03); Dprintf("Set COLOR_NEON_M\n");}
            }
 
-        if (Val < MaxVal) // Not turned on
+        if (Val < MaxVal || Def_Neon) // Not turned on
              {
              bool Is_On;
              uint8_t Rand = random8();
              if (Val >= MaxVal - MAX_FLICKER_CNT)  // Flicker active    250 >= 255 - 5
                   {
-                  if (Rand < 80)  return;  // Mit einer niedrigen Warscheinlichkeit bleibt die LED weitere 20 ms an
-                  Val = Val - (MaxVal - MAX_FLICKER_CNT) + 1 + MinVal;  // LED aus, und Zaehler erhoehen  Val = 250 - (255 - 5) + 2 = 2   // 21.10.18:  Old: +2
+                  if (Rand < RandOff)  return;  // Mit einer niedrigen Warscheinlichkeit bleibt die LED weitere 20 ms an
+
+                  #if _USE_DEF_NEON                                                                                        // 12.01.20:
+                    if (Def_Neon)
+                         Val = Min_DefNeon;
+                    else
+                  #endif
+                        Val = Val - (MaxVal - MAX_FLICKER_CNT) + 1 + MinVal;  // LED aus, und Zaehler erhoehen  Val = 250 - (255 - 5) + 2 = 2   // 21.10.18:  Old: +2
                   Is_On = false;
                   }
              else { // Flicker off
-                  if (Rand > 100) return ;  // Verlaengerung der "Aus"-Zeit
+                  if (Rand > Rand_On) return ;  // Verlaengerung der "Aus"-Zeit
                   if (Val == MinVal) { Val += random8(MAX_FLICKER_CNT-1); // Zufaellige Flackeranzahl                                      // 21.10.18:  Old: Val == 1
                                        //Dprintf("Set FlickerCnt %i Min %i Max %i NewVal %i\n", Val - MinVal, MinVal, MaxVal, MaxVal - MAX_FLICKER_CNT + Val - MinVal);
                                      }
@@ -411,6 +442,12 @@ void MobaLedLib_C::TurnOnRoom(CRGB* lp, uint8_t Room_Typ)
     case GAS_LIGHT1: case GAS_LIGHT1D: case NEON_LIGHT1: case NEON_LIGHT1D: case NEON_LIGHT1M: case NEON_LIGHT1L: lp->r = 1;                 break;
     case GAS_LIGHT2: case GAS_LIGHT2D: case NEON_LIGHT2: case NEON_LIGHT2D: case NEON_LIGHT2M: case NEON_LIGHT2L: lp->g = 1;                 break;
     case GAS_LIGHT3: case GAS_LIGHT3D: case NEON_LIGHT3: case NEON_LIGHT3D: case NEON_LIGHT3M: case NEON_LIGHT3L: lp->b = 1;                 break;
+#if _USE_DEF_NEON                                                                                             // 13.01.20:
+    case NEON_DEF_D      : lp->r = lp->g = lp->b = 1; break;
+    case NEON_DEF1D      : lp->r = 1;                 break;
+    case NEON_DEF2D      : lp->g = 1;                 break;
+    case NEON_DEF3D      : lp->b = 1;                 break;
+#endif
     case SINGLE_LED1     :                                                                                    // 06.09.19:
     case SINGLE_LED2     :
     case SINGLE_LED3     : Copy_Single_Room_Col(lp, Room_Typ-SINGLE_LED1,  COLOR_SINGLE);   break;
@@ -436,7 +473,18 @@ void MobaLedLib_C::TurnOffRoom(CRGB* lp, uint8_t RawNr, uint8_t Room_Typ)
     }
 
 }
-
+/*
+ Problem:                                                                                                     // 13.01.20:
+ ~~~~~~~~
+ Wenn GasLights_Inv() verwendet wird und der "Startwert" 1 ist, dann leuchtet zuffÑllig eine LED
+ gleich zu beginn schwach. Sie behÑt diese Helligkeit immer und lÑsst sich nicht Ein- und
+ Ausschalten.
+ Wenn der "Startwert" 0 ist, dann funktioniert es richtig.
+ Abhilfe:
+ Es wurde ein !Initialize in die Zeile eingefÅgt:
+    if (!Initialize && pgm_read_byte_near(cp+P_HOUSE_ON_MIN) & 0x80) Inp = Invert_Inp(Inp);
+ Damit funktioniert es. Keine Anung warum...
+*/
 
 //-----------------------------
 void MobaLedLib_C::Proc_House()
@@ -479,6 +527,7 @@ void MobaLedLib_C::Proc_House()
 {
   TimerData_T *tp = (TimerData_T*)rp; rp += sizeof(TimerData_T);
   uint8_t  Inp    = Get_Input(pgm_read_byte_near(cp+P_HOUSE_INCH));
+  if (!Initialize && pgm_read_byte_near(cp+P_HOUSE_ON_MIN) & 0x80) Inp = Invert_Inp(Inp);                     // 13.01.20:
   uint8_t LED_cnt = pgm_read_byte_near(cp+P_HOUSE_CNT);
   uint8_t Led0    = pgm_read_byte_near(cp+P_HOUSE_LED);
   CRGB *lp;
@@ -539,7 +588,7 @@ void MobaLedLib_C::Proc_House()
           }
      #endif
 
-     uint8_t On_Min   = pgm_read_byte_near(cp+P_HOUSE_ON_MIN);
+     uint8_t On_Min   = pgm_read_byte_near(cp+P_HOUSE_ON_MIN) & 0x7F;;                                        // 13.01.20:  Added: 0x7F
      uint8_t On_Max = pgm_read_byte_near(cp+P_HOUSE_ON_MAX);
      bool IsOn = Inp_Is_On(Inp);
    //if (IsOn && (On_LEDs <= On_Min || (On_LEDs < On_Max && random8(2) > 0)))
@@ -636,7 +685,14 @@ void MobaLedLib_C::Proc_House()
         case NEON_LIGHTL:
         case NEON_LIGHT1L:
         case NEON_LIGHT2L:
-        case NEON_LIGHT3L:     Update_Neon_Light(Room_Typ, lp);    break;
+        case NEON_LIGHT3L:
+#if _USE_DEF_NEON                                                                                             // 13.01.20:
+        case NEON_DEF_D:
+        case NEON_DEF1D:
+        case NEON_DEF2D:
+        case NEON_DEF3D:
+#endif
+                               Update_Neon_Light(Room_Typ, lp);    break;
         }
       Room_Typ = pgm_read_byte_near(++cpr);  // Next Room
       uint8_t RawNr = Get_RawNr(Room_Typ);

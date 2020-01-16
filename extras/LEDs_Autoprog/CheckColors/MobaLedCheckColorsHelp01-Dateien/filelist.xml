@@ -2,7 +2,10 @@
  <o:MainFile HRef="../MobaLedCheckColorsHelp01.htm"/>
  <o:File HRef="themedata.thmx"/>
  <o:File HRef="colorschememapping.xml"/>
- <o:File HRef="image003.jpg"/>
+ <o:File HRef="image001.png"/>
  <o:File HRef="image002.png"/>
+ <o:File HRef="image003.png"/>
+ <o:File HRef="image006.jpg"/>
+ <o:File HRef="image007.jpg"/>
  <o:File HRef="filelist.xml"/>
 </xml>

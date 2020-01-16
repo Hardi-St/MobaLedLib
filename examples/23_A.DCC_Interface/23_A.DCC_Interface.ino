@@ -1,4 +1,18 @@
+// Disable the warning:                                                                                       // 26.12.19:
+//   ... warning: 'EEPROM' defined but not used [-Wunused-variable]
+//   static EEPROMClass EEPROM;
+// and:
+//   ... warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+//
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wsign-compare"
 #include <NmraDcc.h>
+#pragma GCC diagnostic pop
+
+
+
+
 /*
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -286,8 +300,8 @@ void setup(){
   pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin
   pinMode(ERROR_LED_PIN,   OUTPUT);
 
-  EEPROM.read(0); // Prevent EEPROM warning: "EEPROM.h:145:20: warning: 'EEPROM' defined but not used "
-                  // Unfortunately there are some other signed/unsigned warnings in the lib which can't be disabled
+  //EEPROM.read(0); // Prevent EEPROM warning: "EEPROM.h:145:20: warning: 'EEPROM' defined but not used "
+  //                // Unfortunately there are some other signed/unsigned warnings in the lib which can't be disabled
 }
 
 //-----------

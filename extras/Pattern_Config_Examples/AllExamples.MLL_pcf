@@ -13,6 +13,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯Morsecode
 Dauer¯240
 Goto Tabelle¯
@@ -22,13 +26,13 @@ LED_Tab¯¯.¯¯.¯¯.¯¯-¯-¯-¯¯-¯-¯-¯¯-¯-¯-¯¯.¯¯.¯¯.¯¯¯¯¯.¯¯-¯-¯-¯¯.¯¯¯¯.¯¯¯¯-¯-¯-¯¯¯¯
 LED_Attr¯14.4¯
 LED_Attr¯14.4¯
 LED_Attr¯14.4¯
-msoTextBox¯637.2;38.99992;522.3;162.3¯Mit diesem Blatt kann ein Morsecode als Konfiguration eines LED Musters erstellt werden. 
+msoTextBox¯655.35;38.39992;537.9;155.7¯Mit diesem Blatt kann ein Morsecode als Konfiguration eines LED Musters erstellt werden. 
 Im Feld "Morsetext" wird die in Morsecode zu übersetzende Botschaft eingetragen. Wörter werden mit Leerzeichen getrennt. Das Feld "Dauer Dit in ms" gibt die Dauer eines Punktes in Millisekunden (ms) an. Das Senden eines Strichs dauert dreimal so lang wie das Senden eines Punktes. Nach jedem Punkt oder Strich ist eine Pause von der Dauer eines Punktes. Nach jedem Buchstaben ist eine Pause von der Dauer eines Striches. Nach jedem Wort ist eine Leerschritt-Pause von der Dauer von sieben Punkten. Ist "Spruchanfang/-ende senden" mit "Ja" ausgewählt, wird an den Anfang der gesamten Nachricht zusätzlich die Buchstabenfolge "KA" gesetzt (=Spruchanfang) und ans Ende die Buchstabenfolge "AR" (=Spruchende).
 Folgende besondere Signale werden unterstützt: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA} {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. Sie werden aus den entsprechenden Buchstaben ohne Trennzeichen generiert.{Attrib}B1,90 B93,93 B100,108 B222,236 B594,618
-msoTextBox¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
-msoPicture¯293.4;424.8;262;230¯Insel_Lampe_Aus.jpg
-msoPicture¯293.4;424.8;262;230¯Insel_Lampe_An.jpg
-msoFormControl¯535.8;90;79.8;19.8¯Code erstellen¯Make_Morsecode
+msoTextBox¯656.6164;0;115.7892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
+msoPicture¯300.75;416.25;270.4;220.4¯Insel_Lampe_Aus.jpg
+msoPicture¯300.75;416.25;270.4;220.4¯Insel_Lampe_An.jpg
+msoFormControl¯550.2;87.6;81.6;19.2¯Code erstellen¯Make_Morsecode
 
 SheetName¯AmpelX
 Version¯1
@@ -45,6 +49,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_AmpelX
 Dauer¯2 Sec¯1 Sec¯10 Sec¯3 Sec¯=F~¯=G~¯=H~¯=I~
 Goto Tabelle¯
@@ -60,7 +68,7 @@ LED_Attr¯15¯c65535,i16711680,B¯c5287936¯¯c5287936¯¯¯¯c16711680¯c16711680¯c167116
 LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
 LED_Attr¯15¯i5287936¯¯¯¯¯¯¯c5287936¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
 LED_Attr¯15¯c65535,i16711680,B¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
-msoTextBox¯492.75;0;355.1245;156.443¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
+msoTextBox¯506.1;0;365.9245;151.043¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
 einer Modellampel über zwei WS2811 Module.
 Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
 Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
@@ -71,7 +79,7 @@ Das Beispiel benutzt zwei WS2811 Moule welche einzelne LEDs in den
 Ampelmodellen ansteuern.  Wenn dieses Beispiel mit einem RGB Stripe
 getestet wir, dann werden die Farben falsch dargestellt (Blau anstelle von 
 Gelb, Lila anstelle von Rot+Gelb).{Attrib}B1,116
-msoPicture¯839.1;5.833386;96;102.75¯Ampel.jpg
+msoPicture¯863.25;5.833386;99.6;99.75¯Ampel.jpg
 
 SheetName¯AmpelX_Off
 Version¯1
@@ -88,6 +96,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_AmpelX_Off
 Dauer¯500 ms
 Goto Tabelle¯
@@ -103,7 +115,7 @@ LED_Attr¯15¯i65535,B¯c6299648¯¯c5287936¯¯¯¯c16711680¯c16711680¯c16711680¯c167116
 LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
 LED_Attr¯15¯i5287936¯¯¯¯¯¯¯c5287936¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
 LED_Attr¯15¯i65535,B¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
-msoTextBox¯492.75;0;355.1245;156.443¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
+msoTextBox¯506.1;0;365.9245;151.043¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
 einer Modellampel über zwei WS2811 Module.
 Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
 Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
@@ -114,7 +126,7 @@ Das Beispiel benutzt zwei WS2811 Moule welche einzelne LEDs in den
 Ampelmodellen ansteuern.  Wenn dieses Beispiel mit einem RGB Stripe
 getestet wir, dann werden die Farben falsch dargestellt (Blau anstelle von 
 Gelb, Lila anstelle von Rot+Gelb).{Attrib}B1,116
-msoPicture¯839.1;5.833386;96;102.75¯Ampel.jpg
+msoPicture¯863.25;5.833386;99.6;99.75¯Ampel.jpg
 
 SheetName¯RGB_AmpelX
 Version¯1
@@ -131,6 +143,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_AmpelX
 Dauer¯2 Sec¯1 Sec¯10 Sec¯3 Sec¯=F~¯=G~¯=H~¯=I~
 Goto Tabelle¯
@@ -170,7 +186,7 @@ LED_Attr¯15¯i65535
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
-msoTextBox¯492.75;0;365.7927;156.443¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung mit einem RGB LED stripe.
+msoTextBox¯506.1;0;377.7927;151.043¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung mit einem RGB LED stripe.
 Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
 Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
 Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate
@@ -180,7 +196,7 @@ Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
 spezielle Hardware benötigt. 
 Das folgend Beispiel zeigt wie das aussieht wenn einzelne LEDs in einer Ampel
 angesteuert werden.{Attrib}B1,97
-msoPicture¯839.1;5.833386;96;102.75¯Ampel.jpg
+msoPicture¯863.25;5.833386;99.6;99.75¯Ampel.jpg
 
 SheetName¯RGB_AmpelX_Off
 Version¯1
@@ -197,6 +213,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_AmpelX
 Dauer¯500 ms
 Goto Tabelle¯
@@ -236,7 +256,7 @@ LED_Attr¯15¯i65535
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
-msoTextBox¯492.75;0;365.7927;156.443¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung mit einem RGB LED stripe.
+msoTextBox¯506.1;0;377.7927;151.043¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung mit einem RGB LED stripe.
 Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
 Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
 Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate
@@ -246,7 +266,7 @@ Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
 spezielle Hardware benötigt. 
 Das folgend Beispiel zeigt wie das aussieht wenn einzelne LEDs in einer Ampel
 angesteuert werden.{Attrib}B1,97
-msoPicture¯839.1;5.833386;96;102.75¯Ampel.jpg
+msoPicture¯863.25;5.833386;99.6;99.75¯Ampel.jpg
 
 SheetName¯ConstrWarnLight
 Version¯1
@@ -263,6 +283,10 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯ConstrWarnLight
 Dauer¯100 ms¯200 ms
 Goto Tabelle¯
@@ -284,11 +308,11 @@ LED_Attr¯15¯
 LED_Attr¯15¯
 LED_Attr¯15¯
 LED_Attr¯15¯
-msoTextBox¯492.75;0;489;102.1983¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
+msoTextBox¯506.1;0;504.6;99.19827¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
 Zur Absicherung von Baustellen verwendet man häufig Lauflichter. Dafür gibt es die verschiedensten Lösungen für eine Modelleisenbahn. Allerdings lässt sich das noch flexibler durch die Verwendung der MobaLedLib gestalten. Hier kann man die Anzahl der Lampen und den Effekt ganz einfach variieren.
 Die Tabelle zeigt wie man die Warnlichter so konfiguriert, dass sie kurz Aufblitzen und dann mit reduzierter Helligkeit weiter leuchten. Diesen Effekt findet man bei vielen Baustellen. 
 Dieser Effekt ist noch mit einem einfachen Lauflicht kombiniert.{Attrib}B1,80
-msoPicture¯500.25;108.75;219.75;75¯ConstrWarnLight.jpg
+msoPicture¯514.8;105.75;225.75;72¯ConstrWarnLight.jpg
 
 SheetName¯RGB_ConstrWarnLight
 Version¯1
@@ -305,6 +329,10 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_ConstrWarnLight
 Dauer¯100 ms¯200 ms
 Goto Tabelle¯
@@ -362,11 +390,11 @@ LED_Attr¯15¯i65535
 LED_Attr¯15¯i65535
 LED_Attr¯15¯i65535
 LED_Attr¯15¯i65535
-msoTextBox¯493.5;1.5;489;102.1983¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
+msoTextBox¯506.85;1.5;504.6;99.19827¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
 Zur Absicherung von Baustellen verwendet man häufig Lauflichter. Dafür gibt es die verschiedensten Lösungen für eine Modelleisenbahn. Allerdings lässt sich das noch flexibler durch die Verwendung der MobaLedLib gestalten. Hier kann man die Anzahl der Lampen und den Effekt ganz einfach variieren.
 Die Tabelle zeigt wie man die Warnlichter so konfiguriert, dass sie kurz Aufblitzen und dann mit reduzierter Helligkeit weiter leuchten. Diesen Effekt findet man bei vielen Baustellen. 
 Dieser Effekt ist noch mit einem einfachen Lauflicht kombiniert {Attrib}B1,80
-msoPicture¯501;110.25;219.75;75¯ConstrWarnLight.jpg
+msoPicture¯515.55;107.25;225.75;72¯ConstrWarnLight.jpg
 
 SheetName¯RGB_AmpelX_Fade
 Version¯1
@@ -383,6 +411,10 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_AmpelX_Fade
 Dauer¯200 ms¯2 Sec¯200 ms¯1 Sec¯200 ms¯10 Sec¯200 ms¯3 Sec¯=F~¯=G~¯=H~¯=I~¯=J~¯=K~¯=L~¯=M~
 Goto Tabelle¯
@@ -422,7 +454,7 @@ LED_Attr¯15¯i65535
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
-msoTextBox¯492.75;0;355.1245;129.3207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
+msoTextBox¯506.1;0;365.9245;125.1207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
 dabei werden die LEDs langsam Ein- und Ausgeschaltet.
 Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
 Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
@@ -431,7 +463,7 @@ weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt
 werden. 
 Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
 spezielle Hardware benötigt. {Attrib}B1,124
-msoPicture¯839.1;5.833386;96;102.75¯Ampel.jpg
+msoPicture¯863.25;5.833386;99.6;99.75¯Ampel.jpg
 
 SheetName¯RGB_AmpelX_Fade_Off
 Version¯1
@@ -448,6 +480,10 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯RGB_AmpelX_Fade_Off
 Dauer¯100 ms¯300 ms¯100 ms¯500 ms
 Goto Tabelle¯
@@ -487,7 +523,7 @@ LED_Attr¯15¯i65535
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i5287936
-msoTextBox¯492.75;0;355.1245;129.3207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
+msoTextBox¯506.1;0;365.9245;125.1207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
 dabei werden die LEDs langsam Ein- und Ausgeschaltet.
 Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
 Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
@@ -496,7 +532,7 @@ weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt
 werden. 
 Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
 spezielle Hardware benötigt. {Attrib}B1,124
-msoPicture¯839.1;7.333386;96;102.75¯Ampel.jpg
+msoPicture¯863.25;7.333386;99.6;99.75¯Ampel.jpg
 
 SheetName¯Sound_JQ6500
 Version¯1
@@ -513,12 +549,16 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯_Sound_JQ6500_ADKey
 Dauer¯400 ms¯10 ms
 Goto Tabelle¯
 LED_Tab¯LED 1¯33¯0
 LED_Attr¯13.5¯
-msoTextBox¯492.75;0;489;170.0042¯Dieses Beispiel ist die Vorlage für den Sound_JQ6500_Seq Befehl. 
+msoTextBox¯506.1;0;504.6;164.6042¯Dieses Beispiel ist die Vorlage für den Sound_JQ6500_Seq Befehl. 
 Das JQ6500 Sound Modul hat einen analogen Eingang an den mehrere per Widerstand kodierte 
 Taster angeschlossen werden können. Mit einem WS2811 Modul und einem Tiefpassfilter kann
 so die sonst per Taster und Widerstand generierte Spannung erzeugt werden. Damit kann man 
@@ -544,12 +584,16 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯_LocalVar_Sound_JQ6500
 Dauer¯400 ms
 Goto Tabelle¯G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯P E
 LED_Tab¯ADKey 1¯¯19¯26¯30¯36¯48¯0
 LED_Attr¯59.3¯i8696052
-msoTextBox¯493.5;0;489;169.8678¯Dieses Beispiel ist die Vorlage für den Sound_JQ6500_PlayRandom und Sound_JQ6500_Next_of_N... Befehl. 
+msoTextBox¯506.85;0;504.6;164.4678¯Dieses Beispiel ist die Vorlage für den Sound_JQ6500_PlayRandom und Sound_JQ6500_Next_of_N... Befehl. 
 Das JQ6500 Sound Modul hat einen analogen Eingang an den mehrere per Widerstand kodierte 
 Taster angeschlossen werden können. Mit einem WS2811 Modul und einem Tiefpassfilter kann
 so die sonst per Taster und Widerstand generierte Spannung erzeugt werden. Damit kann man 
@@ -572,6 +616,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯LocalVar_Sound
 Dauer¯200 ms
 Goto Tabelle¯G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯S G 1¯P E
@@ -579,7 +627,7 @@ LED_Tab¯ADKey 1¯¯255¯134¯70¯49¯¯¯¯¯¯¯¯¯¯¯0
 LED_Tab¯ADKey 2¯¯¯¯¯¯255¯134¯70¯49¯37¯29¯25¯22¯17¯11¯0
 LED_Attr¯72¯i8696052
 LED_Attr¯72¯i8696052
-msoTextBox¯492;0;487.3637;169.7542¯Dieses Beispiel ist die Vorlage für den Sound_PlayRandom und Sound_Next_of_N... Befehl. 
+msoTextBox¯505.35;0;502.9637;164.3542¯Dieses Beispiel ist die Vorlage für den Sound_PlayRandom und Sound_Next_of_N... Befehl. 
 Das MP3-TF-16P Sound Modul hat zwei analoge Eingänge an die mehrere per Widerstand kodierte 
 Taster angeschlossen werden können. Mit einem WS2811 Modul und einem Tiefpassfilter kann
 so die sonst per Taster und Widerstand generierte Spannung erzeugt werden. Damit kann man 
@@ -587,7 +635,7 @@ so die sonst per Taster und Widerstand generierte Spannung erzeugt werden. Damit
 wurden experimentell ermittelt und stehen in der MobaLedLib.h. 
 In dem Beispiel wird die Goto Funktionalität benutzt um über einen Parameter auszuwählen welche Sound Datei abgespielt werden soll.
 Bemerkenswert ist, dass die gesammte "Funktion" nur 45 Bytes belegt.{Attrib}B1,89
-msoPicture¯971.75;3.75;343.5;138.75¯MP3-TF-16P_Buttons.jpg
+msoPicture¯1000.7;3.75;353.1;133.95¯MP3-TF-16P_Buttons.jpg
 
 SheetName¯Status_Button
 Version¯1
@@ -604,6 +652,10 @@ Analoges Überblenden: ¯0
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯Status_Button
 Dauer¯0.4 Sec
 Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯¯¯G2¯SP¯¯¯¯¯¯¯G3¯SP¯¯¯¯¯¯¯¯¯G4¯SP¯¯¯¯¯¯¯¯¯¯¯G5
@@ -611,7 +663,7 @@ LED_Tab¯LED 1¯1¯x¯¯¯¯x¯¯x¯¯¯¯x¯¯x¯¯x¯¯¯.¯x¯¯x¯¯x¯¯x¯¯¯.¯x¯¯x¯¯x¯¯x¯¯x¯¯¯.
 LED_Tab¯¯0¯1¯¯¯¯2¯¯¯¯¯¯3¯¯¯¯¯¯¯¯4¯¯¯¯¯¯¯¯¯¯5
 LED_Attr¯13.5¯
 LED_Attr¯15¯¯i13553360¯i8696052¯i8696052¯i8696052¯i8696052¯i6740479¯i6740479¯i6740479¯i6740479¯i6740479¯i6740479¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022
-msoTextBox¯492.75;0;767.4421;183.5653¯Status Button Beispiel
+msoTextBox¯506.1;0;791.4421;177.5653¯Status Button Beispiel
 Besonders eindrucksvoll zeigt das „Status_Button“ Beispiel der Anwendung der „Goto“ Funktion. Mit der Pattern Konfiguration sollen Knöpfe implementiert werden welche verschiedene Zustände besitzen. Abhängig von der Anzahl der Betätigungen eines Tasters sollen verschiedene Aktionen ausgelöst werden. Diese Taster werden am Anlagenrand in der Nähe besonderer Attraktionen platziert. Die Besucher können durch einen Druck auf den Taster eine oder mehrere Funktionen auslösen. Man kennt diese „Druckknopf Aktionen“ aus dem Miniatur Wunderland. 
 In dem Druckknopf befindet sich eine LED welche den aktuellen Zustand durch einen Blinkkode anzeigen soll. Wenn die Taste einmal gedrückt wird, dann leuchtet der Taster einmal gefolgt von einer Pause. Wird die Taste dann ein zweites Mal betätigt, dann Blinkt die LED zweimal…
 Es werden 5 verschiedene Zustände unterstützt. Sie werden über den „S“ Eintrag in der „Goto“ Tabelle markiert. In der LED1 Zeile sieht man, dass die Lampe ein-, zwei- und bis zu fünfmal blinkt. Am Eine eines Bereichs wird mit dem „G“ Befehl wieder zum Anfang des Blocks gesprungen. Damit wird die Sequenz so lange wiederholt bis ein anderer Start Befehl kommt.
@@ -633,14 +685,18 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯Heartbeat_Hue
 Dauer¯60 Sek¯0 ms
 Goto Tabelle¯
 LED_Tab¯Hue¯x¯.
 LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
-msoTextBox¯492.7499;0;409.75;196.8764¯Diese Seite zeigt wie man die Farbe einer LED ganz langsam verändert. 
+msoTextBox¯506.0999;0;422.95;190.2764¯Diese Seite zeigt wie man die Farbe einer LED ganz langsam verändert. 
 Mit dem HSV Modus können die Farben der LEDs auf eine alternative Weise dargestellt werden. Dabei verwendet man die drei Komponenten „H“ = Farbwert (Englisch: Hue), „S“ = Sättigung (Englisch: Saturation) und „V“ = Helligkeit (Englisch: Value). Diese drei Komponenten werden gerne so wie im Bild Rechts dargestellt.Der Vorteil dieser Transformation ist, dass man durch Verändern von nur einer Komponente die gewünschten Änderungen an der Resultierenden Farbe erzielen kann. Mit der Änderung von „Hue“ können alle möglichen Farben erzeugt werden. In diesem Beispiel wird "Hue" innerhalb von 60 Sekunden von Rot über Grün und Blau nach Lila verändert. Danach springt "Hue" wieder auf Rot. Dieser Sprung ist unsichtbar, da die Farben End Farbe nahtlos in die Startfarbe übergeht. Im Bild Rechts ist dieser Übergang unglücklicherweise ausgeschnitten.Dieses Makro wird im Beispiel "01.Heartbeat" zusammen mit dem Folgenden "Heartbeat_Val" benutzt.{Attrib}B1,71
-msoPicture¯909.3749;7.874016E-05;177;135¯HSV_Colors.jpg
+msoPicture¯935.9249;7.874016E-05;183;130.8¯HSV_Colors.jpg
 
 SheetName¯Heartbeat_Val
 Version¯1
@@ -657,13 +713,17 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯Heartbeat_Val
 Dauer¯1 Sek
 Goto Tabelle¯
 LED_Tab¯Val¯x¯.
 LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
-msoTextBox¯492.7501;0;408.5;183.3153¯Diese Seite zeigt wie man die Helligkeit einer LED über einen einzigen Parameter verändert. Mit dem HSV Modus können die Farben der LEDs auf eine alternative Weise dargestellt werden. Dabei verwendet man die drei Komponenten „H“ = Farbwert (Englisch: Hue), „S“ = Sättigung (Englisch: Saturation) und „V“ = Helligkeit (Englisch: Value). Diese drei Komponenten werden gerne so wie im Bild Rechts dargestellt.Der Vorteil dieser Transformation ist, dass man durch Verändern von nur einer Komponente die gewünschten Änderungen an der Resultierenden Farbe erzielen kann. Mit der Änderung von „Value“ kann die Helligkeit stufenlos von 0 bis zur maximalen Helligkeit verändert werden ohne das dabei die Farbe verändert wird. Das wird im Beispiel "01.Heartbeat" dazu benutzt das die Helligkeit der LED pulsiert. Zur Adressierung der "Value" Komponente wird der Startkanal 2 benutzt. Der Kanal 0 entspricht "Hue" und 1 der Sättigung.{Attrib}B1,93
-msoPicture¯906.5;0;177;135¯HSV_Colors.jpg
+msoTextBox¯506.1001;0;421.7;177.3153¯Diese Seite zeigt wie man die Helligkeit einer LED über einen einzigen Parameter verändert. Mit dem HSV Modus können die Farben der LEDs auf eine alternative Weise dargestellt werden. Dabei verwendet man die drei Komponenten „H“ = Farbwert (Englisch: Hue), „S“ = Sättigung (Englisch: Saturation) und „V“ = Helligkeit (Englisch: Value). Diese drei Komponenten werden gerne so wie im Bild Rechts dargestellt.Der Vorteil dieser Transformation ist, dass man durch Verändern von nur einer Komponente die gewünschten Änderungen an der Resultierenden Farbe erzielen kann. Mit der Änderung von „Value“ kann die Helligkeit stufenlos von 0 bis zur maximalen Helligkeit verändert werden ohne das dabei die Farbe verändert wird. Das wird im Beispiel "01.Heartbeat" dazu benutzt das die Helligkeit der LED pulsiert. Zur Adressierung der "Value" Komponente wird der Startkanal 2 benutzt. Der Kanal 0 entspricht "Hue" und 1 der Sättigung.{Attrib}B1,93
+msoPicture¯933.05;0;181.8;130.8¯HSV_Colors.jpg
 
 SheetName¯Dep Signal4 RGB
 Version¯1
@@ -680,6 +740,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯_Dep_Signal4_RGB
 Dauer¯500 ms
 Goto Tabelle¯E¯SE¯SE¯SE
@@ -721,15 +785,15 @@ LED_Attr¯15¯i65535
 LED_Attr¯15¯i65535
 LED_Attr¯15¯i65535
 LED_Attr¯30¯¯W¯W¯W¯W
-msoTextBox¯492.75;0;554.75;183.3153¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals.
+msoTextBox¯506.1;0;572.75;177.3153¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals.
 Das Ausfahrtsignal soll 4 Aspekte darstellen: HP0, HP1, HP2 und HP0 + SH1.
 Dieses Beispiel ist für den Test mit einem RGB LED Stripe gedacht. Darum werden pro Signallampe drei Zeilen benutzt. Auf der Modelleisenbahn wird ein WS2811  Modul zur Ansteuerung der LEDs im Signal verwendet wie es im nächsten Beispiel gezeigt ist.
 Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
 Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}B1,60
-msoPicture¯257.7;783;33.75;167.25¯HP0.jpg
-msoPicture¯296.85;783;33.75;166.5¯HP1.jpg
-msoPicture¯336;783;34.5;166.5¯HP2.jpg
-msoPicture¯375.9;783;33;168¯HP0_SH1.jpg
+msoPicture¯284.85;773.1;34.95;161.25¯HP0.jpg
+msoPicture¯325.2;773.1;34.95;160.5¯HP1.jpg
+msoPicture¯365.55;773.1;35.7;160.5¯HP2.jpg
+msoPicture¯406.65;773.1;34.2;162¯HP0_SH1.jpg
 
 SheetName¯Dep Signal4
 Version¯1
@@ -746,6 +810,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯_Dep_Signal4
 Dauer¯500 ms
 Goto Tabelle¯E¯SE¯SE¯SE
@@ -763,14 +831,14 @@ LED_Attr¯15¯i255
 LED_Attr¯15¯c16777215,i0
 LED_Attr¯15¯c15132391
 LED_Attr¯30¯¯W¯W¯¯W
-msoTextBox¯492.75;0;551;183.3153¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals.Das Ausfahrtsignal soll 4 Aspekte darstellen: HP0, HP1, HP2 und HP0 + SH1.
+msoTextBox¯506.1;0;567.8;177.3153¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals.Das Ausfahrtsignal soll 4 Aspekte darstellen: HP0, HP1, HP2 und HP0 + SH1.
 Dieses Beispiel ist für den Test mit einem RGB LED Stripe gedacht. Darum werden pro Signallampe drei Zeilen benutzt. Auf der Modelleisenbahn wird ein WS2811  Modul zur Ansteuerung der LEDs im Signal verwendet wie es im nächsten Beispiel gezeigt ist.
 Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
 Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}B1,60
-msoPicture¯258.6;616.275;33.75;167.25¯HP0.jpg
-msoPicture¯296.4;616.275;33.75;166.5¯HP1.jpg
-msoPicture¯334.8;616.275;34.5;166.5¯HP2.jpg
-msoPicture¯373.8;616.275;33;168¯HP0_SH1.jpg
+msoPicture¯285.15;606.9751;34.95;160.65¯HP0.jpg
+msoPicture¯324.15;606.9751;34.95;159.9¯HP1.jpg
+msoPicture¯363.75;606.9751;35.7;159.9¯HP2.jpg
+msoPicture¯403.95;606.9751;34.2;161.4¯HP0_SH1.jpg
 
 SheetName¯Entry Signal3 RGB
 Version¯1
@@ -787,6 +855,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯_Entry_Signal3_RGB
 Dauer¯500 ms
 Goto Tabelle¯E¯SE¯SE
@@ -810,10 +882,10 @@ LED_Attr¯15¯i255
 LED_Attr¯15¯i255
 LED_Attr¯15¯i255
 LED_Attr¯15¯
-msoTextBox¯492.75;0;327;34.3926¯Dieses Blatt zeigt die Konfiguration eines Einfahrtsignals.Die Konfiguration entspricht den vorangegangenen Beispielen.{Attrib}B1,60
-msoPicture¯258.75;643.35;30;164.25¯HP0_E.jpg
-msoPicture¯298.65;643.35;30;165¯HP1_E.jpg
-msoPicture¯338.55;643.35;30;164.25¯HP2_E.jpg
+msoTextBox¯506.1;0;337.8;34.3926¯Dieses Blatt zeigt die Konfiguration eines Einfahrtsignals.Die Konfiguration entspricht den vorangegangenen Beispielen.{Attrib}B1,60
+msoPicture¯286.5;632.85;31.2;158.25¯HP0_E.jpg
+msoPicture¯325.8;633.45;31.2;158.4¯HP1_E.jpg
+msoPicture¯366.9;633.45;31.2;158.25¯HP2_E.jpg
 
 SheetName¯Entry Signal3
 Version¯1
@@ -830,6 +902,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯_Entry_Signal3
 Dauer¯500 ms
 Goto Tabelle¯E¯SE¯SE
@@ -841,10 +917,10 @@ LED_Attr¯13.5¯i255
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯c16711680,i65535
 LED_Attr¯15¯
-msoTextBox¯492.75;0;767.4421;34.3926¯Dieses Blatt zeigt die Konfiguration eines Einfahrtsignals.Die Konfiguration entspricht den vorangegangenen Beispielen.{Attrib}B1,60
-msoPicture¯261;541.65;30;164.25¯HP0_E.jpg
-msoPicture¯300.9;541.65;30;165¯HP1_E.jpg
-msoPicture¯340.8;541.65;30;164.25¯HP2_E.jpg
+msoTextBox¯506.1;0;791.4421;34.3926¯Dieses Blatt zeigt die Konfiguration eines Einfahrtsignals.Die Konfiguration entspricht den vorangegangenen Beispielen.{Attrib}B1,60
+msoPicture¯286.95;538.95;31.2;158.25¯HP0_E.jpg
+msoPicture¯328.05;538.95;31.2;159¯HP1_E.jpg
+msoPicture¯369.15;538.95;31.2;158.25¯HP2_E.jpg
 
 SheetName¯Ilumination Hue
 Version¯1
@@ -861,12 +937,16 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯Changing_Hue
 Dauer¯60 Sek¯0 ms
 Goto Tabelle¯
 LED_Tab¯Hue¯x¯.
 LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
-msoTextBox¯492.75;0;767.4421;47.95378¯Dieses Blatt zeigt die Konfiguration Licht Installation.Die Ilumination eines Objektes kann man mit der hier gezeigten Tabelle erreichen. Dieser Teil entspricht der "Heartbeat_Hue" Seite. {Attrib}B1,57
+msoTextBox¯506.1;0;791.4421;47.35378¯Dieses Blatt zeigt die Konfiguration Licht Installation.Die Ilumination eines Objektes kann man mit der hier gezeigten Tabelle erreichen. Dieser Teil entspricht der "Heartbeat_Hue" Seite. {Attrib}B1,57
 
 SheetName¯Ilumination Val
 Version¯1
@@ -883,12 +963,16 @@ Analoges Überblenden: ¯1
 Goto Mode: ¯0
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯Pulsating_Val
 Dauer¯50 ms¯5 Sek¯2 Sek¯5 Sek¯10 Sek
 Goto Tabelle¯
 LED_Tab¯Val¯¯x¯x¯.¯.
 LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
-msoTextBox¯492.75;0;767.4421;102.1983¯Dieses Blatt zeigt die Konfiguration Licht Installation.Die Illumination eines Objektes kann man mit der hier gezeigten Tabelle erreichen. Dieser Teil ist eine Variation der "Heartbeat_Val" Seite. Hier ist der Helligkeitsverlauf
+msoTextBox¯506.1;0;791.4421;99.19827¯Dieses Blatt zeigt die Konfiguration Licht Installation.Die Illumination eines Objektes kann man mit der hier gezeigten Tabelle erreichen. Dieser Teil ist eine Variation der "Heartbeat_Val" Seite. Hier ist der Helligkeitsverlauf
 in 5 Schritte unterteilt. 
 Diese Seite und die vorrangegangene werden im Beispiel "16.Illumination_Pattern_Func" 
 zusammengefasst und mit unterschiedlichen Zeiten auf mehrere LEDs angewandt.
@@ -909,6 +993,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯D1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯KS_Vorsignal_ZS3V_RGB
 Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
 Goto Tabelle¯¯E¯S¯E¯S¯P¯¯¯g1
@@ -936,14 +1024,14 @@ LED_Attr¯15¯i6740479
 LED_Attr¯15¯i15921906
 LED_Attr¯15¯i15921906
 LED_Attr¯15¯i15921906
-msoTextBox¯492.75;0;327;88.46078¯Dieses Blatt zeigt die Konfiguration eines Ks-Vorsignalwiederholers
+msoTextBox¯505.5;0;337.8;86.06079¯Dieses Blatt zeigt die Konfiguration eines Ks-Vorsignalwiederholers
 Signal Bilder sind Ks 2| Ks 1 | Ks 1+ Zs 3V  |  Kennlicht
 Ks 2 = Halt erwarten mit 5% verkürzten Bremsweg
 Ks 1  = Fahrt nach Fahrplangeschwindigkeit
 Ks 1 + Zs 3V  = Fahrt  erwarten mit angezeigter Geschwindigkeit x10 (Grün blinkt){Attrib}B1,68
-msoPicture¯376.1028;683.1707;30.75;222¯KS_Vor.jpg
-msoPicture¯556.4558;683.1705;30.75;221.25¯ZS1.jpg
-msoPicture¯873.4854;684.0529;31.5;242.25¯Ks1_Zs3v.jpg
+msoPicture¯408.9528;673.1118;30.75;213¯KS_Vor.jpg
+msoPicture¯594.7058;673.1118;30.75;212.25¯ZS1.jpg
+msoPicture¯873.6354;673.1118;32.7;232.65¯Ks1_Zs3v.jpg
 
 SheetName¯KS_Vorsignal_Zs3V
 Version¯1
@@ -960,6 +1048,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯D1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯KS_Vorsignal_Zs3V
 Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
 Goto Tabelle¯¯E¯S¯E¯S¯P¯¯¯g1
@@ -971,14 +1063,14 @@ LED_Attr¯13.5¯i65535
 LED_Attr¯15¯i5287936
 LED_Attr¯15¯i6740479
 LED_Attr¯15¯i10921638
-msoTextBox¯492.75;0;327;88.46078¯Dieses Blatt zeigt die Konfiguration eines Ks-Vorsignalwiederholers
+msoTextBox¯505.5;0;337.8;86.06079¯Dieses Blatt zeigt die Konfiguration eines Ks-Vorsignalwiederholers
 Signal Bilder sind Ks 2| Ks 1 | Ks 1+ Zs 3V  |  Kennlicht
 Ks 2 = Halt erwarten mit 5% verkürzten Bremsweg
 Ks 1  = Fahrt nach Fahrplangeschwindigkeit
 Ks 1 + Zs 3V  = Fahrt  erwarten mit angezeigter Geschwindigkeit x10 (Grün blinkt){Attrib}B1,68
-msoPicture¯373.4557;567.5823;30.75;222¯KS_Vor.jpg
-msoPicture¯561.7498;567.5823;30.75;221.25¯ZS1.jpg
-msoPicture¯874.3678;564.9351;31.5;242.25¯Ks1_Zs3v.jpg
+msoPicture¯409.3057;554.4351;30.75;213¯KS_Vor.jpg
+msoPicture¯602.9999;554.4351;30.75;212.25¯ZS1.jpg
+msoPicture¯869.1178;554.4351;32.7;232.65¯Ks1_Zs3v.jpg
 
 SheetName¯KS_Hauptsignal_Zs3_Zs1_RGB
 Version¯1
@@ -995,6 +1087,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯D1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯KS_Hauptsignal_ZS3_Zs1_RGB
 Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
 Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
@@ -1022,16 +1118,16 @@ LED_Attr¯15¯i46080
 LED_Attr¯15¯i15921906
 LED_Attr¯15¯i15921906
 LED_Attr¯15¯i15921906
-msoTextBox¯492.75;0;327;115.5831¯Dieses Blatt zeigt die Konfiguration eines Ks-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3  | HP 0 + Zs 1
+msoTextBox¯505.5;0;337.8;111.9831¯Dieses Blatt zeigt die Konfiguration eines Ks-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3  | HP 0 + Zs 1
 Hp 0 = Halt
 Ks 1  = Fahrt nach Fahrplangeschwindigkeit
 Ks 1 + Zs 3  = Fahrt mit angezeigter Geschwindigkeit x10
 Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt)
 {Attrib}B1,54
-msoPicture¯374.3382;684.9354;31.5;221.25¯KS_Hp0.jpg
-msoPicture¯557.3383;682.2883;31.5;221.25¯KS_Hp0.jpg
-msoPicture¯749.1617;680.5234;31.5;241.5¯KS_Ks1.jpg
-msoPicture¯1037.073;680.5234;32.25;246.75¯KS_Ks1_Zs3.jpg
+msoPicture¯404.1882;669.4235;31.5;212.25¯KS_Hp0.jpg
+msoPicture¯592.5884;669.4235;31.5;212.25¯KS_Hp0.jpg
+msoPicture¯789.8116;669.4235;31.5;231.9¯KS_Ks1.jpg
+msoPicture¯1061.823;669.4235;33.45;237.15¯KS_Ks1_Zs3.jpg
 
 SheetName¯KS_Hauptsignal_Zs3_Zs1
 Version¯1
@@ -1048,6 +1144,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯D1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯KS_Hauptsignal_Zs3_Zs1
 Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
 Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
@@ -1059,16 +1159,16 @@ LED_Attr¯13.5¯i15921906
 LED_Attr¯15¯i255
 LED_Attr¯15¯i46080
 LED_Attr¯15¯i15921906
-msoTextBox¯492.75;0;327;115.5831¯Dieses Blatt zeigt die Konfiguration eines Ks-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3  | HP 0 + Zs 1
+msoTextBox¯505.5;0;337.8;111.9831¯Dieses Blatt zeigt die Konfiguration eines Ks-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3  | HP 0 + Zs 1
 Hp 0 = Halt
 Ks 1  = Fahrt nach Fahrplangeschwindigkeit
 Ks 1 + Zs 3  = Fahrt mit angezeigter Geschwindigkeit x10
 Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt)
 {Attrib}B1,54
-msoPicture¯561.7498;564.0529;30.75;221.25¯ZS1.jpg
-msoPicture¯373.4558;568.4647;31.5;221.25¯KS_HP0.jpg
-msoPicture¯747.397;564.053;31.5;241.5¯KS_Ks1.jpg
-msoPicture¯1054.721;569.3471;31.5;240.75¯Ks1_Zs3.jpg
+msoPicture¯601.1998;551.7529;30.75;212.25¯ZS1.jpg
+msoPicture¯407.5058;551.7529;31.5;212.25¯KS_HP0.jpg
+msoPicture¯792.247;551.7529;31.5;231.9¯KS_Ks1.jpg
+msoPicture¯1071.071;551.7529;31.5;231.15¯Ks1_Zs3.jpg
 
 SheetName¯KS_Hauptsignal_Zs3_Zs 6_Zs1_RGB
 Version¯1
@@ -1085,6 +1185,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯D1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯KS_Hauptsignal_Zs3_Zs6_Zs1_RGB
 Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
 Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
@@ -1118,15 +1222,15 @@ LED_Attr¯15¯i15921906
 LED_Attr¯15¯i14277081
 LED_Attr¯15¯i14277081
 LED_Attr¯15¯i14277081
-msoTextBox¯492.75;0;327;115.5831¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3 + Zs 6 | HP 0 + Zs 1
+msoTextBox¯505.5;0;337.8;111.9831¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3 + Zs 6 | HP 0 + Zs 1
 Hp 0 = Halt
 Ks 1  = Fahrt nach Fahrplangeschwindigkeit
 Ks 1 + Zs 3 + Zs 6 = Fahrt mit angezeigter Geschwindigkeit x10 und Gegengleisfahrt
 Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt){Attrib}B1,54
-msoPicture¯370.8088;727.2883;31.5;221.25¯Ks_HP0.jpg
-msoPicture¯559.103;725.5234;44.25;303¯Ks1.jpg
-msoPicture¯1049.427;725.5234;44.25;333¯KS1_Zs3_Zs6.jpg
-msoPicture¯742.9853;724.6412;44.25;363.75¯Hp0_Zs1.jpg
+msoPicture¯403.6588;715.0234;31.5;212.25¯Ks_HP0.jpg
+msoPicture¯597.353;715.0234;44.25;291¯Ks1.jpg
+msoPicture¯1058.577;715.0234;45.45;319.8¯KS1_Zs3_Zs6.jpg
+msoPicture¯786.6353;715.0234;44.25;349.35¯Hp0_Zs1.jpg
 
 SheetName¯KS_Hauptsignal_Zs3_Zs 6_Zs1
 Version¯1
@@ -1143,6 +1247,10 @@ Analoges Überblenden: ¯X
 Goto Mode: ¯1
 Goto Aktivierung: ¯
 Grafische Anzeige: ¯D1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
 Makro Name: ¯KS_Hauptsignal_Zs3_Zs6_Zs1
 Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
 Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
@@ -1156,12 +1264,150 @@ LED_Attr¯15¯i255
 LED_Attr¯15¯i46080
 LED_Attr¯15¯i14277081
 LED_Attr¯15¯i14277081
-msoTextBox¯492.75;0;327;115.5831¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3 + Zs 6 | HP 0 + Zs 1
+msoTextBox¯505.5;0;337.8;111.9831¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 | Ks 1 | Ks 1+ Zs 3 + Zs 6 | HP 0 + Zs 1
 Hp 0 = Halt
 Ks 1  = Fahrt nach Fahrplangeschwindigkeit
 Ks 1 + Zs 3 + Zs 6 = Fahrt mit angezeigter Geschwindigkeit x10 und Gegengleisfahrt
 Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt){Attrib}B1,54
-msoPicture¯372.5735;598.4648;31.5;221.25¯KS_HP0.jpg
-msoPicture¯559.103;601.1118;31.5;241.5¯KS_KS1.jpg
-msoPicture¯1052.073;598.4647;38.25;289.5¯KS_KS1_Zs3_Zs6.jpg
-msoPicture¯742.9853;601.1119;38.25;316.5¯KS_HP0_Zs1.jpg
+msoPicture¯411.4236;583.1648;31.5;212.25¯KS_HP0.jpg
+msoPicture¯603.353;583.1648;31.5;231.9¯KS_KS1.jpg
+msoPicture¯1060.623;583.1648;39.45;278.1¯KS_KS1_Zs3_Zs6.jpg
+msoPicture¯792.6353;583.1648;38.25;303.9¯KS_HP0_Zs1.jpg
+
+SheetName¯Charlieplex.LED Test
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯Charlieplexing
+RGB Modul Nummer: ¯1
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Viessm_4751_LED_Test
+Dauer¯1 Sek
+Goto Tabelle¯E¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯Se¯SP¯G1
+LED_Tab¯LED 0¯x
+LED_Tab¯LED1¯¯x¯¯¯¯¯¯¯¯¯¯¯.
+LED_Tab¯LED 2¯¯¯x
+LED_Tab¯LED 3¯¯¯¯x
+LED_Tab¯LED 4¯¯¯¯¯x
+LED_Tab¯LED 5¯¯¯¯¯¯x
+LED_Tab¯LED 6¯¯¯¯¯¯¯x
+LED_Tab¯LED 7¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 8¯¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 9¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 10¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 11¯¯¯¯¯¯¯¯¯¯¯¯x
+LED_Attr¯13.5¯
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯
+msoTextBox¯506.1;0;337.8;156.443¯Überprüfung der LED Zuordnung
+Mit dieser Konfiguration kann die LED Zuordnung überprüft werden.Mit den 11 Goto Befehlen kann die überprüft werden welche LED über den entsprechenden Kanal angesprochen wird. Damit kann die Übersetzungstabelle für das entsprechende Signal erstellt werden. Dazu wird die Nummer der LED im unten abgebildeten Signals für jeden Kanal notiert. Diese Nummern werden dann in das Feld "Charliplexin LED Zuordnung:" eingetragen. Das Charlieplexing Modul wird vom Prog_Generator aus über die Makros Charlie_Buttons() oder Charlie_Binary() angesprochen.{Attrib}B1,30
+msoPicture¯168.9;704.1;76.2;234¯LED_Numbers_Ref.jpg
+
+SheetName¯Viessm.4751
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯11
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯Charlieplexing
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯Viessmann
+Analoge Eingänge: ¯
+Makro Name: ¯Viessm_4751
+Dauer¯300 ms
+Goto Tabelle¯¯PE¯S¯E¯S¯E¯SP¯E¯SG1¯S¯E¯SG1¯SG2
+LED_Tab¯LED 0
+LED_Tab¯LED1¯¯¯¯x¯¯¯¯x¯¯¯x¯¯.
+LED_Tab¯LED 2¯¯x¯¯¯¯x
+LED_Tab¯LED 3¯¯x
+LED_Tab¯LED 4¯¯¯¯¯¯x
+LED_Tab¯LED 5¯¯¯¯¯¯x
+LED_Tab¯LED 6¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 7¯¯¯¯x
+LED_Tab¯LED 8¯¯x¯¯x¯¯¯¯x¯¯¯x
+LED_Tab¯LED 9¯¯¯¯x¯¯¯¯x
+LED_Tab¯LED 10¯¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 11
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯¯Not used¯¯¯Not used¯Same as 3
+LED_Attr¯13.5¯
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i65535¯¯¯¯c255
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯49.2¯¯¯¯¯¯¯¯¯¯O-4171¯¯¯O-4171¯O-4171
+msoTextBox¯506.1;0;337.8;156.443¯Ansteuerung des Vissmann Signals 4751 und 4723
+Wenn die "Charlieplexing Zuordnung" mit dem Namen "Viessman" geladen ist, dann können die Signal Bilder beider Signale über die gleichen Nummern angesteuert werden.Mit einer angepassten "Charlieplexing Zuordnung" kann ein Signal eines anderen Herstellers mit der gleichen Tabelle verwendet werden.Für das HV Signal der Stummi Kollegen Matthias & Lorenz wird die Zuordnung "HV_Matthias" benutzt (Die Platine wurde von Matthias entworfen).Das Charlieplexing Modul wird vom Prog_Generator aus über die Makros Charlie_Buttons() oder Charlie_Binary() angesprochen.{Attrib}B1,47
+msoPicture¯280.35;692.55;51;116.55¯V4751_0.jpg
+msoPicture¯357.75;692.55;50.4;116.55¯V4751_1.jpg
+msoPicture¯437.55;695.55;50.4;116.55¯V4751_2.jpg
+msoPicture¯646.35;695.55;50.4;116.55¯V4751_5.jpg
+msoPicture¯514.95;696.15;50.4;116.55¯V4751_3.jpg
+msoPicture¯163.65;715.65;76.2;237¯LED_Numbers_Ref.jpg
+
+SheetName¯Charlie_But_Bin
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯1
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯2
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯0
+Goto Mode: ¯1
+Goto Aktivierung: ¯Binary
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Charlie_B_
+Dauer¯1 ms
+Goto Tabelle¯E¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE
+LED_Tab¯Green¯15¯35¯55¯75¯95¯115¯135¯155¯175¯195¯215
+LED_Tab¯Blue (Status)¯15¯35¯55¯75¯95¯115¯135¯155¯175¯195¯215
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+msoTextBox¯491.25;0;767.4421;75.07607¯Muster zum ansteuern der Zustände eines Charlieplexing Moduls.
+Dieses Muster deffiniert die "Helligkeitswerte" mit denen die Zustände des Charlieplexing Moduls angesprochen werden. Dieses Muster wirdvon dem Makros "Charlie_Buttons()" und "Charlie_Binary()" benutztwelche standardmäßig im Prog_Generator verfügbar sind. {Attrib}B1,63

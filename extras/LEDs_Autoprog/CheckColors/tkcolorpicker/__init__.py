@@ -53,10 +53,5 @@
 # * License: http://creativecommons.org/licenses/by-sa/3.0/	
 # ***************************************************************************
 
-
-#from tkcolorpicker.colorpicker import ColorPicker, askcolor
-from tkcolorpicker.alphabar import AlphaBar
 from tkcolorpicker.gradientbar import GradientBar
 from tkcolorpicker.colorsquare import ColorSquare
-from tkcolorpicker.lightgradientbar import LightGradientBar
-from tkcolorpicker.colorwheel import ColorWheel

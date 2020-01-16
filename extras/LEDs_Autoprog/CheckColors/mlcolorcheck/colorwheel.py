@@ -53,15 +53,15 @@
 # * License: http://creativecommons.org/licenses/by-sa/3.0/	
 # ***************************************************************************
 
-
-
 from tkcolorpicker.functions import tk, round2, rgb_to_hexa, hue2col, rgb_to_hsv, hsv_to_rgb
 import math
+from mlcolorcheck.DefaultConstants import COLORCOR_MAX, DELTA_H, INVERT_WHEEL
+
 
 class ColorWheel(tk.Canvas):
     """Wheel color gradient with selection cross."""
 
-    def __init__(self, parent, hue, color=None, cr=100, cg=69, cb=94, height=256, width=256, **kwargs):
+    def __init__(self, parent, hue, color=None, cr=COLORCOR_MAX, cg=int(69*COLORCOR_MAX/100), cb=int(94*COLORCOR_MAX/100), height=256, width=256, **kwargs):
         """
         Create a ColorSquare.
 
@@ -99,9 +99,9 @@ class ColorWheel(tk.Canvas):
             
             radius = min(height,width)/2.0
             centre = height/2, width/2
-            crf = 100/self.cr
-            cgf = 100/self.cg
-            cbf = 100/self.cb
+            crf = COLORCOR_MAX/self.cr
+            cgf = COLORCOR_MAX/self.cg
+            cbf = COLORCOR_MAX/self.cb
             for y in range(height):
                 line = []
                 ry = y - centre[1]
@@ -110,24 +110,24 @@ class ColorWheel(tk.Canvas):
                     rx = x - centre[0]
                     x2 = rx*rx                    
                     
-                    s = math.sqrt(x2 + y2) / radius
-#                    s = ((x2 + (y - centre[1])**2.0)**0.5 / radius
-                    if s <= 1.0:
-                        h = ((math.atan2(ry, rx) / math.pi) + 1.0) / 2.0
-                        rxy,gxy,bxy = hsv_to_rgb(h*360, s*100, 100)
-
+                    s = int((math.sqrt(x2 + y2) / radius) * 100)
+#                   s = ((x2 + (y - centre[1])**2.0)**0.5 / radius
+                    if s <= 100:
+                        h = int(((math.atan2(ry, rx) / math.pi) + 1.0) * 180)
+                        
+                        h = self._correct_hue_for_disp(h)
+                            
+                        rxy,gxy,bxy = hsv_to_rgb(h, s, 100)
                         rxy = int(rxy*crf)
                         gxy =  int(gxy*cgf)
                         bxy =  int(bxy*cbf)
                         if rxy > 255: rxy = 255
                         if gxy > 255: gxy = 255
                         if bxy > 255: bxy = 255
-
                         color = rgb_to_hexa(rxy, gxy, bxy)
-                        line.append(color)
                     else:
                         color = rgb_to_hexa(255, 255, 255)
-                        line.append(color)
+                    line.append(color)
                         
                 data.append("{" + " ".join(line) + "}")
             self.bg.put(" ".join(data))
@@ -145,6 +145,8 @@ class ColorWheel(tk.Canvas):
         self.create_image(0, 0, image=self.bg, anchor="nw", tags="bg")
         self.tag_lower("bg")
         h, s, v = color
+        
+        h = self._correct_hue_for_disp(h)     
         
         radius = min(height,width)/2.0
         centre = height/2, width/2 
@@ -204,40 +206,31 @@ class ColorWheel(tk.Canvas):
         y = self.coords('cross_h')[1]
         xp = min(x, self.bg.width() - 1)
         yp = min(y, self.bg.height() - 1)
-        try:
-            r, g, b = self.bg.get(round2(xp), round2(yp))
-        except ValueError:
-            r, g, b = self.bg.get(round2(xp), round2(yp)).split()
-            r, g, b = int(r), int(g), int(b)
-
-        h, s, v = rgb_to_hsv(r, g, b)
-
         height = self.bg.height()
         width = self.bg.width()
         radius = min(height,width)/2.0
-        centre = height/2, width/2            
+        centre = height/2, width/2 
 
         rx = x - centre[0]
         ry = y - centre[1]
         
         v = self.get_hue()
-                
-        s = ((x - centre[0])**2.0 + (y - centre[1])**2.0)**0.5 / radius
-        if s > 1.0: 
-            s = 100
-        else:
-            s = int(s*100)
-            
-        h = int(360 * ((math.atan2(ry, rx) / math.pi) + 1.0) / 2.0)
+        x2 = rx*rx
+        y2 = ry*ry
         
+        s = int((math.sqrt(x2 + y2) / radius) * 100)                
+        #s = ((x - centre[0])**2.0 + (y - centre[1])**2.0)**0.5 / radius
+        if s > 100: 
+            s = 100
+       
+        h = int(180 * ((math.atan2(ry, rx) / math.pi) + 1.0))
+        
+        h = self._correct_hue_for_disp(h)  
         
         r,g,b = hsv_to_rgb(h, s, v)                    
                       
         hexa = rgb_to_hexa(r, g, b)            
 
-#        r, g, b = hsv_to_rgb(h, s, v)
-#        s = round2((1 - float(y) / self.winfo_height()) * 100)
-#        v = round2(100 * float(x) / self.winfo_width())
         return (r, g, b), (h, s, v), hexa
 
     def set_rgb(self, sel_color):
@@ -246,9 +239,12 @@ class ColorWheel(tk.Canvas):
         height = self.winfo_height()
         h, s, v = rgb_to_hsv(*sel_color)
         self.set_hue(v)
-        
+
+        h = self._correct_hue_for_disp(h)  
+            
         radius = min(height,width)/2.0
         centre = height/2, width/2 
+        radh = math.radians(h)
         
         x = centre[1] - width * math.cos(radh) * s/200
         y = centre[0] - height * math.sin(radh) * s/200
@@ -263,11 +259,35 @@ class ColorWheel(tk.Canvas):
         h, s, v = sel_color
         self.set_hue(v)
         
+        h = self._correct_hue_for_disp(h)  
+        
         radius = min(height,width)/2.0
         centre = height/2, width/2 
-        radh = math.radians(h)
 
+        radh = math.radians(h)
+ 
         x = centre[1] - width * math.cos(radh) * s/200
         y = centre[0] - height * math.sin(radh) * s/200
         self.coords('cross_h', 0, y, width, y)
         self.coords('cross_v', x, 0, x, height)
+        
+    def _correct_hue_for_disp(self, h):
+    
+        h1=h+DELTA_H
+        if h1>360:
+            h1=h1-360
+        if INVERT_WHEEL:
+            h1=360-h1
+            
+        return h1
+    
+    def _correct_hue_for_calc(self, h):
+    
+        h1=h-DELTA_H
+        if h1<0:
+            h1=h1+360
+        if INVERT_WHEEL:
+            h1=360-h1
+            
+        return h1
+    

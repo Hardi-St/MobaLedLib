@@ -1,12 +1,13 @@
 # MobaLedLib
-###Arduino library for controlling LEDs and other components on a model railway.
+## Arduino library for controlling LEDs and other components on a model railway.
 
+** New: Charlieplexing (LED Multiplexing) module which could be configured by the Pattern_Configurator individually **
 
-**New: Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
+** Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
 
 To start the excel program press the Win+r key together and copy the following line
 into the "Run" dialog and press enter:
-  %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\extras\LEDs_AutoProg\Prog_Generator_MobaLedLib.xlsm
+  %USERPROFILE%\Documents\Arduino\libraries\Mobaledlib\extras\Prog_Generator_MobaLedLib.xlsm
 
 **The use of RGB LEDs offers fascinating possibilities for lighting a model railway:**
 - **Infinite number of lighting effects** - Brightness and color of each LED can be
@@ -18,6 +19,7 @@ into the "Run" dialog and press enter:
 - Controlling other components is just as easy
   - Sound modules
   - Servo and stepper motors
+  - Charlieplexing light signals
   - Power devices
 - Additional module to read 80 and more switches with 10 signal wires
 - Stand-alone operation or networked with other components possible
@@ -109,7 +111,17 @@ Questions / suggestions / praise / ...
 - Corrected the XPattern function (used in the Light signals)
 - Corrected the Excel Programs
 
-**Ver.: 0.9.2** 08.12.19:
+**Ver.: 0.9.3** 08.12.19:
 - Engagement of Pattern_Configurator and Program_Generator => Easy exchange between the tools
 - CheckColors function: Live view of the colors and brightens of the LEDs
 - Existing lines could be edited in the Prog_Generator
+
+**Ver.: 1.0.0** 16.01.20:
+- New Charlieplexing program for the Servo_LED module which could be used to drive Viessmann and other "Multiplexed" light signals
+- Configuration upload from the Pattern_Configurator over the LEDs "Bus" to the Charlieplexing module. The module is configured on the railway layout.
+- Direct programming support for the Tiny_UniProg module from excel (One click to install the software)
+- Flashing of the software for the Charlieplexing Module from excel (One click to install the software)
+- Enhanced Color Test program with a lot of new features
+- New Black and White TV simulation (configurable)
+- Simulation of defective neon lights added
+- 1001 of other small changes and improvements

@@ -53,22 +53,15 @@
                                         // 18.11.18:  Enabled because of the saved RAM
 
 #define _NEW_ROOM_COL // Saves 162 Byte FLASH and 43 Bytes RAM
-/*
- New
-Sketch uses 23226 bytes (75%) of program storage space. Maximum is 30720 bytes.
-Global variables use 597 bytes (29%) of dynamic memory, leaving 1451 bytes for local variables. Maximum is 2048 bytes.
 
-OLd
-Sketch uses 23388 bytes (76%) of program storage space. Maximum is 30720 bytes.
-Global variables use 640 bytes (31%) of dynamic memory, leaving 1408 bytes for local variables. Maximum is 2048 bytes.
-            -162     -43
-*/
 
 
 // Memory usage tests / optimisation                  Flash  Ram   Attention _PRINT_DEBUG_MESSAGES must be disabled
 #define _USE_COUNTER        1           // 28.10.18:    592    0
 #define _USE_HOUSE          1           // 28.10.18:   2924   18?
 #define _USE_SET_COLTAB     1           // 09.12.18:
+#define _USE_SET_TVTAB      1           // 10.01.20:    176    4
+#define _USE_DEF_NEON       1           // 12.01.20:     96  -31 ?
 #define _USE_PATTERN        1           // 28.10.18:   2096    0
 #define _USE_FIRE           1           // 28.10.18:    594    0
 #define _USE_HSV_GROUP      1           // 28.10.18:     62    0
@@ -81,9 +74,18 @@ Global variables use 640 bytes (31%) of dynamic memory, leaving 1408 bytes for l
 #define _USE_WELDING        1           // 28.10.18:    430    0
 #define _USE_COPYLED        1           // 28.10.18:    116    0
 #define _USE_SCHEDULE       1           // 28.10.18:    264    0
-                                        // 28.10.18:   7986   18  Sum
+                                        // 28.10.18:  ?7986   18  Sum
+/*
+_USE_DEF_NEON = 1
+Der Sketch verwendet 21408 Bytes (69%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
+Globale Variablen verwenden 530 Bytes (25%) des dynamischen Speichers, 1518 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
 
+_USE_DEF_NEON = 0
+Der Sketch verwendet 21312 Bytes (69%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
+Globale Variablen verwenden 561 Bytes (27%) des dynamischen Speichers, 1487 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
+                     96     -31
 
+*/
 
 /* 28.10.18:
 All:

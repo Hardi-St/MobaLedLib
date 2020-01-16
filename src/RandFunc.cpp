@@ -40,6 +40,7 @@
  13.09.18:  - Output is set directly when turned on
             - RandMux tested with MinTime=3 Min,  MaxTime=2 Min
  15.09.18:  - RF_STAY_ON added
+ 13.01.20:  - RF_NOT_SAME added
 
 
  Anwendungen fuer die Zufallsfunktion:
@@ -149,10 +150,12 @@ void MobaLedLib_C::Proc_Random()
 //------------------------------------------------------------
 void MobaLedLib_C::Set_Dest_RandMux(uint8_t Act, uint8_t Mode)
 //------------------------------------------------------------
+// Set the DestVar2 .. DestVarN
+// DestVar1 is activated if the input is disabled !
 {
   uint8_t DstVar1 = pgm_read_byte_near(cp+P_RANDMUX_DSTVAR1);
   uint8_t DstVarN = pgm_read_byte_near(cp+P_RANDMUX_DSTVARN);
-  if (Act == 255)
+  if (Act == 255) // Activate the next (random) output.
      {
      if (Mode & RF_SEQ)
           {
@@ -166,12 +169,20 @@ void MobaLedLib_C::Set_Dest_RandMux(uint8_t Act, uint8_t Mode)
               }
           if (Act > DstVarN - DstVar1) Act = 1;
           }
-     else Act = 1 + random8(DstVarN - DstVar1);
+     else {
+          do {
+             Act = 1 + random8(DstVarN - DstVar1);
+             Dprintf("Set_Dest_RandMux %i (Already act %i)\n", Act, Inp_Is_On(Get_Input(Act))); // Debug
+             } while ((Mode & RF_NOT_SAME) && Inp_Is_On(Get_Input(Act))); // If RF_NOT_SAME is used the random selection is repeated if the input is already active  // 13.01.20:
+          }
      }
 
   //Dprintf("RandMux set %i DstVar1=%i DstVarN=%i\n", Act, DstVar1, DstVarN);// Debug
   for (uint8_t Nr = DstVar1, i = 0; Nr <= DstVarN; Nr++, i++)
+      {
       Set_Input(Nr, Act == i);
+      //Dprintf("Get_Input(%i): %i\n", Nr, Get_Input(Nr)); // Debug
+      }
 }
 
 //-------------------------------

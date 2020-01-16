@@ -18,15 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 HSV gradient bar
 """
+COLORCOR_MAX = 255
 
-
-from tkcolorpicker.functions import tk, round2, rgb_to_hexa, hue2col
+from tkcolorpicker.functions import tk, round2, rgb_to_hexa, hue2col, rgb_to_hsv
 
 
 class GradientBar(tk.Canvas):
     """HSV gradient colorbar with selection cursor."""
 
-    def __init__(self, parent, hue=0, value=0, height=11, width=256, variable=None,
+    def __init__(self, parent, hue=0, value=0, cr=COLORCOR_MAX, cg=int(69*COLORCOR_MAX/100), cb=int(94*COLORCOR_MAX/100), height=11, width=256, variable=None,
                  **kwargs):
         """
         Create a GradientBar.
@@ -59,6 +59,10 @@ class GradientBar(tk.Canvas):
 
         self.gradient = tk.PhotoImage(master=self, width=width, height=height)
 
+        self.cr = cr
+        self.cg = cg
+        self.cb = cb
+        
         self.bind('<Configure>', lambda e: self._draw_gradient(hue))
         self.bind('<ButtonPress-1>', self._on_click)
         self.bind('<B1-Motion>', self._on_move)
@@ -117,3 +121,30 @@ class GradientBar(tk.Canvas):
         x = hue / 360. * self.winfo_width()
         self.coords('cursor', x, 0, x, self.winfo_height())
         self._variable.set(hue)
+        
+    def correct_hue(self, hue):
+        r, g, b = hue2col(hue)
+        crf = COLORCOR_MAX/int(self.cr)
+        cgf = COLORCOR_MAX/int(self.cg)
+        cbf = COLORCOR_MAX/int(self.cb)
+        rcor = int(r*crf)
+        gcor = int(g*cgf)
+        bcor = int(b*cbf)
+        if rcor > 255: rcor = 255
+        if gcor > 255: gcor = 255
+        if bcor > 255: bcor = 255 
+        args = (rcor,gcor, bcor)
+        h,s,v = rgb_to_hsv(*args)
+        h= hue
+        return h
+    
+    def set_colorcorrection(self, cr, cg, cb):
+        """Set collorcorrection values"""
+        self.cr = int(cr)
+        self.cg = int(cg)
+        self.cb = int(cb)
+        hue = int(variable.get())
+        cor_hue = self.correct_hue(hue)
+        self._variable.set(cor_hue)
+        self._draw_gradient(cor_hue)
+        self.event_generate("<<ColorChanged>>")         
