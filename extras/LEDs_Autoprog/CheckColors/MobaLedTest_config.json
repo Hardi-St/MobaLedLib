@@ -1,20 +1,18 @@
 {
-    "serportnumber": 4,
-    "serportname": "COM4",
-    "baudrate": "115200",
+    "serportnumber": 0,
+    "serportname": "",
     "maxLEDcount": "256",
     "lastLedCount": 1,
     "lastLed": 0,
     "pos_x": 100,
     "pos_y": 100,
     "colorview": 1,
-    "startpage": "-1",
-    "startpagename": "ColorCheckPage",
-    "led_correction_r": "200",
-    "led_correction_g": "200",
-    "led_correction_b": "200",
+    "startpage": 1,
+    "led_correction_r": "100",
+    "led_correction_g": "69",
+    "led_correction_b": "94",
     "use_led_correction": 1,
-    "old_color": "#0F0D03",
+    "old_color": "#FFA8C7",
     "palette": {
         "ROOM_COL0": "#0F0D03",
         "ROOM_COL1": "#162C1B",
@@ -34,7 +32,5 @@
         "SINGLE_LED": "#FFFFFF",
         "SINGLE_LED D": "#323232"
     },
-    "autoconnect": true,
-    "lastSound": 0,
-    "lastSoundImpuls": 200
+    "autoconnect": true
 }

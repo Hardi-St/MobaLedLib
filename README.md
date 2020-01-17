@@ -125,3 +125,6 @@ Questions / suggestions / praise / ...
 - New Black and White TV simulation (configurable)
 - Simulation of defective neon lights added
 - 1001 of other small changes and improvements
+
+**Ver.: 1.0.1** 17.01.20:
+- Corrected the upload in version 1.0.0 because some files have not been update ;-(
