@@ -1,0 +1,495 @@
+SheetName¯AmpelX
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯6
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯0
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX
+Dauer¯2 Sec¯1 Sec¯10 Sec¯3 Sec¯=F~¯=G~¯=H~¯=I~
+Goto Tabelle¯
+LED_Tab¯Rot 1¯x¯x¯¯¯x¯x¯x¯x
+LED_Tab¯Grün 1¯¯¯x
+LED_Tab¯Gelb 1¯¯x¯¯x
+LED_Tab¯Rot 2¯x¯x¯x¯x¯x¯x
+LED_Tab¯Grün 2¯¯¯¯¯¯¯x
+LED_Tab¯Gelb 2¯¯¯¯¯¯x¯¯x
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c255¯¯c5287936¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯c65535,i16711680,B¯c5287936¯¯c5287936¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯¯¯¯¯¯¯c5287936¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯c65535,i16711680,B¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;355.1245;156.443¯Dit voorbeeld toont de configuratie van een verkeerslicht op een kruising bij een modelverkeerslicht met behulp van twee WS2811-modules.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde  verkeerslicht is hetzelfde. Voor dit voorbeeld zijn deze duplicaten weggelaten. Ze kunnen in de tabel worden gemaakt door het blok te kopiëren.
+Het voorbeeld gebruikt twee WS2811 Modules die afzonderlijke LED's in de verkeerslichtmodellen besturen. Als dit voorbeeld wordt getest met een RGB-strip, worden de kleuren onjuist weergegeven (blauw in plaats van geel, paars in plaats van rood + geel).{Attrib}B1,137
+msoTextBox1¯492.75;0;355.1245;142.8818¯This example shows the configuration of a traffic light at an intersection at a model traffic light using two WS2811 modules.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite traffic light is the same. For this example, these duplicates are omitted. They can be created in the table by copying the block.
+The example uses two WS2811 Modules which control individual LEDs in the traffic light models.
+If this example is tested with an RGB stripe, the colors are displayed incorrectly (blue instead of yellow, purple instead of red + yellow).{Attrib}B1,122
+msoTextBox0¯492.75;0;355.1245;161.843¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
+einer Modellampel über zwei WS2811 Module. Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt werden. 
+Das Beispiel benutzt zwei WS2811 Moule welche einzelne LEDs in den Ampelmodellen ansteuern.  Wenn dieses Beispiel mit einem RGB Stripe getestet wir, dann werden die Farben falsch dargestellt (Blau anstelle von Gelb, Lila anstelle von Rot+Gelb).{Attrib}B1,116
+msoTextBox3¯492.75;0;355.1245;142.8818¯This example shows the configuration of a traffic light at an intersection at a model traffic light using two WS2811 modules.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite traffic light is the same. For this example, these duplicates are omitted. They can be created in the table by copying the block.
+The example uses two WS2811 Modules which control individual LEDs in the traffic light models.
+If this example is tested with an RGB stripe, the colors are displayed incorrectly (blue instead of yellow, purple instead of red + yellow).{Attrib}B1,122
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯AmpelX_Off
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯6
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_INVERT_INP | PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯0
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX_Off
+Dauer¯500 ms
+Goto Tabelle¯
+LED_Tab¯Rot 1
+LED_Tab¯Grün 1
+LED_Tab¯Gelb 1¯x¯.
+LED_Tab¯Rot 2
+LED_Tab¯Grün 2
+LED_Tab¯Gelb 2¯x
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c255¯¯c5287936¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535,B¯c6299648¯¯c5287936¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯¯¯¯¯¯¯c5287936¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535,B¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;355.1245;156.443¯Dit voorbeeld toont de configuratie van een verkeerslicht op een kruising bij een modelverkeerslicht met behulp van twee WS2811-modules.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde verkeerslicht is hetzelfde. Voor dit voorbeeld zijn deze duplicaten weggelaten. Ze kunnen in de tabel worden gemaakt door het blok te kopiëren.
+Het voorbeeld gebruikt twee WS2811 Modules die afzonderlijke LED's in de verkeerslichtmodellen besturen. Als dit voorbeeld wordt getest met een RGB-strip, worden de kleuren onjuist weergegeven (blauw in plaats van geel, paars in plaats van rood + geel).{Attrib}B1,116
+msoTextBox1¯492.75;0;355.1245;142.8818¯This example shows the configuration of a traffic light at an intersection at a model traffic light using two WS2811 modules.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite traffic light is the same. For this example, these duplicates are omitted. They can be created in the table by copying the block.
+The example uses two WS2811 Modules which control individual LEDs in the traffic light models.
+If this example is tested with an RGB stripe, the colors are displayed incorrectly (blue instead of yellow, purple instead of red + yellow).{Attrib}B1,122
+msoTextBox0¯492.75;0;355.1245;161.843¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
+einer Modellampel über zwei WS2811 Module. Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt werden. 
+Das Beispiel benutzt zwei WS2811 Moule welche einzelne LEDs in den Ampelmodellen ansteuern. Wenn dieses Beispiel mit einem RGB Stripe getestet wir, dann werden die Farben falsch dargestellt (Blau anstelle von Gelb, Lila anstelle von Rot+Gelb).{Attrib}B1,116
+msoTextBox3¯492.75;0;355.1245;161.843¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
+einer Modellampel über zwei WS2811 Module. Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt werden. 
+Das Beispiel benutzt zwei WS2811 Moule welche einzelne LEDs in den Ampelmodellen ansteuern. Wenn dieses Beispiel mit einem RGB Stripe getestet wir, dann werden die Farben falsch dargestellt (Blau anstelle von Gelb, Lila anstelle von Rot+Gelb).{Attrib}B1,116
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯RGB_AmpelX
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯18
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯0
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX
+Dauer¯2 Sec¯1 Sec¯10 Sec¯3 Sec¯=F~¯=G~¯=H~¯=I~
+Goto Tabelle¯
+LED_Tab¯Rot 1¯x¯x¯¯¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 1¯¯x¯¯x
+LED_Tab¯Gelb 1¯¯x¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 1¯¯¯x
+LED_Tab¯
+LED_Tab¯Rot 2¯x¯x¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 2¯¯¯¯¯¯x¯¯x
+LED_Tab¯Gelb 2¯¯¯¯¯¯x¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 2¯¯¯¯¯¯¯x
+LED_Tab¯
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i5287936¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i5287936¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;365.7927;156.443¯Dit voorbeeld toont de configuratie van een verkeerslicht op een kruispunt met een RGB LED-strip.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde Verkeerslicht wordt op dezelfde manier geschakeld. Voor dit voorbeeld zijn deze duplicaten weggelaten. U kunt ze maken door het blok in de tabel te kopiëren.
+Het voorbeeld gebruikt de LED's van een RGB LED-strip er is dan geen speciale hardware vereist.
+Dit voorbeeld laat zien hoe het eruit ziet als individuele LED's in een verkeerslicht worden bestuurd.{Attrib}B1,97
+msoTextBox1¯492.75;0;365.7927;142.8818¯This example shows the configuration of a traffic light at an intersection with an RGB LED stripe.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite Traffic light is switched in the same way. For this example, these duplicates are omitted. You can create by copying the block in the table.
+The example uses the LEDs of an RGB LED strip because you don't have any special hardware required.
+The following example shows what it looks like when individual LEDs in a traffic light can be controlled.{Attrib}B1,95
+msoTextBox0¯492.75;0;365.7927;119.3595¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung mit einem RGB LED stripe. Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln. Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt werden. Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine spezielle Hardware benötigt. Das folgend Beispiel zeigt wie das aussieht wenn einzelne LEDs in einer Ampel angesteuert werden.{Attrib}B1,97
+msoTextBox3¯492.75;0;365.7927;142.8818¯This example shows the configuration of a traffic light at an intersection with an RGB LED stripe.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite Traffic light is switched in the same way. For this example, these duplicates are omitted. You can create by copying the block in the table.
+The example uses the LEDs of an RGB LED strip because you don't have any special hardware required.
+The following example shows what it looks like when individual LEDs in a traffic light can be controlled.{Attrib}B1,95
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯RGB_AmpelX_Off
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯18
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_INVERT_INP | PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯0
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX
+Dauer¯500 ms
+Goto Tabelle¯
+LED_Tab¯Rot 1¯¯.
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 1¯x
+LED_Tab¯Gelb 1¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 1
+LED_Tab¯
+LED_Tab¯Rot 2
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 2¯x
+LED_Tab¯Gelb 2¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 2
+LED_Tab¯
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i5287936¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i5287936¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯c255¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;365.7927;156.443¯Dit voorbeeld toont de configuratie van een verkeerslicht op een kruispunt met een RGB LED-strip.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde verkeerslicht wordt op dezelfde manier geschakeld. Voor dit voorbeeld zijn de duplicaten weggelaten. U kunt deze maken door het blok in de tabel te kopiëren.
+Het voorbeeld gebruikt de LED's van een RGB LED-strip. Er is dan geen speciale hardware vereist.
+Het volgende voorbeeld laat zien hoe het eruit ziet als individuele LED's in een verkeerslicht worden bestuurd.{Attrib}B1,97
+msoTextBox1¯492.75;0;365.7927;142.8818¯This example shows the configuration of a traffic light at an intersection with an RGB LED stripe.The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite Traffic light is switched in the same way. For this example, these duplicates are omitted. You can create by copying the block in the table.The example uses the LEDs of an RGB LED strip because you don't have any special hardware required.The following example shows what it looks like when individual LEDs in a traffic light can be controlled.{Attrib}B1,95
+msoTextBox0¯492.75;0;365.7927;119.3595¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung mit einem RGB LED stripe. Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln. Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt werden. Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine spezielle Hardware benötigt. Das folgend Beispiel zeigt wie das aussieht wenn einzelne LEDs in einer Ampel angesteuert werden.{Attrib}B1,97
+msoTextBox3¯492.75;0;365.7927;142.8818¯This example shows the configuration of a traffic light at an intersection with an RGB LED stripe.The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite Traffic light is switched in the same way. For this example, these duplicates are omitted. You can create by copying the block in the table.The example uses the LEDs of an RGB LED strip because you don't have any special hardware required.The following example shows what it looks like when individual LEDs in a traffic light can be controlled.{Attrib}B1,95
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯RGB_AmpelX_Fade
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯18
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX_Fade
+Dauer¯200 ms¯2 Sec¯200 ms¯1 Sec¯200 ms¯10 Sec¯200 ms¯3 Sec¯=F~¯=G~¯=H~¯=I~¯=J~¯=K~¯=L~¯=M~
+Goto Tabelle¯
+LED_Tab¯Rot 1¯x¯x¯x¯x¯¯¯¯¯x¯x¯x¯x¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 1¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯Gelb 1¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 1¯¯¯¯¯x¯x
+LED_Tab¯
+LED_Tab¯Rot 2¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 2¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯Gelb 2¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 2¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯¯¯¯¯¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯¯¯¯¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i5287936¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i5287936¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;355.1245;142.8818¯Dit voorbeeld toont de configuratie van een uitgeschakeld verkeerslicht op een kruispunt.
+De LED's worden langzaam in- en uitgeschakeld.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde verkeerslicht wordt op dezelfde manier geschakeld. Voor dit voorbeeld zijn deze duplicaten weggelaten. U kunt deze maken door het blok in de tabel te kopiëren.
+Het voorbeeld gebruikt de LED's van een RGB LED-strip er is dan geen speciale hardware vereist.{Attrib}B1,88
+msoTextBox1¯492.75;0;393.45;129.3207¯This example shows the configuration of a traffic light at an intersection
+the LEDs are slowly switched on and off.
+The traffic light system consists of two differently switched traffic lights.
+One for each direction of travel (horizontal / vertical). The opposite
+Traffic light is switched in the same way. For this example, these duplicates
+are omitted. You can create them by copying the block in the table below.
+The example uses the LEDs of an RGB LED strip because you don't have any
+special hardware required.{Attrib}B1,116
+msoTextBox0¯492.75;0;355.1245;133.5207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
+dabei werden die LEDs langsam Ein- und Ausgeschaltet.
+Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
+Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate
+weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt 
+werden. 
+Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
+spezielle Hardware benötigt. {Attrib}B1,124
+msoTextBox2¯492.75;0;393.45;129.3207¯This example shows the configuration of a traffic light at an intersection
+the LEDs are slowly switched on and off.
+The traffic light system consists of two differently switched traffic lights.
+One for each direction of travel (horizontal / vertical). The opposite
+Traffic light is switched in the same way. For this example, these duplicates
+are omitted. You can create them by copying the block in the table below.
+The example uses the LEDs of an RGB LED strip because you don't have any
+special hardware required.{Attrib}B1,116
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯RGB_AmpelX_Fade_Off
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯18
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_INVERT_INP | PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX_Fade_Off
+Dauer¯100 ms¯300 ms¯100 ms¯500 ms
+Goto Tabelle¯
+LED_Tab¯Rot 1
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 1¯x¯x
+LED_Tab¯Gelb 1¯x¯x¯.¯.
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 1
+LED_Tab¯
+LED_Tab¯Rot 2
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 2¯x¯x
+LED_Tab¯Gelb 2¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 2
+LED_Tab¯
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯¯¯¯¯¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯¯¯¯¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i5287936¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i5287936¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;355.1245;142.8818¯Dit voorbeeld toont de configuratie van een verkeerslicht op een kruispunt.
+De LED's worden langzaam in- en uitgeschakeld.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde verkeerslicht wordt op dezelfde manier geschakeld. Voor dit voorbeeld zijn deze duplicaten weggelaten. U kunt deze maken door het blok in de tabel te kopiëren.
+Het voorbeeld gebruikt de LED's van een RGB LED-strip dan is er geen speciale hardware vereist.{Attrib}B1,74
+msoTextBox1¯492.75;0;355.1245;133.5207¯This example shows the configuration of a traffic light at an intersection
+the LEDs are slowly switched on and off.
+The traffic light system consists of two differently switched traffic lights.
+One for each direction of travel (horizontal / vertical). The opposite
+Traffic light is switched in the same way. For this example, these duplicates
+are omitted. You can create them by copying the block in the table below.
+The example uses the LEDs of an RGB LED strip because you don't have any
+special hardware required.{Attrib}B1,74 B76,115
+msoTextBox0¯492.75;0;355.1245;133.5207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
+dabei werden die LEDs langsam Ein- und Ausgeschaltet.
+Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
+Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate
+weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt 
+werden. 
+Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
+spezielle Hardware benötigt. {Attrib}B1,124
+msoTextBox1¯492.75;0;355.1245;133.5207¯This example shows the configuration of a traffic light at an intersection
+the LEDs are slowly switched on and off.
+The traffic light system consists of two differently switched traffic lights.
+One for each direction of travel (horizontal / vertical). The opposite
+Traffic light is switched in the same way. For this example, these duplicates
+are omitted. You can create them by copying the block in the table below.
+The example uses the LEDs of an RGB LED strip because you don't have any
+special hardware required.{Attrib}B1,74 B76,115
+msoPicture¯890.15;7.333386;96;102.75¯Ampel.jpg
+
+SheetName¯RGB_AmpelX_A
+Version¯1
+Erste RGB LED: ¯19
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯17
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯
+Analoges Überblenden: ¯
+Goto Mode: ¯
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX_A
+Dauer¯2 Sec¯2 sec¯10 Sec¯500¯500¯500¯500¯500¯500¯500¯500¯2 Sec
+Goto Tabelle¯
+LED_Tab¯Rot 1¯x¯x¯¯¯¯¯¯¯¯¯¯¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x
+LED_Tab¯Rot 1
+LED_Tab¯Rot 1
+LED_Tab¯Gelb 1¯¯x¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯Gelb 1¯¯x¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯Gelb 1
+LED_Tab¯Grün 1
+LED_Tab¯Grün 1¯¯¯x¯¯x¯¯x¯¯x¯¯x
+LED_Tab¯Grün 1
+LED_Tab¯Rot 2¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x
+LED_Tab¯Rot 2
+LED_Tab¯Rot 2
+LED_Tab¯Gelb 2¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯Gelb 2¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯Gelb 2
+LED_Tab¯Grün 2
+LED_Tab¯Grün 2¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯¯x¯¯x¯¯x¯¯x
+LED_Tab¯
+LED_Attr¯14.4¯i255
+LED_Attr¯14.4¯i255
+LED_Attr¯14.4¯i255
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i255
+LED_Attr¯14.4¯i255
+LED_Attr¯14.4¯i255
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i65535
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i46080
+LED_Attr¯14.4¯i46080
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75

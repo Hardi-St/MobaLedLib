@@ -1,5 +1,11 @@
 # Dokumente zur MobaLedLib
 
+Seit Anfang März 2020 gibt es ein eigenes Wiki für die MobaLedLib. Hier findet man alle benötigten Informationen:
+[MobaLedLib Wiki](https://wiki.mobaledlib.de/doku.php)
+
+Darum werden die folgenden Links nicht weiter gepflegt…
+
+
 Dieses Dokument enthält Links zu allen wichtigen Dokumenten der MobaLedLib. Mit einem Klick auf die unterstrichenen Überschriften kommt man direkt zu dem entsprechenden Dokument. Dort kann man es lesen oder herunter laden.
 
 Das Hauptverzeichnis aller Dokumente erreicht man über diesen Link: [MobaLedLib_Docu](https://github.com/Hardi-St/MobaLedLib_Docu)

@@ -23,6 +23,8 @@ uint8_t Get_LED_Read       ();
 
 void Upd_LED_Heartbeat();
 
+void Setup_LEDs(void (*Add_Int_Proc)(void));
+void Power_on_Ani();
 void Setup_LEDs_with_Power_on_Ani(void (*Add_Int_Proc)(void));
 
 void Test_LEDs(); // Debug

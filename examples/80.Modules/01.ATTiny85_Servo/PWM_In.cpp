@@ -30,7 +30,7 @@
 
 // Compile the following function with
 //   cd "C:\Program Files (x86)\Arduino\hardware\tools\avr\bin"
-//   avr-gcc.exe -gstabs -Wa,-ahlmsd="C:\Dat\Märklin\Arduino\LEDs_Eisenbahn\Prog_ATTiny85\ATTiny85_Servo\PWM_In_Asm\PWM_in_Asm.lst" -dp -fverbose-asm -O "C:\Dat\Märklin\Arduino\LEDs_Eisenbahn\Prog_ATTiny85\ATTiny85_Servo\PWM_In_Asm\PWM_in_Asm.c"
+//   avr-gcc.exe -gstabs -Wa,-ahlmsd="C:\Dat\Maerklin\Arduino\LEDs_Eisenbahn\Prog_ATTiny85\ATTiny85_Servo\PWM_In_Asm\PWM_in_Asm.lst" -dp -fverbose-asm -O "C:\Dat\Maerklin\Arduino\LEDs_Eisenbahn\Prog_ATTiny85\ATTiny85_Servo\PWM_In_Asm\PWM_in_Asm.c"
 //
 // and manually convert the generated PWM_in_Asm.lst to PWM_in_Asm.S
 //

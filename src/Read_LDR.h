@@ -4,7 +4,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -49,25 +49,11 @@
  Revision History:
  ~~~~~~~~~~~~~~~~~
  24.09.18:  - Started
-
- ToDo:
- - Andere Analogwerte zur verfuegung stellen
- - Erkennen wenn ein Schalter angeschlossen ist. Dann soll die Daempfung sehr gross sein
-
-
- Memory usage: Flash: 586, RAM 13 Byte (Incl. Dprintf()                                                       // 24.09.18:
- USE_LDR (792 FLASH)
-
- Wenn Init_LDR() nicht aufgerufen wird, dann spart man nur 68 Bytes FLASH. Die Interrupt benoetigt
- 704 Bytes FLASH.
- Wenn man die Funktionalitaet des Interrupts in eine eigene Funktion auslagert und diese ueber eine
- boolsche Variable geschaltet im Interrupt aufruft, dann kann man 434 Bytes sparen. Aber nicht
- alle 704 Bytes ;-(
- => Der compiler Schalter kann nicht entfallen ;-(
- ==> Das Einlesen des LDR kommt in eine H-Datei. Dann braucht es nur Speicher wenn die h-Datei eingebunden ist.
-
-
+ 06.04.20:  - Using the AnalogScanner library instead of an own analog
+              interrupt function to be able to use the other analog inputs
+              in the program.
 */
+
 // Detection of a switch
 #ifndef SWITCH_NIGHT
   #define SWITCH_NIGHT 240
@@ -96,6 +82,7 @@ static uint16_t AD_Count = 0;
 static uint8_t  AD_Min   = 255;
 static uint8_t  OldDarkness;
 static uint8_t  LDR_damping_Fact;
+static uint16_t LDR_Check_Count;
 
 uint8_t Get_Damped_Darkness();
 uint8_t Get_Act_Darkness();                    // Actual value of the darkness sensor
@@ -109,49 +96,25 @@ uint8_t Get_Act_Darkness();                    // Actual value of the darkness s
 // 50                  6s         Wenn das Umgebungslicht per Dimmer gesteuert wird
 // 100 fast            4s          "
 
-//-------------------------------------------------------------
-void Init_DarknessSensor(uint8_t LDR_Pin, uint8_t Damping_Fact = 50) // dafault value for Damping_Fact = 50 (Range: 1 = Slow, 100 = fast)
-//-------------------------------------------------------------
-// http://yaab-arduino.blogspot.com/2015/02/fast-sampling-from-analog-input.html
-//
-// Attention: The analogRead() function can't be used together with the darkness sensor
-//            because this function reads the analog values in an interrupt routine.
+//----------------------------------------------------------------------------------------------------
+void Init_DarknessSensor(uint8_t LDR_Pin, uint8_t Damping_Fact = 50, uint8_t AnalogInp_Scan_Count = 1) // dafault value for Damping_Fact = 50 (Range: 1 = Slow, 100 = fast)
+//----------------------------------------------------------------------------------------------------
 {
   pinMode(LDR_Pin, INPUT_PULLUP);
   LDR_damping_Fact = Damping_Fact;
+  LDR_Check_Count  = 500/AnalogInp_Scan_Count;
 
-  ADCSRA = 0;                       // clear ADCSRA register
-  ADCSRB = 0;                       // clear ADCSRB register
-  ADMUX |= ((LDR_Pin - A0) & 0x07); // set analog input pin   (Tested with Auduino Nano)
-  ADMUX |= (1 << REFS0);            // set reference voltage
-  ADMUX |= (1 << ADLAR);            // left align ADC value to 8 bits from ADCH register
-
-  // sampling rate is [ADC clock] / [prescaler] / [conversion clock cycles]
-  // for Arduino Uno ADC clock is 16 MHz and a conversion takes 13 clock cycles
-  ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);    // 128 prescaler for   9.6 KHz
-//ADCSRA |= (1 << ADPS2) |                (1 << ADPS0);    // 32  prescaler for  38.5 KHz
-//ADCSRA |= (1 << ADPS2);                                  // 16  prescaler for  76.9 KHz
-//ADCSRA |=                (1 << ADPS1) | (1 << ADPS0);    // 8   prescaler for 153.8 KHz
-
-  ADCSRA |= (1 << ADATE); // enable auto trigger
-  ADCSRA |= (1 << ADIE);  // enable interrupts when measurement complete
-  ADCSRA |= (1 << ADEN);  // enable ADC
-  ADCSRA |= (1 << ADSC);  // start ADC measurements
 }
 
-
-//-----------
-ISR(ADC_vect)
-//-----------
-// Using a low pass filter in addition with a min calculation.
-// The 50 Hz flicker of the Lights is "filtered" with a min
-// calculation because this is very fast. In addition
-// a low pass is used.
+//-----------------------------------------------------
+void Darkness_Detection_Callback(int , int , int value)
+//-----------------------------------------------------
+// THis function has to be called from the AnalogScanner library
 {
-   if (++AD_Count < 500)
+  if (++AD_Count < LDR_Check_Count)
        {
-       uint8_t Val = ADCH;
-       if (Val < AD_Min) AD_Min = Val;
+       uint8_t Val8 = value>>2;
+       if (Val8 < AD_Min) AD_Min = Val8;
        }
   else {
        if (AD_Flags.Start)
@@ -183,7 +146,7 @@ ISR(ADC_vect)
             else if (AD_Flags.SwitchMode && AD_Min > SWITCH_DAY && AD_Min < SWITCH_NIGHT)
                     AD_Flags.SwitchMode = 0;
             }
-       AD_Min = ADCH;
+       AD_Min = value>>2;
        AD_Count = 0;
        }
 }

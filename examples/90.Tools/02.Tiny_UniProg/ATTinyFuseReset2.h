@@ -2,6 +2,7 @@
 #define _ATTINYFUSERESET2_H_
 
 void Check_HV_Reset_Button(uint8_t Button);
+void Print_12V_Value(uint16_t Val, uint8_t WithRaw);
 
 void HV_Interrupt_Proc();
 

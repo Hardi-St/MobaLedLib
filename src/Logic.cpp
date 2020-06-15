@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -65,6 +65,8 @@
 #include "MobaLedLib.h"
 
 
+
+//uint8_t skip = 0;                                                 // 01.05.20: Added by Juergen
 //-----------------------------
 void MobaLedLib_C::Proc_Logic()
 //-----------------------------
@@ -77,7 +79,8 @@ void MobaLedLib_C::Proc_Logic()
   bool ChkEnable = false;
   uint8_t Val    = _BIT_NEW; // Local result of one AND group
   uint8_t Res    = 0;
-  //Dprintf("DstVar %i (%i) ", DstVar, Get_Input(DstVar)); // Test mehrfach verwenung der Logic Ausgaenge
+
+  // Dprintf("DstVar %i (%i) ", DstVar, Get_Input(DstVar)); // Test mehrfach verwenung der Logic Ausgaenge
   while (Cnt--)
     {
     uint8_t d = pgm_read_byte_near(p++);
@@ -110,8 +113,12 @@ void MobaLedLib_C::Proc_Logic()
     First = false;
     }
   Res |= Val;
+#if _USE_STORE_STATUS                                                                                         // 01.05.20:
+  if (!Initialize) Set_Input(DstVar, Res);
+#else
   Set_Input(DstVar, Res);
-  //Dprintf("Res %i %s", Res, pgm_read_byte_near(cp-2) == 1 ? "\n":"   "); // Test mehrfach verwenung der Logic Ausgaenge
+#endif
+  // Dprintf("\nRes %i %s", Res, pgm_read_byte_near(cp-2) == 1 ? "\n":"   "); // Test mehrfach verwenung der Logic Ausgaenge
 }
 
 //------------------------------------------------------

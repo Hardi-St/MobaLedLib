@@ -1,0 +1,1760 @@
+{
+    "...": {
+        "ParName": "...",
+        "Cnt": "4",
+        "Type": "Var",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "ADKey": {
+        "ParName": "ADKey",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "255",
+        "Input Text": "\"Helligkeitswert\" ADKey",
+        "Hint": "Die Werte können mit dem Farbtest Programm ermittelt werden.",
+        "Implementation comment": ""
+    },
+    "ADKey1": {
+        "ParName": "ADKey1",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "255",
+        "Input Text": "\"Helligkeitswert\" ADKey1",
+        "Hint": "Die Werte können mit dem Farbtest Programm ermittelt werden.",
+        "Implementation comment": ""
+    },
+    "ADKey2": {
+        "ParName": "ADKey2",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Input Text": "\"Helligkeitswert\" ADKey2",
+        "Hint": "Die Werte können mit dem Farbtest Programm ermittelt werden.",
+        "Implementation comment": ""
+    },
+    "ARDUINO Baudrate": {
+        "ParName": "ARDUINO-Baudrate",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "115200",
+            "57600"
+        ],
+        "ValuesText": [
+            "115200",
+            "57600"
+        ],
+        "ConfigName": [
+            "Baudrate",
+            "baudratenumber"
+        ],
+        "AllowValueEntry": "False",
+        "Hide": "True",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Baudrate",
+        "Hint": "Baudrate des angeschlossenen ARDUINOs"
+    },
+    "ARDUINO Port": {
+        "ParName": "ARDUINO-Port",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [],
+        "ValuesText": [
+            "NO DEVICE",
+            "COM1",
+            "COM2",
+            "COM3",
+            "COM4",
+            "COM5"
+        ],
+        "ConfigName": [
+            "serportname",
+            ""
+        ],
+        "AllowValueEntry": "True",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Anschluss",
+        "Hint": "Anschluss an den der ARDUINO angeschlossen ist"
+    },
+    "ARDUINO Type": {
+        "ParName": "ARDUINO-Type",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "NanoOld",
+            "NanoNew",
+            "IDE"
+        ],
+        "ValuesText": [
+            "Nano/Uno (alt)",
+            "Nano/Uno (neu)",
+            "Typ von Arduino IDE"
+        ],
+        "ConfigName": [
+            "ArduinoTypeName",
+            "ArduinoTypeNumber"
+        ],
+        "Values2Params": [
+            "arduino:avr:nano:cpu=atmega328old",
+            "arduino:avr:nano:cpu=atmega328",
+            " "
+        ],
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Board Typ",
+        "Hint": "Board Typ des ARDUINOs, der angeschlossen ist"
+    },
+    "ARDUINOBlink": {
+        "ParName": "ARDUINOBlink",
+        "Cnt": "1",
+        "Type": "Checkbutton",
+        "ConfigName": "ARDUINOBlink",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "ARDUINO blinken lassen",
+        "Hint": "ARDUINO blinkt, wenn er ausgewählt wird. \nACHTUNG: Das Reaktionszeit der Benutzeroberfläche wir dadurch langsamer"
+    },
+    "ARDUINOConnected": {
+        "ParName": "ARDUINO-Connected",
+        "Cnt": "1",
+        "Type": "Text",
+        "Lines": "4",
+        "Min": "0",
+        "Max": "255",
+        "ReadOnly": "True",
+        "Default": "No connected ARDUINO found",
+        "Input Text": "gefundene Geräte",
+        "Hint": "Zeigt alle angeschlossenen Geräte an - bei original Arduinos erscheint der Name z.B. ARDUINO NANO. Clones werden mit dem verbauten Chip aufgeführt, z.B. CH340 oder ähnlich"
+    },
+    "ARDUINODetect": {
+        "ParName": "ARDUINODetect",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": " ",
+        "Hint": " ",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "ARDUINOShowAll",
+            "ARDUINOTakeOver",
+            "ARDUINOBlink",
+            "AutoConnect"
+        ]
+    },
+    "ARDUINOMessage": {
+        "ParName": "ARDUINOMessage",
+        "Cnt": "1",
+        "Type": "Text",
+        "Lines": "1",
+        "Min": "0",
+        "Max": "255",
+        "ReadOnly": "True",
+        "Default": "Working ...",
+        "Input Text": "ARDUINO Erkennung Status",
+        "Hint": "Zeigt den Status der ARDUINO Erkennung an."
+    },
+    "ARDUINOMobaLedLib": {
+        "ParName": "ARDUINOMobaLedLib",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "ARDUINO MobaLedLib",
+        "Hint": "ARDUINO Button",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "ButtonARDUINOTest",
+            "ButtonARDUINOInitLED",
+            "MLL_DigitalSystem",
+            "ButtonARDUINOInitDCC"
+        ]
+    },
+    "ARDUINOParams": {
+        "ParName": "ARDUINOParams",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "ARDUINO Daten",
+        "Hint": "ARDUINO Daten",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "ARDUINO Port",
+            "ARDUINO Type",
+            "ARDUINO Baudrate"
+        ]
+    },
+    "ARDUINOShowAll": {
+        "ParName": "ARDUINOShowAll",
+        "Cnt": "1",
+        "Type": "Checkbutton",
+        "ConfigName": "ARDUINOShowAll",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Alle Anschlüsse zeigen",
+        "Hint": "Alle gefundenen Anschlüsse werden angezeigt"
+    },
+    "ARDUINOTakeOver": {
+        "ParName": "ARDUINOTakeOver",
+        "Cnt": "1",
+        "Type": "Checkbutton",
+        "ConfigName": "ARDUINOTakeOver",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Automatisch übernehmen",
+        "Hint": "Daten des ARDUINO werden automatisch übernommen"
+    },
+    "Act": {
+        "ParName": "Act",
+        "Cnt": "2",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "0.5 Sek",
+        "Input Text": "Aktive Zeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "AutoConnect": {
+        "ParName": "Autoconnect",
+        "Cnt": "1",
+        "Type": "Checkbutton",
+        "ConfigName": "autoconnect",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Automatisch verbinden",
+        "Hint": "Es wird automatisch eine Verbindung zum ARDUINO aufgebaut"
+    },
+    "BW_B": {
+        "ParName": "BW_B",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "80",
+        "Input Text": "Blauanteil bei Schwarz/Weis TV",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "BW_G": {
+        "ParName": "BW_G",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "40",
+        "Input Text": "Grünanteil bei Schwarz/Weis TV",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "BW_R": {
+        "ParName": "BW_R",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "40",
+        "Input Text": "Rotanteil bei Schwarz/Weis TV",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "B_LED_Cx": {
+        "ParName": "B_LED_Cx",
+        "Cnt": "12",
+        "Type": "CX",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "=> Dialog",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "B_Max": {
+        "ParName": "B_Max",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "150",
+        "Input Text": "Maximaler zufälliger Blauanteil",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "B_Min": {
+        "ParName": "B_Min",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "60",
+        "Input Text": "Minimaler zufälliger Blauanteil",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "BinStates": {
+        "ParName": "BinStates",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "2",
+        "Max": "11",
+        "Default": "6",
+        "Input Text": "Anzahl der Zustände",
+        "Hint": "Anzahl der vom Charlieplexing Modul unterstützten Zustände (zwischen 2 und 11).",
+        "Implementation comment": ""
+    },
+    "Brightness": {
+        "ParName": "Brightness",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "200",
+        "Input Text": "Helligkeit",
+        "Hint": "Helligkeit der Feuersimulation",
+        "Implementation comment": ""
+    },
+    "ButtonARDUINOInitDCC": {
+        "ParName": "ButtonARDUINOInitDCC",
+        "Cnt": "1",
+        "Type": "Button",
+        "Function": "ButtonARDUINOInitDCC",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Init DCC/Selectrix ARDUINO",
+        "Hint": "Initialisiere DCC/Selectrix ARDUINO"
+    },
+    "ButtonARDUINOInitLED": {
+        "ParName": "ButtonARDUINOInitLED",
+        "Cnt": "1",
+        "Type": "Button",
+        "Function": "ButtonARDUINOInitLED",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Initialisiere LED ARDUINO",
+        "Hint": "Initialisiere LED ARDUINO"
+    },
+    "ButtonARDUINOTest": {
+        "ParName": "ButtonARDUINOTest",
+        "Cnt": "1",
+        "Type": "Button",
+        "Function": "ButtonARDUINOTest",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Verbinden mit LED ARDUINO",
+        "Hint": "Stellt die Verbindung zum ausgewählten ARDUINO her und tested, ob die MobaLedLib richtig antwortet. Wenn alles ok ist, wird unten im Statusfeld <Verbunden> angezeigt"
+    },
+    "CC_BLUE": {
+        "ParName": "CC_BLUE",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "led_correction_b",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Blue",
+        "Hint": "Blue"
+    },
+    "CC_GREEN": {
+        "ParName": "CC_GREEN",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "led_correction_g",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Green",
+        "Hint": "Green"
+    },
+    "CC_RED": {
+        "ParName": "CC_RED",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "led_correction_r",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "RED",
+        "Hint": "RED"
+    },
+    "ColTab": {
+        "ParName": "ColTab",
+        "Cnt": "1",
+        "Type": "ColTab",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Farben ändern",
+        "Hint": "Gehe zur Farbtest Seite und passe die Farben der Farbpalette an Deine Wünsche an",
+        "Implementation comment": ""
+    },
+    "ColorCheckButton_ok": {
+        "ParName": "ColorCheckButton_ok",
+        "Cnt": "1",
+        "Type": "Button",
+        "Function": "ButtonColorCheck_OK",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "SET_COLTAB Palette übergeben",
+        "Hint": "Die aktuelle Palette wird an Set_ColTab übergeben",
+        "Implementation comment": ""
+    },
+    "CtrMode": {
+        "ParName": "CtrMode",
+        "Cnt": "1",
+        "Type": "Mode",
+        "Min": "",
+        "Max": "",
+        "Default": "CM_NORMAL",
+        "Input Text": "Mode",
+        "Hint": "Ein oder mehrere Modes: CM_NORMAL, CF_INV_INPUT, CF_INV_ENABLE, CF_BINARY, CF_RESET_LONG, CF_UP_DOWN, CF_ROTATE, CF_PINGPONG, CF_SKIP0, CF_RANDOM, CF_LOCAL_VAR, CF_ONLY_LOCALVAR  getrennt über '|'",
+        "Implementation comment": ""
+    },
+    "Cx": {
+        "ParName": "Cx",
+        "Cnt": "13",
+        "Type": "CX",
+        "Values": [
+            "C_auto",
+            "C_ALL",
+            "C1",
+            "C2",
+            "C3",
+            "C12",
+            "C23",
+            "C_RED",
+            "C_GREEN",
+            "C_BLUE",
+            "C_WHITE",
+            "C_YELLOW",
+            "C_CYAN"
+        ],
+        "ValuesText": [
+            "Automatisch",
+            "Alle LED",
+            "C1",
+            "C2",
+            "C3",
+            "LED1+2",
+            "LED 2+3",
+            "C_RED",
+            "C_GREEN",
+            "C_BLUE",
+            "C_WHITE",
+            "C_YELLOW",
+            "C_CYAN"
+        ],
+        "Min": "",
+        "Max": "",
+        "Default": "C_auto",
+        "Input Text": "LED-Channel",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "DCC BaseAddress": {
+        "ParName": "DCC_BaseAddress",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "DCC_BaseAddress",
+        "Min": "1",
+        "Max": "9999",
+        "Persistent": "True",
+        "Default": "200",
+        "Input Text": "DCC Basis Addresse",
+        "Hint": "Basis Addresse des DCC Keyboards"
+    },
+    "DCC End": {
+        "ParName": "DCC_End",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "dcc_end",
+        "Min": "1",
+        "Max": "9999",
+        "Default": "9999",
+        "Input Text": "DCC Ende",
+        "Hint": "Ende des DCC Adressbereichs, den der ARDUINO abdecken soll"
+    },
+    "DCC Start": {
+        "ParName": "DCC_Start",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "dcc_start",
+        "Min": "1",
+        "Max": "9999",
+        "Default": "1",
+        "Input Text": "DCC Start",
+        "Hint": "Start des DCC Adressbereichs, den der ARDUINO abdecken soll"
+    },
+    "DstVar": {
+        "ParName": "DstVar",
+        "Cnt": "17",
+        "Type": "Var",
+        "AllowValueEntry": "True",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Zielvariable1",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "DstVar0": {
+        "ParName": "DstVar0",
+        "Cnt": "6",
+        "Type": "Var",
+        "AllowValueEntry": "True",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Zielvariable",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "DstVar1": {
+        "ParName": "DstVar1",
+        "Cnt": "8",
+        "Type": "Var",
+        "AllowValueEntry": "True",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Zielvariable 1",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "DstVarN": {
+        "ParName": "DstVarN",
+        "Cnt": "17",
+        "Type": "Var",
+        "AllowValueEntry": "True",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "ZielvariableN",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "Duration": {
+        "ParName": "Duration",
+        "Cnt": "9",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "1 Min",
+        "Input Text": "Dauer",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Enable": {
+        "ParName": "Enable",
+        "Cnt": "1",
+        "Type": "Var",
+        "Min": "0",
+        "Max": "250",
+        "Default": "SI_1",
+        "Input Text": "Nummer der Enable Eingangs",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "EnableCh": {
+        "ParName": "EnableCh",
+        "Cnt": "1",
+        "Type": "Var",
+        "AllowValueEntry": "True",
+        "Min": "0",
+        "Max": "250",
+        "Default": "SI_1",
+        "Input Text": "Nummer der Enable Eingangs",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "End": {
+        "ParName": "End",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "110",
+        "Input Text": "Endwert",
+        "Hint": "(Helligkeits-) Wert ab dem die Schedule funktion nicht mehr aktiv ist",
+        "Implementation comment": ""
+    },
+    "Farbauswahl": {
+        "ParName": "Farbauswahl",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "HSV",
+            "Farbrad"
+        ],
+        "ValuesText": [
+            "HSV-Farbton",
+            "Farbrad"
+        ],
+        "ConfigName": [
+            "",
+            "colorview"
+        ],
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Farbauswahl",
+        "Hint": "Farbauswahl - Neustart notwendig"
+    },
+    "G_Max": {
+        "ParName": "G_Max",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "210",
+        "Input Text": "Maximaler zufälliger Grünanteil",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "G_Min": {
+        "ParName": "G_Min",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "70",
+        "Input Text": "Minimaler zufälliger Grünanteil",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "GlobVarNr": {
+        "ParName": "GlobVarNr",
+        "Cnt": "1",
+        "Type": "Var",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Nummer der globalen Variablen",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "Group_Colour": {
+        "ParName": "Group_Colour",
+        "Cnt": "1",
+        "Type": "Color",
+        "Min": "1",
+        "Max": "255",
+        "Default": "#FFFFFF",
+        "Input Text": "Gruppenfarbe",
+        "Hint": "Farbe der Gruppe - direkt eingeben oder durch Anklicken des Farbbuttons auswählen",
+        "Implementation comment": ""
+    },
+    "Group_Comment": {
+        "ParName": "Group_Comment",
+        "Cnt": "1",
+        "Type": "BigEntry",
+        "Min": "1",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Kommentar",
+        "Hint": "Beliebige Beschreibung, z.B. rotes Haus am Hang links",
+        "Implementation comment": ""
+    },
+    "Group_Connector": {
+        "ParName": "Group_Connector",
+        "Cnt": "1",
+        "Type": "String",
+        "Min": "1",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Anschluss",
+        "Hint": "Bezeichnung des Anschlusses, an dem die Gruppe angeschlossen ist",
+        "Implementation comment": ""
+    },
+    "Group_Distributor": {
+        "ParName": "Group_Distributor",
+        "Cnt": "1",
+        "Type": "String",
+        "Min": "1",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Verteiler",
+        "Hint": "Bezeichnung des Verteiler, an dem die Gruppe angeschlossen ist",
+        "Implementation comment": ""
+    },
+    "Group_Name": {
+        "ParName": "Group_Name",
+        "Cnt": "1",
+        "Type": "GroupCombo",
+        "Min": "1",
+        "Max": "255",
+        "Default": "Gruppenname",
+        "Input Text": "Gruppenname",
+        "Hint": "Bezeichnung der Gruppe - Auswahl aus Liste oder neuen Namen eingeben und <übernehmen> anklicken",
+        "Implementation comment": ""
+    },
+    "ImportLEDcnt": {
+        "ParName": "ImportLEDcnt",
+        "Cnt": "1",
+        "SingleLEDCnt":"1",
+        "Type": "",
+        "Min": "1",
+        "Max": "15",
+        "Default": "1",
+        "Input Text": "Anzahl der einzelnen LEDs",
+        "Hint": "Anzahl der LEDs die der Makro verwendet",
+        "Implementation comment": ""
+    },
+    "ImportString": {
+        "ParName": "ImportString",
+        "Type": "Text",
+        "Min": "1",
+        "Max": "255",
+        "Default": "PatternT1(#LED,128,#InCh,2,0,128,0,PM_NORMAL,1 Sek,9)",
+        "Input Text": "Import String",
+        "Hint": "Mit diesem Makro ist es möglich einen Macro direkt vom Excel ProgGen einzufügen.",
+        "Implementation comment": ""
+    },
+    "TemplateString": {
+        "ParName": "TemplateString",
+        "Type": "Text",
+        "Min": "1",
+        "Max": "255",
+        "Hide": "True",
+        "Default": " ",
+        "Input Text": "Template String",
+        "Hint": "Mit diesem Makro ist es möglich einen Macro direkt vom Excel ProgGen einzufügen.",
+        "Implementation comment": ""
+    },
+    "InCh": {
+        "ParName": "InCh",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Schalter",
+        "Hint": "Schalter",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "S_Class",
+            "S_Address",
+            "S_Type",
+            "S_Start",
+            "S_Invert"
+        ]
+    },
+    "InCh_Cnt": {
+        "ParName": "InCh_Cnt",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "1",
+        "Max": "64",
+        "Default": "3",
+        "Input Text": "Anzahl der Eingänge",
+        "Hint": "Anzahl der verwendeten InCh Variablen",
+        "Implementation comment": ""
+    },
+    "InReset": {
+        "ParName": "InReset",
+        "Cnt": "2",
+        "Type": "Var",
+        "Min": "0",
+        "Max": "255",
+        "Default": "SI_0",
+        "Input Text": "Reset Eingangsvariable",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "LED": {
+        "ParName": "LED",
+        "Cnt": "67",
+        "Type": "#",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "LEDColourCorrection": {
+        "ParName": "LEDColourCorrection",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "LED Farbkorrektur",
+        "Hint": "LED Farbkorrektur",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "CC_RED",
+            "CC_GREEN",
+            "CC_BLUE"
+        ]
+    },
+    "LEDcnt": {
+        "ParName": "LEDcnt",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "3",
+        "Max": "15",
+        "Default": "6",
+        "Input Text": "Anzahl der einzelnen LEDs",
+        "Hint": "Anzahl der LEDs eines Baustellen Warnlichts (3-15)",
+        "Implementation comment": ""
+    },
+    "LedCnt": {
+        "ParName": "LedCnt",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "1",
+        "Max": "250",
+        "Default": "3",
+        "Input Text": "LED Anzahl",
+        "Hint": "Anzahl der benutzten LEDs für die Feuer Simulation",
+        "Implementation comment": ""
+    },
+    "LEDcntCWL": {
+        "ParName": "LEDcntCWL",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "3",
+        "Max": "15",
+        "Default": "6",
+        "Input Text": "Anzahl der einzelnen LEDs",
+        "Hint": "Anzahl der LEDs eines Baustellen Warnlichts (3-15)",
+        "Implementation comment": ""
+    },
+    "LedCntRGB": {
+        "ParName": "LedCntRGB",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "3",
+        "Max": "250",
+        "Default": "3",
+        "Input Text": "LED Anzahl",
+        "Hint": "Anzahl der benutzten LEDs für die Feuer Simulation",
+        "Implementation comment": ""
+    },
+    "LedCnt_Nxt": {
+        "ParName": "LedCnt_Nxt",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "-20",
+        "Max": "20",
+        "Default": "1",
+        "Input Text": "Änderung von StartLedNr",
+        "Hint": "Ändert die StartLedNr des folgenden Befehls",
+        "Implementation comment": ""
+    },
+    "LedCnt_Res": {
+        "ParName": "LedCnt_Res",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "1",
+        "Max": "100",
+        "Default": "3",
+        "Input Text": "Anzahl reservierter LEDs",
+        "Hint": "Anzahl der reservierten LEDs. Diese LEDs werden übersprungen. ",
+        "Implementation comment": ""
+    },
+    "Logging-Level": {
+        "ParName": "Logging-Level",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "debug",
+            "info",
+            "warning",
+            "error",
+            "critical"
+        ],
+        "ValuesText": [
+            "debug",
+            "info",
+            "warning",
+            "error",
+            "critical"
+        ],
+        "ConfigName": [
+            "LoggingLevelName",
+            "LoggingLevelNumber"
+        ],
+        "Pesistent": "True",
+        "Min": "0",
+        "Max": "255",
+        "Default": "error",
+        "Input Text": "Logging Level",
+        "Hint": "Level für Loggingausgaben"
+    },
+    "MLL_DigitalSystem": {
+        "ParName": "MLL_DigitalSystem",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "None",
+            "CAN",
+            "DCC",
+            "Selectrix"
+        ],
+        "ValuesText": [
+            "Kein System",
+            "CAN",
+            "DCC",
+            "Selectrix"
+        ],
+        "ConfigName": [
+            "MLLDigSysName",
+            "MLLDigSysNumber"
+        ],
+        "Hide": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Digital System",
+        "Hint": "Digitalsystem, mit dem die MobaLedLib gesteuert wird (noch nicht implementiert ...)"
+    },
+    "MacroStartPageText": {
+        "ParName": "MacroStartPageText",
+        "Cnt": "1",
+        "Type": "Text",
+        "Min": "0",
+        "Max": "255",
+        "ReadOnly": "True",
+        "Default": "Starttext für Macros und Effekte",
+        "Input Text": "Macros und Effekte:",
+        "Hint": "Zeigt die angeschlossenen ARDUINOs an"
+    },
+    "MaxBrightness": {
+        "ParName": "MaxBrightness",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "255",
+        "Input Text": "Maximale Helligkeit der LEDs",
+        "Hint": "Die Helligkeit ist eine Zahl zwischen 0 und 255.",
+        "Implementation comment": ""
+    },
+    "MaxLEDcnt": {
+        "ParName": "MaxLEDcnt",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "maxLEDcount",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "maximale Anzahl LED",
+        "Hint": "maximale Anzahl LED"
+    },
+    "MaxOn": {
+        "ParName": "MaxOn",
+        "Cnt": "2",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "10 Sek",
+        "Input Text": "Maximal Active Zeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "MaxSoundNr": {
+        "ParName": "MaxSoundNr",
+        "Cnt": "6",
+        "Type": "",
+        "Min": "1",
+        "Max": "",
+        "Default": "4",
+        "Input Text": "Maximale Sound Nummer",
+        "Hint": "Maximale Soundnummer|Modul MP3_F-16P: 14|Modul JQ6500: 5",
+        "Implementation comment": "Die Maximale Nummer ist abhängig vom Sound Modul. 14 beim MP3-TF-16P, 5 beim JQ6500"
+    },
+    "MaxTime": {
+        "ParName": "MaxTime",
+        "Cnt": "4",
+        "Type": "Time",
+        "Min": "0",
+        "Max": "1048560",
+        "Default": "120 Sek",
+        "Input Text": "Maximale Zeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Max_Brightness": {
+        "ParName": "Max_Brightness",
+        "Cnt": "4",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "65",
+        "Input Text": "Maximale zufällige Helligkeit",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "Max_Delay": {
+        "ParName": "Max_Delay",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "3 Sek",
+        "Input Text": "Maxmale Zeit bis zum Zündversuch",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "MinBrightness": {
+        "ParName": "MinBrightness",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "5",
+        "Input Text": "Minimale Helligheit der LEDs",
+        "Hint": "Die Helligkeit ist eine Zahl zwischen 0 und 255.",
+        "Implementation comment": ""
+    },
+    "MinOn": {
+        "ParName": "MinOn",
+        "Cnt": "2",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "2 Sek",
+        "Input Text": "Minimal aktive Zeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "MinTime": {
+        "ParName": "MinTime",
+        "Cnt": "4",
+        "Type": "Time",
+        "Min": "0",
+        "Max": "1048560",
+        "Default": "5 Sek",
+        "Input Text": "Minimale Zeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Min_Brightness": {
+        "ParName": "Min_Brightness",
+        "Cnt": "4",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "40",
+        "Input Text": "Minimale zufällige Helligkeit",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "Min_Def": {
+        "ParName": "Min_Def",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Rotes glimmen des Starters",
+        "Hint": "Werte > 5 sind nicht sinnvoll",
+        "Implementation comment": ""
+    },
+    "Min_Delay": {
+        "ParName": "Min_Delay",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "1 Sek",
+        "Input Text": "Minmale Zeit bis zum Zündversuch",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Off": {
+        "ParName": "Off",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Input Text": "Helligkeit wenn Eingang deaktiv",
+        "Hint": "Die Helligkeit ist eine Zahl zwischen 0 und 255.",
+        "Implementation comment": ""
+    },
+    "OnT": {
+        "ParName": "OnT",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "100 ms",
+        "Input Text": "Einschaltzeit der Lichter",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "On_Max": {
+        "ParName": "On-Max",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "2",
+        "Input Text": "Max Ein",
+        "Hint": "Maximale Anzahl der zufällig aktiven Beleuchtungen"
+    },
+    "On_Min": {
+        "ParName": "On-Min",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Min Ein",
+        "Hint": "Minimale Anzahl der zufällig aktiven Beleuchtungen"
+    },
+    "PNumLED": {
+        "ParName": "PNumLED",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Anzahl der LED",
+        "Hint": "Anzahl der LED, die vom Patternkonfigurator Makro benötigt werden.",
+        "Implementation comment": ""
+    },
+    "Pause": {
+        "ParName": "Pause",
+        "Cnt": "2",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "0.5 Sek",
+        "Input Text": "Pausenzeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Period": {
+        "ParName": "Period",
+        "Cnt": "3",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "131070",
+        "Default": "1 Sek",
+        "Input Text": "Periode",
+        "Hint": "Die Periode wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximalperiode beträgt zwei Minuten (131070 ms). ",
+        "Implementation comment": ""
+    },
+    "R_InCh": {
+        "ParName": "R_InCh",
+        "Cnt": "12",
+        "Type": "Var",
+        "Min": "0",
+        "Max": "250",
+        "Default": "",
+        "Input Text": "Eingangsvar. Reset",
+        "Hint": "",
+        "Implementation comment": "Input channel reset"
+    },
+    "R_Max": {
+        "ParName": "R_Max",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "85",
+        "Input Text": "Maximaler zufälliger Rotanteil",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "R_Min": {
+        "ParName": "R_Min",
+        "Cnt": "2",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Input Text": "Minimaler zufälliger Rotanteil",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "RandMode": {
+        "ParName": "RandMode",
+        "Cnt": "2",
+        "Type": "Var",
+        "AllowValueEntry": "True",
+        "Min": "",
+        "Max": "",
+        "Default": "RM_NORMAL",
+        "Input Text": "Mode",
+        "Hint": "Ein oder mehrere Modes: RM_NORMAL, RF_SLOW, RF_SEQ, RF_STAY_ON, RF_NOT_SAME getrennt mit '|'",
+        "Implementation comment": ""
+    },
+    "RandOff": {
+        "ParName": "RandOff",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "200",
+        "Input Text": "Wahrscheinlichkeit das Lampe wieder aus geht",
+        "Hint": "0 = Lampe bleibt an, 1 = Blitzt nur kurz auf, 255 = Lampe bleibt sehr lange an bis es zum nächsten Aussetzer kommt",
+        "Implementation comment": ""
+    },
+    "Rand_On": {
+        "ParName": "Rand_On",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "10",
+        "Input Text": "Wahrscheinlichkeit das Lampe startet",
+        "Hint": "0 = Lampe startet nicht, 1 = Startet sehr selten, 255 = Startet sofort",
+        "Implementation comment": ""
+    },
+    "Rotate": {
+        "ParName": "Rotate",
+        "Cnt": "4",
+        "Type": "",
+        "Min": "0",
+        "Max": "1",
+        "Default": "1",
+        "Input Text": "Zustände rotieren",
+        "Hint": "Beginnt nach dem letzen Zustand wieder mit dem ersten Zustand wenn die Variable auf 1 gesetzt ist.",
+        "Implementation comment": ""
+    },
+    "S_Address": {
+        "ParName": "S_Address",
+        "Cnt": "1",
+        "Type": "String",
+        "Min": "1",
+        "Max": "255",
+        "Default": "100",
+        "Input Text": "Adresse-Variable",
+        "Hint": "Adresse oder Variablenname",
+        "Implementation comment": ""
+    },
+    "S_Class": {
+        "ParName": "S_Class",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "SI_1",
+            "DCC-switch",
+            "CAN-switch",
+            "SX-switch",
+            "Variable"
+        ],
+        "ValuesDummy": [
+            "SI_1",
+            "DCC-switch",
+            "CAN-switch",
+            "SX-switch",
+            "ARDUINO Port",
+            "Variable"
+        ],
+        "ValuesText": [
+            "Immer an",
+            "DCC Adresse",
+            "CAN-Bus Adresse",
+            "Selectrix Adresse.Bit",
+            "Variable"
+        ],
+        "ValuesTextDummy": [
+            "Immer an",
+            "DCC Adresse",
+            "CAN-Bus Adresse",
+            "Selectrix Adresse.Bit",
+            "ARDUINO Port",
+            "Variable"
+        ],
+        "Min": "1",
+        "Max": "255",
+        "Default": "SI_1",
+        "Input Text": "Schalterart",
+        "Hint": "Art des des Schalters: Immer an, DCC Adresse, CAN-Bus Adresse , Selectrix (Adresse.Bit) ,ARDUINO Port, Variable",
+        "Implementation comment": ""
+    },
+    "S_Description": {
+        "ParName": "Description",
+        "Cnt": "1",
+        "Type": "String",
+        "Min": "1",
+        "Max": "255",
+        "Default": "Switch01",
+        "Input Text": "Bezeichnung",
+        "Hint": "Kurzbezeichnung des Schalters",
+        "Implementation comment": ""
+    },
+    "S_InCh": {
+        "ParName": "S_InCh",
+        "Cnt": "6",
+        "Type": "Var",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Eingangsvar. Flip Flop setzen",
+        "Hint": "",
+        "Implementation comment": "Input channel set"
+    },
+    "S_Invert": {
+        "ParName": "S_Invert",
+        "Cnt": "1",
+        "Type": "Checkbutton",
+        "Min": "1",
+        "Max": "255",
+        "Default": "OFF",
+        "Restrictedto": [
+            "House",
+            "GasLights"
+        ],
+        "Input Text": "Eing. Invertieren",
+        "Hint": "Eingang invertieren",
+        "Implementation comment": ""
+    },
+    "S_Start": {
+        "ParName": "S_Start",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+        ],
+        "ValuesText": [
+            "Aus",
+            "Ein",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+        ],
+        "Min": "1",
+        "Max": "255",
+        "Default": "OFF",
+        "Input Text": "Startwert",
+        "Hint": "Startwert des Schalters: Aus,Ein,LED1,LED2,LED3",
+        "Implementation comment": ""
+    },
+    "S_Type": {
+        "ParName": "S_Typ",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "S_ONOFF",
+            "B_RED",
+            "B_GREEN",
+            "B_Tast"
+        ],
+        "ValuesText": [
+            "Ein/Ausschalter",
+            "Rote Taste",
+            "Grüne Taste",
+            "Taste (SX)"
+        ],
+        "Min": "1",
+        "Max": "255",
+        "Default": "S_ONOFF",
+        "Input Text": "Schaltertyp",
+        "Hint": "Typ des Schalters: Ein/Ausschalter, Rote Taste, Grüne Taste, Taste (nur bei SX)",
+        "Implementation comment": ""
+    },
+    "S_Typex": {
+        "ParName": "Typ",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "S_ONOFF",
+            "B_RED",
+            "B_GREEN"
+        ],
+        "Min": "1",
+        "Max": "255",
+        "Default": "S_ONOFF",
+        "Input Text": "Schalter Typ",
+        "Hint": "Typ des Schalters: S_ONOFF, B_RED, B_GREEN",
+        "Implementation comment": ""
+    },
+    "SerialMonitorInput": {
+        "ParName": "SerialMonitorInput",
+        "Cnt": "1",
+        "Type": "BigEntry",
+        "Min": "1",
+        "Max": "255",
+        "Default": "",
+        "ValueChangeEvent": "True",
+        "Input Text": "Eingabe",
+        "Hint": "Eingabe eines Kommandos für den ARDUINO",
+        "Implementation comment": ""
+    },
+    "ServoAddress": {
+        "ParName": "ServoAddress",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "ServoAddress",
+        "Min": "0",
+        "Max": "9999",
+        "Persistent": "True",
+        "Default": "1",
+        "Input Text": "Servo Addresse",
+        "Hint": "Addresse des Servos (LED-Nummer des Anschlusses)"
+    },
+    "ServoChannel": {
+        "ParName": "ServoChannel",
+        "Cnt": "1",
+        "Type": "",
+        "ConfigName": "ServoChannel",
+        "Min": "0",
+        "Max": "2",
+        "Persistent": "True",
+        "Default": "0",
+        "Input Text": "Servo Anschluss",
+        "Hint": "Anschluss des Servos (RGB-Nummer des Anschlusses)"
+    },
+    "SoundAddress": {
+        "ParName": "Sound_Address",
+        "Cnt": "",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Persistent": "True",
+        "ValueChangeEvent": "True",
+        "Input Text": "Soundmodul Adresse",
+        "Hint": "Adresse des Soundmoduls"
+    },
+    "SoundImpulsLength": {
+        "ParName": "Sound_ImpulsLength",
+        "Cnt": "",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Persistent": "True",
+        "ValueChangeEvent": "True",
+        "Input Text": "Impulslänge",
+        "Hint": "Länge des Impulses"
+    },
+    "Sound_BLUE": {
+        "ParName": "Sound_BLUE",
+        "Cnt": "",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Persistent": "True",
+        "ValueChangeEvent": "True",
+        "Input Text": "Sound Anschluss B",
+        "Hint": "Sound Anschluss B"
+    },
+    "Sound_GREEN": {
+        "ParName": "Sound_GREEN",
+        "Cnt": "",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Persistent": "True",
+        "ValueChangeEvent": "True",
+        "Input Text": "Sound Anschluss G",
+        "Hint": "Sound Anschluss G"
+    },
+    "Sound_LED": {
+        "ParName": "Sound_LED",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Sound Auswahl",
+        "Hint": "Anschluss des Soundmoduls",
+        "ValueChangeEvent": "True",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "Sound_RED",
+            "Sound_GREEN",
+            "Sound_BLUE"
+        ]
+    },
+    "Sound_RED": {
+        "ParName": "Sound_RED",
+        "Cnt": "",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Key_Up": "<Control-r>",
+        "Key_Down": "<Alt-r>",
+        "Default": "0",
+        "Persistent": "True",
+        "ValueChangeEvent": "True",
+        "Input Text": "Sound Anschluss R",
+        "Hint": "Sound Anschluss R"
+    },
+    "SrcLED": {
+        "ParName": "SrcLED",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Nummer der Quell LED",
+        "Hint": "Die Helligkeitswerte werden von dieser LED kopiert",
+        "Implementation comment": ""
+    },
+    "Start": {
+        "ParName": "Start",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "60",
+        "Input Text": "Startwert",
+        "Hint": "(Helligkeits-) Wert ab dem die Schedule funktion aktiv ist",
+        "Implementation comment": ""
+    },
+    "StartFileParams": {
+        "ParName": "StartFileParams",
+        "Cnt": "1",
+        "Type": "BigEntry",
+        "Min": "1",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Startdatei-Parameter",
+        "Hint": "Parameter der Startdatei",
+        "Implementation comment": ""
+    },
+    "Startseite": {
+        "ParName": "Startseite",
+        "Cnt": "1",
+        "Type": "Combo",
+        "Values": [
+            "ColorCheckPage",
+            "EffectTestPage",
+            "SerialMonitorPage",
+            "StartPage"
+        ],
+        "ValuesText": [
+            "Farbtest",
+            "Programmgenerator",
+            "Serieller Monitor",
+            "Startseite"
+        ],
+        "ConfigName": [
+            "startpagename",
+            "startpage"
+        ],
+        "Min": "0",
+        "Max": "255",
+        "Default": "4",
+        "Input Text": "Startseite",
+        "Hint": "Seite auswählen, die als Startseite gezeigt werden soll"
+    },
+    "States": {
+        "ParName": "States",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "2",
+        "Max": "11",
+        "Default": "6",
+        "Input Text": "Anzahl der Zustände",
+        "Hint": "Anzahl der vom Charlieplexing Modul unterstützten Zustände (zwischen 2 und 11).",
+        "Implementation comment": ""
+    },
+    "Steps": {
+        "ParName": "Steps",
+        "Cnt": "4",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "1",
+        "Input Text": "Schritte",
+        "Hint": "Anzahl der Schritte um welche die Lautstärke verringert/erhöht werden soll",
+        "Implementation comment": ""
+    },
+    "T_InCh": {
+        "ParName": "T_InCh",
+        "Cnt": "6",
+        "Type": "Var",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Input Text": "Eingangsvar. Flip Flop trigger",
+        "Hint": "",
+        "Implementation comment": "Input channel trigger"
+    },
+    "T_Max": {
+        "ParName": "T-Max",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "255",
+        "Default": "150",
+        "Input Text": "Max Zeit (sek)",
+        "Hint": "Maximale Zeit bis zur nächsten Änderung"
+    },
+    "T_Min": {
+        "ParName": "T-Min",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "255",
+        "Default": "50",
+        "Input Text": "Min Zeit(sek)",
+        "Hint": "Minimale Zeit bis zur nächsten Änderung"
+    },
+    "Test_But_InCh": {
+        "ParName": "Test_But_InCh",
+        "Cnt": "1",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Input Text": "Start Nummer der Schalter",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "TimeOut": {
+        "ParName": "TimeOut",
+        "Cnt": "11",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "5 Sek",
+        "Input Text": "Abschaltzeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Timeout": {
+        "ParName": "Timeout",
+        "Cnt": "10",
+        "Type": "Time",
+        "Min": "1",
+        "Max": "1048560",
+        "Default": "30 Sek",
+        "Input Text": "Abschaltzeit",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Update_t_Max": {
+        "ParName": "Update_t_Max",
+        "Cnt": "4",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "156",
+        "Input Text": "Maximale Zeit zum Farbwechsel [4ms]",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "Update_t_Min": {
+        "ParName": "Update_t_Min",
+        "Cnt": "4",
+        "Type": "",
+        "Min": "1",
+        "Max": "255",
+        "Default": "31",
+        "Input Text": "Minimale Zeit zum Farbwechsel [4ms]",
+        "Hint": "",
+        "Implementation comment": ""
+    },
+    "UseZ21Data": {
+        "ParName": "UseZ21Data",
+        "Cnt": "1",
+        "Type": "Checkbutton",
+        "ConfigName": "UseZ21Data",
+        "Min": "0",
+        "Max": "255",
+        "Default": "",
+        "Input Text": "Z21 Port Liste verwenden",
+        "Hint": "Wenn diese Option gesetzt wird, verwendet der Z21 Simulator die Eintragungen in der nachfolgenden Tabelle (für Experten)"
+    },
+    "Val0": {
+        "ParName": "Val0",
+        "Cnt": "5",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "0",
+        "Input Text": "Helligkeit wenn deaktiv",
+        "Hint": "Die Helligkeit ist eine Zahl zwischen 0 und 255.",
+        "Implementation comment": ""
+    },
+    "Val1": {
+        "ParName": "Val1",
+        "Cnt": "9",
+        "Type": "",
+        "Min": "0",
+        "Max": "255",
+        "Default": "255",
+        "Input Text": "Helligkeit wenn aktiv",
+        "Hint": "Die Helligkeit ist eine Zahl zwischen 0 und 255.",
+        "Implementation comment": ""
+    },
+    "WaitE": {
+        "ParName": "WaitE",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "0",
+        "Max": "1048560",
+        "Default": "500 ms",
+        "Input Text": "Wartezeit am Ende des Lauflichts",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "WaitT": {
+        "ParName": "WaitT",
+        "Cnt": "1",
+        "Type": "Time",
+        "Min": "0",
+        "Max": "1048560",
+        "Default": "0 ms",
+        "Input Text": "Wartezeit zwischen zwei Lichtern",
+        "Hint": "Die Zeit wird in Millisekunden angegeben. Es können aber auch [Sec] oder [Min] angehängt werden. Die Maximale Zeit beträgt 17 Minuten (1048560 ms). ",
+        "Implementation comment": ""
+    },
+    "Z21Data": {
+        "ParName": "Z21data",
+        "Cnt": "",
+        "Type": "Multipleparams",
+        "Min": "",
+        "Max": "",
+        "Default": "",
+        "Repeat": "3",
+        "Input Text": "Port Daten für Z21",
+        "Hint": "Port Daten für Z21",
+        "Implementation comment": "",
+        "MultipleParams": [
+            "ARDUINO Port",
+            "DCC Start",
+            "DCC End"
+        ]
+    }
+}

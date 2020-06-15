@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -184,18 +184,18 @@
 #include "MobaLedLib.h"      // Use the Moba Led Library
 
 #define NUM_LEDS_1       148 // Number of LEDs for the first stripe
-#define NUM_LEDS_2         6 // Number WS2811 modules for the second "stripe"
+#define NUM_LEDS_2        12 // Number WS2811 modules for the second "stripe"
 
 #define LED_DO_PIN_1       6 // Pin D6 is connected to the LED stripe 1
-#define LED_DO_PIN_2      A2 // Pin A2 is connected to the LED stripe 2
+#define LED_DO_PIN_2      A4 // Pin A2 is connected to the LED stripe 2
 
 
 #define CTR_CHANNELS_1    10                   // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, up to 18 if two CD4017 are used, ...
-#define BUTTON_INP_LIST_1 2,7,8,9,10,11,12,A1  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)
+#define BUTTON_INP_LIST_1 2,7,8,9,10,11,12,A5  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)
 #define CTR_CHANNELS_2    18                   // Number of used counter channels for keyboard 2. Up to 10 if one 4017 is used, up to 18 if two CD4017 are used, ...
-#define BUTTON_INP_LIST_2 A0                   // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
-#define CLK_PIN           A4                   // Pin number used for the CD4017 clock (Example 18 = A4)
-#define RESET_PIN         A5                   // Pin number used for the CD4017 reset (Example 19 = A5)
+#define BUTTON_INP_LIST_2 A2                   // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
+#define CLK_PIN           A0                   // Pin number used for the CD4017 clock (Example 18 = A4)
+#define RESET_PIN         A3                   // Pin number used for the CD4017 reset (Example 19 = A5)
                                                // The digital pins D2..D13 could be used also.
                                                // Attention the analog pins A6 & A7 of the Nano can't be used as digital input/output
                                                // => They can't be used for to read the keys
@@ -204,15 +204,15 @@
 
 #include "Keys_4017.h"       // Keyboard library which uses the CD4017 counter to save Arduino pins. Attention: The pins (CLK_PIN, ...) must be defined prior.
 
-#define START_SWITCHES_2       128   // Define the start number for the second keyboard. The first 128 inputs are directly mapped to the LEDs in case the keyboard 1 is enlarged
+#define START_SWITCHES_2       112   // Define the start number for the second keyboard. The first 128 inputs are directly mapped to the LEDs in case the keyboard 1 is enlarged
 #define START_INTERNAL_INPUTS  (START_SWITCHES_2 + KEYS_ARRAY_BYTE_SIZE_2*8) // The internal variables start after the second switch group
 
 // *** Macros ***
 #define myConst(Nr) Const(Nr, C_GREEN, Nr, 0,225) //Simplified Const() function
 
 #define PushButtAct(LEDNr, ChNr, Nr)     T_FlipFlopResetTimeout(Nr+START_INTERNAL_INPUTS, Nr+START_SWITCHES_2, SI_0, 10 sec)   \
-                                         Blink3(LEDNr+NUM_LEDS_1, ChNr,    Nr+START_INTERNAL_INPUTS, 500 ms,500 ms, 0,224,100) \
-                                         Const( Nr+128,           C_BLUE,  Nr+START_INTERNAL_INPUTS, 0, 225)
+                                         Blink3(LEDNr+NUM_LEDS_1, ChNr,    Nr+START_INTERNAL_INPUTS, 500 ms,500 ms, 0,224,10) \
+                                         Const( Nr+80,           C_BLUE,   Nr+START_INTERNAL_INPUTS, 0, 225)
 
 
 //*******************************************************************
@@ -270,7 +270,7 @@ MobaLedLib_Configuration()
   PushButtAct(5,  C1, 14)  // Sw 15
   PushButtAct(5,  C2, 15)  // Sw 16
   PushButtAct(5,  C3, 16)  // Sw 17
-  PushButtAct(3,  C3, 17)  // Sw 18 Last LED is driven from the unused channel of the first WS2811 module
+  PushButtAct(3,  C1, 17)  // Sw 18 Last LED is driven from the unused channel of the first WS2811 module
 
   EndCfg // End of the configuration
   };

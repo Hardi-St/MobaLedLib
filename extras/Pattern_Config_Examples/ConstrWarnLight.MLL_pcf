@@ -1,0 +1,153 @@
+SheetName¯ConstrWarnLight
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯9
+Bits pro Wert: ¯2
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯ConstrWarnLight
+Dauer¯100 ms¯200 ms
+Goto Tabelle¯
+LED_Tab¯LED 0¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯.¯.¯x¯x
+LED_Tab¯LED 1¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯x¯x
+LED_Tab¯LED 2¯¯¯¯¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 3¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 4¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 5¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 6¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 7¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 8¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Attr¯13.5¯i65279
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65279
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;489;105.1983¯Dit voorbeeld laat zien hoe de werfbeveiliging kan worden geconfigureerd.
+Lopende lichten worden vaak gebruikt om bouwplaatsen te beveiligen. Er zijn verschillende oplossingen voor gebruik bij een modelspoorbaan. Het kan echter nog flexibeler worden gemaakt door MobaLedLib te gebruiken. Hier kunt u eenvoudig het aantal lampen en het effect variëren.
+De tabel laat zien hoe de waarschuwingslichten zo moeten worden geconfigureerd dat ze kort knipperen en vervolgens met verminderde helderheid blijven gloeien. Dit effect is op veel bouwplaatsen te vinden.
+Dit effect wordt gecombineerd met een eenvoudig looplicht.{Attrib}B1,73
+msoTextBox1¯492.75;0;489;102.1983¯This example shows how construction site protection can be configured.
+Running lights are often used to secure construction sites. There are various solutions for a model train. However, this can be made even more flexible by using the MobaLedLib. Here you can easily vary the number of lamps and the effect.
+The table shows how to configure the warning lights so that they flash briefly and then continue to glow with reduced brightness. This effect can be found on many construction sites.
+This effect is combined with a simple running light.{Attrib}B1,71
+msoTextBox0¯492.75;0;489;105.1983¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
+Zur Absicherung von Baustellen verwendet man häufig Lauflichter. Dafür gibt es die verschiedensten Lösungen für eine Modelleisenbahn. Allerdings lässt sich das noch flexibler durch die Verwendung der MobaLedLib gestalten. Hier kann man die Anzahl der Lampen und den Effekt ganz einfach variieren.
+Die Tabelle zeigt wie man die Warnlichter so konfiguriert, dass sie kurz Aufblitzen und dann mit reduzierter Helligkeit weiter leuchten. Diesen Effekt findet man bei vielen Baustellen. 
+Dieser Effekt ist noch mit einem einfachen Lauflicht kombiniert.{Attrib}B1,80
+msoTextBox3¯492.75;0;489;102.1983¯This example shows how construction site protection can be configured.
+Running lights are often used to secure construction sites. There are various solutions for a model train. However, this can be made even more flexible by using the MobaLedLib. Here you can easily vary the number of lamps and the effect.
+The table shows how to configure the warning lights so that they flash briefly and then continue to glow with reduced brightness. This effect can be found on many construction sites.
+This effect is combined with a simple running light.{Attrib}B1,71
+msoPicture¯499.65;98.55;219.75;75¯ConstrWarnLight.jpg
+
+SheetName¯RGB_ConstrWarnLight
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯26
+Bits pro Wert: ¯2
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_ConstrWarnLight
+Dauer¯100 ms¯200 ms
+Goto Tabelle¯
+LED_Tab¯LED 0 R¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯.¯.¯x¯x
+LED_Tab¯LED 0 G¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯x¯x
+LED_Tab¯LED 0 B
+LED_Tab¯LED 1 R¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯x¯x
+LED_Tab¯LED 1 G¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯x¯x
+LED_Tab¯LED 1 B
+LED_Tab¯LED 2 R¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 2 G¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 2 B
+LED_Tab¯LED 3 R¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 3 G¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 3 B
+LED_Tab¯LED 4 R¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 4 G¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 4 B
+LED_Tab¯LED 5 R¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 5 G¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 5 B
+LED_Tab¯LED 6 R¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 6 G¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 6 B
+LED_Tab¯LED 7 R¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 7 G¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 7 B
+LED_Tab¯LED 8 R¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯LED 8 G¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 8 B
+LED_Attr¯13.5¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+RGB_LED_CheckBox¯           1
+msoTextBox2¯493.5;1.5;489;102.1983¯Dit voorbeeld laat zien hoe de bouwplaats beveiliging kan worden geconfigureerd.
+Lopende lichten worden vaak gebruikt om bouwplaatsen te beveiligen. Er zijn verschillende oplossingen voor een modelspoorbaan. Dit kan echter nog flexibeler worden gemaakt door MobaLedLib te gebruiken. Hier kunt u eenvoudig het aantal lampen en het effect variëren.
+De tabel laat zien hoe de waarschuwingslichten zo moeten worden geconfigureerd dat ze kort knipperen en vervolgens met verminderde helderheid blijven gloeien.
+Dit effect wordt gecombineerd met een eenvoudig looplicht.{Attrib}B1,79
+msoTextBox1¯493.5;1.5;489;102.1983¯This example shows how construction site protection can be configured.
+Running lights are often used to secure construction sites. There are various solutions for a model train. However, this can be made even more flexible by using the MobaLedLib. Here you can easily vary the number of lamps and the effect.
+The table shows how to configure the warning lights so that they flash briefly and then continue to glow with reduced brightness. This effect can be found on many construction sites.
+This effect is combined with a simple running light.{Attrib}B1,70
+msoTextBox0¯493.5;1.5;489;105.1983¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
+Zur Absicherung von Baustellen verwendet man häufig Lauflichter. Dafür gibt es die verschiedensten Lösungen für eine Modelleisenbahn. Allerdings lässt sich das noch flexibler durch die Verwendung der MobaLedLib gestalten. Hier kann man die Anzahl der Lampen und den Effekt ganz einfach variieren.
+Die Tabelle zeigt wie man die Warnlichter so konfiguriert, dass sie kurz Aufblitzen und dann mit reduzierter Helligkeit weiter leuchten. Diesen Effekt findet man bei vielen Baustellen. 
+Dieser Effekt ist noch mit einem einfachen Lauflicht kombiniert {Attrib}B1,80
+msoTextBox3¯493.5;1.5;489;102.1983¯This example shows how construction site protection can be configured.
+Running lights are often used to secure construction sites. There are various solutions for a model train. However, this can be made even more flexible by using the MobaLedLib. Here you can easily vary the number of lamps and the effect.
+The table shows how to configure the warning lights so that they flash briefly and then continue to glow with reduced brightness. This effect can be found on many construction sites.
+This effect is combined with a simple running light.{Attrib}B1,70
+msoPicture¯501;99.45;219.75;75¯ConstrWarnLight.jpg

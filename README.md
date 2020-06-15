@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-** New: Charlieplexing (LED Multiplexing) module which could be configured by the Pattern_Configurator individually **
+** New: Languages / DCC Buttons / LED preview / pyProgGen / Port detection / EEPROM / Switches / 4 LED Channels / Variables / ...**
 
 ** Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
 
@@ -32,7 +32,9 @@ A lot of **examples** show the usage of the library. They could be use as startu
 
 
 This library is described in detail here:
+https://wiki.mobaledlib.de/doku.php
 https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sid=e3b7f6122766c330d04cecf18b7b4878
+
 Several videos which demonstrate the library are available in the following pages in the forum
 You could also search for MobaLedLib in the internet.
 
@@ -128,3 +130,36 @@ Questions / suggestions / praise / ...
 
 **Ver.: 1.0.1** 17.01.20:
 - Corrected the upload in version 1.0.0 because some files have not been update ;-(
+
+**Ver.: 1.0.2** 18.04.20:
+- Test of switch and variables
+
+**Ver.: 1.0.3** 01.05.20:
+- Test of additional LED channels and EEPROM Storage
+
+**Ver.: 1.0.4** 23.05.20:
+- Automatically detecting COM port the Arduino is connected to
+- Improved the HV_Reset() in the Tiny_UniProg according to Juergens tipp
+- New macros InCh_to_TmpVar1() and Bin_InCh_to_TmpVar1() which start with state 1 instead of 0
+- New macros for Servos and Herzstueck polarisation
+- New Push Button macros which read DCC and hardware buttons
+- Added macros Andreaskreuz with lamp test
+
+**Ver.: 1.0.5** 31.05.20:
+- Automatically install all libraries
+- Using the Sketchbook path for the working directory
+
+**Ver.: 1.0.6** 06.06.20:
+- Added Mishas LED Previev and Mux functions to the Pattern_Configurator
+- Using Harolds new pyProgGen_MobaLedLib
+- Using the new USB port detection also in the Pattern_Configurator
+
+**Ver.: 1.0.7** 07.06.20:
+- Corrected the LED Animation, the "Start LedNr" in combination with "HerzHerz_BiRelais()"
+
+**Ver.: 1.9.4** 14.06.20:
+- Added Misha's Multiplexer to the Prog_Generator
+
+**Ver.: 1.9.5** 15.06.20:
+- The versions 1.0.2 - 1.9.4 are not released test versions.
+- Since there are a huge number of changes since version 1.0.1 all details are described here: https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sd=a&start=2410

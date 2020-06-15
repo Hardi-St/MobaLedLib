@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -32,9 +32,9 @@
 
 // *** Defines to enable certain functions of the library ***
 
-//#define _TEST_BUTTONS               // Enable this to use three buttons connected to the Arduino pins for testing (04.08.18: FLASH: 1390, RAM 18 without DEBUG_PRINT_BUTTONS())
+//#define _TEST_BUTTONS                 // Enable this to use three buttons connected to the Arduino pins for testing (04.08.18: FLASH: 1390, RAM 18 without DEBUG_PRINT_BUTTONS())
 
-//#define _PRINT_DEBUG_MESSAGES       // Enable this line to print debug messages to the PC (USB)
+//#define _PRINT_DEBUG_MESSAGES         // Enable this line to print debug messages to the PC (USB)
 
 //#define _FAST_TIMES                   // Enable this for debugging with fast timing for the houses
 
@@ -74,72 +74,10 @@
 #define _USE_WELDING        1           // 28.10.18:    430    0
 #define _USE_COPYLED        1           // 28.10.18:    116    0
 #define _USE_SCHEDULE       1           // 28.10.18:    264    0
-                                        // 28.10.18:  ?7986   18  Sum
-/*
-_USE_DEF_NEON = 1
-Der Sketch verwendet 21408 Bytes (69%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 530 Bytes (25%) des dynamischen Speichers, 1518 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-
-_USE_DEF_NEON = 0
-Der Sketch verwendet 21312 Bytes (69%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 561 Bytes (27%) des dynamischen Speichers, 1487 Bytes für lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     96     -31
-
-*/
-
-/* 28.10.18:
-All:
-Der Sketch verwendet 19264 Bytes (62%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-
-_USE_SCHEDULE
-Der Sketch verwendet 19000 Bytes (61%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     264
-
-_USE_COPYLED
-Der Sketch verwendet 19148 Bytes (62%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     116
-
-_USE_WELDING
-Der Sketch verwendet 18834 Bytes (61%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     430
-
-_USE_RANMUX
-Der Sketch verwendet 18900 Bytes (61%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     364
-
-_USE_RANDOM
-Der Sketch verwendet 18972 Bytes (61%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     292
-
-_USE_LOGIC
-Der Sketch verwendet 19092 Bytes (62%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     172
-
-_USE_HSV_GROUP
-Der Sketch verwendet 19092 Bytes (62%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     172
-
-_USE_HSV_GROUP
-Der Sketch verwendet 19202 Bytes (62%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-                     62
-
-_USE_HOUSE & _USE_SET_COLOR
-Der Sketch verwendet 16270 Bytes (52%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 757 Bytes (36%) des dynamischen Speichers, 1291 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-
-_USE_SET_COLOR
-Der Sketch verwendet 19184 Bytes (62%) des Programmspeicherplatzes. Das Maximum sind 30720 Bytes.
-Globale Variablen verwenden 775 Bytes (37%) des dynamischen Speichers, 1273 Bytes fuer lokale Variablen verbleiben. Das Maximum sind 2048 Bytes.
-*/
+#define _USE_STORE_STATUS   1           // 22.04.20:    138    5                                              // 19.05.20: Juergen
+#define _USE_INCH_TRIGGER   1           // 08.06.20:    -12    0
+#define _USE_CANDLE         1           // 10.06.20:    352    2                                              // 09.06.20:
+                                        //             8750        Sum
 
 // Hardware pin definitions
 

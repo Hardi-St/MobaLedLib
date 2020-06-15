@@ -1,6 +1,8 @@
 @ECHO OFF
 REM Arduino parameters see:
 REM   https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
+REM Revision History:
+REM 05.06.20:  - Hiding the Debug messages from the compiler
 
 
 REM Used additional resources:
@@ -35,11 +37,13 @@ ECHO **********************************
 ECHO * Compile and uplaod the program *
 ECHO **********************************
 ECHO.
+CHCP 65001 >NUL
 "C:\Program Files (x86)\Arduino\arduino_debug.exe" "01.ATTiny85_Servo.ino" ^
    --upload ^
    --port %ComPort% ^
    --pref programmer=arduino:arduinoasisp ^
-   --board ATTinyCore:avr:attinyx5:LTO=disable,TimerClockSource=default,chip=85,clock=8internal,eesave=aenable,bod=2v7,millis=enabled
+   --board ATTinyCore:avr:attinyx5:LTO=disable,TimerClockSource=default,chip=85,clock=8internal,eesave=aenable,bod=2v7,millis=enabled ^
+   2>&1 | find /v "Set log4j store directory" | find /v " StatusLogger " | find /v "serial.SerialDiscovery"
 
 IF ERRORLEVEL 1 (
    REM White on RED

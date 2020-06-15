@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -116,39 +116,46 @@
 
 #define SINGLE_LEDS_EXAMPLE  // If this line is enabled single LEDs are used to demonstrate the Schedule() function. Otherwise "real" houses, lamps, ... are used
 
-#define FASTLED_INTERNAL // Disable version number message in FastLED library (looks like an error)
-#include "FastLED.h"     // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
-                         // Arduino IDE: Sketch / Include library / Manage libraries                    Deutsche IDE: Sketch / Bibliothek einbinden / Bibliothek verwalten
-                         //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
-                         //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
+#define FASTLED_INTERNAL  // Disable version number message in FastLED library (looks like an error)
+#include "FastLED.h"      // The FastLED library must be installed in addition if you got the error message "..fatal error: FastLED.h: No such file or directory"
+                          // Arduino IDE: Sketch / Include library / Manage libraries                    Deutsche IDE: Sketch / Bibliothek einbinden / Bibliothek verwalten
+                          //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
+                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-#include "MobaLedLib.h"  // Use the Moba Led Library
+#include <AnalogScanner.h>// Interrupt driven analog reading library. The library has to be installed manually from https://github.com/merose/AnalogScanner
+
+#include "MobaLedLib.h"   // Use the Moba Led Library
 
 #define SWITCH_DAMPING_FACT   1  // 1 = Slow, 100 Fast (Normal 1)
-#include "Read_LDR.h"    // Darkness sensor
+#include "Read_LDR.h"     // Darkness sensor
 
-#define SERIAL_BAUD 9600 // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
-#define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
-#define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
-#define LDR_PIN      A7  // Use A7 if the MobaLedLib "LEDs Main Module" is used
+#define SERIAL_BAUD 9600  // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
-#define INCH0        0   // Define names for the input channels to be able to change them easily.
-#define INCH1        1   // In this small example this is not necessary, but it's useful in a
-#define INCH2        2   // large configuration.
+#define NUM_LEDS     32   // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#define LED_DO_PIN   6    // Pin D6 is connected to the LED stripe
+#define LDR_PIN      A7   // Use A7 if the MobaLedLib "LEDs Main Module" is used
+
+AnalogScanner scanner;    // Creates an instance of the analog pin scanner.
+
+
+
+#define INCH0        0    // Define names for the input channels to be able to change them easily.
+#define INCH1        1    // In this small example this is not necessary, but it's useful in a
+#define INCH2        2    // large configuration.
 #define INCH3        3
 #define INCH4        4
 #define INCH5        5
 
-#define HOUSE_A      0   // Define names for the LED numbers of the houses.
-//      HOUSE_A      1   // In a real setup the names could be: "RailwayStation", "Town_Hall", "Pub", ...
-//      HOUSE_A      2   // Each room get's an own name.
-//      HOUSE_A      3   // Only the first LED numbers are used in the configuration,
-//      HOUSE_A      4   // But it's a good practice to list the other rooms to because
-//      HOUSE_A      5   // then the corrosponding numbers are increasing without gaps.
-//      HOUSE_A      6   // This is usefull if a aditional house is inserted.
-#define HOUSE_B      7   // In this case th sequence could easyly be checked / updated and
-//      HOUSE_B      8   // the aditional lines could be used for documentation
+#define HOUSE_A      0    // Define names for the LED numbers of the houses.
+//      HOUSE_A      1    // In a real setup the names could be: "RailwayStation", "Town_Hall", "Pub", ...
+//      HOUSE_A      2    // Each room get's an own name.
+//      HOUSE_A      3    // Only the first LED numbers are used in the configuration,
+//      HOUSE_A      4    // But it's a good practice to list the other rooms to because
+//      HOUSE_A      5    // then the corrosponding numbers are increasing without gaps.
+//      HOUSE_A      6    // This is usefull if a aditional house is inserted.
+#define HOUSE_B      7    // In this case th sequence could easyly be checked / updated and
+//      HOUSE_B      8    // the aditional lines could be used for documentation
 //      HOUSE_B      9
 //      HOUSE_B      10
 #define HOUSE_C      11
@@ -233,7 +240,14 @@ void setup(){
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
 
-  Init_DarknessSensor(LDR_PIN); // Attention: The analogRead() function can't be used together with the darkness sensor !
+  int scanOrder[] = {LDR_PIN};
+  const int SCAN_COUNT = sizeof(scanOrder) / sizeof(scanOrder[0]);
+
+  Init_DarknessSensor(LDR_PIN, 50, SCAN_COUNT); // Attention: The analogRead() function can't be used together with the darkness sensor !
+
+  scanner.setScanOrder(SCAN_COUNT, scanOrder);
+  scanner.setCallback(LDR_PIN, Darkness_Detection_Callback);
+  scanner.beginScanning();
 
   Serial.begin(SERIAL_BAUD); // Debug
 }

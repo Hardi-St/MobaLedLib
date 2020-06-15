@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -319,7 +319,48 @@
  13.01.20:  - RandMux(): RF_NOT_SAME added
             - House(): Using the upper bit (0x80) of ON_MIN to invert the input
             - Added: House_Inv() , HouseT_Inv(), GasLights_Inv(), RandCntMux()
-
+ 06.04.20:  - Using the AnalogScanner library instead of an own analog interrupt function for the darkness
+              detection to be able to use the other analog inputs in the program.
+              This is necessary to read the analog push buttons.
+ 30.04.20:  - Changed the parameter Skip0 to Use0 in the PushButton functions because it's easyer to understand
+              Attention: Existing macros have do be adapted !
+            - Corrected pointer error in Update_TV_Data (Thanks Juergen)
+ 01.05.20:  - Juergen add new feature to enable application to store the last status of most functions
+ 07.05.20:  - Added new macros InCh_to_TmpVar1 and Bin_InCh_to_TmpVar1 which could be used togeter with the
+              pattern function if the first Goto Number should be 1. This us useful because the power on
+              Goto number is always 0. The new macros are used for the Servo function wirgout stop input
+ 19.05.20:  - Juergen corrected the EEPROM saving. Problems occoured with the _Herz_MoRelais_PF() function.
+              When restoring the states the wrong state was shown for a short time
+            - Finished the Herz_..Relais. macros.
+ 20.05.20:  - Changed the SI_1 behavior. Now it's initialized after the Inp_Processed() call in the
+              constructor to trigger also the INP_TURNED_ON event. This was changed to initialize the state
+              for the Bin_InCh_to_TmpVar() macro which is used in the "AndreaskrLT..." macro
+              => ToDo: Check if this change influences other macros
+            - Changed the abort criteria in Proc_InCh_to_TmpVar and Proc_Bin_InCh_to_TmpVar to be able to
+              use SI_1 = 255 as an input to.
+              => ToDo: Check if this change influences other macros
+ 02.06.20:  - Added Juergens changes which add the possibility to detect trigger events in the inputs in
+              Proc_InCh_to_TmpVar() and Proc_Bin_InCh_to_TmpVar() and forward them to the temp variable.
+              This is used for instance with light signals which should not dim down and dim up the brightness
+			  if the same DCC command is send several times.
+              The trigger is used with the new command Trig_to_TmpVar and Trig_to_TmpVar1.
+ 05.06.20:  - Corrected problem with the new "_USE_INCH_TRIGGER" in "Bin_InCh_to_TmpVar()" which came up
+              if SI_1 is used as input. If the "AndreaskrLT3_RGB()" is used without an DCC input the special
+              input SI_1 = 255 ist used. This generatesd an endless loop in Proc_Bin_InCh_to_TmpVar()
+ 08.06.20:  - Change the Trigger behavior of InCh_to_TmpVar again because the old method didn't work since
+              InCh_to_TmpVar uses one global TmpVar for all calls => This variable can't be used to store
+              the last state. It's always overwritten by the next line.
+              Instead the new macros InCh_to_LocalVar, InCh_to_LocalVar1 habe been implemented which use a
+              LocalVar to store the last state. This method uses 1 bytes of RAM (Old 2, see below) for each call.
+              There are 6 macros to read inputs into a 8 Bit variable:
+              - InCh_to_LocalVar<1>   Used for DCC, "Change" flag is set with every pressed button
+              - InCh_to_TmpVar<1>     Used for DCC, "Change" flag is set if an other button than before is pressed
+              - Bin_InCh_to_TmpVar<1> Used for SX,  "Change" flag is set if the binary input is changed
+              Each of the macros has a version with a tailing 1. They generate a result which starts with
+              1 instead of 0. This is usefull for goto functions which use a default value which should
+              be different from the normal values.
+ 09.06.20:  - Using only one byte to store the last state according to Juergens tipp
+ 10.06.20:  - New CANDLE room type and new Set_CandleTab() macro based on Roberts sources (322 additional Bytes)
 
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
@@ -502,7 +543,6 @@ DayState_E DayState = Unknown;
 
 uint8_t TestMode = 0;    // If this variable is set the normal update function of the LEDs is disabled and the LEDs could be set by a debug
 
-
 /*
  Problem mit dem Initialisieren des Zufallszahlengenerators                                                   // 15.10.18:
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -570,6 +610,22 @@ const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 51 Byte FLASH
                        };
 #endif // _NEW_ROOM_COL
 
+#if _USE_CANDLE
+   const PROGMEM Candle_Dat_T Default_Candle_Dat =
+       {
+       25,     // Candle_Min_Hue            Farbe der Kerze (25 = Orange)
+       25,     // Candle_Max_Hue              "
+       80,     // Candle_Min_BrightnessD    Dunkelphase
+       100,    // Candle_Max_BrightnessD
+       120,    // Candle_Min_Brightness     Standard-Helligkeit
+       145,    // Candle_Max_Brightness
+       64,     // Candle_Change_Probability Wahrscheinlichkeitsfaktor einer Helligkeitsaenderung (0..255)
+       50,     // Candle_Chg_Hue            Wahrscheinlichkeitsfaktor eines Farbwechsels
+       5       // Candle_Time_Dark          Wahrscheinlichkeitsfaktor eins Helligkeitswechsel in den dunklen Bereich
+       };
+#endif
+
+
 #if _USE_SET_TVTAB                                                                                           // 09.01.20:
   const PROGMEM uint8_t Default_TV_Dat[] =
                      {
@@ -584,7 +640,16 @@ const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 51 Byte FLASH
 
 
 //------------------------------------------------------------------------------------------------------------------------------
-MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned char Config[], uint8_t RAM[], uint16_t RamSize) // Constructor
+MobaLedLib_C::MobaLedLib_C(
+    struct CRGB* _leds,
+    uint16_t Num_Leds,
+    const unsigned char Config[],
+    uint8_t RAM[],
+    uint16_t RamSize
+#if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
+    , Callback_t Function
+#endif
+    ) // Constructor
 //------------------------------------------------------------------------------------------------------------------------------
  : leds(_leds),
    Num_Leds(Num_Leds),
@@ -611,12 +676,17 @@ MobaLedLib_C::MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const unsigned
   memset(RAM,    0, RamSize);
 
   memset(InpStructArray, 0x00, _INP_STRUCT_ARRAY_SIZE);
-  Set_Input(SI_1, 1);            // Special input which is always 1
+#if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
+  CallbackFunc = Function;
+#endif
+  //Set_Input(SI_1, 1);          // Special input which is always 1                                           // 20.05.20:  Moved down
   Set_Input(SI_Enable_Sound, 1); // Could be changed by the configuration
 
   Set_Default_TV_Dat_p();                                                                                     // 09.01.20:
 
-  Inp_Processed();        // Clear the Old_Inp[] array
+  Inp_Processed();               // Clear the Old_Inp[] array
+
+  Set_Input(SI_1, 1);            // Special input which is always 1                                           // 20.05.20:  New Location
 
   // Initialize the random numbers with the "uninitialized RAM"
   srandom(random_seed);
@@ -788,6 +858,15 @@ void MobaLedLib_C::Proc_Set_ColTab()                                            
 }
 #endif
 
+#if _USE_CANDLE                                                                                               // 10.06.20:
+//-------------------------------------
+void MobaLedLib_C::Proc_Set_CandleTab()
+//-------------------------------------
+{
+  Candle_DatP = (const Candle_Dat_T*)cp;
+}
+#endif
+
 #if _USE_SET_TVTAB                                                                                            // 09.01.20:
 //----------------------------------
 void MobaLedLib_C::Proc_Set_TV_Tab()
@@ -872,12 +951,115 @@ void MobaLedLib_C::Proc_Use_GlobalVar()                                         
 }
 #endif
 
-//--------------------------------------
-void MobaLedLib_C::Proc_InCh_to_TmpVar()                                                                      // 25.11.18:
-//--------------------------------------
-// ActualVar_p is set to the number of the first input variable which is changed to 1
-//  If InCh 0 is turned to 1 the ActualVar_p is 0
-//  If InCh 1 is turned to 1 the ActualVar_p is 1
+
+#if _USE_INCH_TRIGGER                                                                                         // 02.06.20: New trigger method from Juergen
+//---------------------------------------------------
+void MobaLedLib_C::Proc_InCh_to_X_Var()
+//---------------------------------------------------
+// ActualVar_p is set to the number +Start of the first input variable which is changed to 1
+//  If InCh 0 is turned to 1 the ActualVar_p is 0 +Start
+//  If InCh 1 is turned to 1 the ActualVar_p is 1 +Start
+//  ...
+// If no input variable is changed the ActualVar_p->Changed = 0
+//
+// The new function supports 4 different modes which are controlled by the second argument.
+// - InCh_to_TempVar     Using the global TempVar to store the result (ActualVar_p) for the folloring function
+// - InCh_to_TempVar1    Like above, but the result starts with 1 (Start=1)
+// - InCh_to_LocalVar    Using a individual local variable to store the last state. The Changed flag in the result is only set if number is changed
+// - InCh_to_LocalVar1   Like above, but the result starts with 1 (Start=1)
+//
+// The new "LocalVar" Mode is used for light signals with blanking (LEDs are turned of when the signal aspect changes)
+// Here the blanking should be prevented when the same DCC command is send again.
+// These modes use 1 (Old 2) additional bytes RAM die store the last state and the Changed flag.
+//
+// The modes are coded into the upper two bitts of the argument:
+// args bits:
+// 0..5         number of channels to read  (currently max 6 bits, allows up to 64 gotos)
+// 6            start offset                                                                   (I2X_USE_START1)
+// 7            Use local var: if set to 1 then changed flag is only set if the state changes  (I2X_USE_LOCALVAR)
+{
+  uint16_t InCh = pgm_read_byte_near(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  uint8_t   arg = pgm_read_byte_near(cp+1);
+  uint8_t  Nr      = (arg & I2X_USE_START1) ? 1:0;  // Does ">> 6" instead of "?1:0" save memory? No, it uses exact the same amount of FLASH
+  uint16_t EndInCh = InCh + (arg & (I2X_USE_START1-1));                                                       // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  /*
+  uint8_t p = 0;                                                                 // Debug
+  static uint32_t Next_t = 0;                                                    // Debug
+  if (t > Next_t)                                                                // Debug
+     {                                                                           // Debug
+     if (Next_t == 0) Dprintf("InCh=%i EndInCh=%i\n", InCh, EndInCh);            // Debug
+     Next_t +=5000;                                                              // Debug
+     p = true;                                                                   // Debug
+     }                                                                           // Debug
+  for (uint8_t i = InCh; i <= EndInCh; i++) if(Inp_Changed(Get_Input(i))) p = 1; // Debug
+  */
+  bool Use_LocalVar = arg & I2X_USE_LOCALVAR;                                                                 // 09.06.20: New method from Juergen which uses only one byte RAM
+  ActualVar_p = &TempVar;
+  if (Use_LocalVar)
+      {
+      ActualVar_p->Val = *rp;
+      rp++;
+      }
+
+  for (; InCh <= EndInCh; InCh++, Nr++)                                                                       // 31.05.20:  J: "<=" instead of "<" because EndInCh is now 0..63 instead of 1..64
+    {
+    uint8_t Inp = Get_Input(InCh);
+    //if (p) Dprintf("Get_Input(%i)=%i ", InCh, Inp); // Debug
+    if (Inp == INP_TURNED_ON)
+       {
+       if (Use_LocalVar == false || ActualVar_p->Val != Nr)                                                   // 08.06.20:
+          {
+          ActualVar_p->Changed = 1;
+          ActualVar_p->Val = Nr;
+          if (Use_LocalVar) *(rp-1) = Nr;                                                                     // 09.06.20:
+          //if (p) Dprintf(" ActualVar=%i Trig\n", ActualVar_p->Val); // Debug
+          }
+       return ;
+       }
+    }
+  //if (p) Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
+  ActualVar_p->Changed = 0; // If nothing has changed
+}
+
+//-------------------------------------------------------
+void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()
+//-------------------------------------------------------
+// New function which treats the input variables as binary number
+{
+  uint16_t InCh = pgm_read_byte_near(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
+
+  // args bits:
+  // 0..2         number of channels to read  (currently max 3 bits, see code below (Mask is 8 bit)
+  // 3...5        reserverd
+  // 6            start offset
+  // 7            retrigger bit: if set to 1 also set Changed flag if state didn't change
+  uint8_t  arg     = pgm_read_byte_near(cp+1);
+  uint16_t EndInCh = InCh + (arg & 0x07);                                        // 31.05.20:  J: max 3 bits, see code below (Mask is 8 bit)  // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  uint8_t  Start   = (arg & 0x40) >> 6;                                          // 31.05.20:  J: start offset taken from arg
+
+  ActualVar_p = &TempVar;
+  ActualVar_p->Changed = 0;
+  uint8_t Nr = 0;
+  for (uint8_t Mask = 1; InCh <= EndInCh; InCh++, Mask <<= 1)                    // 31.05.20:  J: "<=" instead of "<" because EndInCh is now 0..7 instead of 1..8
+      {
+      uint8_t Inp = Get_Input(InCh);
+      if (Inp_Changed(Inp)) ActualVar_p->Changed = 1;
+      if (Inp_Is_On(Inp)) Nr |= Mask;
+      }
+  if (ActualVar_p->Changed)
+      {
+      ActualVar_p->Val = Nr + Start;                                                                             // 07.05.20:  Added + Start
+      Dprintf("ActualVar=%i\n", Nr + Start);                                                                     // 31.05.20:  J: Start also added to log output
+      }
+}
+
+#else // 02.06.20: Old
+//---------------------------------------------------
+void MobaLedLib_C::Proc_InCh_to_TmpVar(uint8_t Start)                                                         // 07.05.20:  Added Start
+//---------------------------------------------------
+// ActualVar_p is set to the number +Start of the first input variable which is changed to 1
+//  If InCh 0 is turned to 1 the ActualVar_p is 0 +Start
+//  If InCh 1 is turned to 1 the ActualVar_p is 1 +Start
 //  ...
 // If no input variable is changed the ActualVar_p->Changed = 0
 {
@@ -897,14 +1079,14 @@ void MobaLedLib_C::Proc_InCh_to_TmpVar()                                        
   */
 
   ActualVar_p = &TempVar;
-  for (uint8_t Nr = 0; InCh < EndInCh; InCh++, Nr++)
+  for (uint8_t Nr = 0; InCh != EndInCh; InCh++, Nr++)                                                         // 20.05.20:  Old InCh < EndInCh causes Problem with SP_1
     {
     uint8_t Inp = Get_Input(InCh);
     //if (p) Dprintf("Get_Input(%i)=%i ", InCh, Inp); // Debug
     if (Inp == INP_TURNED_ON)
        {
        ActualVar_p->Changed = 1;
-       ActualVar_p->Val = Nr;
+       ActualVar_p->Val = Nr+Start;                                                                           // 07.05.20:  Added + Start
        //if (p) Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
        return ;
        }
@@ -913,9 +1095,9 @@ void MobaLedLib_C::Proc_InCh_to_TmpVar()                                        
   ActualVar_p->Changed = 0; // If nothing has changed
 }
 
-//--------------------------------------
-void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()                                                                  // 18.01.19:
-//--------------------------------------
+//-------------------------------------------------------
+void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar(uint8_t Start)                                                     // 07.05.20:  Added Start
+//-------------------------------------------------------
 // New function which treats the input variables as binary number
 {
   uint8_t InCh    = pgm_read_byte_near(cp);
@@ -923,7 +1105,7 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()                                    
   ActualVar_p = &TempVar;
   ActualVar_p->Changed = 0;
   uint8_t Nr  = 0;
-  for (uint8_t Mask = 1; InCh < EndInCh; InCh++, Mask<<=1)
+  for (uint8_t Mask = 1; InCh != EndInCh; InCh++, Mask<<=1)                                                   // 20.05.20:  Old InCh < EndInCh causes Problem with SP_1
     {
     uint8_t Inp = Get_Input(InCh);
     if (Inp_Changed(Inp)) ActualVar_p->Changed = 1;
@@ -931,10 +1113,12 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()                                    
     }
   if (ActualVar_p->Changed)
      {
-     ActualVar_p->Val = Nr;
+     ActualVar_p->Val = Nr+Start;                                                                             // 07.05.20:  Added + Start
      Dprintf("ActualVar=%i\n", Nr);
      }
 }
+#endif // _USE_INCH_TRIGGER
+
 
 //-------------------------------
 void MobaLedLib_C::Proc_CopyLED()
@@ -986,7 +1170,7 @@ void MobaLedLib_C::Update_TV_Data()
     if ((uint8_t)(t4 - p->Last_t) >= p->dt)
        {
        p->Last_t = t4;
-       CRGB *lp;
+       // CRGB *lp;                                                                                           // 30.04.20:  Old: uninitialized pointer ;-(
        do
          {
          #if _USE_SET_TVTAB                                                                                   // 10.01.20:
@@ -1005,7 +1189,7 @@ void MobaLedLib_C::Update_TV_Data()
                 {
                 r1 = pgm_read_byte_near_Debug(tp++);
                 r2 = pgm_read_byte_near_Debug(tp++);
-                p->raw[i] = ((int)brightnes * random8(r1, r2)) / 265;
+                p->raw[i] = ((int)brightnes * random8(r1, r2)) / 256;                                         // 24.05.20:  Old: 265
                 }
             //if (p==TV_Dat) Dprintf("%i: %i %i %i\n", brightnes, p->r, p->g, p->b); // Debug
             //if (Debug_read_byte) { Debug_read_byte--; Serial.println(""); } // Debug
@@ -1022,8 +1206,9 @@ void MobaLedLib_C::Update_TV_Data()
                  p->r--;
             else p->r = p->b++;
             }
-         lp->r = p->r; lp->g = p->g; lp->b = p->b;                       // Prevent that the TV color is equal to one of the const room          // 10.01.20:
-         } while (Cmp_Room_Col(lp, 0) == 0 || Cmp_Room_Col(lp, 1) == 0); // colors because in this case the TV would be disabled in all houses.
+           // Prevent that the TV color is equal to one of the const room           // 10.01.20:      // 30.04.20:  Old: lp->r = p->r; lp_>g = p->g; lp->b = p->b;
+           // colors because in this case the TV would be disabled in all houses.                     //    "       Old: while (Cmp_Room_Col(lp, 0) == 0 || Cmp_Room_Col(lp, 1) == 0);
+         } while (Cmp_Room_Col((CRGB*)&(p->raw), 0) == 0 || Cmp_Room_Col((CRGB*)&(p->raw), 1) == 0);  //    "       New line from Jueregn whic saves 24 bytes in addition
        //Dprintf("TV%i %ims  %i %i %i\n", p - TV_Dat, p->dt*16, p->r, p->g, p->b);
        }
     }
@@ -1044,9 +1229,10 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
     t10 = (t>>10) & 0xFF;   // Time divided by 1024
   #endif
   if ((uint8_t)((t & 0xFF) - Last_20) >= 50)
-       {
+       { // is called every 50 ms = 20 Hz
        random16_add_entropy(random_seed = random()); // Add entropy to random number generator                // 27.08.18:  Old position outside the if
        Trigger20fps = TriggerCnt++;
+       if (TriggerCnt == 0) TriggerCnt++;                                                                     // 09.06.20:
        Last_20 = t & 0xFF;
        }
   else Trigger20fps = 0;
@@ -1057,73 +1243,89 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
     Room_ColP = Default_Room_Col_Tab;
   #endif
 
+  #if _USE_CANDLE                                                                                             // 10.06.20:
+    Candle_DatP = &Default_Candle_Dat;
+  #endif
+
   #if _USE_DEF_NEON                                                                                           // 12.01.20:
     Rand_On_DefNeon = 10;
     RandOff_DefNeon = 200;
     Min_DefNeon     = 1;
   #endif
-
+  #if _USE_STORE_STATUS                                                                                       // 01.05.20:
+    ProcCounterId = 0;
+  #endif
   for (cp = Config, rp = RAM; !End; )
     {
     uint8_t Type = pgm_read_byte_near(cp++);
     switch (Type)
-      {                                                                                                           // #ifdef's to disable some features for memory consumption checks
-#                                                                                                                 ifdef _USE_SEP_CONST
-      case CONST_T              : Proc_Const();             IncCP_Const();         break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_HOUSE
-      case HOUSE_T              : Proc_House();             IncCP_House();         break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_FIRE
-      case FIRE_T               : Proc_Fire();              IncCP_Fire();          break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_SET_COLTAB
-      case SET_COLTAB_T         : Proc_Set_ColTab();        IncCP_Set_ColTab();    break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_SET_TVTAB        // 10.01.20:
-      case SET_TV_TAB_T         : Proc_Set_TV_Tab();        IncCP_Set_TV_Tab();    break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_DEF_NEON         // 12.01.20:
-      case SET_DEF_NEON_T       : Proc_Set_Def_Neon();      IncCP_Set_Def_Neon();  break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_HSV_GROUP
-      case NEW_HSV_GROUP_T      : Proc_New_HSV_Group();     IncCP_New_HSV_Group(); break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_LOCAL_VAR
-      case NEW_LOCAL_VAR_T      : Proc_New_Local_Var();     IncCP_New_Local_Var(); break;                         // 07.11.18:
-#                                                                                                                 endif
+      {                                                                                                            // #ifdef's to disable some features for memory consumption checks
+#                                                                                                                  ifdef _USE_SEP_CONST
+      case CONST_T              : Proc_Const();              IncCP_Const();         break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_HOUSE
+      case HOUSE_T              : Proc_House();              IncCP_House();         break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_FIRE
+      case FIRE_T               : Proc_Fire();               IncCP_Fire();          break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_SET_COLTAB
+      case SET_COLTAB_T         : Proc_Set_ColTab();         IncCP_Set_ColTab();    break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_CANDLE           // 10.06.20:
+      case SET_CANDLETAB_T     : Proc_Set_CandleTab();      IncCP_Set_CandleTab(); break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_SET_TVTAB        // 10.01.20:
+      case SET_TV_TAB_T         : Proc_Set_TV_Tab();         IncCP_Set_TV_Tab();    break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_DEF_NEON         // 12.01.20:
+      case SET_DEF_NEON_T       : Proc_Set_Def_Neon();       IncCP_Set_Def_Neon();  break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_HSV_GROUP
+      case NEW_HSV_GROUP_T      : Proc_New_HSV_Group();      IncCP_New_HSV_Group(); break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_LOCAL_VAR
+      case NEW_LOCAL_VAR_T      : Proc_New_Local_Var();      IncCP_New_Local_Var(); break;                         // 07.11.18:
+#                                                                                                                  endif
 
-#                                                                                                                 if _USE_USE_GLOBALVAR
-      case USE_GLOBALVAR_T      : Proc_Use_GlobalVar();     IncCP_Use_GlobalVar(); break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_INCH_TO_VAR
-      case INCH_TO_TMPVAR_T     : Proc_InCh_to_TmpVar();    IncCP_InCh_to_TmpVar();break;
-      case BIN_INCH_TO_TMPVAR_T : Proc_Bin_InCh_to_TmpVar();IncCP_InCh_to_TmpVar();break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_LOGIC
-      case LOGIC_T              : Proc_Logic();             IncCP_Logic();         break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_RANDOM
-      case RANDOM_T             : Proc_Random();            IncCP_Random();        break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_RANMUX
-      case RANDMUX_T            : Proc_RandMux();           IncCP_RandMux();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_WELDING
-      case WELDING_T            : Proc_Welding();           IncCP_Welding();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_COPYLED
-      case COPYLED_T            : Proc_CopyLED();           IncCP_CopyLED();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_SCHEDULE
-      case SCHEDULE_T           : Proc_Schedule();          IncCP_Schedule();      break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_COUNTER
-      case COUNTER_T            : Proc_Counter();           IncCP_Counter();       break;
-#                                                                                                                 endif
-      case END_T                : End = true;                                      break;
+#                                                                                                                  if _USE_USE_GLOBALVAR
+      case USE_GLOBALVAR_T      : Proc_Use_GlobalVar();      IncCP_Use_GlobalVar(); break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_INCH_TO_VAR
+#if _USE_INCH_TRIGGER                                                                                              // 02.06.20:
+      case INCH_TO_X_VAR_T      : Proc_InCh_to_X_Var();      IncCP_InCh_to_X_Var(); break;
+      case BIN_INCH_TO_TMPVAR_T : Proc_Bin_InCh_to_TmpVar(); IncCP_InCh_to_X_Var(); break;
+#else
+      case INCH_TO_TMPVAR_T     : Proc_InCh_to_TmpVar(0);    IncCP_InCh_to_X_Var(); break;
+      case INCH_TO_TMPVAR1_T    : Proc_InCh_to_TmpVar(1);    IncCP_InCh_to_X_Var(); break;                         // 07.05.20:
+      case BIN_INCH_TO_TMPVAR_T : Proc_Bin_InCh_to_TmpVar(0);IncCP_InCh_to_X_Var(); break;
+      case BIN_INCH_TO_TMPVAR1_T: Proc_Bin_InCh_to_TmpVar(1);IncCP_InCh_to_X_Var(); break;                         // 07.05.20:
+#endif
+#                                                                                                                  endif
+#                                                                                                                  if _USE_LOGIC
+      case LOGIC_T              : Proc_Logic();              IncCP_Logic();         break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_RANDOM
+      case RANDOM_T             : Proc_Random();             IncCP_Random();        break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_RANMUX
+      case RANDMUX_T            : Proc_RandMux();            IncCP_RandMux();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_WELDING
+      case WELDING_T            : Proc_Welding();            IncCP_Welding();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_COPYLED
+      case COPYLED_T            : Proc_CopyLED();            IncCP_CopyLED();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_SCHEDULE
+      case SCHEDULE_T           : Proc_Schedule();           IncCP_Schedule();      break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_COUNTER
+      case COUNTER_T            : Proc_Counter();            IncCP_Counter();       break;
+#                                                                                                                  endif
+      case END_T                : End = true;                                       break;
       default:
-#                                                                                                                 if _USE_PATTERN
+#                                                                                                                  if _USE_PATTERN
                                   uint8_t pt = Is_Pattern(Type);
                                   if (pt)
                                        {
@@ -1137,7 +1339,11 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
       }
     }
 
-  Initialize = false;
+  if (Initialize != false)
+  {
+      Dprintf("reset initialize\n");                                                                          // 01.05.20:
+      Initialize = false;
+  }
   Inp_Processed();
 }
 
@@ -1158,62 +1364,72 @@ void MobaLedLib_C::Inc_cp(uint8_t Type)
 //-------------------------------------
 {
   switch (Type)
-     {                                                                                                            // #ifdef's to disable some features for memory consumption checks
-#                                                                                                                 ifdef _USE_SEP_CONST
-     case CONST_T              : IncCP_Const();         break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_HOUSE
-     case HOUSE_T              : IncCP_House();         break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_SET_TVTAB        // 10.01.20:
-     case SET_TV_TAB_T         : IncCP_Set_TV_Tab();    break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_DEF_NEON         // 12.01.20:
-     case SET_DEF_NEON_T       : IncCP_Set_Def_Neon();  break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_FIRE
-     case FIRE_T               : IncCP_Fire();          break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_SET_COLTAB
-     case SET_COLTAB_T         : IncCP_Set_ColTab();    break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_HSV_GROUP
-     case NEW_HSV_GROUP_T      : IncCP_New_HSV_Group(); break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_LOCAL_VAR
-     case NEW_LOCAL_VAR_T      : IncCP_New_Local_Var(); break;                                                    // 07.11.18:
-#                                                                                                                 endif
-#                                                                                                                 if _USE_USE_GLOBALVAR
-     case USE_GLOBALVAR_T      : IncCP_Use_GlobalVar(); break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_INCH_TO_VAR
-      case INCH_TO_TMPVAR_T    :
-      case BIN_INCH_TO_TMPVAR_T:IncCP_InCh_to_TmpVar(); break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_LOGIC
-     case LOGIC_T              : IncCP_Logic();         break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_RANDOM
-     case RANDOM_T             : IncCP_Random();        break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_RANMUX
-     case RANDMUX_T            : IncCP_RandMux();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_WELDING
-     case WELDING_T            : IncCP_Welding();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_COPYLED
-     case COPYLED_T            : IncCP_CopyLED();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_SCHEDULE
-     case SCHEDULE_T           : IncCP_Schedule();      break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_COUNTER
-     case COUNTER_T            : IncCP_Counter();       break;
-#                                                                                                                 endif
-#                                                                                                                 if _USE_PATTERN
-     default:                    uint8_t pt = Is_Pattern(Type);
-                                 if (pt) IncCP_Pattern(Type - pt + 1);
+     {                                                                                                             // #ifdef's to disable some features for memory consumption checks
+#                                                                                                                  ifdef _USE_SEP_CONST
+     case CONST_T               : IncCP_Const();         break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_HOUSE
+     case HOUSE_T               : IncCP_House();         break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_SET_TVTAB        // 10.01.20:
+     case SET_TV_TAB_T          : IncCP_Set_TV_Tab();    break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_DEF_NEON         // 12.01.20:
+     case SET_DEF_NEON_T        : IncCP_Set_Def_Neon();  break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_FIRE
+     case FIRE_T                : IncCP_Fire();          break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_SET_COLTAB
+     case SET_COLTAB_T          : IncCP_Set_ColTab();    break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_CANDLE           // 10.06.20:
+     case SET_CANDLETAB_T       : IncCP_Set_CandleTab();    break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_HSV_GROUP
+     case NEW_HSV_GROUP_T       : IncCP_New_HSV_Group(); break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_LOCAL_VAR
+     case NEW_LOCAL_VAR_T       : IncCP_New_Local_Var(); break;                                                    // 07.11.18:
+#                                                                                                                  endif
+#                                                                                                                  if _USE_USE_GLOBALVAR
+     case USE_GLOBALVAR_T       : IncCP_Use_GlobalVar(); break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_INCH_TO_VAR
+#if _USE_INCH_TRIGGER                                                                                              // 02.06.20:
+     case INCH_TO_X_VAR_T       :
+     case BIN_INCH_TO_TMPVAR_T  :IncCP_InCh_to_X_Var();  break;
+#else
+      case INCH_TO_TMPVAR_T     :
+      case INCH_TO_TMPVAR1_T    :
+      case BIN_INCH_TO_TMPVAR_T :
+      case BIN_INCH_TO_TMPVAR1_T:IncCP_InCh_to_X_Var();  break;
+#endif
+#                                                                                                                  endif
+#                                                                                                                  if _USE_LOGIC
+     case LOGIC_T               : IncCP_Logic();         break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_RANDOM
+     case RANDOM_T              : IncCP_Random();        break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_RANMUX
+     case RANDMUX_T             : IncCP_RandMux();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_WELDING
+     case WELDING_T             : IncCP_Welding();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_COPYLED
+     case COPYLED_T             : IncCP_CopyLED();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_SCHEDULE
+     case SCHEDULE_T            : IncCP_Schedule();      break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_COUNTER
+     case COUNTER_T             : IncCP_Counter();       break;
+#                                                                                                                  endif
+#                                                                                                                  if _USE_PATTERN
+     default:                     uint8_t pt = Is_Pattern(Type);
+                                  if (pt) IncCP_Pattern(Type - pt + 1);
 #                                                                                                                 endif
      }
 }
@@ -1280,6 +1496,8 @@ void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, ui
 // InpStructArrayNr 0 => Channels 0 .. 3
 //                  1 =>          4 .. 7
 //                  n =>          n*8 .. n*8+3
+//
+// Attention: The function writes  8*ByteCnt input channels !!!
 {
   uint8_t *Dest = &InpStructArray[InpStructArrayNr];
   while (ByteCnt--)
@@ -1330,9 +1548,17 @@ void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
   //if (channel>2) Dprintf("Set_Input %i=%i\n", channel, On?1:0);
   uint8_t ByteNr  = channel>>2;  // / 4;
   uint8_t BitMask = 1 << ((channel % 4)<<1);  // 2^((channel%4)*2)
+#if _USE_STORE_STATUS                                                                                         // 01.05.20:
+  uint8_t oldValue = InpStructArray[ByteNr]>>((channel % 4)<<1) & 0x03;
+  //uint8_t oldValue2 = InpStructArray[ByteNr];
+#endif
   if (On)
        InpStructArray[ByteNr] |=  BitMask;
   else InpStructArray[ByteNr] &= ~BitMask;
+#if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
+  //Dprintf("Set_Input Inp[%i] changed from %i to %i (On=%i)\n", channel, oldValue2, InpStructArray[ByteNr], On);
+  Do_Callback(CT_CHANNEL_CHANGED, channel, oldValue, &On);
+#endif
 }
 
 //--------------------------------
@@ -1364,5 +1590,13 @@ void MobaLedLib_C::Update()
      Int_Update(millis());
      }
 }
+
+#if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
+void MobaLedLib_C::Do_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue)
+{
+    //Dprintf("Do_Callback ValueId %i OldValue %i NewValue %i\n", ValueId, OldValue, *NewValue);
+    if (CallbackFunc!=NULL) CallbackFunc(CallbackType, ValueId, OldValue, NewValue);
+}
+#endif
 
 

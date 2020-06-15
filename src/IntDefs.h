@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -136,6 +136,10 @@
 #define P_COUNT_DEST_COUNT     6
 #define P_COUNT_FIRST_DEST     7
 
+// Callback types for Callback_t                                                                              // 01.05.20:
+#define CT_CHANNEL_CHANGED 0
+#define CT_COUNTER_CHANGED 1
+#define CT_COUNTER_INITIAL 2
 
 #define PT_INACTIVE 255
 
@@ -229,6 +233,18 @@ typedef struct
     uint16_t Duration;
     } Sound_Dat_t;   // 6 Byte
 
+typedef struct                                                                                                // 10.06.20:
+    {
+    uint8_t  Candle_Min_Hue;
+    uint8_t  Candle_Max_Hue;
+    uint8_t  Candle_Min_BrightnessD;
+    uint8_t  Candle_Max_BrightnessD;
+    uint8_t  Candle_Min_Brightness;
+    uint8_t  Candle_Max_Brightness;
+    uint8_t  Candle_Change_Probability;
+    uint8_t  Candle_Chg_Hue;
+    uint8_t  Candle_Time_Dark;
+    } Candle_Dat_T;
 
 #endif // __OUTPUT_FUNCT_INTDEFS_H__
 

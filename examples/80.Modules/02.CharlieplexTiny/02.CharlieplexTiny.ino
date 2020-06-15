@@ -594,9 +594,9 @@ int8_t Get_Group(uint16_t val)
 //  66 -  85:  3
 // ...
 // 186 - 205:  9
-// 206 - 225   Start PMode   (10)
-// 226 - 245   End PMode     (11)
-// 246 - 265   Unused        (12)
+// 206 - 225   10
+// 226 - 245   PMode     (11)
+// 246 - 265   Unused    (12)
 //
 {
   if (val < 26) return 0;

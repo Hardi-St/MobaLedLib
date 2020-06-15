@@ -34,24 +34,24 @@
 volatile uint8_t LED_Bright[LED_CNT]        = { 0, 0,   0,   0,   0,   0}; // Full brightness if >= MAX_BRIGHT
          uint8_t Max_LED_Brightnes[LED_CNT] = { 4, 2, 255, 255, 255, 255}; // Correct the brightnes of the LEDs
 
-                     // 76543210
-                     // ---XXX--
+                           // 76543210
+                           // ---XXX--
 uint8_t LED_PRT[LED_CNT] = { B00010000,  // 1  Blue    Reset as IO Pin
-                       B00000100,  // 2  White   Normal Reset Function
-                       B00001000,  // 3  Green   Heart Beat
-                       B00010000,  // 4  Red     Error
-                       B00000100,  // 5  Yellow  Prog.
-                       B00001000   // 6  Orange
-                     };
-                     // 76543210
-                     // ---XXX--
+                             B00000100,  // 2  White   Normal Reset Function
+                             B00001000,  // 3  Green   Heart Beat
+                             B00010000,  // 4  Red     Error
+                             B00000100,  // 5  Yellow  Prog.
+                             B00001000   // 6  Orange
+                           };
+                          // 76543210
+                          // ---XXX--
 uint8_t LED_DDR[LED_CNT] = { B00010100,  // 1  Blue    Reset as IO Pin
-                       B00010100,  // 2  White   Normal Reset Function
-                       B00001100,  // 3  Green   Heart Beat
-                       B00011000,  // 4  Red     Error
-                       B00001100,  // 5  Yellow  Prog.
-                       B00011000   // 6  Orange
-                     };
+                             B00010100,  // 2  White   Normal Reset Function
+                             B00001100,  // 3  Green   Heart Beat
+                             B00011000,  // 4  Red     Error
+                             B00001100,  // 5  Yellow  Prog.
+                             B00011000   // 6  Orange
+                           };
 
 
 #define LED_MASK       B00011100
@@ -107,12 +107,25 @@ void Test_Speed_LEDs()
 
  Der LED Index wird nach 32 Interrupt aufrufen erhoeht
 */
-#define LED_RESET_AS_IO  0
-#define LED_NORM_RESETF  1
-#define LED_HEART_BEAT   2
-#define LED_ERROR        3
-#define LED_PROG         4
-#define LED_RES          5
+#include "LED_Polarity.h"
+
+#if LED_POLARITY_NORMAL // Normal LED polarity (+ on the left side) //getestet von Dominik und Okay für neue Version von Platine 2020-03-29
+   #define LED_RESET_AS_IO  1
+   #define LED_NORM_RESETF  0
+   #define LED_HEART_BEAT   4
+   #define LED_ERROR        5
+   #define LED_PROG         2
+   #define LED_RES          3
+#else // Wrong LED polarity (+ on the right side. Unfortunately the first PCB (14.06.19) have a the + on the wrong side)
+   #define LED_RESET_AS_IO  0
+   #define LED_NORM_RESETF  1
+   #define LED_HEART_BEAT   2
+   #define LED_ERROR        3
+   #define LED_PROG         4
+   #define LED_RES          5
+#endif
+
+
 
 
 
@@ -216,18 +229,44 @@ void Test_LEDs()
     }
 }
 
-//-------------------------------------------------------
-void Setup_LEDs_with_Power_on_Ani(void (*Add_Int_Proc)(void))
-//-------------------------------------------------------
+//-----------------------------------------
+void Setup_LEDs(void (*Add_Int_Proc)(void))
+//-----------------------------------------
 {
   Add_Int_Proc_Ptr = Add_Int_Proc;
   Timer1.initialize(100);  // [us] Original 500                                                               // 28.06.19:  Old 250
   Timer1.attachInterrupt(LED_IntProc);
+}
+
+//-----------------
+void Power_on_Ani()
+//-----------------
+{
+  const uint8_t LedTab[] =                                                                                    // 09.04.20:
+    {
+    LED_RESET_AS_IO,
+    LED_NORM_RESETF,
+    LED_HEART_BEAT,
+    LED_ERROR,
+    LED_PROG,
+    LED_RES,
+    };
+
   for (uint8_t i = 0; i < LED_CNT*2-1; i++)
       {
-      uint8_t LED_Nr = i< LED_CNT?i:2*LED_CNT-2-i;
+      uint8_t LED_Nr = LedTab[i< LED_CNT?i:2*LED_CNT-2-i];                                                    // 09.04.20:  Added LedTab[]
       Set_LED(LED_Nr, Max_LED_Brightnes[LED_Nr]);
       delay(30);
       Set_LED(LED_Nr, 0);
       }
+}
+
+
+
+//-------------------------------------------------------
+void Setup_LEDs_with_Power_on_Ani(void (*Add_Int_Proc)(void))
+//-------------------------------------------------------
+{
+  Setup_LEDs(Add_Int_Proc);
+  Power_on_Ani();
 }

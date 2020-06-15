@@ -1,0 +1,446 @@
+SheetName¯Heartbeat_Hue
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_HSV
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Heartbeat_Hue
+Dauer¯60 Sek¯0 ms
+Goto Tabelle¯
+LED_Tab¯Hue¯x¯.
+LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.7499;0;409.75;197.1264¯Deze pagina laat zien hoe je de kleur van een LED heel langzaam kunt veranderen.
+Met de HSV-modus kunnen de kleuren van de LED's op een alternatieve manier worden weergegeven. De drie componenten "H" = kleurwaarde (Engels: HUE (tint)), "S" = verzadiging (Engels: Saturation (verzadiging)) en "V" = helderheid (Engels: Value (waarde)) worden gebruikt. Deze drie componenten worden vaak getoond zoals op de afbeelding rechts. Het voordeel van deze transformatie is dat u de gewenste wijzigingen in de resulterende kleur kunt aanbrengen door slechts één component te wijzigen. Door "Hue" te wijzigen, kunnen alle mogelijke kleuren worden gemaakt. In dit voorbeeld verandert "HUE" binnen 60 seconden van rood naar groen en blauw naar paars. Dan springt "HUE" terug naar rood. Deze sprong is onzichtbaar omdat de kleuren bij de eindkleur naadloos overgaan in de startkleur. Helaas is deze overgang uitgesneden in de afbeelding rechts.
+Deze macro wordt gebruikt in het voorbeeld "01.Heartbeat" samen met de volgende "Heartbeat_Val". {Attrib}B1,79
+msoTextBox1¯492.7499;0;409.75;156.443¯This page shows how to change the color of an LED very slowly.
+With the HSV mode, the colors of the LEDs can be displayed in an alternative way. The three components "H" = color value (English: Hue), "S" = saturation (English: saturation) and "V" = brightness (English: value) are used. These three components are often shown as shown in the picture on the right. The advantage of this transformation is that you can make the desired changes to the resulting color by changing just one component. By changing "Hue" all possible colors can be created. In this example, "Hue" changes from red to green and blue to purple within 60 seconds. Then "Hue" jumps to red again. This jump is invisible because the colors End Color seamlessly merges into the starting color. Unfortunately, this transition is cut out in the image on the right. This macro is used in the example "01. Heartbeat" together with the following "Heartbeat_Val".{Attrib}B1,63
+msoTextBox3¯492.7499;0;409.75;156.443¯This page shows how to change the color of an LED very slowly.
+With the HSV mode, the colors of the LEDs can be displayed in an alternative way. The three components "H" = color value (English: Hue), "S" = saturation (English: saturation) and "V" = brightness (English: value) are used. These three components are often shown as shown in the picture on the right. The advantage of this transformation is that you can make the desired changes to the resulting color by changing just one component. By changing "Hue" all possible colors can be created. In this example, "Hue" changes from red to green and blue to purple within 60 seconds. Then "Hue" jumps to red again. This jump is invisible because the colors End Color seamlessly merges into the starting color. Unfortunately, this transition is cut out in the image on the right. This macro is used in the example "01. Heartbeat" together with the following "Heartbeat_Val".{Attrib}B1,63
+msoTextBox0¯492.7499;0;409.75;204.3265¯Diese Seite zeigt wie man die Farbe einer LED ganz langsam verändert. 
+Mit dem HSV Modus können die Farben der LEDs auf eine alternative Weise dargestellt werden. Dabei verwendet man die drei Komponenten „H“ = Farbwert (Englisch: Hue), „S“ = Sättigung (Englisch: Saturation) und „V“ = Helligkeit (Englisch: Value). Diese drei Komponenten werden gerne so wie im Bild Rechts dargestellt.Der Vorteil dieser Transformation ist, dass man durch Verändern von nur einer Komponente die gewünschten Änderungen an der Resultierenden Farbe erzielen kann. Mit der Änderung von „Hue“ können alle möglichen Farben erzeugt werden. In diesem Beispiel wird "Hue" innerhalb von 60 Sekunden von Rot über Grün und Blau nach Lila verändert. Danach springt "Hue" wieder auf Rot. Dieser Sprung ist unsichtbar, da die Farben End Farbe nahtlos in die Startfarbe übergeht. Im Bild Rechts ist dieser Übergang unglücklicherweise ausgeschnitten.Dieses Makro wird im Beispiel "01.Heartbeat" zusammen mit dem Folgenden "Heartbeat_Val" benutzt.{Attrib}B1,71
+msoPicture¯909.3749;7.874016E-05;177;135¯HSV_Colors.jpg
+
+SheetName¯Heartbeat_Val
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯2
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯1
+Wert Min: ¯10
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_HSV|PF_EASEINOUT
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Heartbeat_Val
+Dauer¯1 Sek
+Goto Tabelle¯
+LED_Tab¯Val¯x¯.
+LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.7501;0;408.5;183.5653¯Deze pagina laat zien hoe u de helderheid van een LED kunt wijzigen met behulp van een enkele parameter.
+Met de HSV-modus kunnen de kleuren van de LED's op een alternatieve manier worden weergegeven. De drie componenten "H" = kleurwaarde (Engels: HUE (tint)), "S" = verzadiging (Engels: Saturation (verzadiging)) en "V" = helderheid (Engels: Value (waarde)) worden gebruikt. Deze drie componenten worden vaak getoond zoals op de afbeelding rechts. Het voordeel van deze transformatie is dat u de gewenste wijzigingen in de resulterende kleur kunt aanbrengen door slechts één component te wijzigen. Door "Value" te wijzigen, kan de helderheid continu worden gewijzigd van 0 tot de maximale helderheid zonder de kleur te wijzigen.
+In het voorbeeld "01. Heartbeat" wordt dit gebruikt om de helderheid van de LED te pulseren. Startkanaal 2 wordt gebruikt om de component "Waarde" te adresseren. Kanaal 0 komt overeen met "HUE" en 1 met verzadiging.{Attrib}B1,103
+msoTextBox1¯492.7501;0;408.5;142.8818¯This page shows how to change the brightness of an LED using a single parameter. With the HSV mode, the colors of the LEDs can be displayed in an alternative way. The three components "H" = color value (English: Hue), "S" = saturation (English: saturation) and "V" = brightness (English: value) are used. These three components are often shown as shown in the picture on the right. The advantage of this transformation is that you can make the desired changes to the resulting color by changing just one component. By changing "Value", the brightness can be changed continuously from 0 to the maximum brightness without changing the color. In the example "01. Heartbeat" this is used to pulsate the brightness of the LED. Start channel 2 is used to address the "Value" component. Channel 0 corresponds to "Hue" and 1 to saturation.{Attrib}B1,82
+msoTextBox3¯492.7501;0;408.5;142.8818¯This page shows how to change the brightness of an LED using a single parameter. With the HSV mode, the colors of the LEDs can be displayed in an alternative way. The three components "H" = color value (English: Hue), "S" = saturation (English: saturation) and "V" = brightness (English: value) are used. These three components are often shown as shown in the picture on the right. The advantage of this transformation is that you can make the desired changes to the resulting color by changing just one component. By changing "Value", the brightness can be changed continuously from 0 to the maximum brightness without changing the color. In the example "01. Heartbeat" this is used to pulsate the brightness of the LED. Start channel 2 is used to address the "Value" component. Channel 0 corresponds to "Hue" and 1 to saturation.{Attrib}B1,82
+msoPicture¯906.5;0;177;135¯HSV_Colors.jpg
+
+SheetName¯Ilumination Hue
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_HSV
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Changing_Hue
+Dauer¯60 Sek¯0 ms
+Goto Tabelle¯
+LED_Tab¯Hue¯x¯.
+LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;767.4421;34.3926¯Dit blad toont de configuratie van de lichtinstallatie.
+De verlichting van een object kan worden bereikt met de hier getoonde tabel. Dit deel komt overeen met de pagina "Heartbeat_Hue".{Attrib}B1,54
+msoTextBox1¯492.75;0;767.4421;34.3926¯This sheet shows the configuration of the light installation. The illumination of an object can be achieved with the table shown here. This part corresponds to the "Heartbeat_Hue" page.{Attrib}B1,62
+msoTextBox3¯492.75;0;767.4421;34.3926¯This sheet shows the configuration of the light installation. The illumination of an object can be achieved with the table shown here. This part corresponds to the "Heartbeat_Hue" page.{Attrib}B1,62
+msoTextBox0¯492.75;0;767.4421;48.55378¯Dieses Blatt zeigt die Konfiguration Licht Installation.Die Ilumination eines Objektes kann man mit der hier gezeigten Tabelle erreichen. Dieser Teil entspricht der "Heartbeat_Hue" Seite. {Attrib}B1,57
+
+SheetName¯Ilumination Val
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯2
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_HSV|PF_EASEINOUT
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Pulsating_Val
+Dauer¯50 ms¯5 Sek¯2 Sek¯5 Sek¯10 Sek
+Goto Tabelle¯
+LED_Tab¯Val¯¯x¯x¯.¯.
+LED_Attr¯13.5¯¯¯¯¯¯¯¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;767.4421;75.07607¯Dit blad toont de configuratie van de lichtinstallatie.
+De verlichting van een object kan worden bereikt met de hier getoonde tabel. Dit deel is een variatie op de pagina "Heartbeat_Val".
+Hier is de helderheidscurve verdeeld in 5 stappen.
+Deze pagina en de vorige worden getoond in het voorbeeld "16.Illumination_Pattern_Func" samengevat en toegepast op verschillende LED's met verschillende tijden.
+Dit zorgt voor de mooie lichteffecten.{Attrib}B1,54
+msoTextBox1¯492.75;0;767.4421;75.07607¯This sheet shows the configuration of the light installation. The illumination of an object can be achieved with the table shown here. This part is a variation of the "Heartbeat_Val" page. Here is the brightness curve
+divided into 5 steps.
+This page and the previous one are summarized in the example "16.Illumination_Pattern_Func" and applied to several LEDs with different times. This creates the pretty lighting effects.{Attrib}B1,63
+msoTextBox3¯492.75;0;767.4421;75.07607¯This sheet shows the configuration of the light installation. The illumination of an object can be achieved with the table shown here. This part is a variation of the "Heartbeat_Val" page. Here is the brightness curve
+divided into 5 steps.
+This page and the previous one are summarized in the example "16.Illumination_Pattern_Func" and applied to several LEDs with different times. This creates the pretty lighting effects.{Attrib}B1,63
+msoTextBox0¯492.75;0;767.4421;88.63725¯Dieses Blatt zeigt die Konfiguration Licht Installation.Die Illumination eines Objektes kann man mit der hier gezeigten Tabelle erreichen. Dieser Teil ist eine Variation der "Heartbeat_Val" Seite. Hier ist der Helligkeitsverlauf
+in 5 Schritte unterteilt.
+Diese Seite und die vorrangegangene werden im Beispiel "16.Illumination_Pattern_Func" zusammengefasst und mit unterschiedlichen Zeiten auf mehrere LEDs angewandt. Dadurch ergeben sich der hübsche  Beleuchtungseffekte.{Attrib}B1,57
+
+SheetName¯KellerLichtAus
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯51
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_SEQUENZ_STOP
+Analoges Überblenden: ¯X
+Goto Mode: ¯
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KellerLichtAus
+Dauer¯1 sek
+Goto Tabelle¯E
+LED_Tab¯¯.
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯491.25;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯KellerLichtBlau
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯51
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_SEQUENZ_STOP
+Analoges Überblenden: ¯X
+Goto Mode: ¯
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KellerLichtBlau
+Dauer¯1 sek
+Goto Tabelle¯E
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯¯x
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯491.25;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯KellerLichtAn
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯51
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_SEQUENZ_STOP
+Analoges Überblenden: ¯X
+Goto Mode: ¯
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KellerLichtAn
+Dauer¯1 Sek
+Goto Tabelle¯E
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Tab¯¯x
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯491.25;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75

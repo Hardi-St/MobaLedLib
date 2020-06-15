@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@
             Const      (LED0+7, C1, TmpNr+2, 0,255)                          // Rauch                                           \
             Const      (LED0+7, C3, TmpNr+2, 0,63)                           // Status LED Rauc                                 \
             Fire_truck (LED0+8,     TmpNr+3)                                                                                    \
-            Sound_PlayRandom(LED0+0,TmpNr+4, 5)                              // Sound zufaellig                                  \
+            Sound_PlayRandom(LED0+0,TmpNr+4, 5)                              // Sound zufaellig                                 \
             Sound_Seq8(      LED0+0,TmpNr+0)                                 // Sound aus (Stille.mp3)
 
  The PushButton_w_LED_0_3 line uses a macro which uses one input to trigger a counter and drives
@@ -222,7 +222,7 @@
             Const      (LED0+7, C3, TmpNr+2, 0,63)  /* Status LED Rauch */                                             \
             Fire_truck (LED0+8,     TmpNr+3)                                                                           \
           /*Sound_Next_of_N(LED0+0, TmpNr+4, 5)*/   /* Sound 1-5 nacheinander */                                       \
-            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufaellig */                                               \
+            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufaellig */                                              \
             Sound_Seq8(      LED0+0,TmpNr+0)        /* Sound aus (Stille.mp3) */
 #if 0
             Const      (StatusLEDs+0,C_ALL,   TmpNr+0, 0, 10)                 /* Debug: */                             \

@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,8 @@
                          //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
+
+#include "Analog_Buttons10.h"
 
 #define NUM_LEDS        32  // Number of LEDs
 #define LED_DO_PIN      6   // Pin D6 is connected to the LED stripe
@@ -264,69 +266,6 @@ void setup(){
 }
 
 
-// Table containing the delta from one compare value to the next. We don't store the 16 bit values to save memory.
-const PROGMEM uint8_t DeltaTab[10] = { 88, 86, 89, 113, 112, 96, 88, 77, 94, 101};
-
-//:::::::::::::::::::::::
-class Analog_Buttons10_C   // Attention this class will be moved to the library in the next version
-//:::::::::::::::::::::::
-{
-public:
-  //-------------------------------------
-  Analog_Buttons10_C(uint8_t AnalogPinNr) // Constructor
-  //-------------------------------------
-  {
-    APin = AnalogPinNr;
-    LastCheck = 0;
-    LastKey   = 0xFFFF;
-    SameCnt   = 0;
-  }
-
-  //------------
-  uint16_t Get()
-  //------------
-  // Must be called periodic in the loop() function
-  {
-    uint8_t t = millis() % 0xFF;
-    if ((uint8_t)(t - LastCheck) > 20) // Check every 20 ms
-       {
-       LastCheck = t;
-       uint16_t Key = Get_Act_Key();
-       if (Key == LastKey)
-            SameCnt++;
-       else SameCnt = 0;
-       LastKey = Key;
-       }
-    if (SameCnt >= 4)    // Wenn 4 mal hintereinander der gleiche Wert gelesen wird, dann wird der Taster als gedrueckt gemeldet
-         return LastKey; // Das ist wichtig weil der Analog wert mit einem 1uF Kondensator gefiltert wird
-    else return 0;
-  }
-
-private:
-  //--------------------
-  uint16_t Get_Act_Key()
-  //--------------------
- {
-    const uint8_t *p = DeltaTab; // Table containing the delta from one compare value to the next
-    uint16_t Cmp = 0;
-    uint16_t Bit = 1;
-    uint16_t val = analogRead(APin);
-    while (Bit < 513)
-        {
-        Cmp += pgm_read_byte_near(p);
-        if (val < Cmp) return Bit;
-        p++;
-        Bit <<= 1;
-        }
-    return 0;
-  }
-
-private:
-  uint8_t  APin;
-  uint8_t  LastCheck;
-  uint16_t LastKey;
-  uint8_t  SameCnt;
-};
 
 Analog_Buttons10_C AButtons(ANA_BUTTON_PIN);
 

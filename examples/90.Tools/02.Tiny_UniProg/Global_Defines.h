@@ -17,7 +17,7 @@ void printf_proc(const __FlashStringHelper *format, ...);
 #define RELAIS_RST_PIN        6
 #define RELAIS_PRG_PIN        7
 #define RELAIS_PWR_PIN        8
-#define PIN_POWER             9           // Power suppliy pin for ATTiny
+#define PIN_POWER             9           // Power supply pin for ATTiny
 #define PIN_MOSI              11          // SPI Pins
 #define PIN_MISO              12          //   "
 #define PIN_SCK               13          //   "

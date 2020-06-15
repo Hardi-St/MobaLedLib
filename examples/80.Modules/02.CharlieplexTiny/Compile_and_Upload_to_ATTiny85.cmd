@@ -1,6 +1,8 @@
 @ECHO OFF
 REM Arduino parameters see:
 REM   https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
+REM Revision History:
+REM 05.06.20:  - Hiding the Debug messages from the compiler
 
 
 REM Used additional resources:
@@ -25,7 +27,7 @@ ECHO Dieser Vorgang muss nur ein mal gemacht werden. Danach wird nur noch die ge
 ECHO Konfiguration vom Pattern_Configuartor aus zum ATTiny geschickt.
 ECHO.
 
-SET DefaultPort=10
+SET DefaultPort=6
 
 SET ComPort=%1
 IF NOT "%ComPort%" == "" Goto PortIsSet
@@ -34,9 +36,12 @@ IF NOT "%ComPort%" == "" Goto PortIsSet
    SET ComPort=\\.\COM%PortNr%
 :PortIsSet
 
-iF EXIST "Compile_and_Upload_to_ATTiny85_Result.txt" DEL "Compile_and_Upload_to_ATTiny85_Result.txt" > NUL
+IF EXIST "Compile_and_Upload_to_ATTiny85_Result.txt" DEL "Compile_and_Upload_to_ATTiny85_Result.txt" > NUL
 
 IF NOT EXIST "%USERPROFILE%\AppData\Local\Arduino15\packages\ATTinyCore\hardware\avr\" (
+   REM Attention: If the directory exists, but it's empty the installation aborts with the following message:
+   REM  Fehler: ATTinyCore: Unbekanntes Paket
+   REM
    ECHO ***************************************
    ECHO * Installing ATTiny boards package... *
    ECHO ***************************************
@@ -77,7 +82,8 @@ IF NOT EXIST "%USERPROFILE%\Documents\Arduino\libraries\FastLED\" (
    ECHO * Installing FastLED Library... *
    ECHO *********************************
    ECHO.
-   "C:\Program Files (x86)\Arduino\arduino_debug.exe" --install-library "EWMA"
+   REM                                                                        14.03.20: Old "EWMA" => "FastLED"
+   "C:\Program Files (x86)\Arduino\arduino_debug.exe" --install-library "FastLED"
    )
 
 ECHO.
@@ -86,11 +92,13 @@ ECHO **********************************
 ECHO * Compile and uplaod the program *
 ECHO **********************************
 ECHO.
-"C:\Program Files (x86)\Arduino\arduino_debug.exe" "02.CharlieplexTiny.ino" ^
+CHCP 65001 >NUL
+"C:\Program Files (x86)\Arduino\arduino_debug.exe" "01.ATTiny85_Servo.ino" ^
    --upload ^
    --port %ComPort% ^
    --pref programmer=arduino:arduinoasisp ^
-   --board ATTinyCore:avr:attinyx5:LTO=enable,TimerClockSource=default,chip=85,clock=16pll,eesave=aenable,bod=2v7,millis=enabled
+   --board ATTinyCore:avr:attinyx5:LTO=enable,TimerClockSource=default,chip=85,clock=16pll,eesave=aenable,bod=2v7,millis=enabled ^
+   2>&1 | find /v "Set log4j store directory" | find /v " StatusLogger " | find /v "serial.SerialDiscovery"
 
 IF ERRORLEVEL 1 (
    REM White on RED

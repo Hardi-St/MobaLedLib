@@ -179,11 +179,11 @@ void HV_Interrupt_Proc()
 void FuseReset_setup()
 //--------------------
 {
-  pinMode(PIN_POWER , OUTPUT);
-  pinMode(PIN_HV_SDI, OUTPUT);
-  pinMode(PIN_HV_SII, OUTPUT);
-  pinMode(PIN_HV_SCI, OUTPUT);
-  pinMode(PIN_HV_SDO, OUTPUT);     // Configured as input when in programming mode
+  pinMode(PIN_POWER , OUTPUT);     // Power supply for the ATTimy
+  pinMode(PIN_HV_SDI, OUTPUT);     // Target Data Input
+  pinMode(PIN_HV_SII, OUTPUT);     // Target Instruction Input
+  pinMode(PIN_HV_SCI, OUTPUT);     // Target Clock Input
+  pinMode(PIN_HV_SDO, OUTPUT);     // Target Data Output, Configured as input when in programming mode
 
   /*
   The following setups have been moved to the Tiny_UniProg.ino setup() function
@@ -230,6 +230,21 @@ void Print_Signatur_and_ChipName(uint16_t Signatur)
   printf(")\n");
 }
 
+//-------------------------------------------------
+void Print_12V_Value(uint16_t Val, uint8_t WithRaw)
+//-------------------------------------------------
+{
+  Serial.print(0.0279*Val+0.05, 1);
+  if (WithRaw)
+       {
+       Serial.print(F("V ("));
+       Serial.print(Val);
+       Serial.println(F(")"));
+       }
+  else Serial.println(F("V"));
+}
+
+
 //--------------------------
 void HV_Reset(uint8_t Quiet)
 //--------------------------
@@ -242,7 +257,10 @@ void HV_Reset(uint8_t Quiet)
   digitalWrite(PIN_HV_SDI, LOW);
   digitalWrite(PIN_HV_SII, LOW);
   digitalWrite(PIN_HV_SDO, LOW);
+  PORTD |= PIN_MSKD_GND;           // Discharge the capacitors                                                // 14.05.20:  Juergen
   onOff = 0;                       // 12v Off
+  delay(100);                                                                                                 //  "
+  PORTD &= PIN_MSKD_GND;                                                                                      //
   digitalWrite(PIN_POWER, HIGH);   // Vcc On
   delayMicroseconds(20);
   onOff = 1;                       // 12v On
@@ -253,7 +271,7 @@ void HV_Reset(uint8_t Quiet)
 
   if (!Quiet)
      {
-     Serial.print(F("Reset Voltage: ")); Serial.print(0.0279*analogRead(PIN_HV_AD_12V)+0.05, 1); Serial.println(F("V"));
+     Serial.print(F("Reset Voltage: ")); Print_12V_Value(analogRead(PIN_HV_AD_12V), 0);
      if (millis() >= TimeOut)
         Serial.println(F("Timeout generating reset voltage!\n"
                          "Hope that the actual voltage works also."));
@@ -269,23 +287,30 @@ void Write_or_Check_Reset_Fuse(int8_t Mode, uint8_t ProgMode)
 //  1 = Normal reset function
 //  0 = Reset pin as IO pin
 // -1 = Check the fuse
+//  2 = Default fuses                                                                                         // 07.02.20:
 // The persistent reset flags
 //   Pers.Flags.ResetNorm
 //   Pers.Flags.ResetAsIO
 // which controls the blue and white LED are set.
 //
 // If ProgMode is enabled no serial messages are generated
-// and end_pmode() is noz called
+// and end_pmode() is not called
 {
   FuseReset_setup();
   HV_Reset(ProgMode);
+  Set_LED_Error(0);                                                                                           // 07.02.20:
+  Set_LED_Reset_as_IO(0);                                                                                     //   "
+  Set_LED_Norm_ResetF(0);                                                                                     //   "
   Set_Error_Flag(0);
   Chip_Data_T Chip_Data;
   Chip_Data.Signatur = readSignature();
   if (!ProgMode)
      {
      Print_Signatur_and_ChipName(Chip_Data.Signatur);
-     Serial.print(F("Old Fuses:")); Read_and_Print_Fuses(Chip_Data);
+     if (Mode == -1)
+          Serial.print(F("Act Fuses:"));                                                                     // 07.02.20:
+     else Serial.print(F("Old Fuses:"));
+     Read_and_Print_Fuses(Chip_Data);
      }
   uint8_t Rstdisbl_Mask = 0;
   switch (Chip_Data.Signatur)
@@ -308,16 +333,19 @@ void Write_or_Check_Reset_Fuse(int8_t Mode, uint8_t ProgMode)
           {
           case  1: hfuse = Chip_Data.hfuse |  Rstdisbl_Mask; break; // Set   RSTDISBL fuse
           case  0: hfuse = Chip_Data.hfuse & ~Rstdisbl_Mask; break; // Clear RSTDISBL fuse
+          case  2: hfuse = 0xDF;                             break; // Default for ATTiny?4 and ATTiny?5      // 07.02.20:
           default: hfuse = Chip_Data.hfuse;                         // don't change the fuse just read it
           }
 
-       if (hfuse != Chip_Data.hfuse)
+       if (hfuse != Chip_Data.hfuse || Mode == 2)
             {
             writeFuse(HFUSE, hfuse);
             if (!ProgMode) { printf("New Fuses:"); Read_and_Print_Fuses(Chip_Data);}
             if (hfuse != Chip_Data.hfuse) Set_Error_Flag(1);
             }
        else if (Mode != -1 && !ProgMode) printf("Fuse already o.k.\n");
+
+       if (Mode == 2) writeFuse(LFUSE, 0x62); // Default for ATTiny?4 and ATTiny?5                            // 07.02.20:
 
        // Set the LED flags
        if (Chip_Data.hfuse & Rstdisbl_Mask)
@@ -329,10 +357,12 @@ void Write_or_Check_Reset_Fuse(int8_t Mode, uint8_t ProgMode)
   digitalWrite(PIN_HV_SCI, LOW);
   digitalWrite(PIN_POWER,  LOW);    // Vcc Off
   onOff = 0;                        // 12v Off
+  delay(50);                                                                                                  // 07.02.20:
   Save_Persist_Data();
-  /*if (!ProgMode) */end_pmode();
+  end_pmode();
+  digitalWrite(PIN_POWER, HIGH);    // Vcc on to be able to program it again                                  // 07.02.20: Without this programming was not possible if the button was pressed. is also turned on in setup()
+  digitalWrite(PIN_RESET, LOW);     // Turn off the reset transistor                                          //    "
 }
-
 
 
 //----------------------------------------
@@ -348,7 +378,8 @@ static uint32_t  Start_Press = 0;
        Serial.println(F("\nReset Pin:\n"
                         " Short press:    Check the actual reset fuse\n"
                         " > 0.5 secs:     Activate normal reset function\n"
-                        " Hold 2 seconds: Program reset pin as output\n"));
+                        " Hold 2 seconds: Program reset pin as output\n"
+                        " Hold 4 seconds: Program default fuses\n"));
        delay(50); // for debouncing
        }
   else {
@@ -376,19 +407,25 @@ static uint32_t  Start_Press = 0;
                                 "!!! Programming reset as output !!!\n"
                                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n"));
                //onOff = 1; // Das wird doch in HV_Reset() gemacht
-               Set_LED_Reset_as_IO(1); // To indicate that the button could be released
-               uint32_t t = millis();
+               uint32_t t, Start;
+               t = Start = millis();
                while(Read_Buttons_and_Jumper() == 3)
                  {
                  Upd_LED_Heartbeat();// Wait until the button is released
-                 if (millis() - t > 250)
+                 if (millis() - t > 250) // Flash To indicate that the button could be released
                     {
                     Set_LED_Reset_as_IO(!Get_LED_Reset_as_IO());
+                    if (millis() - Start > 4000) Set_LED_Norm_ResetF(!Get_LED_Reset_as_IO());                 // 07.02.20:
                     t = millis();
                     }
                  }
                onOff = 0;
-               Write_or_Check_Reset_Fuse(0, 0);
+               if (millis() - Start > 4000)                                                                   // 07.02.20:
+                    {
+                    Serial.println(F("*** Writing default fuses ***\n"));
+                    Write_or_Check_Reset_Fuse(2, 0); // Write default configuration in case some thing was wrong
+                    }
+               else Write_or_Check_Reset_Fuse(0, 0);
                }
           Button = 17; // is stored below to Old_Button.
           Set_LED_Read(0);

@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -71,9 +71,9 @@
  l      |                 |     ^   | [ ]A7              INT0/D2[ ] |--------'
  -------'                 |     '---| [ ]5V                  GND[ ] |
                           |         | [ ]RST                 RST[ ] |
-                          |  .-GND--| [ ]GND   5V MOSI GND   TX1[ ] |--------.
-                          |  |      | [ ]Vin   [ ] [ ] [ ]   RX1[ ] |        |
-                          |  |      |          [ ] [ ] [ ]          |        |
+                          |  .-GND--| [ ]GND   5V MOSI GND   TX1[ ] |--------*---[3.9K]--.
+                          |  |      | [ ]Vin   [ ] [ ] [ ]   RX1[ ] |        |           |
+                          |  |      |          [ ] [ ] [ ]          |        |          GND
                           |  |      |          MISO SCK RST         |        |
                           |  |      | NANO-V3                       |        |
                           |  |      +-------------------------------+        |
@@ -138,7 +138,12 @@
  Revision History:
  ~~~~~~~~~~~~~~~~~
  12.01.20:  - Improved the Check_Mainboard_Buttons() function
-
+ 01.05.20:  - Storing the status to the EEPROM (Functions from Juergen)
+ 05.05.20:  - Wait 1.5 seconds after booting to prevent flickering of the LEDs if the Arduino is detected from the excel program
+ 13.05.20:  - Started the SPI interface
+ 17.05.20:  - The SPI communication is no longer necessary since the TX LED Problem could also be
+              solved wit a 3.9K resistor between TX and ground.
+              The SPI functions are kept in the software but the are normally disabled by not defining USE_SPI_COM
 */
 
 #ifndef __LEDS_AUTOPROG_H__
@@ -154,6 +159,9 @@
 #define DCC_INPSTRUCT_START 0  // Start number in the InpStructArray[]
 
 #define SERIAL_BAUD     115200 // Should be equal to the DCC_Rail_Decoder_Transmitter.ino program
+
+#define DISABLE_SPI_DELAY 3000 // After this time the SPI pins are disabled if they are not used
+                               // The programm also sends a command to the DCC/SX slave to deactivate his pins
 
 #ifdef READ_LDR                // Enable the darkness detection functions
   #include "Read_LDR.h"        // process the darkness sensor
@@ -171,22 +179,56 @@
                                // If your program uses to much memory you get the following warning:
                                //   "Low memory available, stability problems may occur."
                                //
-                               // The files are listed in the Arduino IDE, but they tont use memory if USE_CAN_AS_INPUT is disabled
+                               // The files are listed in the Arduino IDE, but they don't use memory if USE_CAN_AS_INPUT is disabled
   #include <SPI.h>
   #include "Add_Message_to_Filter_nd.h"
-
-  #define LED_HEARTBEAT_PIN 17 // The build in LED can't be use because the pin is used as clock port for the SPI bus
+  #ifndef LED_HEARTBEAT_PIN
+     #define LED_HEARTBEAT_PIN A3 // The build in LED can't be use because the pin is used as clock port for the SPI bus
+  #endif
 #else // not USE_CAN_AS_INPUT
-  #define LED_HEARTBEAT_PIN 13 // Build in LED
+  #ifndef LED_HEARTBEAT_PIN
+    #define LED_HEARTBEAT_PIN  13 // Build in LED
+  #endif
 #endif
+
+#ifdef USE_SPI_COM                                                                                            // 13.05.20:
+  #ifdef USE_CAN_AS_INPUT
+     #error "USE_CAN_AS_INPUT can't be used together with USE_CAN_AS_INPUT"
+  #endif
+  #ifndef LED_HEARTBEAT_PIN
+    #define LED_HEARTBEAT_PIN A3 // The build in LED can't be use because the pin is used as clock port for the SPI bus
+  #endif
+  #include <SPI.h>
+#endif // USE_SPI_COM
 
 CRGB leds[NUM_LEDS];           // Define the array of leds
 
-MobaLedLib_Create(leds);       // Define the MobaLedLib instance
-LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
+#if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                               // 19.05.20: Juergen
+  void On_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue);
+  MobaLedLib_CreateEx(leds, On_Callback);       // Define the MobaLedLib instance
+#else
+  MobaLedLib_Create(leds);       // Define the MobaLedLib instance
+#endif
 
-char Buffer[13] = "";
 
+
+#if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0
+  LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
+#endif
+
+#if defined USE_SPI_COM                                                                                       // 13.05.20:
+  char Buffer[2][13] = {"",""};
+#else
+  char Buffer[1][13] = {""};
+#endif
+
+bool Send_Disable_Pin_Active = 1;                                                                             // 13.05.20:
+
+
+#if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20:  New feature from Juergen
+    #define EEPROM_START 0
+    void StoreStatus(uint16_t EEPromAddr, uint8_t status);                                                    // 01.05.20:
+#endif
 
 #ifdef RECEIVE_LED_COLOR_PER_RS232
 //-------------------------------------
@@ -217,13 +259,15 @@ void (* ResetArduino)(void) = 0; // Restart the Arduino
 void Receive_LED_Color_per_RS232()                                                                            // 03.11.19:
 //--------------------------------
 {
-  digitalWrite(SEND_DISABLE_PIN, 1); // Tell the DCC Arduino to be quiet
+  if (Send_Disable_Pin_Active) digitalWrite(SEND_DISABLE_PIN, 1); // Tell the DCC Arduino to be quiet         // 13.05.20:  Added: if (Send_Disable_Pin_Active)
 
   char Buffer[20] = "";
   uint8_t JustStarted = 1;
   while (1)
      {
-     LED_HeartBeat.Update(300); // Fast Flash
+     #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0                                                  // 13.05.20:
+       LED_HeartBeat.Update(300); // Fast Flash
+     #endif
      if (Serial.available() > 0)
         {
         char c = Serial.read();
@@ -259,7 +303,7 @@ void Receive_LED_Color_per_RS232()                                              
         }
      }
 }
-#endif
+#endif // RECEIVE_LED_COLOR_PER_RS232
 
 #ifdef USE_EXT_ADDR
   /*
@@ -350,12 +394,197 @@ void Receive_LED_Color_per_RS232()                                              
          }
      //char s[30];sprintf(s, "Addr %i not found Dir:%i", ReceivedAddr, Direction); Serial.println(s);  // Debug
    }
+
 #endif // USE_EXT_ADDR
 
-#if defined USE_RS232_AS_INPUT
-   //----------------
-   void Proc_Buffer()
-   //----------------
+
+#if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                     // 19.05.20: Juergen
+// if function returns TRUE the calling loop stops
+
+   //-----------------------------------------------------------------------------------------------
+   void ForAllStoreValues(uint8_t ValueType, uint8_t ValueId, uint8_t* Value, HandleValue_t handler)
+   //-----------------------------------------------------------------------------------------------
+   {
+     uint16_t EEPromAddr = EEPROM_START;
+     uint16_t tmp;
+     for (const uint8_t *p = (const uint8_t*)Store_Values, *e = p + sizeof(Store_Values); p < e; )
+         {
+         tmp = pgm_read_word_near(p); p += 2;
+         if (handler(ValueType, ValueId, Value, EEPromAddr, tmp>>8, tmp)) break;
+         EEPromAddr++;
+         }
+   }
+
+   //--------------------------------------------------------------------------------------------------------------------------------------
+   bool Handle_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t* Value, uint16_t EEPromAddr, uint8_t TargetValueId, uint8_t Options)
+   //--------------------------------------------------------------------------------------------------------------------------------------
+   {
+     #if defined(DEBUG_STORE_STATUS) && 1
+       { char s[80]; sprintf(s, "Handle callback type %d for %d. %d@EEAdr %d=%d options=0x%02X", CallbackType, ValueId, TargetValueId, EEPromAddr, *Value, Options); Serial.println(s); } // Debug
+     #endif
+     if (CallbackType == CT_COUNTER_CHANGED || CallbackType == CT_COUNTER_INITIAL)
+        {
+        if ((Options & IS_COUNTER) != IS_COUNTER) return false;
+        if (ValueId != TargetValueId) return false;
+        if (CallbackType == CT_COUNTER_INITIAL)
+           {
+           eeprom_busy_wait();
+           *Value = eeprom_read_byte((const uint8_t*)EEPromAddr);
+           #if defined(DEBUG_STORE_STATUS) && 1
+             { char s[80]; sprintf(s, "Initialite Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); } // Debug
+           #endif
+           }
+
+        #if defined(DEBUG_STORE_STATUS) && 1
+          { char s[80]; sprintf(s, "Store Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); } // Debug
+        #endif
+        StoreStatus(EEPromAddr, *Value);
+        return true;
+        }
+     if (CallbackType == CT_CHANNEL_CHANGED)
+        {
+        bool IsToggle = (Options & IS_PULSE) != IS_PULSE;
+        uint8_t InCnt = Options & InCnt_MSK;
+        #if defined(DEBUG_STORE_STATUS) && 0
+           Serial.print("Store Channel:"); Serial.print(StoreChannel); // Debug
+           Serial.print(" IsToggle:");     Serial.print(IsToggle);     // Debug
+           Serial.print(" InCnt:");        Serial.print(InCnt);        // Debug
+           Serial.print(" Tmp:");          Serial.println(tmp);        // Debug
+        #endif
+        if (ValueId < TargetValueId || ValueId >= TargetValueId + InCnt) return false;
+        uint8_t status = 0;
+
+        if (IsToggle)
+           {
+           for (uint8_t cnt = InCnt; cnt > 0;)
+               {
+               cnt--;
+               byte tmp = MobaLedLib.Get_Input(TargetValueId + cnt);
+               tmp = (tmp == INP_ON || tmp == INP_TURNED_ON) ? 1 : 0;
+               #if defined(DEBUG_STORE_STATUS) && 0
+                   char s[80]; sprintf(s, "State of InCh %d=%d", InCh+cnt, tmp); Serial.println(s);  // Debug
+               #endif
+               status = (status << 1) + tmp;
+               }
+           #if defined(DEBUG_STORE_STATUS) && 0
+               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); } // Debug
+           #endif
+           }
+        else // pulse type
+           {
+           if (*Value != INP_ON && *Value != INP_TURNED_ON) return false;
+           status = ValueId - TargetValueId;
+           #if defined(DEBUG_STORE_STATUS) && 0
+               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); } // Debug
+           #endif
+           }
+        StoreStatus(EEPromAddr, status);
+        return true;
+        }
+
+     return false;
+   }
+
+   //------------------------------------------------------------------------------------------
+   void On_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue)
+   //------------------------------------------------------------------------------------------
+   {
+     if (     (CallbackType == CT_CHANNEL_CHANGED && ((OldValue > 0) != (*NewValue > 0)))
+           || (CallbackType == CT_COUNTER_CHANGED &&  (OldValue != *NewValue))
+           ||  CallbackType == CT_COUNTER_INITIAL)
+        {
+        #if defined(DEBUG_STORE_STATUS) && 1
+           if (CallbackType == CT_CHANNEL_CHANGED)
+              { char s[80]; sprintf(s, "On_Value_Changed: channel %d changed from %d to %d", ValueId, OldValue, *NewValue); Serial.println(s); } // Debug
+           else if (CallbackType == CT_COUNTER_CHANGED)
+                   { char s[80]; sprintf(s, "On_Value_Changed: counter %d changed from %d to %d", ValueId, OldValue, *NewValue); Serial.println(s); } // Debug
+        #endif
+        ForAllStoreValues(CallbackType, ValueId, NewValue, Handle_Callback);
+        #if defined(DEBUG_STORE_STATUS) && 1
+           if (CallbackType == CT_COUNTER_INITIAL)
+              {
+              char s[80]; sprintf(s, "On_Counter_Init: counter %d set to %d", ValueId, *NewValue); Serial.println(s);
+              } // Debug
+        #endif
+        }
+   };
+
+   //-----------------------------------------------------------------------------------------------------------------------------------------
+   bool Handle_Restore_Status(uint8_t ValueType, uint8_t ValueId, uint8_t* Value, uint16_t EEPromAddr, uint8_t TargetValueId, uint8_t Options)
+   //-----------------------------------------------------------------------------------------------------------------------------------------
+   {
+     #if defined(DEBUG_STORE_STATUS) && 1
+       { char s[80]; sprintf(s, " restore state for %d@EEAdr %d, options=0x%02X", TargetValueId, EEPromAddr, Options); Serial.println(s); } // Debug
+     #endif
+     if ((Options & IS_COUNTER) == IS_COUNTER) return false;
+
+     eeprom_busy_wait();
+     uint8_t status = eeprom_read_byte((const uint8_t*)EEPromAddr);
+     uint8_t InCnt = Options & InCnt_MSK;
+     if (status > (1 << InCnt))
+        {
+        #if defined(DEBUG_STORE_STATUS) && 1
+          { char s[80]; sprintf(s, " don't restore state, stored status for InCh %d@EEAdr %d=%d is invalid", TargetValueId, EEPromAddr, status); Serial.println(s); } // Debug
+        #endif
+        return false;
+        }
+     #if defined(DEBUG_STORE_STATUS) && 1
+       { char s[80]; sprintf(s, " stored status for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); } // Debug
+     #endif
+     if ((Options & IS_PULSE) != IS_PULSE)
+          {
+          for (uint8_t cnt = 0; cnt < InCnt; cnt++)
+              {
+              MobaLedLib.Set_Input(TargetValueId + cnt, status & 0x01);
+              status = status >> 1;
+              }
+          }
+     else {
+          MobaLedLib.Set_Input(TargetValueId + status, 1);
+          }
+     return false;
+   }
+
+   //-----------------------------------------------------------------------------------------------
+   void RestoreStatus()
+   //-----------------------------------------------------------------------------------------------
+   {
+     #if defined(DEBUG_STORE_STATUS) && 1
+       Serial.println("Restore last state begin"); // Debug
+     #endif
+     ForAllStoreValues(0, 0, 0, Handle_Restore_Status);
+     #if defined(DEBUG_STORE_STATUS) && 1
+       Serial.println("Restore last state done"); // Debug
+     #endif
+   }
+
+   //------------------------------------------------------------------------------------------------------------------------------------
+   void StoreStatus(uint16_t EEPromAddr, uint8_t status) // 17.04.20:
+   //------------------------------------------------------------------------------------------------------------------------------------
+   {
+     #if defined(DEBUG_STORE_STATUS) && 0
+       { char s[80];sprintf(s, "store status for EEAdr %i value:%i", EEPromAddr, value); Serial.println(s);}  // Debug
+     #endif
+     uint8_t eeValue = eeprom_read_byte((const uint8_t*)EEPromAddr);
+     #if defined(DEBUG_STORE_STATUS) && 0
+       { char s[80]; sprintf(s, " read ActualVal for EEAdr%i=%d", EEPromAddr, eeValue); Serial.println(s); }  // Debug
+     #endif
+     if (eeValue != status)
+        {
+        #if defined(DEBUG_STORE_STATUS) && 1
+           { char s[80]; sprintf(s, " updating status for EEAdr %d=%d", EEPromAddr, status); Serial.println(s); } // Debug
+        #endif
+        eeprom_busy_wait();
+        eeprom_write_byte((uint8_t*)EEPromAddr, status);
+        }
+   }
+#endif // ENABLE_STORE_STATUS                                                                                 // 01.05.20:
+
+
+#if defined USE_RS232_OR_SPI_AS_INPUT
+   //----------------------------
+   void Proc_Buffer(char *Buffer)                                                                             // 13.05.20:  Added: Buffer
+   //----------------------------
    {
      uint16_t Addr, Direction, OutputPower, State;
      //Serial.println(Buffer); // Debug
@@ -378,7 +607,144 @@ void Receive_LED_Color_per_RS232()                                              
    }
 #endif
 
-#if defined USE_RS232_AS_INPUT || defined RECEIVE_LED_COLOR_PER_RS232
+#ifdef USE_SPI_COM                                                                                            // 13.05.20:
+  /*
+  SPI Kommunikation:
+  - wird parallel zur RS232 Kommunikation benutzt, weil:
+    - es sein kann, dass der Jumper J13 nicht verbunden wurde
+    - die LED Kommandos von Windows weiterhin per RS232 kommen (Excel/Farbtest/...)
+  - Wenn der SPI Modus funktioniert, dann wird die A1 Leitung deaktiviert.
+    Das wird auf beiden Arduinos gemacht damit die Leitung für andere Zwecke genutzt werden kann
+    Zu Programmstart schickt der LED Arduino eine 6 (ACK) und eine 0 zum DCC Arduino. Dieser
+    Antwortet auf das zweite Zeichen mit 0xF9. Daran erkennt man, das die richtige Software
+    auf dem anderen Arduino läuft.
+
+  - Beim SPI Bus werden gesendete und empfangene Daten gleichzeitig übertragen.
+    Der Master schickt ein Byte und gleichzeitig wird ein Byte vom Slave empfangen.
+    => Der Slave muss das erste zu Sendende Byte bereits im SPDR Register ablegen bevor der Master
+      die erste Anfrage schickt.
+
+  - Das SPI Modul kann unabhängig von USE_RS232_OR_SPI_AS_INPUT und RECEIVE_LED_COLOR_PER_RS232 aktiviert werden
+    damit man dem DCC/Selectrix Nano sagen kann, dass er die A1 Leitung Leitungen freigeben soll
+    damit diese im LED Programm benutzt werden können. Dazu schickt der LED Arduino das Byte 6 an
+    den DCC/Selectrix Nano.
+
+  - Automatische deaktivierung der SPI und der A1 Leitung:
+    Der DCC/Selectrix Nano deaktiviert seine SPI Leitungen, wenn er drei Sekunden lang
+    keine SPI Anfragen bekommt damit die Pins am DCC Arduino für die Schalter genutzt
+    werden können.
+    Der SPI Mode wird wieder aktiviert, wenn High am Pin 13 erkannt wird. Das passiert beim Booten
+    des LED Arduinos automatisch. Beim neuen Bootloader blinkt die LED 3 mal mit 125 ms Periodendauer.
+    Beim alten Bootloader ist sie einmal für 100 ms an. Aber das ist nur dann so wenn das LED Programm
+    darauf installiert ist wenn das "BareMinimum" Programm installiert wird, dann blinkt nichts ?!?
+
+  - Wenn Der DCC/Selectrix Nano einmal das SPI Kommando Nr 6 empfangen hat wird der A1 Pin deaktiviert.
+
+  - Wenn der SPI Mode aktiv ist, dann können die eingebauten LEDs 'L' an D13 der Arduinos nicht benutzt
+    werden weil sie gleichzeitig leuchten würden.
+
+  Die SPI Kommunikation wird momentan nicht verwendet weil das TX LED Problem auch über einen 3.9K Widerstang
+  der gehen Masse geschaltet ist lösen kann. => 3 Tage Arbeit für die Katz ;-(
+  */
+
+  //----------------
+  void Disable_SPI()
+  //----------------
+  {
+    SPI.end();
+    pinMode(SS, INPUT);
+    pinMode(11, INPUT);  // SPI SI pin
+    pinMode(13, INPUT);  // SPI CLK pin
+  }
+
+  //---------------------------------------------------
+  void Check_SPI_Slave(uint8_t Disable_SPI_if_Detected)
+  //---------------------------------------------------
+  // Check if the correct SPI slave is available
+  // The check is performed every 200ms until a slave is detected
+  // If Disable_SPI_if_Detected is set to 1 the SPI comunication in the LED Arduino is disabled
+  {
+    if (Send_Disable_Pin_Active)
+       {
+       static uint8_t LastCheck = 0;
+       if ((uint8_t)((millis() & 0xFF) - LastCheck) > 200)
+          {
+          LastCheck = millis() & 0xFF;
+          Read_SPI_Char(6); //+Disable_SPI_if_Detected); // The Slave will send 0xF9/0xFAwith the next request
+          if (Read_SPI_Char(0) == 0xF9) //+Disable_SPI_if_Detected)
+             {
+             Serial.println(F("Disabled A1 function")); // Debug
+             Send_Disable_Pin_Active = 0;
+             pinMode(SEND_DISABLE_PIN, INPUT);
+             if (Disable_SPI_if_Detected) Disable_SPI();
+             }
+          }
+       }
+  }
+
+  //-------------------------------------
+  uint8_t Read_SPI_Char(uint8_t SendChar)
+  //-------------------------------------
+  {
+    digitalWrite(SS, LOW);   // Starts communication with the SPI slave (DCC/Selectrix Arduino)
+    //if (Send_Disable_Pin_Active == 0)    // RS232 communication is disabled => A valid SPI answer has been receifed in Check_SPI_Slave()
+         return SPI.transfer(SendChar);  // Send 0 to slave and receives value from slave
+    //else return 0;
+  }
+#endif // USE_SPI_COM
+
+
+
+
+#if defined USE_RS232_OR_SPI_AS_INPUT || defined RECEIVE_LED_COLOR_PER_RS232
+   #if defined USE_RS232_OR_SPI_AS_INPUT && defined USE_SPI_COM   // USE_SPI_COM is enabled if the DCC/SX arduino also uses SPI,
+                                                                  // but without DCC commands the USE_RS232_OR_SPI_AS_INPUT is not active
+                                                                  // In this case the DCC Arduino disables the SPI communication
+                                                                  // to be able to use the pins in the LED Arduino for switches
+      //--------------------------------------------------------
+      bool Get_Char_from_RS232_or_SPI(char &c, uint8_t &Buff_Nr)
+      //--------------------------------------------------------
+      {
+        //PORTB &= ~3; // Disable D8 & D9   Debug Speed Test
+        //DDRB  |=  3; // OUTPUT
+        //PORTB |=  1;
+
+        c = Read_SPI_Char(0);
+        if (c)
+             {
+             Buff_Nr = 1;
+             //PORTB |= 3;        // Debug Speed Test
+             return 1;
+             }
+        else {
+             Buff_Nr = 0;
+             if (Serial.available() > 0)
+                  {
+                  c = Serial.read();
+                  //PORTB |= 3;   // Debug Speed Test
+                  return 1;
+                  }
+             else {
+                  //PORTB &= ~3;  // Debug Speed Test
+                  return 0;
+                  }
+             }
+      }
+   #else // Only RECEIVE_LED_COLOR_PER_RS232
+      //--------------------------------------------------------
+      bool Get_Char_from_RS232_or_SPI(char &c, uint8_t &Buff_Nr)
+      //--------------------------------------------------------
+      {
+        Buff_Nr = 0;
+        if (Serial.available() > 0)
+             {
+             c = Serial.read();
+             return 1;
+             }
+        else return 0;
+      }
+   #endif // USE_RS232_OR_SPI_AS_INPUT
+
    //-----------------------
    void Proc_Received_Char()
    //-----------------------
@@ -398,49 +764,51 @@ void Receive_LED_Color_per_RS232()                                              
           }
      #endif
 
-     while (Serial.available() > 0)
-        {
-        char c = Serial.read();
-        // Serial.print(c); // Debug
-        switch (c)
-           {
-           #if defined RECEIVE_LED_COLOR_PER_RS232
-              case '#': Receive_LED_Color_per_RS232(); break; // The first '#' is used to enable the serial color change mode  // 03.11.19:
-           #endif
-           #if defined USE_RS232_AS_INPUT
-             case '@':
-             case '$': if (*Buffer) Serial.println(F(" Unterm. Error"));
-                       *Buffer = c; Buffer[1] = '\0';
+     char c;
+     uint8_t Buff_Nr;
+     while (Get_Char_from_RS232_or_SPI(c, Buff_Nr))
+       {
+       //Serial.print(c); // Debug
+       switch (c)
+          {
+          #if defined RECEIVE_LED_COLOR_PER_RS232
+             case '#': if (Buff_Nr==0) Receive_LED_Color_per_RS232(); // The first '#' is used to enable the serial color change mode  // 03.11.19:  // 13.05.20:  Added: if (Buff_Nr==0)
                        break;
-             default:  // Other characters
-                       uint8_t ExpLen;
-                       switch(*Buffer)
-                          {
-                          case '@': ExpLen = 11; break;
-                          case '$': ExpLen =  8; break;
-                          default : ExpLen =  0;
-                                    Serial.print(c); // Enable this line to show status messages from the DCC-Arduino
-                          }
-                       if (ExpLen)
-                          {
-                          uint8_t len = strlen(Buffer);
-                          if (len < ExpLen)
-                               {
-                               Buffer[len++] = c;
-                               Buffer[len]   = '\0';
-                               }
-                          else {
-                               if (c != '\n')
-                                    Serial.println(F(" Length Error"));
-                               else Proc_Buffer();
-                               *Buffer = '\0';
-                               }
-                          }
-           #endif // USE_RS232_AS_INPUT
-           }
-        }
+          #endif
+          #if defined USE_RS232_OR_SPI_AS_INPUT
+            case '@':
+            case '$': if (*Buffer[Buff_Nr]) Serial.println(F(" Unterm. Error"));                             // 13.05.20:  Added [Buff_Nr] to all Buffer usages in this and the following lines
+                      *Buffer[Buff_Nr] = c; Buffer[Buff_Nr][1] = '\0';
+                      break;
+            default:  // Other characters
+                      uint8_t ExpLen;
+                      switch(*Buffer[Buff_Nr])
+                         {
+                         case '@': ExpLen = 11; break;
+                         case '$': ExpLen =  8; break;
+                         default : ExpLen =  0;
+                         Serial.print(c); // Enable this line to show status messages from the DCC-Arduino
+                         }
+                      if (ExpLen)
+                         {
+                         uint8_t len = strlen(Buffer[Buff_Nr]);
+                         if (len < ExpLen)
+                              {
+                              Buffer[Buff_Nr][len++] = c;
+                              Buffer[Buff_Nr][len]   = '\0';
+                              }
+                         else {
+                              if (c != '\n')
+                                   Serial.println(F(" Length Error"));
+                              else Proc_Buffer(Buffer[Buff_Nr]);
+                              *Buffer[Buff_Nr] = '\0';
+                              }
+                         }
+          #endif // USE_RS232_OR_SPI_AS_INPUT
+          }
+       }
    }
-#endif // USE_RS232_AS_INPUT || RECEIVE_LED_COLOR_PER_RS232
+#endif // USE_RS232_OR_SPI_AS_INPUT || RECEIVE_LED_COLOR_PER_RS232
 
 #ifdef USE_CAN_AS_INPUT
 
@@ -519,8 +887,8 @@ void Receive_LED_Color_per_RS232()                                              
      {
      #define FIRST_FLAG 0x80
      static uint8_t  LastKey   = FIRST_FLAG; // At the beginning the Inputs are read in case the start value is set to 1 in the excel sheet
-     static uint32_t NextCheck = 0;
      uint8_t Mask = 0; // Mask is used in addition as Flag for the periodic button check
+     static uint32_t NextCheck = 0;
      if (millis() >= NextCheck)
         {
         Mask = 1;
@@ -568,7 +936,20 @@ void Receive_LED_Color_per_RS232()                                              
 //-----------
 void setup(){
 //-----------
-  FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
+  #ifdef SETUP_FASTLED // Use a special FastLED Setup macro defined in the LEDs_AutoProg.h                    // 26.04.20:
+    SETUP_FASTLED();
+
+    #ifdef COLOR_CORRECTION                                                                                   // 17.04.20:  New feature from Jürgen
+      controller0.setCorrection(COLOR_CORRECTION); // Attention: Can't be used with Servos, Sound Modules, Charliplexing, ...
+    #endif
+  #else
+    CLEDController& controller = FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS); // Initialize the FastLED library
+    controller.clearLeds(256);                                                                                // 13.04.20: Uses only 12 Bytes!
+
+    #ifdef COLOR_CORRECTION                                                                                   // 17.04.20:  New feature from Jürgen
+      controller.setCorrection(COLOR_CORRECTION); // Attention: Can't be used with Servos, Sound Modules, Charliplexing, ...
+    #endif
+  #endif
 
   Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
 
@@ -581,10 +962,10 @@ void setup(){
   #endif                                                               //   "Error ARDUINO is not answering"
 
 //  #define GCC_VERSION (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)
-//  Serial.print("GCC_VERSION:"); Serial.println(GCC_VERSION);
+//  Serial.print(F("GCC_VERSION:")); Serial.println(GCC_VERSION);
 
 
-  #ifdef USE_RS232_AS_INPUT
+  #ifdef USE_RS232_OR_SPI_AS_INPUT
     pinMode(SEND_DISABLE_PIN, OUTPUT);
     digitalWrite(SEND_DISABLE_PIN, 0);
   #endif
@@ -603,7 +984,17 @@ void setup(){
     else Serial.println(F("CAN Init Fail!"));                    //    => Messages matching 0x0016???? are passed
   #endif
 
+  #ifdef USE_SPI_COM                                                                                          // 13.05.20:
+    SPI.begin();                         // Begins the SPI commnuication
+    SPI.setClockDivider(SPI_CLOCK_DIV8); // Sets clock for SPI communication at 8 (16/8=2Mhz)
+    digitalWrite(SS,HIGH);               // Setting SlaveSelect as HIGH (So master doesnt connnect with slave)
+  #endif
+
   Set_Start_Values(MobaLedLib); // The start values are defined in the "MobaLedLib.h" file if entered by the user
+
+  #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                              // 19.05.20: Juergen
+    RestoreStatus();
+  #endif
 
   #if defined TEST_TOGGLE_BUTTONS || defined TEST_PUSH_BUTTONS
     Setup_Toggle_Buttons();
@@ -612,6 +1003,32 @@ void setup(){
   #ifdef READ_LDR
     Init_DarknessSensor(LDR_PIN); // Attention: The analogRead() function can't be used together with the darkness sensor !
   #endif
+
+  #ifdef USE_ADDITIONAL_SETUP_PROC
+    Additional_Setup_Proc();                                                                                  // 31.03.20:
+  #endif
+
+  #ifdef DUMP_EEPROM_ON_START                                                                                 // 01.05.20:
+    char tmp[5];
+
+    Serial.println("Dump off EEProm content");
+    for (uint16_t eeAddr = 0; eeAddr < 1024; eeAddr++)
+    {
+        if ((eeAddr&0x0f) == 0)
+        {
+            Serial.println();
+            sprintf(tmp, "%04x", eeAddr);
+            Serial.print(tmp);
+        }
+        eeprom_busy_wait();
+        uint8_t value = eeprom_read_byte((const uint8_t*)eeAddr);
+        sprintf(tmp, " %02x", value);
+        Serial.print(tmp);
+    }
+    Serial.println();
+  #endif
+
+  if (millis() < 1500) delay(1500 - millis()); // Wait to prevent flickering if the Arduino is detected from the excel program  // 05.05.20:
 }
 
 #if defined READ_LDR && defined READ_LDR_DEBUG
@@ -638,19 +1055,45 @@ void setup(){
   }
 #endif // READ_LDR_DEBUG
 
+
 //-----------
 void loop(){
 //-----------
-  LED_HeartBeat.Update();
+  #ifdef Additional_Loop_Proc
+    #ifdef USE_SPI_COM
+    if (millis() > DISABLE_SPI_DELAY + 50) // Wait until the SPI pins are disabled in case they are not used
+    #endif
+       {
+       Additional_Loop_Proc();                                                                                // 31.03.20:
+       }
+  #endif
+
+  #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0                                                     // 13.05.20:
+    LED_HeartBeat.Update();
+  #endif
 
   MobaLedLib.Update();                  // Update the LEDs in the configuration
 
-  #if defined USE_RS232_AS_INPUT || defined RECEIVE_LED_COLOR_PER_RS232
+  #if defined USE_RS232_OR_SPI_AS_INPUT || defined RECEIVE_LED_COLOR_PER_RS232
     Proc_Received_Char();               // Process characters received from the RS232 (DCC, Selectrix, ... Arduino)
   #endif
 
-  #if defined USE_RS232_AS_INPUT
-    digitalWrite(SEND_DISABLE_PIN, 1);  // Stop the sending of the DCC-Arduino because the RS232 interrupts are not processed during the FastLED.show() command
+  #if defined USE_SPI_COM               // Check if the SPI Slave is available to be able to use the A1 pin       // 15.05.20:
+    #if defined USE_RS232_OR_SPI_AS_INPUT      // If SPI communication is used this check is always sent in case the DCC Arduino was restarted
+       Check_SPI_Slave(0);              // The slave will deactivate the pull-Up resistor in the A1 line
+    #else
+      if (millis() < DISABLE_SPI_DELAY) // Give the DCC/SX Arduino some time to boot
+           Check_SPI_Slave(1);          // The slave will deactivate the pull-Up resistor in the A1 line
+      else if (Send_Disable_Pin_Active)
+              {
+              Send_Disable_Pin_Active = 0;
+              Disable_SPI();
+              }
+    #endif
+  #endif
+
+  #if defined USE_RS232_OR_SPI_AS_INPUT
+    if (Send_Disable_Pin_Active) digitalWrite(SEND_DISABLE_PIN, 1);  // Stop the sending of the DCC-Arduino because the RS232 interrupts are not processed during the FastLED.show() command  // 13.05.20:  Added: if (Send_Disable_Pin_Active)
   #endif
 
   #if defined TEST_TOGGLE_BUTTONS || defined TEST_PUSH_BUTTONS
@@ -664,8 +1107,8 @@ void loop(){
 
   FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
 
-  #ifdef USE_RS232_AS_INPUT
-    digitalWrite(SEND_DISABLE_PIN, 0);  // Allow the sending of the DCC commands again
+  #ifdef USE_RS232_OR_SPI_AS_INPUT
+    if (Send_Disable_Pin_Active) digitalWrite(SEND_DISABLE_PIN, 0);  // Allow the sending of the DCC commands again  // 13.05.20:  Added: if (Send_Disable_Pin_Active)
   #endif
 
   #if defined READ_LDR && defined READ_LDR_DEBUG

@@ -1,0 +1,481 @@
+SheetName¯Status_Button
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯3
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯0
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button
+Dauer¯0.4 Sec
+Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯¯¯G2¯SP¯¯¯¯¯¯¯G3¯SP¯¯¯¯¯¯¯¯¯G4¯SP¯¯¯¯¯¯¯¯¯¯¯G5
+LED_Tab¯LED 1¯1¯x¯¯¯¯x¯¯x¯¯¯¯x¯¯x¯¯x¯¯¯.¯x¯¯x¯¯x¯¯x¯¯¯.¯x¯¯x¯¯x¯¯x¯¯x¯¯¯.
+LED_Tab¯¯0¯1¯¯¯¯2¯¯¯¯¯¯3¯¯¯¯¯¯¯¯4¯¯¯¯¯¯¯¯¯¯5
+LED_Attr¯13.5¯
+LED_Attr¯15¯¯i13553360¯i8696052¯i8696052¯i8696052¯i8696052¯i6740479¯i6740479¯i6740479¯i6740479¯i6740479¯i6740479¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i9359529¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i1137094¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022¯i11854022
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;767.4421;170.0042¯Voorbeeld van statusknop.
+De "Status_Button" toont een bijzonder indrukwekkend voorbeeld van het gebruik van de "Goto" -functie. Met de patroonconfiguratie moeten knoppen worden geïmplementeerd die verschillende statussen hebben. Afhankelijk van het aantal keren dat een knop wordt ingedrukt, moeten verschillende acties worden geactiveerd.
+Deze knoppen bevinden zich aan de rand van het systeem in de buurt van speciale attracties. Bezoekers kunnen een of meer functies activeren door op de knop te drukken.
+Men kent deze "drukknopacties" ook uit Miniworld Rotterdam.
+Er is een LED in de drukknop die de huidige status moet aangeven door middel van een knipperende code. Als de knop eenmaal wordt ingedrukt, licht de knop eenmaal op, gevolgd door een pauze. Als de knop een tweede keer wordt ingedrukt, knippert de LED tweemaal ... 5 verschillende statussen worden ondersteund. Ze zijn gemarkeerd met de vermelding "S" in de tabel "Ga naar". In de LED1-lijn kunt u zien dat de lamp één, twee en maximaal vijf keer knippert. Op een van de gebieden springt het commando "G" terug naar het begin van het blok. Dit herhaalt de reeks totdat een ander startcommando komt.
+Een andere functie is te zien in kolom 1. Hier is de helderheid van de LED = 1. Dit betekent dat deze zwak oplicht wanneer uitgeschakeld, zodat de knop ook in het donker kan worden gevonden.{Attrib}B1,24
+msoTextBox1¯492.75;0;767.4421;142.8818¯Status button example
+The "Status_Button" shows a particularly impressive example of the use of the "Goto" function. With the pattern configuration buttons are to be implemented which have different states. Depending on the number of times a button is pressed, various actions are to be triggered. These buttons are placed on the edge of the system near special attractions. Visitors can trigger one or more functions by pressing the button. One knows these "push button actions" from the miniature wonderland.
+There is an LED in the push button which should indicate the current status by means of a flashing code. If the button is pressed once, the button lights up once followed by a pause. If the button is pressed a second time, the LED flashes twice ...
+5 different states are supported. They are marked with the "S" entry in the "Goto" table. In the LED1 line you can see that the lamp flashes once, twice and up to five times. At one of the areas, the "G" command jumps back to the beginning of the block. This repeats the sequence until another start command comes.
+Another feature can be seen in column 1. Here the brightness of the LED = 1. This means that it lights up weakly when switched off so that the button can also be found in the dark.{Attrib}B1,22
+msoTextBox3¯492.75;0;767.4421;142.8818¯Status button example
+The "Status_Button" shows a particularly impressive example of the use of the "Goto" function. With the pattern configuration buttons are to be implemented which have different states. Depending on the number of times a button is pressed, various actions are to be triggered. These buttons are placed on the edge of the system near special attractions. Visitors can trigger one or more functions by pressing the button. One knows these "push button actions" from the miniature wonderland.
+There is an LED in the push button which should indicate the current status by means of a flashing code. If the button is pressed once, the button lights up once followed by a pause. If the button is pressed a second time, the LED flashes twice ...
+5 different states are supported. They are marked with the "S" entry in the "Goto" table. In the LED1 line you can see that the lamp flashes once, twice and up to five times. At one of the areas, the "G" command jumps back to the beginning of the block. This repeats the sequence until another start command comes.
+Another feature can be seen in column 1. Here the brightness of the LED = 1. This means that it lights up weakly when switched off so that the button can also be found in the dark.{Attrib}B1,22
+msoTextBox0¯492.75;0;767.4421;190.1653¯Status Button Beispiel
+Besonders eindrucksvoll zeigt das „Status_Button“ Beispiel der Anwendung der „Goto“ Funktion. Mit der Pattern Konfiguration sollen Knöpfe implementiert werden welche verschiedene Zustände besitzen. Abhängig von der Anzahl der Betätigungen eines Tasters sollen verschiedene Aktionen ausgelöst werden. Diese Taster werden am Anlagenrand in der Nähe besonderer Attraktionen platziert. Die Besucher können durch einen Druck auf den Taster eine oder mehrere Funktionen auslösen. Man kennt diese „Druckknopf Aktionen“ aus dem Miniatur Wunderland. 
+In dem Druckknopf befindet sich eine LED welche den aktuellen Zustand durch einen Blinkkode anzeigen soll. Wenn die Taste einmal gedrückt wird, dann leuchtet der Taster einmal gefolgt von einer Pause. Wird die Taste dann ein zweites Mal betätigt, dann Blinkt die LED zweimal…
+Es werden 5 verschiedene Zustände unterstützt. Sie werden über den „S“ Eintrag in der „Goto“ Tabelle markiert. In der LED1 Zeile sieht man, dass die Lampe ein-, zwei- und bis zu fünfmal blinkt. Am Eine eines Bereichs wird mit dem „G“ Befehl wieder zum Anfang des Blocks gesprungen. Damit wird die Sequenz so lange wiederholt bis ein anderer Start Befehl kommt.
+Ein weiteres Feature erkennt man an der Spalte 1. Hier ist die Helligkeit der LED = 1. Damit leuchtet diese im ausgeschalteten Zustand schwach damit man den Taster auch bei Dunkelheit findet.
+{Attrib}B1,23
+
+SheetName¯Status_Button_RGB_0_2_Spez
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯9
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯Nothing
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button_RGB_0_2_Spez
+Dauer¯0.5 Sec
+Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯G2
+LED_Tab¯RGB1¯¯¯¯¯¯¯¯x
+LED_Tab¯RGB1¯¯x
+LED_Tab¯RGB1¯1¯¯¯¯¯¯¯x
+LED_Tab¯RGB2¯¯¯¯¯¯¯x
+LED_Tab¯RGB2¯¯¯x
+LED_Tab¯RGB2¯1¯¯¯¯¯¯x
+LED_Tab¯RGB3¯¯¯¯¯¯x
+LED_Tab¯RGB3¯¯¯¯x
+LED_Tab¯RGB3¯1¯¯¯¯¯x¯¯¯.
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_Button_RGB_0_1
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯Counter(CM_NORMAL, 30 Sek)
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button_RGB_0_1
+Dauer¯0.5 Sec
+Goto Tabelle¯E¯SP¯G1
+LED_Tab¯RGB¯1¯10¯100
+LED_Tab¯RGB¯2¯10¯100
+LED_Tab¯RGB¯3¯10¯100
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_Button_RGB_0_2
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button_RGB_0_2
+Dauer¯0.5 Sec
+Goto Tabelle¯E¯SP¯G1¯SP¯G2
+LED_Tab¯RGB¯2¯10¯100
+LED_Tab¯RGB¯2¯¯¯20¯255
+LED_Tab¯RGB¯2¯¯¯¯0
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_Button_RGB_0_3
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button_RGB_0_3
+Dauer¯0.5 Sec
+Goto Tabelle¯E¯SP¯G1¯SP¯G2¯SP¯G3
+LED_Tab¯RGB¯1¯10¯111¯20¯222
+LED_Tab¯RGB¯2¯10¯¯20¯222¯255
+LED_Tab¯RGB¯3¯10¯111¯20¯¯¯255
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_Button_RGB_0_4
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯Nothing
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button_RGB_0_4
+Dauer¯0.5 Sec
+Goto Tabelle¯E¯SP¯G1¯SP¯G2¯SP¯G3¯SP¯G4
+LED_Tab¯RGB¯1¯10¯11¯20¯21¯30¯31¯40¯41
+LED_Tab¯RGB¯2¯10¯11¯20¯21¯30¯31¯40¯41
+LED_Tab¯RGB¯3¯10¯11¯20¯21¯30¯31¯40¯41
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_Button_RGB_0_5
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_Button_RGB_0_5
+Dauer¯0.5 Sec
+Goto Tabelle¯E¯SP¯G1¯SP¯G2¯SP¯G3¯SP¯G4¯SP¯G5
+LED_Tab¯RGB¯1¯10¯11¯20¯21¯30¯31¯40¯41¯50¯51
+LED_Tab¯RGB¯2¯10¯11¯20¯21¯30¯31¯40¯41¯50¯51
+LED_Tab¯RGB¯3¯10¯11¯20¯21¯30¯31¯40¯41¯50¯51
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           1
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_ButtonB_0_1
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯1
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_ButtonB_0_1
+Dauer¯0.4 Sec
+Goto Tabelle¯E¯SP¯¯¯G1
+LED_Tab¯¯1¯x¯.¯.¯.
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           0
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_ButtonB_0_2
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯1
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_ButtonB_0_2
+Dauer¯0.4 Sec
+Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯¯¯G2
+LED_Tab¯¯1¯x¯.¯.¯.¯x¯.¯x¯.¯.¯.
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           0
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_ButtonB_0_3
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯1
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_ButtonB_0_3
+Dauer¯0.4 Sec
+Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯¯¯G2¯SP¯¯¯¯¯¯¯G3
+LED_Tab¯¯1¯x¯.¯.¯.¯x¯.¯x¯.¯.¯.¯x¯.¯x¯.¯x¯.¯.¯.
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           0
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_ButtonB_0_4
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯1
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_ButtonB_0_4
+Dauer¯0.4 Sec
+Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯¯¯G2¯SP¯¯¯¯¯¯¯G3¯SP¯¯¯¯¯¯¯¯¯G4
+LED_Tab¯¯1¯x¯.¯.¯.¯x¯.¯x¯.¯.¯.¯x¯.¯x¯.¯x¯.¯.¯.¯x¯.¯x¯.¯x¯.¯x¯.¯.¯.
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           0
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75
+
+SheetName¯Status_ButtonB_0_5
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯1
+Schalter Nummer: ¯SI_LocalVar
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Status_ButtonB_0_5
+Dauer¯0.4 Sec
+Goto Tabelle¯E¯SP¯¯¯G1¯SP¯¯¯¯¯G2¯SP¯¯¯¯¯¯¯G3¯SP¯¯¯¯¯¯¯¯¯G4¯SP¯¯¯¯¯¯¯¯¯¯¯G5
+LED_Tab¯¯1¯x¯.¯.¯.¯x¯.¯x¯.¯.¯.¯x¯.¯x¯.¯x¯.¯.¯.¯x¯.¯x¯.¯x¯.¯x¯.¯.¯.¯x¯.¯x¯.¯x¯.¯x¯.¯x¯.¯.¯.
+LED_Attr¯14.4¯
+RGB_LED_CheckBox¯           0
+msoTextBox¯497;0;767.4421;142.8818¯Mit diesem Blatt kann die Konfiguration eines LED Musters erstellt werden.
+Die Gelb hinterlegten Felder und die Tabellen können verändert werden.
+Die Spalten der Tabelle beschreiben einen Abschnitt des Musters welches für eine bestimmte Zeit angezeigt wird. Die Dauer wird in der ersten Tabelle eingetragen.
+Die Zeiten können in Minuten ("Min") oder Sekunden ("Sec"= angegeben werden. Wird keine Einheit angegeben dann ist die Zeitangabe in Millisekunden ("ms").
+Achtung zwischen Zahl und Einheit muss ein Leerzeichen stehen und die Groß- und Kleinschreibung muss exakt stimmen. Wenn Spalten die gleiche Anzeigedauer
+haben, dann sollte die Zeit nur in den ersten Spalten angegeben werden zur Minimierung des Speicherverbrauchs. Die Folgenden Zeilen können als Formel Angegeben
+werden damit man sieht wie lange der Abschnitt dauert. Im Beispiel unten ist das bei den Spalten 4 bis 8 gemacht.
+In der zweiten Tabelle wird mit einem x markiert welche LED in dem Abschnitt leuchten soll. Wenn mehrere Helligkeiststufen benutzt werden, dann wird die Helligkeit
+als Zahl eingetragen. Die Anzahl der Abschnitte wird automatisch anhand der eingetragenen Markierungen bestimmt. Wenn am Ende leere Abschnitte verwendet
+werden sollen, dann muss in die letzte Spalte ein Punkt eingefügt werden.{Attrib}B1,75

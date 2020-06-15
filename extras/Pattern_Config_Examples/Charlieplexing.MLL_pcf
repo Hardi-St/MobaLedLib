@@ -1,0 +1,163 @@
+SheetName¯Charlieplex.LED Test
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯Charlieplexing
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Viessm_4751_LED_Test
+Dauer¯1 Sek
+Goto Tabelle¯E¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯Se¯SP¯G1
+LED_Tab¯LED 0¯x
+LED_Tab¯LED1¯¯x¯¯¯¯¯¯¯¯¯¯¯.
+LED_Tab¯LED 2¯¯¯x
+LED_Tab¯LED 3¯¯¯¯x
+LED_Tab¯LED 4¯¯¯¯¯x
+LED_Tab¯LED 5¯¯¯¯¯¯x
+LED_Tab¯LED 6¯¯¯¯¯¯¯x
+LED_Tab¯LED 7¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 8¯¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 9¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 10¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 11¯¯¯¯¯¯¯¯¯¯¯¯x
+LED_Attr¯13.5¯
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯i65535
+LED_Attr¯14.6¯i65535
+LED_Attr¯14.6¯i46080
+LED_Attr¯14.6¯i65535
+LED_Attr¯14.6¯i46080
+LED_Attr¯14.6¯
+msoTextBox2¯492.75;0;327;156.443¯Controleer de LED-toewijzing t.b.v. de Charliepexing module.
+Met deze configuratie kan de LED-toewijzing worden gecontroleerd. De 11 Goto-opdrachten kunnen worden gebruikt om te controleren welke LED wordt geadresseerd via het overeenkomstige kanaal. Hiermee kan de vertaaltabel voor het bijbehorende signaal worden gemaakt.
+Om dit te doen, wordt het nummer van de LED in het hieronder getoonde signaal voor elk kanaal genoteerd. Deze nummers worden vervolgens ingevoerd in het veld "Charlieplexing LED-toewijzing".
+De Charlieplexing-module wordt door de Prog_Generator geadresseerd via de macro's Charlie_Buttons () of Charlie_Binary (). {Attrib}B1,59
+msoTextBox1¯492.75;0;327;129.3207¯Check the LED assignment
+With this configuration, the LED assignment can be checked. The 11 Goto commands can be used to check which LED is addressed via the corresponding channel. This enables the translation table for the corresponding signal to be created. To do this, the number of the LED in the signal shown below is noted for each channel. These numbers are then entered in the "Charliplexin LED assignment:" field. The Charlieplexing module is addressed by the Prog_Generator using the Charlie_Buttons () or Charlie_Binary () macros.{Attrib}B1,25
+msoTextBox3¯492.75;0;327;129.3207¯Check the LED assignment
+With this configuration, the LED assignment can be checked. The 11 Goto commands can be used to check which LED is addressed via the corresponding channel. This enables the translation table for the corresponding signal to be created. To do this, the number of the LED in the signal shown below is noted for each channel. These numbers are then entered in the "Charliplexin LED assignment:" field. The Charlieplexing module is addressed by the Prog_Generator using the Charlie_Buttons () or Charlie_Binary () macros.{Attrib}B1,25
+msoTextBox0¯492.75;0;327;161.843¯Überprüfung der LED Zuordnung
+Mit dieser Konfiguration kann die LED Zuordnung überprüft werden.Mit den 11 Goto Befehlen kann die überprüft werden welche LED über den entsprechenden Kanal angesprochen wird. Damit kann die Übersetzungstabelle für das entsprechende Signal erstellt werden. Dazu wird die Nummer der LED im unten abgebildeten Signals für jeden Kanal notiert. Diese Nummern werden dann in das Feld "Charliplexin LED Zuordnung:" eingetragen. Das Charlieplexing Modul wird vom Prog_Generator aus über die Makros Charlie_Buttons() oder Charlie_Binary() angesprochen.{Attrib}B1,30
+msoPicture¯165;714.6;76.2;243.6¯LED_Numbers_Ref.jpg
+
+SheetName¯Viessm.4751
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯11
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯Charlieplexing
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯Viessmann
+Analoge Eingänge: ¯
+Makro Name: ¯Viessm_4751
+Dauer¯300 ms
+Goto Tabelle¯¯PE¯S¯E¯S¯E¯SP¯E¯SG1¯S¯E¯SG1¯SG2
+LED_Tab¯LED 0
+LED_Tab¯LED1¯¯¯¯x¯¯¯¯x¯¯¯x¯¯.
+LED_Tab¯LED 2¯¯x¯¯¯¯x
+LED_Tab¯LED 3¯¯x
+LED_Tab¯LED 4¯¯¯¯¯¯x
+LED_Tab¯LED 5¯¯¯¯¯¯x
+LED_Tab¯LED 6¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 7¯¯¯¯x
+LED_Tab¯LED 8¯¯¯¯¯¯¯¯x¯¯¯x
+LED_Tab¯LED 9¯¯¯¯x¯¯¯¯x
+LED_Tab¯LED 10¯¯¯¯¯¯¯¯¯¯¯x
+LED_Tab¯LED 11
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯¯Not used¯¯¯Not used¯Same as 3
+LED_Attr¯13.5¯
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯i65535
+LED_Attr¯14.6¯i65535
+LED_Attr¯14.6¯i46080
+LED_Attr¯14.6¯i65535
+LED_Attr¯14.6¯i46080
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯
+LED_Attr¯49.2¯¯¯¯¯¯¯¯¯¯O-4171¯¯¯O-4171¯O-4171
+msoTextBox2¯492.75;0;385.8;129.3207¯Controle van de Viessmann signalen 4751 en 4723.
+Als de "Charlieplexing-opdracht" met de naam "Viessman" is geladen, kunnen de seinbeelden van beide signalen via dezelfde nummers worden bestuurd.
+Met een aangepaste "Charlieplexing-opdracht" kan een signaal van een andere fabrikant met dezelfde tabel worden gebruikt.
+Voor het HV-signaal van de Stummi-collega's Matthias & Lorenz is de opdracht "HV_Matthias " gebruikt (het bord is ontworpen door Matthias).
+De Charlieplexing-module wordt door de Prog_Generator geadresseerd via de macro's Charlie_Buttons () of Charlie_Binary (). {Attrib}B1,47
+msoTextBox1¯492.75;0;327;142.8818¯Control of Vissmann signals 4751 and 4723
+If the "Charlieplexing assignment" with the name "Viessman" is loaded, then the signal images of both signals can be controlled via the same numbers. With an adapted "Charlieplexing assignment", a signal from another manufacturer with the same table can be used. For the HV signal of the Stummi colleagues Matthias & Lorenz the assignment "HV_Matthias" is used (the board was designed by Matthias). The Charlieplexing module is addressed by the Prog_Generator using the Charlie_Buttons () or Charlie_Binary () macros.{Attrib}B1,42
+msoTextBox3¯492.75;0;327;142.8818¯Control of Vissmann signals 4751 and 4723
+If the "Charlieplexing assignment" with the name "Viessman" is loaded, then the signal images of both signals can be controlled via the same numbers. With an adapted "Charlieplexing assignment", a signal from another manufacturer with the same table can be used. For the HV signal of the Stummi colleagues Matthias & Lorenz the assignment "HV_Matthias" is used (the board was designed by Matthias). The Charlieplexing module is addressed by the Prog_Generator using the Charlie_Buttons () or Charlie_Binary () macros.{Attrib}B1,42
+msoTextBox0¯492.75;0;327;170.0042¯Ansteuerung des Vissmann Signals 4751 und 4723
+Wenn die "Charlieplexing Zuordnung" mit dem Namen "Viessman" geladen ist, dann können die Signal Bilder beider Signale über die gleichen Nummern angesteuert werden.Mit einer angepassten "Charlieplexing Zuordnung" kann ein Signal eines anderen Herstellers mit der gleichen Tabelle verwendet werden.Für das HV Signal der Stummi Kollegen Matthias & Lorenz wird die Zuordnung "HV_Matthias" benutzt (Die Platine wurde von Matthias entworfen).Das Charlieplexing Modul wird vom Prog_Generator aus über die Makros Charlie_Buttons() oder Charlie_Binary() angesprochen.{Attrib}B1,47
+msoPicture¯273;703.2;49.8;117.6¯V4751_0.jpg
+msoPicture¯348;703.2;49.2;117.6¯V4751_1.jpg
+msoPicture¯425.4;706.2;49.2;117.6¯V4751_2.jpg
+msoPicture¯628.2;706.2;49.2;117.6¯V4751_5.jpg
+msoPicture¯500.4;706.8;49.2;117.6¯V4751_3.jpg
+msoPicture¯159.75;726.15;76.2;243.6¯LED_Numbers_Ref.jpg
+
+SheetName¯Charlie_But_Bin
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯8
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯0
+Goto Mode: ¯1
+Goto Aktivierung: ¯Binary
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Charlie_B_
+Dauer¯1 ms
+Goto Tabelle¯E¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE¯SE
+LED_Tab¯Red¯15¯35¯55¯75¯95¯115¯135¯155¯175¯195¯215
+LED_Tab¯Green¯15¯35¯55¯75¯95¯115¯135¯155¯175¯195¯215
+LED_Tab¯Blue (Status)¯15¯35¯55¯75¯95¯115¯135¯155¯175¯195¯215
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯
+LED_Attr¯14.4¯
+msoTextBox2¯493.5;0;744.642;48.55378¯Patroon voor het besturen van de toestanden van een Charlieplexing-module.
+Dit patroon definieert de "helderheidswaarden" waarmee de toestanden van de Charlieplexing-module worden aangepast.
+Dit patroon wordt gebruikt door de macro's "Charlie_Buttons ()" en "Charlie_Binary ()" die standaard beschikbaar zijn in de Prog_Generator. {Attrib}B1,73
+msoTextBox1¯493.5;0;475.5;61.51496¯Pattern for controlling the states of a Charlieplexing module.
+This pattern defines the "brightness values" with which the states of the Charlieplexing module are addressed. This pattern is used by the macros "Charlie_Buttons ()" and "Charlie_Binary ()" which are available as standard in the Prog_Generator.{Attrib}B1,63
+msoTextBox3¯493.5;0;475.5;61.51496¯Pattern for controlling the states of a Charlieplexing module.
+This pattern defines the "brightness values" with which the states of the Charlieplexing module are addressed. This pattern is used by the macros "Charlie_Buttons ()" and "Charlie_Binary ()" which are available as standard in the Prog_Generator.{Attrib}B1,63
+msoTextBox0¯493.5;0;744.642;76.87606¯Muster zum ansteuern der Zustände eines Charlieplexing Moduls.
+Dieses Muster deffiniert die "Helligkeitswerte" mit denen die Zustände des Charlieplexing Moduls angesprochen werden. Dieses Muster wirdvon dem Makros "Charlie_Buttons()" und "Charlie_Binary()" benutztwelche standardmäßig im Prog_Generator verfügbar sind. {Attrib}B1,63

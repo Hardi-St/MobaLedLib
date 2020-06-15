@@ -62,10 +62,60 @@
  07.01.20:  - Detect if the Debug hardware is available and disable the software serial port if not
               because otherwise the Charliplexing module generates to much interrupts which cause the
               Reset pin LEDs to flicker
+ 05.02.20:  - Started the selftest.
+              - Check the voltage divider
+ 07.02.20:  - Moved the timing critical functions and status outputs from the setup() to Power_On_Func()
+              to prevent problems when avrdude is runnung. In some cases the programming was aborted
+              because this. Now the function Power_On_Func() is called 500ms after the restart.
+              This seames to solves the problems
+            - Corrected the activation of the reset and power in after the "Cng Reset Pin" button was pressed.
+            - Automatically reprogram the reset pin if it was configured as IO before.
+            - New mode to reset the fuses to default values by holding the button for 4 seconds.
+ 09.04.20:  - Corrected the power on animation
+ 14.05.20:  - Improved the HV_Reset() according to Juergens tipp
+ 05.06.20:  - Added LED_Polarity.h to change the LED polarity from excel
+
 
  Todo:
  ~~~~~
+ - Der Check Taster geht nicht wenn nach Power on die Fuses geschrieben wurden                                // 07.02.20:
+   - Beim zweiten mal geht es
+   - Direkt nach Power on geht es auch
+   - Es geht auch noch wenn man die Fuses danach mehrfach schreibt
+
+ - Manchmal sind die blaue und Weisse LED gleichzeitig an ?
+
+
  - Funktioniert die Taster Erkennung mit 1K und 10K ? See: "// Wrong R2"
+ - Wenn kein
+
+
+ Das Programmieren ist nicht zuverlaessig ;-(                                                                 // 07.02.20:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ - Es geht erst beim zweiten Versuch an meinem Laptop
+   Bei anderen Rechnern get es gar nicht richtig ;-(                    => 07.02.20: Ist behoben
+ - Das original ArduinoISP Programm funktioniert zuverlaessig
+
+
+ Erkennung von Flash Fehlern
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Eigentlich sollte das Programm bei einem Prog. Fehler die rote LED anmachen.
+ Das Funktioniert aber leider nicht innerhalb der "avrisp()" Funktion.
+ Ich weiss nicht woran ich erkenne ob es geklappt hat oder nicht ;-(
+ - Das lesen des Chip Typs wird ber die "universal()" Funktion gemacht. Diese
+   setzt das error Flag nicht. Es sieht so aus, als waere der Rckgabewert
+   von spi_transaction() 0 wenn es einen Fehler gab, aber das kann ich nicht
+   sicher sagen.
+   Im Guten Fall findet man die werte der Fuses in dem Ergebniss: lfus=F1 Hfus=D5 efuse=FF
+   Rckgabewerte im Guten Fall: 1E 93 0B F1 F1 F1 D5 D5 D5 FF FF FF FF D5 F1 F1 F1 F1 D5 D5 D5 FF FF FF
+   Ohne eingesteckten ATTiny:   00 00 00 00 00 00 00 00 00
+   Bei den Tests war das "Don't write Flag" '-n' aktiv
+
+   3x Erfolgreiches setzen der Fuses ohne "Don't write Flag" '-n'
+   1E 93 0B F1 F1 F1 D5 D5 D5 FF FF FF FF D5 F1 F1 F1 F1 D5 D5 D5 FF FF FF
+   1E 93 0B F1 F1 F1 D5 D5 D5 FF FF FF 00 FF FF D5 D5 F1 F1 F1
+   1E 93 0B F1 F1 F1 D5 D5 D5 FF FF FF 00 FF FF D5 D5 F1 F1 F1 F1 F1 D5 D5 D5 FF FF FF
+
 
 */
 
@@ -244,6 +294,8 @@ int pmode = 0;
 unsigned int here;
 uint8_t buff[256]; // global block storage
 
+uint8_t Call_Power_On_Func = 1;                                                                               // 07.02.20:
+
 typedef struct param {
   uint8_t  devicecode;
   uint8_t  revision;
@@ -315,15 +367,56 @@ void Save_Persist_Data()
   Save_Persist_Checksum(&Pers, sizeof(Pers));
 }
 
-//----------
-void setup()
-//----------
+//----------------
+uint8_t Selftest()                                                                                            // 04.02.20:
+//----------------
+//
 {
-  SERIAL.begin(BAUDRATE);
-  Serial.println(F("ArduinoISP Tiny_UniProg by Hardi   V.1.0\t" __DATE__ " " __TIME__));
+  uint8_t With_Raw = 1;  // Set to 1 to debugging
+  // Check the 12V voltage divider
+  uint16_t Err = 0;
+  uint8_t OldDDRD = DDRD, OldPortD = PORTD;                                                                   // 07.02.20:
+  DDRD  = PIN_MSKD_PWR | PIN_MSKD_GND; // Program the pins as output
+  PORTD = PIN_MSKD_GND;                // Activate T1 to discharge C1
+  delay(50);
+  uint16_t v;
+  analogRead(PIN_HV_AD_12V);
+  if ((v = analogRead(PIN_HV_AD_12V)) > 18) { Err++; Serial.print(F("Exp. C1 discharge voltage (<0.5V):")); Print_12V_Value(v, With_Raw); }
+  PORTD = PIN_MSKD_PWR;                // Enable P4 => Charge C1 to 5V - 4*0.7V = 2.2V
+  delay(50);
+  v = analogRead(PIN_HV_AD_12V); // Measured: 109 = 3.1V
+  if (v < 90 || v > 130) { Err++; Serial.print(F("Exp. C1 charge voltage (3.1V):")); Print_12V_Value(v, With_Raw); }
+  // Check the capacitor C1
+  PORTD = 0;
+  delay(200);
+  v = analogRead(PIN_HV_AD_12V); // Measured: 79 = 2.3V with ATTiny / 3.0V without
+  if (v < 60) { Err++; Serial.print(F("Exp. C1 volt. after 200 ms (>1.7V): ")); Print_12V_Value(v, With_Raw);}
+  PORTD = PIN_MSKD_GND;
+  delay(10);
+  v = analogRead(PIN_HV_AD_12V); // Measured: 0
+  if (v > 18)  { Err++; Serial.print(F("Exp. C1 volt. T1 Act (<0.5V): ")); Print_12V_Value(v, With_Raw);}
 
-  pinMode(RELAIS_RST_PIN, INPUT_PULLUP);                                                                      // 07.01.20:
-  DebugHardwareAvailable = digitalRead(RELAIS_RST_PIN) == 0; // If the Relais are available the Pulldown resistor for the FETs pull the pin to gnd
+  DDRD  = OldDDRD;                                                                                            // 07.02.20:
+  PORTD = OldPortD;
+
+  // Todo: Add further checks
+  Serial.print(F("Selftest "));
+  if (Err)
+       Serial.println(F("errors detected !"));
+  else Serial.println(F("O.K."));
+
+  return Err!=0; // ToDo: Error LED should flash
+}
+
+
+//------------------
+void Power_On_Func()
+//------------------
+// This function is called at power on or if the reset is pressed
+// after 1 second.
+// But it's not called if serial characters are received in the first second
+{
+  Serial.println(F("ArduinoISP Tiny_UniProg by Hardi   V.1.2\t" __DATE__ " " __TIME__));
 
   #ifdef ATTINY_FEEDBACK
     if (DebugHardwareAvailable)                                                                               // 07.01.20:
@@ -334,8 +427,11 @@ void setup()
   #ifndef USE_HARDWARE_SPI
      printf("Software SPI\n");
   #endif
+  Power_on_Ani();
 
+  Selftest();                                                                                                 // 04.02.20:
 
+  // Print Persistant messages
   if (Check_Persist_Checksum(&Pers, sizeof(Pers)))
        {
        error = Pers.Flags.Error;
@@ -347,11 +443,39 @@ void setup()
        }
   Pers.Flags.Error = 0;
 
-
   Store_Persistent_Msg(""); // Clear the persistent message
   Save_Persist_Data();
 
-  Setup_LEDs_with_Power_on_Ani(HV_Interrupt_Proc);
+
+  // Check the fuses
+  if (Pers.Flags.ResetNorm == 0 && Pers.Flags.ResetAsIO == 0)
+     {
+     for (uint8_t i = 0; i < 3; i++)
+        { Set_LED_Read(1); delay(100); Set_LED_Read(0); delay(100); }
+     Set_LED_Read(1);
+     Write_or_Check_Reset_Fuse(-1, 0); // Check the fuse
+     if (error)
+        {
+        Set_LED_Error(1);
+        delay(500);
+        Write_or_Check_Reset_Fuse(-1, 0); // second try in case of an error
+        Set_LED_Error(error);
+        }
+     Set_LED_Read(0);
+     }
+
+}
+
+//----------
+void setup()
+//----------
+{
+  SERIAL.begin(BAUDRATE);
+
+  pinMode(RELAIS_RST_PIN, INPUT_PULLUP);                                                                      // 07.01.20:
+  DebugHardwareAvailable = digitalRead(RELAIS_RST_PIN) == 0; // If the Relais are available the Pulldown resistor for the FETs pull the pin to gnd
+
+  Setup_LEDs(HV_Interrupt_Proc);
 
   pinMode(PIN_POWER,      OUTPUT);  digitalWrite(PIN_POWER, HIGH);
   pinMode(RELAIS_PWR_PIN, OUTPUT);  digitalWrite(RELAIS_PWR_PIN, LOW);
@@ -371,25 +495,6 @@ void setup()
   sbi (ADCSRA, ADPS2);
   cbi (ADCSRA, ADPS1);
   cbi (ADCSRA, ADPS0);
-
-  #ifdef USE_HARDWARE_SPI /// The HV programming can't be used with slow target clock rates
-  // Check the reset fuse of the target at power on and activate the blue or white LED
-  if (Pers.Flags.ResetNorm == 0 && Pers.Flags.ResetAsIO == 0)
-     {
-     #ifdef USE_DELAYED_CHECK_FUSES
-        Delayed_Check_Fuses = 1;
-     #else
-        // If the Uno is plugged to the PC the reset is pulled after one second and released 4 seconds later
-        // The following delay prevents starting the Write_or_Check_Reset_Fuse() in the first second.
-        for (uint8_t i = 0; i < 5; i++)
-           { Set_LED_Read(1); delay(200); Set_LED_Read(0); delay(200); }
-
-        Write_or_Check_Reset_Fuse(-1, 0); // Check the fuse
-        if (error)
-           Write_or_Check_Reset_Fuse(-1, 0); // second try in case of an error
-     #endif // USE_DELAYED_CHECK_FUSES
-     }
-  #endif // USE_HARDWARE_SPI
 }
 
 
@@ -447,10 +552,19 @@ uint8_t Read_Buttons_and_Jumper()
 void loop(void)
 //-------------
 {
-  Set_LED_Error(error);
-  Set_LED_Norm_ResetF(Pers.Flags.ResetNorm);
-  Set_LED_Reset_as_IO(Pers.Flags.ResetAsIO);
+  if (Call_Power_On_Func == 0) // Power on function has be called                                             // 07.02.20:
+     {
+     Set_LED_Error(error);
+     Set_LED_Norm_ResetF(Pers.Flags.ResetNorm);
+     Set_LED_Reset_as_IO(Pers.Flags.ResetAsIO);
+     Upd_LED_Heartbeat();
+     }
 
+  if (Call_Power_On_Func && millis() > 500)                                                                   // 07.02.20:
+     { // After 500 ms the Power_On_Func() is called if no serial characters are receieved
+     Call_Power_On_Func = 0;
+     Power_On_Func();
+     }
 
   #ifdef ATTINY_FEEDBACK                                                                                      // 16.04.19:
     if (DebugHardwareAvailable && (millis() > (softserialtime + toSoftSerial)) && !softSerialAktiv)           // 07.01.20:  Added: DebugHardwareAvailable
@@ -460,23 +574,26 @@ void loop(void)
        softSerialAktiv = true;
        }
 
-    Upd_LED_Heartbeat();
-
     if (Serial.available())
        {
-       softserialtime = millis();
-       softSerial.end();
-       softSerialAktiv = false;
+       Call_Power_On_Func = 0;                                                                                // 07.02.20:
+       if (DebugHardwareAvailable)                                                                            // 06.02.20:
+          {
+          softserialtime = millis();
+          softSerial.end();
+          softSerialAktiv = false;
+          }
        avrisp();
        }
 
-    if (softSerial.available() && !pmode && softSerialAktiv)
+    if (DebugHardwareAvailable && softSerial.available() && !pmode && softSerialAktiv)                        // 06.02.20:  Added DebugHardwareAvailable
        Serial.write(softSerial.read());
   #else
-    // light the heartbeat LED
-    Upd_LED_Heartbeat();
     if (SERIAL.available())
+       {
+       Call_Power_On_Func = 0;                                                                                // 07.02.20:
        avrisp();
+       }
   #endif
 
   #ifdef USE_DELAYED_CHECK_FUSES
@@ -942,7 +1059,15 @@ void read_signature()
                           |   |   universal function 4 SPI Bytes
                           |   read_signature
                           Start programming mode
+
+ Wite fuses:
+ 000AAAAAAAAAAABEPVVVVVVVVVVVVVVVVVVVVVVVVQProg. duration 375 ms (V)
+
+ Ohne ATTiny:
+ 00AAAAAAAAAAABEPVVVVVVVVVQProg. duration 512 ms (V)
+
 */
+uint8_t Prog_Reset_as_IO_at_the_End = 0;
 
 //-----------
 void avrisp()
@@ -952,7 +1077,19 @@ void avrisp()
   static uint8_t  Last_ch = 0;
   uint8_t ch = getch();
   Enable_Relais();
-  //Add_Persistent_Msg("'%c' ", ch, ch); // Debug
+
+  // If the Reset Pin is programmed as IO it's reprogrammed as reset pin to be able to flash the prog.        // 07.02.20:
+  if (Get_LED_Reset_as_IO())
+     { // Activate the normal Reset function
+     Add_Persistent_Msg("Act. normal reset Func. ");
+     Write_or_Check_Reset_Fuse(1, 0);
+     Add_Persistent_Msg("%s\n", Get_LED_Reset_as_IO()?"O.K.":"Error");
+     Save_Persist_Data();
+     Prog_Reset_as_IO_at_the_End = 1;
+     delay(300); // To give the Reset pin time to charge the capacitor
+     }
+
+  //Add_Persistent_Msg("%c", ch); // Debug
   switch (ch)
     {
     case '0':  // signon
@@ -983,18 +1120,6 @@ void avrisp()
                if (!pmode)
                  {
                  Start = millis();
-                 //delay(5000);  // Test
-
-                 /* Das geht noch nicht so
-                 if (Get_LED_Reset_as_IO())
-                    { // Activate the normal Reset function
-                    Add_Persistent_Msg("Start Write_or_Check_Reset_Fuse");
-                    Write_or_Check_Reset_Fuse(1, 1);
-                    Add_Persistent_Msg("Res %i\n", Get_LED_Reset_as_IO());
-                    Save_Persist_Data();
-                    }
-                 */
-
                  start_pmode();
                  }
                empty_reply();
@@ -1025,8 +1150,9 @@ void avrisp()
                break;
     case 'Q':  //0x51
                if (error>0)
-                    Add_Persistent_Msg("Error occurred (Last cmd: 0x%02X '%c'\n", Last_ch, Last_ch);
+                    Add_Persistent_Msg("Error occurred (Last cmd:0x%02X '%c'\n", Last_ch, Last_ch);
                else {
+                    /* Geht nicht
                     switch (Last_ch)
                       {
                       case 0x75: // 'u'
@@ -1034,6 +1160,7 @@ void avrisp()
                                  Add_Persistent_Msg("Error: Wrong signatur detected\n");
                                  break;
                       }
+                    */
                     }
                end_pmode();
                empty_reply();
@@ -1043,7 +1170,18 @@ void avrisp()
                //    We use a special trick to store messages to a persistent RAM region and show them
                //    when the program is restarted.
                // The messages could also be read if the serial monitor is opened after the flash programming
-               Add_Persistent_Msg("Prog. duration %i ms%s\n", millis() - Start); // This message is printed after the restart
+               Add_Persistent_Msg("Prog. time %ims\n", millis() - Start); // This message is printed after the restart
+
+               /*
+               if (Prog_Reset_as_IO_at_the_End)                                                               // 07.02.20:
+                  {
+                  // ToDo: Check if the fuses have been changed. Only restore the old Reset state if they have not been changed
+                  //       Otherwise it's not possible to change the fuses ;-(
+                  Prog_Reset_as_IO_at_the_End = 0;
+                  Add_Persistent_Msg("Prog. reset back as IO");
+                  Write_or_Check_Reset_Fuse(0, 0);
+                  }
+               */
                Pers.Flags.Error = error;
                Save_Persist_Data();
                break;

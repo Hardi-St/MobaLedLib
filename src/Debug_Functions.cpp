@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -74,7 +74,11 @@ void MobaLedLib_C::Print_Comment(uint8_t Type)
     case NEW_HSV_GROUP_T:     Dprintf("New_HSV_Group");     break;
     case NEW_LOCAL_VAR_T:     Dprintf("New_Local_Var");     break;                                            // 07.11.18:
     case USE_GLOBALVAR_T:     Dprintf("Use_GlobalVar");     break;                                            // 15.11.18:
+  #if _USE_INCH_TRIGGER
+    case INCH_TO_X_VAR_T:     Dprintf("InCh_to_X_Var");     break;
+  #else
     case INCH_TO_TMPVAR_T:    Dprintf("InCh_to_TmpVar");    break;
+  #endif
     case BIN_INCH_TO_TMPVAR_T:Dprintf("Bin_InCh_to_TmpVar");break;                                            // 18.01.19:
     case RANDOM_T:            Dprintf("Random");            break;
     case RANDMUX_T:           Dprintf("RandMux");           break;

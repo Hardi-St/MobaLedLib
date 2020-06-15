@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -102,10 +102,10 @@ uint8_t MobaLedLib_C::Is_Room_On(CRGB *lp, uint8_t RawNr)
 
  Es tritt immer wieder auf. Dann schalten alle Preiser die diesen Kanal geschaut haben                        // 10.01.20:
  gleichzeitig das TV aus ;-(
- Das ist nicht sch”n.
+ Das ist nicht schoen.
  => Das wird jetzt in Update_TV_Data() abgefangen
  Bei dem Kamin kann das immer noch auftreten. Aber hier betrifft es nur ein einziges Zimmer.
- Darum „ndere ich das erst mal nicht.
+ Darum aendere ich das erst mal nicht.
 */
 #ifdef _NEW_ROOM_COL
     //--------------------------------------------------------
@@ -205,6 +205,9 @@ uint8_t MobaLedLib_C::Get_RawNr(uint8_t Room_Typ)
     case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case SINGLE_LED3: case SINGLE_LED3D: return 2;
 #if _USE_DEF_NEON                                                                                             // 13.01.20:
     case NEON_DEF1D:  case NEON_DEF2D:  case NEON_DEF3D:  return Room_Typ - NEON_DEF1D; // ToDo: Integerate to the lines above if _USE_DEF_NEON is always active
+#endif
+#if _USE_CANDLE                                                                                               // 09.06.20:
+    case CANDLE1:     case CANDLE2:     case CANDLE3:     return Room_Typ - CANDLE1;    // ToDo: Integerate to the lines above if _USE_CANDLE is always active
 #endif
     default:                                                                                                                          return ALL_CHANNELS;
     }
@@ -365,6 +368,57 @@ void MobaLedLib_C::Update_Neon_Light(uint8_t Room_Typ, CRGB *lp)                
      }
 }
 
+#if _USE_CANDLE
+//----------------------------------------------------------
+void MobaLedLib_C::Update_Candle(uint8_t Room_Typ, CRGB *lp)                                                  // 09.06.20:
+//----------------------------------------------------------
+// Kerzenflackern von Robert
+//
+// Verbesserungsmoeglichkeit:
+// Beim Anzuenden der Kerze sollte das Licht nicht sofort an gehen.
+// Beim entfachen des Streichholzes ist es zunaechst kurz hell.
+// Dann wird es wieder dunkler.
+// Am Anfang ist das Wachs noch nicht heiss => Die Flamme wird langsam heller.
+// => Erst mal werden die Kerzen nicht per Streichholz angezuendet.
+{
+  uint8_t RawNr = Get_RawNr(Room_Typ); // Return 0, 1, 2 for single LEDs and 4 for all channels
+  if (Trigger20fps > 0)
+     {
+     uint8_t Val = lp->raw[RawNr & 0x03];
+     if (RawNr == 4) // If a RGB LED is used and the Red portion is 0
+        {            // Green and Red has to be checked also
+        for (uint8_t i = 1; Val == 0 && i < 3; i++) Val = lp->raw[i];
+        }
+
+     if (Val > 0)  // Enabled ?
+        {
+        uint8_t Brightness;
+        if (random8() <  pgm_read_byte_near(&Candle_DatP->Candle_Change_Probability))   // z.B.: Zufallszahl(0-255) < 64 --> 25% Wahrscheinlichkeit 10.06.20:  Old: 256*50ms / x --> Intervall (50ms) * 4 = 200ms
+           {
+           // Helligkeit zufaellig Aendern
+           if (random8() < pgm_read_byte_near(&Candle_DatP->Candle_Time_Dark))        // Zeit ist im Schnitt Candle_Change_Probability * Candle_Time_Dark
+                Brightness = random8(pgm_read_byte_near(&Candle_DatP->Candle_Min_BrightnessD), pgm_read_byte_near(&Candle_DatP->Candle_Max_BrightnessD));   // Kerze dunkel
+           else Brightness = random8(pgm_read_byte_near(&Candle_DatP->Candle_Min_Brightness),  pgm_read_byte_near(&Candle_DatP->Candle_Max_Brightness));    // Kerze hell
+
+           if (RawNr == 4)
+                {
+                uint8_t Hue;
+                // Change the Hue randomly
+                if ((Hue = pgm_read_byte_near(&Candle_DatP->Candle_Min_Hue)) != pgm_read_byte_near(&Candle_DatP->Candle_Max_Hue) && Val > 1) // Different min and max hue
+                   {
+                   if (random8() < pgm_read_byte_near(&Candle_DatP->Candle_Chg_Hue))
+                      *rp = random8(Hue, pgm_read_byte_near(&Candle_DatP->Candle_Max_Hue));
+                   Hue = *rp;
+                   }
+                lp->setHSV(Hue, 255, Brightness);
+                }
+           else lp->raw[RawNr] = Brightness;
+           }
+        }
+     }
+  if (RawNr == 4) rp++;
+}
+#endif // _USE_CANDLE
 
 //-----------------------------------------------------------
 void MobaLedLib_C::Random_Const_Light(CRGB *lp, uint8_t TVNr)
@@ -448,6 +502,12 @@ void MobaLedLib_C::TurnOnRoom(CRGB* lp, uint8_t Room_Typ)
     case NEON_DEF2D      : lp->g = 1;                 break;
     case NEON_DEF3D      : lp->b = 1;                 break;
 #endif
+#if _USE_CANDLE                                                                                               // 09.06.20:
+    case CANDLE          :
+    case CANDLE1         : lp->r = 1;                 break;
+    case CANDLE2         : lp->g = 1;                 break;
+    case CANDLE3         : lp->b = 1;                 break;
+#endif
     case SINGLE_LED1     :                                                                                    // 06.09.19:
     case SINGLE_LED2     :
     case SINGLE_LED3     : Copy_Single_Room_Col(lp, Room_Typ-SINGLE_LED1,  COLOR_SINGLE);   break;
@@ -515,11 +575,11 @@ void MobaLedLib_C::Proc_House()
 //
 // Die Funktion kann auch zur Ansteuerung der GAS Strassenlaternen benutzt werden.
 // Hier gibt es Laternen mit Gluehbirnen oder LEDs. Fuer die Gluehbirnen werden 3 Kanaele (RGB)
-// parallel geschaltet damit der Strom reicht. Fuer die LED Variante werden die Kanaehle
-// einzeln verwendet. Dazu wurde die RawNr eingefuegt welche bestimmt welcher WS281x
-// Kanal benutzt wird bzw. ob alle Kanaele benutzt werden.
+// parallel geschaltet damit der Strom reicht (Nicht mehr empfohlen, besser WS2811_Extender).
+// Fuer die LED Variante werden die Kanaehle einzeln verwendet. Dazu wurde die RawNr eingefuegt
+// welche bestimmt welcher WS281x Kanal benutzt wird bzw. ob alle Kanaele benutzt werden.
 // Die Funktion ist dadurch ziemlich chaotisch geworden. Evtl. kann man das noch verbessern.
-// Einzelne Kanaele muessen nacheinander und in aufsteugender Reihenfolge angegeben werden.
+// Einzelne Kanaele muessen nacheinander und in aufsteigender Reihenfolge angegeben werden.
 // Beipiel: GAS_LIGHT1, GAS_LIGHT2, GAS_LIGHT3, GAS_LIGHT, GAS_LIGHT1
 // Falsch:  GAS_LIGHT1D, GAS_LIGHTD, GAS_LIGHT2D, GAS_LIGHTD, GAS_LIGHT3D, GAS_LIGHTD,
 // Beim 2. Beispiel benutzt die dritte Lampe den gleichen Kanal wie Lampe 2 ;-(
@@ -670,30 +730,14 @@ void MobaLedLib_C::Proc_House()
         case GAS_LIGHT1D:
         case GAS_LIGHT2D:
         case GAS_LIGHT3D:      Update_Gas_Light(Room_Typ, lp);    break;
-        case NEON_LIGHT:
-        case NEON_LIGHT1:
-        case NEON_LIGHT2:
-        case NEON_LIGHT3:
-        case NEON_LIGHTD:
-        case NEON_LIGHT1D:
-        case NEON_LIGHT2D:
-        case NEON_LIGHT3D:
-        case NEON_LIGHTM:
-        case NEON_LIGHT1M:
-        case NEON_LIGHT2M:
-        case NEON_LIGHT3M:
-        case NEON_LIGHTL:
-        case NEON_LIGHT1L:
-        case NEON_LIGHT2L:
-        case NEON_LIGHT3L:
-#if _USE_DEF_NEON                                                                                             // 13.01.20:
-        case NEON_DEF_D:
-        case NEON_DEF1D:
-        case NEON_DEF2D:
-        case NEON_DEF3D:
+#if _USE_CANDLE
+        case CANDLE:
+        case CANDLE1:
+        case CANDLE2:
+        case CANDLE3:          Update_Candle(Room_Typ, lp);        break;
 #endif
-                               Update_Neon_Light(Room_Typ, lp);    break;
-        }
+        default: if (Room_Typ >= NEON_LIGHT && Room_Typ <= NEON_DEF3D) Update_Neon_Light(Room_Typ, lp);       // 10.06.20:  Saves 18 Bytes instead of usint several case startements
+        }                                                                                                     //            further if() statements use more memory ;-(
       Room_Typ = pgm_read_byte_near(++cpr);  // Next Room
       uint8_t RawNr = Get_RawNr(Room_Typ);
       if ((RawNr & 0x03) == 0) lp++; // If the single channels are used and the next LED is R (0) or not a single channel (4) then the LED pointer should not be incremented

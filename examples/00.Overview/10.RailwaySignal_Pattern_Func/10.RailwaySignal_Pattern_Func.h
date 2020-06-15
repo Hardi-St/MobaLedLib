@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -85,10 +85,10 @@
 
     Spalten Nr->   1    2    3
     Rot  1
-    Gruen 1              x    x
+    Gruen 1             x    x
     Blau 1
     Rot  2                   x
-    Gruen 2                   x
+    Gruen 2                  x
     Blau 2
     Rot  3         x
     Gruen 3

@@ -1,0 +1,661 @@
+SheetName¯Dep Signal4 RGB
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯18
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯_Dep_Signal4_RGB
+Dauer¯500 ms
+Goto Tabelle¯E¯SE¯SE¯SE
+LED_Tab¯
+LED_Tab¯Grün¯¯x¯x
+LED_Tab¯
+LED_Tab¯¯x¯¯¯x
+LED_Tab¯Rot 1
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯Rot 2
+LED_Tab¯
+LED_Tab¯¯¯¯¯1
+LED_Tab¯Weis 1¯¯¯¯1
+LED_Tab¯¯¯¯¯1
+LED_Tab¯¯¯¯¯1
+LED_Tab¯Weis 2¯¯¯¯1
+LED_Tab¯¯¯¯¯1
+LED_Tab¯¯¯¯x
+LED_Tab¯Gelb¯¯¯x
+LED_Tab¯
+LED_Tab¯¯HP0¯HP1¯HP2¯HP0 + SH1
+LED_Attr¯13.5¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯30¯¯W¯W¯W¯W
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;554.75;170.0042¯Dit blad toont de configuratie van een Duits uitgangssignaal.
+Het uitgangssignaal moet 4 aspecten vertegenwoordigen: HP0, HP1, HP2 en HP0 + SH1.
+Dit voorbeeld is bedoeld voor het testen met een RGB LED-strip. Daarom worden per signaallamp drie lijnen gebruikt. Op de modelspoorbaan wordt een WS2811-module gebruikt om de LED's in het signaal te besturen, zoals getoond in het volgende voorbeeld. Hier moeten verschillende LED's worden geadresseerd om de kleuren geel en wit te mengen.
+Via de Goto-functie wordt naar de seinbeelden gesprongen. Het overeenkomstige nummer (0-3) is b.v. gelezen door DCC. De pijl "E" geeft aan dat de module wordt beëindigd nadat een afbeelding wordt weergegeven. De lampen mogen niet plotseling aan of uit gaan. Dit wordt geactiveerd via de schakelaar "Analoge Crossfade".
+De visualisatie met de verschillende driehoeken laat zien dat de helderheid van een lamp langzaam verandert van een onbekende beginwaarde naar de opgegeven eindwaarde. De twee rode lampen moeten branden op HP0. Afhankelijk van of de lamp eerder aan of uit was, verandert de helderheid binnen de opgegeven 500 ms zodat de lamp aan het einde oplicht.{Attrib}B1,60
+msoTextBox1¯492.75;0;554.75;156.443¯This sheet shows the configuration of an exit signal.
+The exit signal should represent 4 aspects: HP0, HP1, HP2 and HP0 + SH1.
+This example is for testing with an RGB LED stripe. Therefore three lines are used per signal lamp. On the model railway, a WS2811 module is used to control the LEDs in the signal, as shown in the next example.
+Here several LEDs have to be addressed to mix the colors yellow and white. The signal images are jumped to via the Goto function. The corresponding number (0-3) is e.g. read by DCC. The "E" arrow indicates that the module is terminated after an image is displayed.
+The lamps should not go on or off suddenly. This is activated via the "Analog crossfade" switch. The visualization with the different triangles shows that the brightness of a lamp slowly changes from an unknown initial value to the specified final value. The two red lamps should be on at HP0. Depending on whether the lamp was previously on or off, the brightness changes within the specified 500 ms so that the lamp lights up at the end.{Attrib}B1,54
+msoTextBox3¯492.75;0;554.75;156.443¯This sheet shows the configuration of an exit signal.
+The exit signal should represent 4 aspects: HP0, HP1, HP2 and HP0 + SH1.
+This example is for testing with an RGB LED stripe. Therefore three lines are used per signal lamp. On the model railway, a WS2811 module is used to control the LEDs in the signal, as shown in the next example.
+Here several LEDs have to be addressed to mix the colors yellow and white. The signal images are jumped to via the Goto function. The corresponding number (0-3) is e.g. read by DCC. The "E" arrow indicates that the module is terminated after an image is displayed.
+The lamps should not go on or off suddenly. This is activated via the "Analog crossfade" switch. The visualization with the different triangles shows that the brightness of a lamp slowly changes from an unknown initial value to the specified final value. The two red lamps should be on at HP0. Depending on whether the lamp was previously on or off, the brightness changes within the specified 500 ms so that the lamp lights up at the end.{Attrib}B1,54
+msoTextBox0¯492.75;0;554.75;190.1653¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals.
+Das Ausfahrtsignal soll 4 Aspekte darstellen: HP0, HP1, HP2 und HP0 + SH1.
+Dieses Beispiel ist für den Test mit einem RGB LED Stripe gedacht. Darum werden pro Signallampe drei Zeilen benutzt. Auf der Modelleisenbahn wird ein WS2811  Modul zur Ansteuerung der LEDs im Signal verwendet wie es im nächsten Beispiel gezeigt ist.
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}B1,60
+msoPicture¯277.5;783;33.75;167.25¯HP0.jpg
+msoPicture¯316.65;783;33.75;166.5¯HP1.jpg
+msoPicture¯355.8;783;34.5;166.5¯HP2.jpg
+msoPicture¯395.7;783;33;168¯HP0_SH1.jpg
+
+SheetName¯Dep Signal4
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯5
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯_Dep_Signal4
+Dauer¯500 ms
+Goto Tabelle¯E¯SE¯SE¯SE
+LED_Tab¯Rot 1¯x¯¯¯x
+LED_Tab¯Grün¯¯x¯x
+LED_Tab¯Gelb¯¯¯x
+LED_Tab¯Rot 2¯x
+LED_Tab¯Weis¯¯¯¯1
+LED_Tab¯
+LED_Tab¯¯HP0¯HP1¯HP2¯HP0 + SH1
+LED_Attr¯13.5¯i255
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16711680,i65535
+LED_Attr¯15¯i255
+LED_Attr¯15¯c16777215,i0
+LED_Attr¯15¯c15132391
+LED_Attr¯30¯¯W¯W¯¯W
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;551;170.0042¯Dit blad toont de configuratie van een Duits uitgangssignaal.
+Het uitgangssignaal moet 4 aspecten vertegenwoordigen: HP0, HP1, HP2 en HP0 + SH1.
+Dit voorbeeld is bedoeld voor het testen met een RGB LED-strip. Daarom worden per signaallamp drie lijnen gebruikt. Op de modelspoorbaan wordt een WS2811-module gebruikt om de LED's in het signaal te besturen, zoals getoond in het volgende voorbeeld. Hier moeten verschillende LED's worden geadresseerd om de kleuren geel en wit te mengen.
+Via de Goto-functie wordt naar de seinbeelden gesprongen. Het overeenkomstige nummer (0-3) is b.v. gelezen door DCC. De pijl "E" geeft aan dat de module wordt beëindigd nadat een afbeelding wordt weergegeven.
+De lampen mogen niet plotseling aan of uit gaan. Dit wordt geactiveerd via de schakelaar "Analoge Crossfade". De visualisatie met de verschillende driehoeken laat zien dat de helderheid van een lamp langzaam verandert van een onbekende beginwaarde naar de opgegeven eindwaarde. De twee rode lampen moeten branden op HP0. Afhankelijk van of de lamp eerder aan of uit was, verandert de helderheid binnen de opgegeven 500 ms zodat de lamp aan het einde oplicht.{Attrib}B1,60
+msoTextBox1¯492.75;0;551;156.443¯This sheet shows the configuration of an exit signal. The exit signal should represent 4 aspects: HP0, HP1, HP2 and HP0 + SH1.
+This example is for testing with an RGB LED stripe. Therefore three lines are used per signal lamp. On the model railway, a WS2811 module is used to control the LEDs in the signal, as shown in the next example.
+Here several LEDs have to be addressed to mix the colors yellow and white. The signal images are jumped to via the Goto function. The corresponding number (0-3) is e.g. read by DCC. The "E" arrow indicates that the module is terminated after an image is displayed.
+The lamps should not go on or off suddenly. This is activated via the "Analog crossfade" switch. The visualization with the different triangles shows that the brightness of a lamp slowly changes from an unknown initial value to the specified final value. The two red lamps should be on at HP0. Depending on whether the lamp was previously on or off, the brightness changes within the specified 500 ms so that the lamp lights up at the end.{Attrib}B1,55
+msoTextBox3¯492.75;0;551;156.443¯This sheet shows the configuration of an exit signal. The exit signal should represent 4 aspects: HP0, HP1, HP2 and HP0 + SH1.
+This example is for testing with an RGB LED stripe. Therefore three lines are used per signal lamp. On the model railway, a WS2811 module is used to control the LEDs in the signal, as shown in the next example.
+Here several LEDs have to be addressed to mix the colors yellow and white. The signal images are jumped to via the Goto function. The corresponding number (0-3) is e.g. read by DCC. The "E" arrow indicates that the module is terminated after an image is displayed.
+The lamps should not go on or off suddenly. This is activated via the "Analog crossfade" switch. The visualization with the different triangles shows that the brightness of a lamp slowly changes from an unknown initial value to the specified final value. The two red lamps should be on at HP0. Depending on whether the lamp was previously on or off, the brightness changes within the specified 500 ms so that the lamp lights up at the end.{Attrib}B1,55
+msoTextBox0¯492.75;0;551;190.1653¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals.Das Ausfahrtsignal soll 4 Aspekte darstellen: HP0, HP1, HP2 und HP0 + SH1.
+Dieses Beispiel ist für den Test mit einem RGB LED Stripe gedacht. Darum werden pro Signallampe drei Zeilen benutzt. Auf der Modelleisenbahn wird ein WS2811  Modul zur Ansteuerung der LEDs im Signal verwendet wie es im nächsten Beispiel gezeigt ist.
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}B1,60
+msoPicture¯277.8;616.8751;33.75;167.25¯HP0.jpg
+msoPicture¯315.6;616.8751;33.75;166.5¯HP1.jpg
+msoPicture¯354;616.8751;34.5;166.5¯HP2.jpg
+msoPicture¯393;616.8751;33;168¯HP0_SH1.jpg
+
+SheetName¯Entry Signal3 RGB
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯9
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯_Entry_Signal3_RGB
+Dauer¯500 ms
+Goto Tabelle¯E¯SE¯SE
+LED_Tab¯
+LED_Tab¯Grün 3¯¯x¯x
+LED_Tab¯
+LED_Tab¯¯¯¯x
+LED_Tab¯Gelb¯¯¯x
+LED_Tab¯
+LED_Tab¯¯x
+LED_Tab¯Rot
+LED_Tab¯
+LED_Tab¯¯HP0¯HP1¯HP2
+LED_Attr¯13.5¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16777215,i5287936
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;327;34.3926¯Dit blad toont de configuratie van een Duits ingangssignaal.
+De configuratie komt overeen met de vorige voorbeelden.{Attrib}B1,59
+msoTextBox1¯492.75;0;327;34.3926¯This sheet shows the configuration of an entry signal. The configuration corresponds to the previous examples.{Attrib}B1,56
+msoTextBox3¯492.75;0;327;34.3926¯This sheet shows the configuration of an entry signal. The configuration corresponds to the previous examples.{Attrib}B1,56
+msoTextBox0¯492.75;0;327;34.3926¯Dieses Blatt zeigt die Konfiguration eines Einfahrtsignals.Die Konfiguration entspricht den vorangegangenen Beispielen.{Attrib}B1,60
+msoPicture¯279.15;642.75;30;164.25¯HP0_E.jpg
+msoPicture¯317.25;643.35;30;165¯HP1_E.jpg
+msoPicture¯357.15;643.35;30;164.25¯HP2_E.jpg
+
+SheetName¯Entry Signal3
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯3
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯_Entry_Signal3
+Dauer¯500 ms
+Goto Tabelle¯E¯SE¯SE
+LED_Tab¯Rot¯x
+LED_Tab¯Grün¯¯x¯x
+LED_Tab¯Gelb¯¯¯x
+LED_Tab¯¯HP0¯HP1¯HP2
+LED_Attr¯13.5¯i255
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16711680,i65535
+LED_Attr¯15¯
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;767.4421;34.3926¯Dit blad toont de configuratie van een Duits ingangssignaal.
+De configuratie komt overeen met de vorige voorbeelden.{Attrib}B1,59
+msoTextBox1¯492.75;0;767.4421;34.3926¯This sheet shows the configuration of an entry signal. The configuration corresponds to the previous examples.{Attrib}B1,56
+msoTextBox3¯492.75;0;767.4421;34.3926¯This sheet shows the configuration of an entry signal. The configuration corresponds to the previous examples.{Attrib}B1,56
+msoTextBox0¯492.75;0;767.4421;34.3926¯Dieses Blatt zeigt die Konfiguration eines Einfahrtsignals.Die Konfiguration entspricht den vorangegangenen Beispielen.{Attrib}B1,60
+msoPicture¯279.6;548.85;30;164.25¯HP0_E.jpg
+msoPicture¯319.5;548.85;30;165¯HP1_E.jpg
+msoPicture¯359.4;548.85;30;164.25¯HP2_E.jpg
+
+SheetName¯KS_Vorsignal_Zs3V_RGB
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Vorsignal_ZS3V_RGB
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯¯¯x
+LED_Tab¯Ks 2¯¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Ks 1¯¯¯¯x¯¯x¯x¯.¯.
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Zs 3V¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯¯¯x¯¯¯¯x¯x¯x¯x
+LED_Tab¯Kennlicht¯¯x¯¯¯¯x¯x¯x¯x
+LED_Tab¯¯¯x¯¯¯¯x¯x¯x¯x
+LED_Attr¯13.5¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯c16777215,i65535
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+RGB_LED_CheckBox¯           1
+msoTextBox2¯493.05;0;429.4;75.07607¯Dit blad toont de configuratie van een Ks Voorsein.
+Seinbeelden zijn: Ks 2 / Ks 1 / Ks 1+ Zs 3V / marker licht.
+Ks 2 = Halt verwacht 5% kortere remweg
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3V = verwachten te reizen met de aangegeven snelheid x10 (groen knipperend) {Attrib}B1,50
+msoTextBox1¯493.05;0;327.6;75.07607¯This sheet shows the configuration of a Ks distant repeater
+Signal pictures are Ks 2 / Ks 1 / Ks 1+ Zs 3V / Kennlicht
+Ks 2 = Halt expect 5% shorter braking distance
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3V = expect to travel at indicated speed x10 (green flashes){Attrib}B1,60
+msoTextBox3¯493.05;0;327.6;75.07607¯This sheet shows the configuration of a Ks distant repeater
+Signal pictures are Ks 2 / Ks 1 / Ks 1+ Zs 3V / Kennlicht
+Ks 2 = Halt expect 5% shorter braking distance
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3V = expect to travel at indicated speed x10 (green flashes){Attrib}B1,60
+msoTextBox0¯493.05;0;327.6;91.03725¯Dieses Blatt zeigt die Konfiguration eines Ks-Vorsignalwiederholers
+Signal Bilder sind Ks 2 / Ks 1 / Ks 1+ Zs 3V  /  Kennlicht
+Ks 2 = Halt erwarten mit 5% verkürzten Bremsweg
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3V  = Fahrt  erwarten mit angezeigter Geschwindigkeit x10 (Grün blinkt){Attrib}B1,68
+msoPicture¯344.4528;683.0118;30.75;222¯KS_Vor.jpg
+msoPicture¯415.9058;683.0118;30.75;221.25¯ZS1.jpg
+msoPicture¯523.3854;683.0118;31.5;242.25¯Ks1_Zs3v.jpg
+
+SheetName¯KS_Vorsignal_Zs3V
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯4
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Vorsignal_Zs3V
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯Ks 2¯¯x
+LED_Tab¯Ks 1¯¯¯¯x¯¯x¯x¯.¯.
+LED_Tab¯Ks 1 + Zs3V¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Kennlicht¯¯x¯¯¯¯x¯x¯x¯x
+LED_Attr¯13.5¯i65535
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i10921638
+RGB_LED_CheckBox¯           0
+msoTextBox2¯493.05;0;429.4;75.07607¯Dit blad toont de configuratie van een Ks Voorsein.
+Seinbeelden zijn: Ks 2 / Ks 1 / Ks 1+ Zs 3V / marker licht
+Ks 2 = Halt verwacht 5% kortere remweg
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3V = verwachten te reizen met de aangegeven snelheid x10 (groen knipperend) {Attrib}B1,50
+msoTextBox1¯493.05;0;327.6;115.7595¯This sheet shows the configuration of a Ks distant repeater
+Signal pictures are Ks 2
+Ks 1
+Ks 1+ Zs 3V
+  marker light
+Ks 2 = Halt expect 5% shorter braking distance
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3V = expect to travel at indicated speed x10 (green flashes){Attrib}B1,60
+msoTextBox3¯493.05;0;327.6;115.7595¯This sheet shows the configuration of a Ks distant repeater
+Signal pictures are Ks 2
+Ks 1
+Ks 1+ Zs 3V
+  marker light
+Ks 2 = Halt expect 5% shorter braking distance
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3V = expect to travel at indicated speed x10 (green flashes){Attrib}B1,60
+msoTextBox0¯493.05;0;327.6;129.3207¯Dieses Blatt zeigt die Konfiguration eines Ks-Vorsignalwiederholers
+Signal Bilder sind Ks 2
+Ks 1 
+Ks 1+ Zs 3V  
+ Kennlicht
+Ks 2 = Halt erwarten mit 5% verkürzten Bremsweg
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3V  = Fahrt  erwarten mit angezeigter Geschwindigkeit x10 (Grün blinkt){Attrib}B1,68
+msoPicture¯344.8057;564.3351;30.75;222¯KS_Vor.jpg
+msoPicture¯424.1998;564.3351;30.75;221.25¯ZS1.jpg
+msoPicture¯518.8678;564.3351;31.5;242.25¯Ks1_Zs3v.jpg
+
+SheetName¯KS_Hauptsignal_Zs3_Zs1_RGB
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Hauptsignal_ZS3_Zs1_RGB
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯Zs 3¯¯¯¯¯¯x
+LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯¯¯x¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Hp 0
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Ks 1¯¯¯¯x¯¯x
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯Zs1¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Attr¯13.5¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯c16777215,i14277081
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+RGB_LED_CheckBox¯           1
+msoTextBox2¯493.05;0;387.6;88.63725¯Dit blad toont de configuratie van een Ks-Hoofdsein.
+Seinbeelden zijn: HP 0 / Ks 1 / Ks 1+ Zs 3 / HP 0 + Zs 1 
+Hp 0 = stop
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3 = rijden met aangegeven snelheid x10
+Hp 0 + Zs 1 = verbaal commando om het rode signaal door te geven (Zs 1 knippert){Attrib}B1,51
+msoTextBox1¯493.05;0;327.6;129.3207¯This sheet shows the configuration of a Ks signal
+Signal pictures are HP 0
+Ks 1
+Ks 1+ Zs 3
+HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 = travel at indicated speed x10
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox3¯493.05;0;327.6;129.3207¯This sheet shows the configuration of a Ks signal
+Signal pictures are HP 0
+Ks 1
+Ks 1+ Zs 3
+HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 = travel at indicated speed x10
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox0¯493.05;0;327.6;156.443¯Dieses Blatt zeigt die Konfiguration eines Ks-SignalsSignal Bilder sind HP 0 
+Ks 1 
+Ks 1+ Zs 3  
+HP 0 + Zs 1
+Hp 0 = Halt
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3  = Fahrt mit angezeigter Geschwindigkeit x10
+Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt)
+{Attrib}B1,54
+msoPicture¯339.6882;679.3235;31.5;221.25¯KS_Hp0.jpg
+msoPicture¯413.7884;679.3235;31.5;221.25¯KS_Hp0.jpg
+msoPicture¯496.7115;679.3235;31.5;241.5¯KS_Ks1.jpg
+msoPicture¯597.273;679.3235;32.25;246.75¯KS_Ks1_Zs3.jpg
+
+SheetName¯KS_Hauptsignal_Zs3_Zs1
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯4
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Hauptsignal_Zs3_Zs1
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯Zs 3¯¯¯¯¯¯x
+LED_Tab¯Hp 0¯¯x¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Ks 1¯¯¯¯x¯¯x
+LED_Tab¯Zs 1¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Attr¯13.5¯i15921906
+LED_Attr¯15¯i255
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i15921906
+RGB_LED_CheckBox¯           0
+msoTextBox2¯493.05;0;387.6;88.63725¯Dit blad toont de configuratie van een Ks-Hoofdsein.
+Seinbeelden zijn: HP 0 / Ks 1 / Ks 1+ Zs 3 / HP 0 + Zs 1 
+Hp 0 = stop
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3 = rijden met aangegeven snelheid x10
+Hp 0 + Zs 1 = verbaal commando om het rode signaal door te geven (Zs 1 knippert){Attrib}B1,51
+msoTextBox3¯493.05;0;327.6;88.63725¯This sheet shows the configuration of a Ks signal
+Signal pictures are HP 0 / Ks 1 / Ks 1+ Zs 3 / HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 = travel at indicated speed x10
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox0¯493.05;0;327.6;119.3595¯Dieses Blatt zeigt die Konfiguration eines Ks-SignalsSignal Bilder sind HP 0 / Ks 1 / Ks 1+ Zs 3  / HP 0 + Zs 1
+Hp 0 = Halt
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3  = Fahrt mit angezeigter Geschwindigkeit x10
+Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt)
+{Attrib}B1,54
+msoPicture¯422.3998;561.6529;30.75;221.25¯ZS1.jpg
+msoPicture¯343.0058;561.6529;31.5;221.25¯KS_HP0.jpg
+msoPicture¯499.147;561.6529;31.5;241.5¯KS_Ks1.jpg
+msoPicture¯606.521;561.6529;31.5;240.75¯Ks1_Zs3.jpg
+
+SheetName¯KS_Hauptsignal_Zs3_Zs 6_Zs1_RGB
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯15
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Hauptsignal_Zs3_Zs6_Zs1_RGB
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯Zs 3¯¯¯¯¯¯x¯¯.¯.
+LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯¯¯x¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Rot
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün¯¯¯¯x¯¯x
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯Zs1¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯Zs6¯¯¯¯¯¯x
+LED_Tab¯¯¯¯¯¯¯x
+LED_Attr¯13.5¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯c16777215,i14277081
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+RGB_LED_CheckBox¯           1
+msoTextBox2¯493.05;0;387.6;88.63725¯Dit blad toont de configuratie van een KS-Hoofdsein.
+Seinbeelden zijn: HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3 + Zs 6 = rij met aangegeven snelheid x10 en rijbaan
+Hp 0 + Zs 1 = verbaal commando om het rode signaal door te geven (Zs 1 knippert){Attrib}B1,51
+msoTextBox1¯493.05;0;327.6;142.8818¯This sheet shows the configuration of a KS signal
+Signal pictures are HP 0
+Ks 1
+Ks 1+ Zs 3 + Zs 6
+HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox3¯493.05;0;327.6;142.8818¯This sheet shows the configuration of a KS signal
+Signal pictures are HP 0
+Ks 1
+Ks 1+ Zs 3 + Zs 6
+HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox0¯493.05;0;327.6;156.443¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 
+Ks 1 
+Ks 1+ Zs 3 + Zs 6 
+HP 0 + Zs 1
+Hp 0 = Halt
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3 + Zs 6 = Fahrt mit angezeigter Geschwindigkeit x10 und Gegengleisfahrt
+Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt){Attrib}B1,54
+msoPicture¯339.1588;724.9234;31.5;221.25¯Ks_HP0.jpg
+msoPicture¯418.553;724.9234;44.25;303¯Ks1.jpg
+msoPicture¯595.227;724.9234;44.25;333¯KS1_Zs3_Zs6.jpg
+msoPicture¯493.5353;724.9234;44.25;363.75¯Hp0_Zs1.jpg
+
+SheetName¯KS_Hauptsignal_Zs3_Zs 6_Zs1
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯5
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Hauptsignal_Zs3_Zs6_Zs1
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯Zs 3¯¯¯¯¯¯x
+LED_Tab¯Hp 0¯¯x¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Ks 1¯¯¯¯x¯¯x
+LED_Tab¯Zs 1¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯Zs 6¯¯¯¯¯¯x
+LED_Attr¯13.5¯i14277081
+LED_Attr¯15¯i255
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+RGB_LED_CheckBox¯           0
+msoTextBox2¯493.05;0;387.6;88.63725¯Dit blad toont de configuratie van een KS-Hoofdsein.
+Seinbeelden zijn: HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3 + Zs 6 = rij met aangegeven snelheid x10 en rijbaan
+Hp 0 + Zs 1 = verbaal commando om het rode signaal door te geven (Zs 1 knippert) {Attrib}B1,51
+msoTextBox1¯493.05;0;327.6;102.1983¯This sheet shows the configuration of a KS signal
+Signal pictures are HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox3¯493.05;0;327.6;102.1983¯This sheet shows the configuration of a KS signal
+Signal pictures are HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox0¯493.05;0;327.6;119.3595¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
+Hp 0 = Halt
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3 + Zs 6 = Fahrt mit angezeigter Geschwindigkeit x10 und Gegengleisfahrt
+Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt){Attrib}B1,54
+msoPicture¯346.9236;593.6648;31.5;221.25¯KS_HP0.jpg
+msoPicture¯424.553;593.6648;31.5;241.5¯KS_KS1.jpg
+msoPicture¯596.0731;593.6648;38.25;289.5¯KS_KS1_Zs3_Zs6.jpg
+msoPicture¯499.5353;593.6648;38.25;316.5¯KS_HP0_Zs1.jpg

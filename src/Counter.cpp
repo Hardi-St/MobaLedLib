@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018, 2019  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -60,6 +60,9 @@
 void MobaLedLib_C::Proc_Counter()
 //-------------------------------
 {
+#if _USE_STORE_STATUS                                                                                         // 01.05.20:
+    ProcCounterId++;
+#endif
   CALCULATE_t4w; // Calculate the local variable t4w if _USE_LOCAL_TX is defined                              // 22.11.18:
   Counter_T* dp = (Counter_T*)rp; // Set the time pointer to the reserved RAM
   rp += sizeof(Counter_T);
@@ -99,9 +102,11 @@ void MobaLedLib_C::Proc_Counter()
      //Dprintf("DestCnt: %i\n",   DestCnt);
      //Dprintf("Counter: %i\n",   dp->Counter);
      if ((ModeL & CF_UP_DOWN) == 0 && !Inp_Is_On(Enable)) Dprintf("Achtung: Enable = 0\n");
-     }
-
-
+#if _USE_STORE_STATUS                                                                                         // 01.05.20:
+     Do_Callback(CT_COUNTER_INITIAL, ProcCounterId, 0, &dp->Counter);
+     Dprintf("Counter: %i %i %i\n", ProcCounterId, Inp, dp->Counter);
+#endif
+  }
 
   if ((ModeL & CF_UP_DOWN) == 0 && !Inp_Is_On(Enable)) // Enabled ?
        dp->Counter = 0;
@@ -167,7 +172,10 @@ void MobaLedLib_C::Proc_Counter()
      {
      uint8_t Clean_Counter = dp->Counter;            // Counter without reverse flag
      if (ModeL & CF_PINGPONG) Clean_Counter &= 0x7F; // Remove the reverse flag
+#if _USE_STORE_STATUS                                                                                         // 01.05.20:
+     Do_Callback(CT_COUNTER_CHANGED, ProcCounterId, OldCounter, &dp->Counter);
      //Dprintf("Proc_Counter: %i => %i: ", OldCounter, Clean_Counter);
+#endif
 
 #ifdef NEW_MODES
      if (ModeH & (CF_LOCAL_VAR>>8))                                                                           // 07.11.18:
@@ -191,7 +199,7 @@ void MobaLedLib_C::Proc_Counter()
           for (uint8_t i = e-1; i != 255; i--, ip--)
                {
                uint8_t InpNr = pgm_read_byte_near(ip);
-               //Dprintf("Inp[%i]=%i", InpNr, Get_Input(InpNr));
+               //Dprintf("Counter Inp[%i]=%i\n", InpNr, Get_Input(InpNr));
                if (ModeL & CF_BINARY)
                     { Set_Input(InpNr, Clean_Counter & Mask); Mask>>=1;}  // Enable binary pattern
                else Set_Input(InpNr, i == Clean_Counter);                 // Enable only one

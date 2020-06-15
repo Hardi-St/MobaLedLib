@@ -1,7 +1,9 @@
 @ECHO OFF
 REM Arduino parameters see:
 REM   https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
-
+REM
+REM Revision History:
+REM 05.06.20:  - Hiding the Debug messages from the compiler
 
 REM Used additional resources:
 REM ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,10 +47,12 @@ ECHO **********************************
 ECHO * Compile and uplaod the program *
 ECHO **********************************
 ECHO.
+CHCP 65001 >NUL
 "C:\Program Files (x86)\Arduino\arduino_debug.exe" "02.Tiny_UniProg.ino" ^
    --upload ^
    --port %ComPort% ^
-   --board arduino:avr:uno --pref programmer=arduino:arduinoisp
+   --board arduino:avr:uno --pref programmer=arduino:arduinoisp ^
+   2>&1 | find /v "Set log4j store directory" | find /v " StatusLogger " | find /v "serial.SerialDiscovery"
 
 IF ERRORLEVEL 1 (
    REM White on RED

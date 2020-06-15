@@ -1,0 +1,380 @@
+SheetName¯Morsecode
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯1
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PM_SEQUENZ_NO_RESTART
+Analoges Überblenden: ¯0
+Goto Mode: ¯
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Morsecode
+Dauer¯240
+Goto Tabelle¯
+LED_Tab¯LED 1¯X¯¯X¯¯X¯¯X¯X¯X¯¯X¯X¯X¯¯X¯X¯X¯¯X¯¯X¯¯X¯¯¯¯¯X¯¯X¯X¯X¯¯X¯¯¯¯X¯¯¯¯X¯X¯X¯¯¯¯X¯X¯X¯¯¯¯X¯¯¯¯X¯X¯X¯¯¯¯¯¯¯¯X¯¯X¯¯X¯¯X¯¯¯¯X¯¯X¯X¯X¯¯¯¯X¯¯X¯X¯X¯¯X¯¯¯¯X¯X¯X¯¯X¯¯X¯¯¯¯X¯¯X¯.
+LED_Tab¯¯S¯¯S¯¯S¯¯O¯O¯O¯¯O¯O¯O¯¯O¯O¯O¯¯S¯¯S¯¯S¯¯¯¯¯R¯¯R¯R¯R¯¯R¯¯¯¯E¯¯¯¯T¯T¯T¯¯¯¯T¯T¯T¯¯¯¯E¯¯¯¯T¯T¯T¯¯¯¯¯¯¯¯H¯¯H¯¯H¯¯H¯¯¯¯A¯¯A¯A¯A¯¯¯¯R¯¯R¯R¯R¯¯R¯¯¯¯D¯D¯D¯¯D¯¯D¯¯¯¯I¯¯I
+LED_Tab¯¯.¯¯.¯¯.¯¯-¯-¯-¯¯-¯-¯-¯¯-¯-¯-¯¯.¯¯.¯¯.¯¯¯¯¯.¯¯-¯-¯-¯¯.¯¯¯¯.¯¯¯¯-¯-¯-¯¯¯¯-¯-¯-¯¯¯¯.¯¯¯¯-¯-¯-¯¯¯¯¯¯¯¯.¯¯.¯¯.¯¯.¯¯¯¯.¯¯-¯-¯-¯¯¯¯.¯¯-¯-¯-¯¯.¯¯¯¯-¯-¯-¯¯.¯¯.¯¯¯¯.¯¯.
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯
+LED_Attr¯14.6¯
+RGB_LED_CheckBox¯           0
+msoTextBox2¯638.4664;0;150.9892;20.8315¯Morsecode door Lorenz{Attrib}F1,20,16711680
+msoTextBox0¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
+msoTextBox1¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
+msoTextBox3¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
+msoTextBox2¯637.2;38.99992;522.3;142.8818¯With this sheet, a Morse code can be created as a configuration of an LED pattern.
+The message to be translated in Morse code is entered in the "Morse text" field. Words are separated by spaces. The "Duration This in ms" field specifies the duration of a point in milliseconds (ms). Sending a stroke takes three times as long as sending a point. After each point or dash there is a pause of the duration of a point. After each letter there is a pause of the length of a line. After each word there is a space break of seven points.
+If "Send beginning / end of phrase" with "Yes" is selected, the letter sequence "KA" is added to the beginning of the entire message (= beginning of saying) and the letter sequence "AR" (= spell the end).
+The following special signals are supported: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA } {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. They are generated from the corresponding letters without separators.{Attrib}B1,81 B145,158 B200,222 B536,569
+msoTextBox2¯637.2;38.99992;522.3;156.443¯Met dit blad kan een Morse-code worden gemaakt als een configuratie van een LED-patroon.
+Het te vertalen bericht in Morse-code wordt ingevoerd in het veld "Morse-tekst". Woorden worden gescheiden door spaties. Het veld "Duur Dit in ms" geeft de duur van een punt in milliseconden (ms) aan. Het verzenden van een lijn duurt drie keer zo lang als het verzenden van een punt. Na elk punt of streepje is er een pauze van de duur van een punt. Na elke letter is er een pauze van de lengte van een regel. Na elk woord is er een spatiepauze van zeven punten.
+Als "Begin / einde van zin" met "Ja" is geselecteerd, wordt de letterreeks "KA" toegevoegd aan het begin van het hele bericht (= begin van het zenden) en de letterreeks "AR" (= het einde van het zenden). De volgende speciale signalen worden ondersteund: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA } {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. Ze worden gegenereerd uit de overeenkomstige letters zonder scheidingstekens.{Attrib}B1,88 B156,168 B220,236 B555,580
+msoTextBox1¯637.2;38.99992;522.3;142.8818¯With this sheet, a Morse code can be created as a configuration of an LED pattern.
+The message to be translated in Morse code is entered in the "Morse text" field. Words are separated by spaces. The "Duration This in ms" field specifies the duration of a point in milliseconds (ms). Sending a stroke takes three times as long as sending a point. After each point or dash there is a pause of the duration of a point. After each letter there is a pause of the length of a line. After each word there is a space break of seven points.
+If "Send beginning / end of phrase" with "Yes" is selected, the letter sequence "KA" is added to the beginning of the entire message (= beginning of saying) and the letter sequence "AR" (= spell the end).
+The following special signals are supported: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA } {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. They are generated from the corresponding letters without separators.{Attrib}B1,81 B145,158 B200,222 B536,569
+msoTextBox0¯637.2;38.99992;522.3;156.443¯Mit diesem Blatt kann ein Morsecode als Konfiguration eines LED Musters erstellt werden.
+Im Feld "Morsetext" wird die in Morsecode zu übersetzende Botschaft eingetragen. Wörter werden mit Leerzeichen getrennt. Das Feld "Dauer Dit in ms" gibt die Dauer eines Punktes in Millisekunden (ms) an. Das Senden eines Strichs dauert dreimal so lang wie das Senden eines Punktes. Nach jedem Punkt oder Strich ist eine Pause von der Dauer eines Punktes. Nach jedem Buchstaben ist eine Pause von der Dauer eines Striches. Nach jedem Wort ist eine Leerschritt-Pause von der Dauer von sieben Punkten.
+Ist "Spruchanfang/-ende senden" mit "Ja" ausgewählt, wird an den Anfang der gesamten Nachricht zusätzlich die Buchstabenfolge "KA" gesetzt (=Spruchanfang) und ans Ende die Buchstabenfolge "AR" (=Spruchende). Folgende besondere Signale werden unterstützt: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA} {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. Sie werden aus den entsprechenden Buchstaben ohne Trennzeichen generiert.{Attrib}B1,90 B93,93 B100,108 B222,236 B594,618
+msoPicture¯293.4;424.8;262;230¯Insel_Lampe_Aus.jpg
+msoPicture¯293.4;424.8;262;230¯Insel_Lampe_An.jpg
+msoFormControl0¯535.2;90;79.8;19.2¯Code erstellen¯Make_Morsecode
+msoFormControl1¯535.2;90;79.8;19.2¯Create code¯Make_Morsecode
+msoFormControl3¯535.2;90;79.8;19.2¯Create code¯Make_Morsecode
+msoFormControl2¯535.2;90;79.8;19.2¯Maak code¯Make_Morsecode
+
+SheetName¯AmpelX
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯6
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯0
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX
+Dauer¯2 Sec¯1 Sec¯10 Sec¯3 Sec¯=F~¯=G~¯=H~¯=I~
+Goto Tabelle¯
+LED_Tab¯Rot 1¯x¯x¯¯¯x¯x¯x¯x
+LED_Tab¯Grün 1¯¯¯x
+LED_Tab¯Gelb 1¯¯x¯¯x
+LED_Tab¯Rot 2¯x¯x¯x¯x¯x¯x
+LED_Tab¯Grün 2¯¯¯¯¯¯¯x
+LED_Tab¯Gelb 2¯¯¯¯¯¯x¯¯x
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c255¯¯c5287936¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯c65535,i16711680,B¯c5287936¯¯c5287936¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯¯¯¯¯¯¯c5287936¯¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯c65535,i16711680,B¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+RGB_LED_CheckBox¯           0
+msoTextBox2¯492.75;0;355.1245;156.443¯Dit voorbeeld toont de configuratie van een verkeerslicht op een kruising bij een modelverkeerslicht met behulp van twee WS2811-modules.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde  verkeerslicht is hetzelfde. Voor dit voorbeeld zijn deze duplicaten weggelaten. Ze kunnen in de tabel worden gemaakt door het blok te kopiëren.
+Het voorbeeld gebruikt twee WS2811 Modules die afzonderlijke LED's in de verkeerslichtmodellen besturen. Als dit voorbeeld wordt getest met een RGB-strip, worden de kleuren onjuist weergegeven (blauw in plaats van geel, paars in plaats van rood + geel).{Attrib}B1,137
+msoTextBox1¯492.75;0;355.1245;142.8818¯This example shows the configuration of a traffic light at an intersection at a model traffic light using two WS2811 modules.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite traffic light is the same. For this example, these duplicates are omitted. They can be created in the table by copying the block.
+The example uses two WS2811 Modules which control individual LEDs in the traffic light models.
+If this example is tested with an RGB stripe, the colors are displayed incorrectly (blue instead of yellow, purple instead of red + yellow).{Attrib}B1,122
+msoTextBox0¯492.75;0;355.1245;161.843¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung an
+einer Modellampel über zwei WS2811 Module. Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt werden. 
+Das Beispiel benutzt zwei WS2811 Moule welche einzelne LEDs in den Ampelmodellen ansteuern.  Wenn dieses Beispiel mit einem RGB Stripe getestet wir, dann werden die Farben falsch dargestellt (Blau anstelle von Gelb, Lila anstelle von Rot+Gelb).{Attrib}B1,116
+msoTextBox3¯492.75;0;355.1245;142.8818¯This example shows the configuration of a traffic light at an intersection at a model traffic light using two WS2811 modules.
+The traffic light system consists of two differently switched traffic lights. One for each direction of travel (horizontal / vertical). The opposite traffic light is the same. For this example, these duplicates are omitted. They can be created in the table by copying the block.
+The example uses two WS2811 Modules which control individual LEDs in the traffic light models.
+If this example is tested with an RGB stripe, the colors are displayed incorrectly (blue instead of yellow, purple instead of red + yellow).{Attrib}B1,122
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯RGB_ConstrWarnLight
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯26
+Bits pro Wert: ¯2
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_ConstrWarnLight
+Dauer¯100 ms¯200 ms
+Goto Tabelle¯
+LED_Tab¯LED 0 R¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯.¯.¯x¯x
+LED_Tab¯LED 0 G¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯x¯x
+LED_Tab¯LED 0 B
+LED_Tab¯LED 1 R¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯x¯x
+LED_Tab¯LED 1 G¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯x¯x
+LED_Tab¯LED 1 B
+LED_Tab¯LED 2 R¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 2 G¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 2 B
+LED_Tab¯LED 3 R¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 3 G¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 3 B
+LED_Tab¯LED 4 R¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 4 G¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 4 B
+LED_Tab¯LED 5 R¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 5 G¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 5 B
+LED_Tab¯LED 6 R¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 6 G¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 6 B
+LED_Tab¯LED 7 R¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 7 G¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯1¯1¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 7 B
+LED_Tab¯LED 8 R¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯LED 8 G¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯LED 8 B
+LED_Attr¯13.5¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+RGB_LED_CheckBox¯           1
+msoTextBox2¯493.5;1.5;489;102.1983¯Dit voorbeeld laat zien hoe de bouwplaats beveiliging kan worden geconfigureerd.
+Lopende lichten worden vaak gebruikt om bouwplaatsen te beveiligen. Er zijn verschillende oplossingen voor een modelspoorbaan. Dit kan echter nog flexibeler worden gemaakt door MobaLedLib te gebruiken. Hier kunt u eenvoudig het aantal lampen en het effect variëren.
+De tabel laat zien hoe de waarschuwingslichten zo moeten worden geconfigureerd dat ze kort knipperen en vervolgens met verminderde helderheid blijven gloeien.
+Dit effect wordt gecombineerd met een eenvoudig looplicht.{Attrib}B1,79
+msoTextBox1¯493.5;1.5;489;102.1983¯This example shows how construction site protection can be configured.
+Running lights are often used to secure construction sites. There are various solutions for a model train. However, this can be made even more flexible by using the MobaLedLib. Here you can easily vary the number of lamps and the effect.
+The table shows how to configure the warning lights so that they flash briefly and then continue to glow with reduced brightness. This effect can be found on many construction sites.
+This effect is combined with a simple running light.{Attrib}B1,70
+msoTextBox0¯493.5;1.5;489;105.1983¯Dieses Beispiel zeigt wie eine Baustellenabsicherung konfiguriert werden kann. 
+Zur Absicherung von Baustellen verwendet man häufig Lauflichter. Dafür gibt es die verschiedensten Lösungen für eine Modelleisenbahn. Allerdings lässt sich das noch flexibler durch die Verwendung der MobaLedLib gestalten. Hier kann man die Anzahl der Lampen und den Effekt ganz einfach variieren.
+Die Tabelle zeigt wie man die Warnlichter so konfiguriert, dass sie kurz Aufblitzen und dann mit reduzierter Helligkeit weiter leuchten. Diesen Effekt findet man bei vielen Baustellen. 
+Dieser Effekt ist noch mit einem einfachen Lauflicht kombiniert {Attrib}B1,80
+msoTextBox3¯493.5;1.5;489;102.1983¯This example shows how construction site protection can be configured.
+Running lights are often used to secure construction sites. There are various solutions for a model train. However, this can be made even more flexible by using the MobaLedLib. Here you can easily vary the number of lamps and the effect.
+The table shows how to configure the warning lights so that they flash briefly and then continue to glow with reduced brightness. This effect can be found on many construction sites.
+This effect is combined with a simple running light.{Attrib}B1,70
+msoPicture¯501;98.85;219.75;75¯ConstrWarnLight.jpg
+
+SheetName¯RGB_AmpelX_Fade
+Version¯1
+Erste RGB LED: ¯0
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯18
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯255
+Wert ausgeschaltet: ¯0
+Mode: ¯PF_NO_SWITCH_OFF
+Analoges Überblenden: ¯1
+Goto Mode: ¯0
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯RGB_AmpelX_Fade
+Dauer¯200 ms¯2 Sec¯200 ms¯1 Sec¯200 ms¯10 Sec¯200 ms¯3 Sec¯=F~¯=G~¯=H~¯=I~¯=J~¯=K~¯=L~¯=M~
+Goto Tabelle¯
+LED_Tab¯Rot 1¯x¯x¯x¯x¯¯¯¯¯x¯x¯x¯x¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 1¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯Gelb 1¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 1¯¯¯¯¯x¯x
+LED_Tab¯
+LED_Tab¯Rot 2¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Gelb 2¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯Gelb 2¯¯¯¯¯¯¯¯¯¯¯x¯x¯¯¯x¯x
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün 2¯¯¯¯¯¯¯¯¯¯¯¯¯x¯x
+LED_Tab¯
+LED_Attr¯13.5¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯¯¯¯¯¯¯¯¯¯¯¯¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯¯¯¯¯¯¯¯¯¯¯¯¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i5287936¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i5287936¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255¯c255
+LED_Attr¯15¯i255¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i255¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680¯c16711680
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936¯c5287936
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+RGB_LED_CheckBox¯           1
+msoTextBox2¯492.75;0;355.1245;142.8818¯Dit voorbeeld toont de configuratie van een uitgeschakeld verkeerslicht op een kruispunt.
+De LED's worden langzaam in- en uitgeschakeld.
+Het verkeerslichtsysteem bestaat uit twee verschillend geschakelde verkeerslichten. Eén voor elke rijrichting (horizontaal / verticaal). Het tegenovergestelde verkeerslicht wordt op dezelfde manier geschakeld. Voor dit voorbeeld zijn deze duplicaten weggelaten. U kunt deze maken door het blok in de tabel te kopiëren.
+Het voorbeeld gebruikt de LED's van een RGB LED-strip er is dan geen speciale hardware vereist.{Attrib}B1,88
+msoTextBox1¯492.75;0;393.45;129.3207¯This example shows the configuration of a traffic light at an intersection
+the LEDs are slowly switched on and off.
+The traffic light system consists of two differently switched traffic lights.
+One for each direction of travel (horizontal / vertical). The opposite
+Traffic light is switched in the same way. For this example, these duplicates
+are omitted. You can create them by copying the block in the table below.
+The example uses the LEDs of an RGB LED strip because you don't have any
+special hardware required.{Attrib}B1,116
+msoTextBox0¯492.75;0;355.1245;133.5207¯Dieses Beispiel zeigt die Konfiguration einer Ampel an einer Kreuzung
+dabei werden die LEDs langsam Ein- und Ausgeschaltet.
+Die Ampelanlage besteht aus zwei unterschiedlich geschalteten Ampeln.
+Für jede Fahrtrichtung (Horizontal/Vertikal) eine. Die gegenüberliegende
+Ampel ist gleich geschaltet. Für dieses Beispiel werden diese Duplikate
+weggelassen. Sie können durch kopieren des Blocks in der Tabelle angelegt 
+werden. 
+Das Beispiel benutzt die LEDs eines RGB LED Stripes weil man dazu keine
+spezielle Hardware benötigt. {Attrib}B1,124
+msoTextBox2¯492.75;0;393.45;129.3207¯This example shows the configuration of a traffic light at an intersection
+the LEDs are slowly switched on and off.
+The traffic light system consists of two differently switched traffic lights.
+One for each direction of travel (horizontal / vertical). The opposite
+Traffic light is switched in the same way. For this example, these duplicates
+are omitted. You can create them by copying the block in the table below.
+The example uses the LEDs of an RGB LED strip because you don't have any
+special hardware required.{Attrib}B1,116
+msoPicture¯890.15;5.833386;96;102.75¯Ampel.jpg
+
+SheetName¯KS_Hauptsignal_Zs3_Zs 6_Zs1_RGB
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯15
+Bits pro Wert: ¯1
+Wert Min: ¯0
+Wert Max: ¯128
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯KS_Hauptsignal_Zs3_Zs6_Zs1_RGB
+Dauer¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯500 ms¯200 ms¯500 ms¯200 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
+LED_Tab¯Zs 3¯¯¯¯¯¯x
+LED_Tab¯Zs 3¯¯¯¯¯¯x¯¯.¯.
+LED_Tab¯Zs 3¯¯¯¯¯¯x
+LED_Tab¯¯¯x¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Rot
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯Grün¯¯¯¯x¯¯x
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯Zs1¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯Zs6¯¯¯¯¯¯x
+LED_Tab¯¯¯¯¯¯¯x
+LED_Attr¯13.5¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i15921906
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+RGB_LED_CheckBox¯           1
+msoTextBox2¯493.05;0;387.6;88.63725¯Dit blad toont de configuratie van een KS-Hoofdsein.
+Seinbeelden zijn: HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = reizen volgens schemasnelheid
+Ks 1 + Zs 3 + Zs 6 = rij met aangegeven snelheid x10 en rijbaan
+Hp 0 + Zs 1 = verbaal commando om het rode signaal door te geven (Zs 1 knippert){Attrib}B1,51
+msoTextBox1¯493.05;0;327.6;142.8818¯This sheet shows the configuration of a KS signal
+Signal pictures are HP 0
+Ks 1
+Ks 1+ Zs 3 + Zs 6
+HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox3¯493.05;0;327.6;142.8818¯This sheet shows the configuration of a KS signal
+Signal pictures are HP 0
+Ks 1
+Ks 1+ Zs 3 + Zs 6
+HP 0 + Zs 1
+Hp 0 = stop
+Ks 1 = travel according to schedule speed
+Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
+Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
+msoTextBox0¯493.05;0;327.6;156.443¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 
+Ks 1 
+Ks 1+ Zs 3 + Zs 6 
+HP 0 + Zs 1
+Hp 0 = Halt
+Ks 1  = Fahrt nach Fahrplangeschwindigkeit
+Ks 1 + Zs 3 + Zs 6 = Fahrt mit angezeigter Geschwindigkeit x10 und Gegengleisfahrt
+Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt){Attrib}B1,54
+msoPicture¯339.1588;724.9234;31.5;221.25¯Ks_HP0.jpg
+msoPicture¯418.553;724.9234;44.25;303¯Ks1.jpg
+msoPicture¯595.227;724.9234;44.25;333¯KS1_Zs3_Zs6.jpg
+msoPicture¯493.5353;724.9234;44.25;363.75¯Hp0_Zs1.jpg
