@@ -1,9 +1,9 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-** New: Languages / DCC Buttons / LED preview / pyProgGen / Port detection / EEPROM / Switches / 4 LED Channels / Variables / ...**
+**New: Languages / DCC Buttons / LED preview / pyProgGen / Port detection / EEPROM / Switches / 4 LED Channels / Variables / ...**
 
-** Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
+**Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
 
 To start the excel program press the Win+r key together and copy the following line
 into the "Run" dialog and press enter:
@@ -31,8 +31,8 @@ This makes the wiring extremely easy.
 A lot of **examples** show the usage of the library. They could be use as startup for own programs.
 
 
-This library is described in detail here:
-https://wiki.mobaledlib.de/doku.php
+This library is described in detail here:<br/>
+https://wiki.mobaledlib.de/doku.php<br/>
 https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sid=e3b7f6122766c330d04cecf18b7b4878
 
 Several videos which demonstrate the library are available in the following pages in the forum
