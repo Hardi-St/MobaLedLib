@@ -361,6 +361,22 @@
               be different from the normal values.
  09.06.20:  - Using only one byte to store the last state according to Juergens tipp
  10.06.20:  - New CANDLE room type and new Set_CandleTab() macro based on Roberts sources (322 additional Bytes)
+ 29.09.20:  - Corrected the case in the Pattern*24 macros: t24 => T24
+            - Incremented the number of Pattern functions from 30 to 32
+ 01.10.20:  - New function "Mainboard_LED(MB_LED, InCh)" which could be used to use the mainboard LEDs as status LEDs
+            - Added macro "WeldingCont()" which continuously flickers while the input is active.
+ 14.10.20:  - Corrected definition of XPatternTE21.. The "_PF_XFADE" Flag was missing here ;-(
+            - Moved the Pattern Macro definitions to "Macros.h"
+ 17.10.20:  - Added Juergens changes:
+              - Added "__attribute__ ((packed))" to all tyypedefs to be able to compile the lib on a 32 bit plattform
+              - Changed the deprecated binary constants B... to 0B...
+              - Disabled the random number generator initialisation by random noise in the RAM if RAMEND
+                is not defined (ESP)
+                => On this platforms the random numbers are always the same
+                ==> ToDo: An othe method has to be implemted to get true random numbers.
+              - Moved the initialisation of Update_TV_Data() down after Room_ColP is initialized
+
+
 
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
@@ -575,6 +591,7 @@ uint8_t TestMode = 0;    // If this variable is set the normal update function o
  mal ein anderer Wert :-))
 */
 
+#ifdef RAMEND																								 // 17.10.20: Jürgen - not all platforms provide a static RAMEND define
 uint32_t __attribute__((section(".noinit"))) random_seed;  // Variable located in the RAM section which is not initialized => It keeps the value after a warm start
 
 //------------------------------------------------------------
@@ -586,6 +603,7 @@ void __attribute__((naked, section(".init3"))) seed_from_ram()
     for (const uint32_t *p = &__data_start; p <= ramend; p++)
         random_seed ^= *p;
 }
+#endif
 
 #ifdef _NEW_ROOM_COL
 const PROGMEM uint8_t Default_Room_Col_Tab[ROOM_COL_CNT*3] = // 51 Byte FLASH
@@ -666,10 +684,10 @@ MobaLedLib_C::MobaLedLib_C(
   // - Initialisation of the serial port in the constructor could hang up the program for some reasons ;-(
   // - Some characters may get lost
   // - If the baudrate is equal to the Flash Tool it seams to be better
-  //  #ifdef _PRINT_DEBUG_MESSAGES
-  //    Serial.begin(57600); //   Attention: The serial monitor in the Arduino IDE must use the same baudrate
-  //  #endif
-  //Dprintf("MobaLedLib_C Constructor\n");
+   // #ifdef _PRINT_DEBUG_MESSAGES
+     // Serial.begin(115200); //   Attention: The serial monitor in the Arduino IDE must use the same baudrate
+   // #endif
+  // Dprintf("MobaLedLib_C Constructor\n");
 
   //memset(_leds, 3, sizeof(CRGB)*Num_Leds); // Debug line to find initialization problems
   memset(TV_Dat, 0, sizeof(TV_Dat));
@@ -679,7 +697,6 @@ MobaLedLib_C::MobaLedLib_C(
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
   CallbackFunc = Function;
 #endif
-  //Set_Input(SI_1, 1);          // Special input which is always 1                                           // 20.05.20:  Moved down
   Set_Input(SI_Enable_Sound, 1); // Could be changed by the configuration
 
   Set_Default_TV_Dat_p();                                                                                     // 09.01.20:
@@ -689,10 +706,12 @@ MobaLedLib_C::MobaLedLib_C(
   Set_Input(SI_1, 1);            // Special input which is always 1                                           // 20.05.20:  New Location
 
   // Initialize the random numbers with the "uninitialized RAM"
+#ifdef RAMEND                                                                                                 // 17.10.20: Jürgen - not all platforms provide a static RAMEND define
   srandom(random_seed);
   random16_set_seed(random());
+#endif
 
-  Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() bust be called before to get unpredictable random numbers)
+  Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
 
   #ifdef _TEST_BUTTONS
     Setup_Test_Buttons();
@@ -825,7 +844,7 @@ void MobaLedLib_C::Proc_Fire()
           // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
           if (random8() < SPARKING )
              {
-             uint8_t y = random8(min(7,LED_cnt));                                                             // Adapt the 7 for
+             uint8_t y = random8(min((uint8_t)7,LED_cnt));                                           // Adapt the 7 for // 17.10.20 Jürgen - cast uint8_t for >8bit platforms
              heat[y] = qadd8(heat[y], random8(160,255));
              }
           }
@@ -1230,18 +1249,20 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
   #endif
   if ((uint8_t)((t & 0xFF) - Last_20) >= 50)
        { // is called every 50 ms = 20 Hz
+#ifdef RAMEND																								  // 17.10.20: Jürgen - not all platforms provide a static RAMEND define
        random16_add_entropy(random_seed = random()); // Add entropy to random number generator                // 27.08.18:  Old position outside the if
+#endif
        Trigger20fps = TriggerCnt++;
        if (TriggerCnt == 0) TriggerCnt++;                                                                     // 09.06.20:
        Last_20 = t & 0xFF;
        }
   else Trigger20fps = 0;
 
-  Update_TV_Data();
-
   #ifdef _NEW_ROOM_COL
     Room_ColP = Default_Room_Col_Tab;
   #endif
+	
+  Update_TV_Data();																							  // 17.10.20: must be called AFTER Room_ColP is initialized - Jürgen 
 
   #if _USE_CANDLE                                                                                             // 10.06.20:
     Candle_DatP = &Default_Candle_Dat;
@@ -1312,7 +1333,8 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
       case RANDMUX_T            : Proc_RandMux();            IncCP_RandMux();       break;
 #                                                                                                                  endif
 #                                                                                                                  if _USE_WELDING
-      case WELDING_T            : Proc_Welding();            IncCP_Welding();       break;
+      case WELDING_CONT_T       : Proc_Welding(0);           IncCP_Welding();       break;                    // 01.10.20:
+      case WELDING_T            : Proc_Welding(1);           IncCP_Welding();       break;
 #                                                                                                                  endif
 #                                                                                                                  if _USE_COPYLED
       case COPYLED_T            : Proc_CopyLED();            IncCP_CopyLED();       break;
@@ -1488,7 +1510,7 @@ uint8_t MobaLedLib_C::Find_Next_Priv_InpChannel(uint8_t Channel, int8_t Directio
 
 // Table to convert the bits from the to the bit structure in the InpStructArray. The table contains the values for one nibble (4 bits)
  //                                        Input:   00000000   00000001   00000010   00000011   00000100   00000101   00000110   00000111   00001000   00001001   00001010   00001011   00001100   00001101   00001110   00001111
-const PROGMEM uint8_t Bits_to_InpStruct_Tab[16] = { B00000000, B00000001, B00000100, B00000101, B00010000, B00010001, B00010100, B00010101, B01000000, B01000001, B01000100, B01000101, B01010000, B01010001, B01010100, B01010101 };
+const PROGMEM uint8_t Bits_to_InpStruct_Tab[16] = { 0b00000000, 0b00000001, 0b00000100, 0b00000101, 0b00010000, 0b00010001, 0b00010100, 0b00010101, 0b01000000, 0b01000001, 0b01000100, 0b01000101, 0b01010000, 0b01010001, 0b01010100, 0b01010101 };
 
 //-----------------------------------------------------------------------------------------------------
 void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, uint8_t InpStructArrayNr)
@@ -1529,7 +1551,7 @@ inline int8_t MobaLedLib_C::Get_Input(uint8_t channel)
 {
   uint8_t ByteNr = channel>>2;       // channel / 4;
   uint8_t Shift  = (channel % 4)<<1;
-  return (InpStructArray[ByteNr]>>Shift) & B00000011;
+  return (InpStructArray[ByteNr]>>Shift) & 0b00000011;
 }
 // Optimierungen:
 //   - Wenn die ByteNr und Shift Berechnung durch Konstanten ersetzt wird, dann dauert es

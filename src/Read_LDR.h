@@ -70,12 +70,6 @@
 
 #include "MobaLedLib.h" // variables Darkness / DayState
 
-typedef struct
-      {
-      uint8_t Start:1;
-      uint8_t SwitchMode:1;
-      } AD_Flags_T;
-
 static AD_Flags_T AD_Flags = { 1, 0 };
 static uint32_t LDR_Val  = 0;
 static uint16_t AD_Count = 0;

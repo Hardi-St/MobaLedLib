@@ -109,7 +109,7 @@ void Test_Speed_LEDs()
 */
 #include "LED_Polarity.h"
 
-#if LED_POLARITY_NORMAL // Normal LED polarity (+ on the left side) //getestet von Dominik und Okay für neue Version von Platine 2020-03-29
+#if LED_POLARITY_NORMAL // Normal LED polarity (+ on the left side) //getestet von Dominik und Okay fuer neue Version von Platine 2020-03-29
    #define LED_RESET_AS_IO  1
    #define LED_NORM_RESETF  0
    #define LED_HEART_BEAT   4

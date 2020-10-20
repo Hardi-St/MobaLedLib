@@ -31,7 +31,7 @@ msoTextBox2¯638.4664;0;150.9892;20.8315¯Morsecode door Lorenz{Attrib}F1,20,16711
 msoTextBox0¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
 msoTextBox1¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
 msoTextBox3¯638.4664;0;112.1892;20.8315¯Morsecode by Lorenz{Attrib}F1,18,16711680
-msoTextBox2¯637.2;38.99992;522.3;142.8818¯With this sheet, a Morse code can be created as a configuration of an LED pattern.
+msoTextBox3¯637.2;38.99992;522.3;142.8818¯With this sheet, a Morse code can be created as a configuration of an LED pattern.
 The message to be translated in Morse code is entered in the "Morse text" field. Words are separated by spaces. The "Duration This in ms" field specifies the duration of a point in milliseconds (ms). Sending a stroke takes three times as long as sending a point. After each point or dash there is a pause of the duration of a point. After each letter there is a pause of the length of a line. After each word there is a space break of seven points.
 If "Send beginning / end of phrase" with "Yes" is selected, the letter sequence "KA" is added to the beginning of the entire message (= beginning of saying) and the letter sequence "AR" (= spell the end).
 The following special signals are supported: {KA} {BT} {AR} {VE} {SK} {SOS} {HH} {OE} {SZ} {AAA} {MIM} {OS} {NNN} {IMI} {BA } {UK} {KN} {KK} {JN} {BT} {AR} {DN} {AC}. They are generated from the corresponding letters without separators.{Attrib}B1,81 B145,158 B200,222 B536,569
@@ -314,19 +314,19 @@ Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯P¯¯¯g1
 LED_Tab¯Zs 3¯¯¯¯¯¯x
 LED_Tab¯Zs 3¯¯¯¯¯¯x¯¯.¯.
 LED_Tab¯Zs 3¯¯¯¯¯¯x
-LED_Tab¯¯¯x¯¯¯¯¯¯x¯x¯x¯x
+LED_Tab¯Rot¯¯x¯¯¯¯¯¯x¯x¯x¯x
 LED_Tab¯Rot
-LED_Tab¯
-LED_Tab¯
+LED_Tab¯Rot
+LED_Tab¯Grün
 LED_Tab¯Grün¯¯¯¯x¯¯x
-LED_Tab¯
-LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯Grün
 LED_Tab¯Zs1¯¯¯¯¯¯¯¯x¯x¯.¯.
-LED_Tab¯¯¯¯¯¯¯¯¯x¯x¯.¯.
-LED_Tab¯¯¯¯¯¯¯x
+LED_Tab¯Zs1¯¯¯¯¯¯¯¯x¯x¯.¯.
+LED_Tab¯Zs1¯¯¯¯¯¯¯¯x¯x¯.¯.
 LED_Tab¯Zs6¯¯¯¯¯¯x
-LED_Tab¯¯¯¯¯¯¯x
-LED_Attr¯13.5¯i14277081
+LED_Tab¯Zs6¯¯¯¯¯¯x
+LED_Tab¯Zs6¯¯¯¯¯¯x
+LED_Attr¯12.9¯i14277081
 LED_Attr¯15¯i14277081
 LED_Attr¯15¯i14277081
 LED_Attr¯15¯i255
@@ -342,13 +342,7 @@ LED_Attr¯15¯i14277081
 LED_Attr¯15¯i14277081
 LED_Attr¯15¯i14277081
 RGB_LED_CheckBox¯           1
-msoTextBox2¯493.05;0;387.6;88.63725¯Dit blad toont de configuratie van een KS-Hoofdsein.
-Seinbeelden zijn: HP 0 / Ks 1 / Ks 1+ Zs 3 + Zs 6 / HP 0 + Zs 1
-Hp 0 = stop
-Ks 1 = reizen volgens schemasnelheid
-Ks 1 + Zs 3 + Zs 6 = rij met aangegeven snelheid x10 en rijbaan
-Hp 0 + Zs 1 = verbaal commando om het rode signaal door te geven (Zs 1 knippert){Attrib}B1,51
-msoTextBox1¯493.05;0;327.6;142.8818¯This sheet shows the configuration of a KS signal
+msoTextBox¯562.4167;0;327.6;142.2¯This sheet shows the configuration of a KS signal
 Signal pictures are HP 0
 Ks 1
 Ks 1+ Zs 3 + Zs 6
@@ -357,24 +351,15 @@ Hp 0 = stop
 Ks 1 = travel according to schedule speed
 Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
 Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
-msoTextBox3¯493.05;0;327.6;142.8818¯This sheet shows the configuration of a KS signal
-Signal pictures are HP 0
-Ks 1
-Ks 1+ Zs 3 + Zs 6
-HP 0 + Zs 1
-Hp 0 = stop
-Ks 1 = travel according to schedule speed
-Ks 1 + Zs 3 + Zs 6 = travel at indicated speed x10 and counter-track travel
-Hp 0 + Zs 1 = verbal command to pass the red signal (Zs 1 flashes){Attrib}B1,50
-msoTextBox0¯493.05;0;327.6;156.443¯Dieses Blatt zeigt die Konfiguration eines KS-SignalsSignal Bilder sind HP 0 
-Ks 1 
-Ks 1+ Zs 3 + Zs 6 
-HP 0 + Zs 1
-Hp 0 = Halt
-Ks 1  = Fahrt nach Fahrplangeschwindigkeit
-Ks 1 + Zs 3 + Zs 6 = Fahrt mit angezeigter Geschwindigkeit x10 und Gegengleisfahrt
-Hp 0 + Zs 1 = mündlicher Befehl um an Rot zeigenden Signal vorbeifahren zu dürfen (Zs 1 blinkt){Attrib}B1,54
-msoPicture¯339.1588;724.9234;31.5;221.25¯Ks_HP0.jpg
-msoPicture¯418.553;724.9234;44.25;303¯Ks1.jpg
-msoPicture¯595.227;724.9234;44.25;333¯KS1_Zs3_Zs6.jpg
-msoPicture¯493.5353;724.9234;44.25;363.75¯Hp0_Zs1.jpg
+msoPicture¯314.4667;722.65;38.75378;250.4824¯Ks_HP0.png
+msoPicture¯593.75;722.65;39.45535;273.1563¯KS1_Zs3_Zs6.png
+msoPicture¯468.4833;722.65;39.45535;297.7932¯Hp0_Zs1.png
+msoShapeOval¯524.1647;10.60433;20;18.42709¯LED_M99O01L1
+msoShapeOval¯522.0397;49.95221;20;18.13331¯LED_M99O01L2
+msoShapeOval¯508.0273;71.71055;19.2;17.97291¯LED_M99O01L3
+msoShapeOval¯527.1335;104.542;10.1874;9.952047¯LED_M99O01L4
+msoShapeOval¯513.3103;166.508;36.5963;22.59803;30.25902¯LED_M99O01L5
+msoShapeOval¯521.6022;139.8563;21.71866;20.07717¯Oval 634000
+msoShapeOval¯534.9667;71.05418;21.91866;20.16047¯Oval 637000
+msoPicture¯390;722.65;37.87819;253.4667¯Ks1.jpg
+msoPicture¯505.0917;7.333386;52.90071;203.5333¯KS_Signal_New1.png

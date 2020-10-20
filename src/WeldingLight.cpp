@@ -57,9 +57,9 @@
 #define glowdelay           50
 
 
-//-------------------------------
-void MobaLedLib_C::Proc_Welding()
-//-------------------------------
+//-------------------------------------------------
+void MobaLedLib_C::Proc_Welding(uint8_t withbreaks)                                                           // 01.10.20:  Addded: withbreaks
+//-------------------------------------------------
 {
   WeldingData_T *dp = (WeldingData_T*)rp; // Set the data pointer to the reserved RAM
   rp += sizeof(WeldingData_T);
@@ -73,8 +73,7 @@ void MobaLedLib_C::Proc_Welding()
           byte flicker = random8(ledflickermin, ledflickermax); // Waehlt zufaelligen Flackerwert
           lp->r = lp->g = qsub8(flicker, 50);
           lp->b = flicker;
-
-          if (--(dp->flickertimes) == 0 || !Inp_Is_On(Inp))
+          if ((withbreaks && --(dp->flickertimes) == 0) || !Inp_Is_On(Inp))
                {
                // Reduziert Flackerzahl um den Wert 1, wenn 0, Nachgluehen start
                lp->r = maxglow << 2; // Gelb
@@ -89,7 +88,7 @@ void MobaLedLib_C::Proc_Welding()
           {
           if ( --(lp->g) == 0 )
              { // Reduziert Gluehwert um 1, wenn 0 Pause starten
-             dp->dt = random16(pausemin, pausemax); // Selektiert zufaelliges Delay fuer Pause zwischen den Schweissvorgaengen
+             if (withbreaks) dp->dt = random16(pausemin, pausemax); // Selektiert zufaelliges Delay fuer Pause zwischen den Schweissvorgaengen
              }
           lp->r = lp->g << 2; // Gelb: r = 4 * g
           }

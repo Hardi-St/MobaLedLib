@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New: Languages / DCC Buttons / LED preview / pyProgGen / Port detection / EEPROM / Switches / 4 LED Channels / Variables / ...**
+**New: Faster uploading to Arduino / Fast Bootloader prog. / Day & Night Timer / Mainboard HW Tests / 64 Time entries in Pattern_Config / several new (LED) functions / Support for MB Ver. 1.7 / Bug fixes **
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
 
@@ -163,3 +163,61 @@ Questions / suggestions / praise / ...
 **Ver.: 1.9.5** 15.06.20:
 - The versions 1.0.2 - 1.9.4 are not released test versions.
 - Since there are a huge number of changes since version 1.0.1 all details are described here: https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sd=a&start=2410
+
+**Ver.: 1.9.6** 22.07.20:
+- Preview LEDs in the Pattern_Configuarator could be moved on top of a picture or under a transparent picture (by Misha)
+- Speedup building and uploading of the Arduino program 10 sec. instead of 23 sec. (by Juergen)
+
+**Ver.: 1.9.6 C** 28.07.20:
+- Corrected Servo programming (Flash was erased when setting the Reset pin as output)
+- Corrected decimal separator problem when loading pattern examples
+- New macros for servo with SMD WS2811 Herz_BiRelais_V1...
+
+**Ver.: 1.9.6 D** 04.08.20:
+- Limit the maximal servo value to 210 (Old 220) to avoid promlems with measurement errors at 2kHz
+- Additional Delay and check if the old directory has been deleted when updating the Beta version
+
+**Ver.: 1.9.6 E** 07.08.20?:
+- Deletted >100000 columns in the DCC sheet which slowed down the loading of .MLL_pfg files
+- Added a status display when loading the .MLL_pfg files
+- Don't read/save the "Examples sheet from/to .MLL_pfg file
+
+**Ver.: 1.9.6 F** 07.10.20:
+- Programming of the fast bootloader added
+- Jürgen has added "Update_Start_LedNr" to the end of Read_PGF_from_String_V1_0() because other wise NUM_LEDS is 0
+- New function "Mainboard_LED(MB_LED, InCh)" which could be used to use the mainboard LEDs as status LEDs
+- Added macro "WeldingCont()" which continuously flickers while the input is active.
+- Don't use the Heartbeat LED at PIN A3 if the CAN bus is used AND the SwitchB or SwitchC is used.
+- Generate an error message if Mainboard_LED(4..) is used together with SwitchB or SwitchC.
+- Created an example file to test the MobaLedLib main board: "Mainboard_Hardware_Test.MLL_pgf"
+  This file is stored in the directory "Prog_Generator_Examples" which is copied to the library destination at startup.
+- Added DayAndNightTimer which could be used with then Scheduler function
+
+**Ver.: 1.9.6 G** 10.10.20:
+- Added additional pins to the Mainboard_LED function. Now nearly every pin could be used as LED pin (New channels 0, 5-16).
+- New method "LED_to_Var()" to set variables controlled by the LED values.
+- Improved the "Mainboard_Hardware_Test.MLL_pgf". Now the mainboard could be tested without the PushButton4017 board.
+
+**Ver.: 1.9.6 H** 10.10.20:
+- Improved the loading of MLL_pgf files
+
+**Ver.: 1.9.6 I** 10.10.20:
+-  Possibilitiy added to ignore problems with the baud rate detection
+
+**Ver.: 1.9.6 J** 11.10.20:
+- The Mainboard_LED function also acceppts the arduino pin numbers D2-D5, D7-D13 amd A0-A5
+
+**Ver.: 1.9.6 K** 16.10.20:
+- Don't gray out the other rooms in the House/Gaslight dialog. Instead the important buttons use bold font
+- User interface:
+  - Corrected the entering of selextrix data and the position of the USB simulation buttons
+  - Corrected the "Dialog" Button. The "Type selection" dialog was called twice in DCC mode.
+- Disabled the "ENABLE_CRITICAL_EVENTS_WB" to hopefully get rid of the crash which is generated if lines are deleted in the Pattern_Configurator. By disabling this events the LED numbers are not updated if lines ade hidden or shown again.
+- Corrected the NEON_DEF2D entry. Channel 1 was used instead of channel 2. This caused the occupation of a new RGB channel if NEON_DEF1D and NEON_DEF2D was used in a sequence
+- Improve the detection probability in "DetectArduino()". Prior the arduino was not always detected at the first trial.
+- Corrected the error detection for the ATtiny upload
+- Increased the number of Time entries from 30 to 64 and corrected the entries 24-30
+- New Charliplexing software which supports the 64 time channels
+
+**Ver.: 2.0.0** 18.10.20:
+- Support for the new buffer gate on mainboard version 1.7 added

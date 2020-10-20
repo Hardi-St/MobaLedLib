@@ -1,0 +1,362 @@
+Head:	Program_Generator configuration file	V1.0
+Sheet:	DCC	MB Test 1 DCC
+Line:	Act	RGB_LED1				Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																
+Line:	Act	Tast LED	SwitchD1			*** Test der Taster und LEDs ***			PushButton_RGB_0_1(#LED, #InCh, TastL0, 1, 1, 0, 0, 0, 2, 2, 0, 127, 127, 0, 0, 0, 0)	1	1	1	0	0			
+Line:	Act	Tast LED	SwitchD2			Mit den Tastern werden die LEDs der Taster			PushButton_RGB_0_1(#LED, #InCh, TastM0, 1, 1, 0, 0, 0, 2, 2, 2, 64, 64, 64, 0, 0, 0)	2	1	1	0	0			
+Line:	Act	Tast LED	SwitchD3			und zusätzlich eine Externe LED angesteuert.			PushButton_RGB_0_1(#LED, #InCh, TastR0, 1, 1, 0, 0, 0, 0, 0, 5, 0, 0, 127, 0, 0, 0)	3	1	1	0	0			
+Line:	Act	Tast LED	TastL1			LED der Taster			Mainboard_LED(1, #InCh)			1	0				
+Line:	Act	Tast LED	TastM1						Mainboard_LED(2, #InCh)			1	0				
+Line:	Act	Tast LED	TastR1						Mainboard_LED(3, #InCh)			1	0				
+Line:	-																
+Line:	-																
+Line:	Act	DCC_Arduino	1	AnAus		*** DCC Test ***			AndreaskrRGB(#LED, #InCh)	4	2	1	0	0			
+Line:	-																
+Line:	-																
+Line:	Act	LDR				*** LDR Überprüfung ***			#define READ_LDR			0	0				
+Line:	Act	LDR				Die drei LEDs müssen bei Dunkelheit angehen.			#define READ_LDR_DEBUG			0	0				
+Line:	Act	LDR				Über den seriellen Monitor kann die Dunkelheit			Schedule(Nacht1, Nacht3, SI_1, 60, 110)			0	0				
+Line:	Act	LDR	Nacht1			angezeigt werden (Baud: 115200) Hell = 20, Dunkel > 100			Const(#LED, C2, #InCh, 0, 127)	6	C2-2	1	0	0			
+Line:	Act	LDR	Nacht2			Die verschiedenen Farben der LED gehen nach 			Const(#LED, C2, #InCh, 0, 127)	7	C2-2	1	0	0			
+Line:	Act	LDR	Nacht3			einer bestimmten Zeit zufällig an. 			Const(#LED, C2, #InCh, 0, 127)	8	C2-2	1	0	0			
+Line:	-																
+Line:	Act	KEYBRD1 A_Tast	SwitchA1			*** Analoge Taster ***			Const(#LED, C12, #InCh, 0, 127)	9	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA2			10 Widerstandskodierte Taster zwischen Pin 4 u 8			Const(#LED, C12, #InCh, 0, 127)	10	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA3			von Stecker KEYBOARD1			Const(#LED, C12, #InCh, 0, 127)	11	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA4			R: 0, 2K2, 4K7, 8K2, 15K, 22K, 33K, 47K, 68K, 150K			Const(#LED, C12, #InCh, 0, 127)	12	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA5			Damit werden verschiedene LEDs angesteuert			Const(#LED, C12, #InCh, 0, 127)	13	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	 			Anzeige in zwei Gruppen a 5 LEDs			// Reserve LEDs(3)	14	3	0	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA6						Const(#LED, C12, #InCh, 0, 127)	17	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA7						Const(#LED, C12, #InCh, 0, 127)	18	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA8						Const(#LED, C12, #InCh, 0, 127)	19	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA9						Const(#LED, C12, #InCh, 0, 127)	20	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA10						Const(#LED, C12, #InCh, 0, 127)	21	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	 			Damit der nächste Test in einer neuen LED Zeile beginnt			// Reserve LEDs(3)	22	3	0	0	0			
+Line:	-																
+Line:	-																
+Line:	Act	RGB_LEDn				*** Test der letzten RGB LED auf der Hauptplatine ***			// Reserve LEDs(40)	25	40	0	0	0			
+Line:	Act	RGB_LEDn				Start LedNr muss 65 sein (Siehe Reserve LEDs)			RGB_Heartbeat(#LED)	65	1	0	0	0			
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Sheet:	DCC	MB Test 2 KEYBRD
+Line:	-					Test des KEYBRD Steckers											
+Line:	-					====================											
+Line:	-					In den KEYBRD Stecker wird ein Testadapter											
+Line:	-					gesteckt bei dem die folgenden Pins verbunden											
+Line:	-					sind: 1 = 7,  5 = 6											
+Line:	-					An Pin 3 und 4 ist eine grüne LED mit einem											
+Line:	-					470 Ohm Widerstand angeschlossen (+ = 3).											
+Line:	-					Diese LED prüft die Versorgungsspannung.											
+Line:	-					Auf der 64'er LED Matrix müssen zwei gelbe und											
+Line:	-					zwei grüne LEDs durchlaufen.											
+Line:	-					Fehlen die grünen LEDs, dann stimmt eine 											
+Line:	-					Verbindung nicht.											
+Line:	-																
+Line:	-					!! Achtung: Der Testadapter für den KEY_80 !!											
+Line:	-					!! Anschluss darf nicht eingesteckt sein         !! 											
+Line:	-																
+Line:	Act					Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																
+Line:	-																
+Line:	Act					Definition der Pins der Mainboard Schalter			// Set_SwitchD_InpLst(7 8 9 A2 A0)			0	0				
+Line:	Act					Nur Pin 6 steuert die RGB LEDs (Nicht A4)			// Set_LED_OutpPinLst(6)			0	0				
+Line:	-																
+Line:	Act					Erzeugt ein Lauflicht mit 2 Kanälen			PatternT1(#LED,64,#InCh,6,0,30,0,0,300 ms,3,6,0,0)	1	2	1	0	0			
+Line:	Act					Variable = 1 wenn LED aus ist			LED_to_Var(PinA4, 0, =, 0)			0	0				
+Line:	Act								LED_to_Var(PinA3, 3, =, 0)			0	0				
+Line:	-																
+Line:	Act		PinA4			Schaltet Pin auf Mainboard anhängig von der			Mainboard_LED(A4, #InCh)			1	0				
+Line:	Act		PinA3			links stehenden Variable			Mainboard_LED(A3, #InCh)			1	0				
+Line:	-																
+Line:	Act								// Reserve LEDs(6)	3	6	0	0	0			
+Line:	Act		SwitchD4			Liest Spannung an Pin D7 und steuert damit LED			Const(#LED, C2, #InCh, 0, 100)	9	C2-2	1	0	0			
+Line:	Act		SwitchD5						Const(#LED, C2, #InCh, 0, 100)	10	C2-2	1	0	0			
+Line:	-																
+Line:	-																
+Line:	Act					*** Test der letzten RGB LED auf der Hauptplatine ***			// Reserve LEDs(54)	11	54	0	0	0			
+Line:	Act					Start LedNr muss 65 sein (Siehe Reserve LEDs)			RGB_Heartbeat(#LED)	65	1	0	0	0			
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Sheet:	DCC	MB Test 3 KEY_80
+Line:	-					Test des KEY_80 Steckers											
+Line:	-					====================											
+Line:	-					In den KEY_80 Stecker wird ein Testadapter											
+Line:	-					gesteckt bei dem die folgenden Pins verbunden											
+Line:	-					sind: 1=2, 3=4, 5=6, 7=8, 9=10, 11,=12											
+Line:	-					An Pin 13 und 14 ist eine grüne LED mit einem											
+Line:	-					470 Ohm Widerstand angeschlossen (+ = 13).											
+Line:	-					Diese LED prüft die Versorgungsspannung.											
+Line:	-					Auf der 64'er LED Matrix müssen 6 gelbe und											
+Line:	-					grüne LEDs durchlaufen.											
+Line:	-					Fehlen die grünen LEDs, dann stimmt eine 											
+Line:	-					Verbindung nicht.											
+Line:	-																
+Line:	-					!! Achtung: Der Testadapter für den KEYBRD !!											
+Line:	-					!! Anschluss darf nicht eingesteckt sein         !! 											
+Line:	-																
+Line:	Act					Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																
+Line:	-																
+Line:	Act					Definition der Pins der Mainboard Schalter			// Set_SwitchD_InpLst(2 8 10 12 A2 A4 A0)			0	0				
+Line:	Act					Nur Pin 6 steuert die RGB LEDs (Nicht A4)			// Set_LED_OutpPinLst(6)			0	0				
+Line:	-																
+Line:	Act								ConstrWarnLightRGB6(#LED, #InCh, 0, 50, 300 ms, 0 ms, 500 ms)	1	6	1	0	0			
+Line:	Act					Variable PinD7 = Not LED 1			LED_to_Var(PinD7, 0, =, 0)			0	0				
+Line:	Act								LED_to_Var(PinD9, 3, =, 0)			0	0				
+Line:	Act								LED_to_Var(PinD11, 6, =, 0)			0	0				
+Line:	Act								LED_to_Var(PinA1, 9, =, 0)			0	0				
+Line:	Act								LED_to_Var(PinA3, 12, =, 0)			0	0				
+Line:	Act								LED_to_Var(PinA5, 15, =, 0)			0	0				
+Line:	-																
+Line:	Act		PinD7			Schaltet Pin D7 abhängig von Variable PinD7			Mainboard_LED(D7, #InCh)			1	0				
+Line:	Act		PinD9						Mainboard_LED(D9, #InCh)			1	0				
+Line:	Act		PinD11						Mainboard_LED(D11, #InCh)			1	0				
+Line:	Act		PinA1						Mainboard_LED(A1, #InCh)			1	0				
+Line:	Act		PinA3						Mainboard_LED(A3, #InCh)			1	0				
+Line:	Act		PinA5						Mainboard_LED(A5, #InCh)			1	0				
+Line:	-																
+Line:	Act								// Reserve LEDs(2)	7	2	0	0	0			
+Line:	Act		SwitchD1			Liest Spannung an Pin D1 und steuert damit LED			ConstRGB(#LED, #InCh, 0, 0, 0, 0, 100, 0)	9	1	1	0	0			
+Line:	Act		SwitchD2						ConstRGB(#LED, #InCh, 0, 0, 0, 0, 100, 0)	10	1	1	0	0			
+Line:	Act		SwitchD3						ConstRGB(#LED, #InCh, 0, 0, 0, 0, 100, 0)	11	1	1	0	0			
+Line:	Act		SwitchD4						ConstRGB(#LED, #InCh, 0, 0, 0, 0, 100, 0)	12	1	1	0	0			
+Line:	Act		SwitchD5						ConstRGB(#LED, #InCh, 0, 0, 0, 0, 100, 0)	13	1	1	0	0			
+Line:	Act		SwitchD6						ConstRGB(#LED, #InCh, 0, 0, 0, 0, 100, 0)	14	1	1	0	0			
+Line:	-																
+Line:	Act					*** Test der letzten RGB LED auf der Hauptplatine ***			// Reserve LEDs(50)	15	50	0	0	0			
+Line:	Act					Start LedNr muss 65 sein (Siehe Reserve LEDs)			RGB_Heartbeat(#LED)	65	1	0	0	0			
+Sheet:	Selectrix	MB Test 4 Selectrix
+Line:	Act						Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																	
+Line:	-																	
+Line:	Act		SwitchD1				*** Test der Taster und LEDs ***			PushButton_RGB_0_1(#LED, #InCh, TastL0, 1, 1, 0, 0, 0, 2, 2, 0, 127, 127, 0, 0, 0, 0)	1	1	1	0	0			
+Line:	Act		SwitchD2				Mit den Tastern werden die LEDs der Taster			PushButton_RGB_0_1(#LED, #InCh, TastM0, 1, 1, 0, 0, 0, 2, 2, 2, 64, 64, 64, 0, 0, 0)	2	1	1	0	0			
+Line:	Act		SwitchD3				und zusätzlich eine Externe LED angesteuert.			PushButton_RGB_0_1(#LED, #InCh, TastR0, 1, 1, 0, 0, 0, 0, 0, 5, 0, 0, 127, 0, 0, 0)	3	1	1	0	0			
+Line:	Act		TastL1				LED der Taster			Mainboard_LED(1, #InCh)			1	0				
+Line:	Act		TastM1							Mainboard_LED(2, #InCh)			1	0				
+Line:	Act		TastR1							Mainboard_LED(3, #InCh)			1	0				
+Line:	-																	
+Line:	Act		1	1	AnAus		*** Selectrix Test ***			AndreaskrRGB(#LED, #InCh)	4	2	1	0	0			
+Line:	-																	
+Line:	-																	
+Line:	Act	LDR					*** LDR Überprüfung ***			#define READ_LDR			0	0				
+Line:	Act	LDR					Die drei LEDs müssen bei Dunkelheit angehen.			#define READ_LDR_DEBUG			0	0				
+Line:	Act	LDR					Über den seriellen Monitor kann die Dunkelheit			Schedule(Nacht1, Nacht3, SI_1, 60, 110)			0	0				
+Line:	Act	LDR	Nacht1				angezeigt werden (Baud: 115200) Hell = 20, Dunkel > 100			Const(#LED, C2, #InCh, 0, 127)	6	C2-2	1	0	0			
+Line:	Act	LDR	Nacht2				Die verschiedenen Farben der LED gehen nach 			Const(#LED, C2, #InCh, 0, 127)	7	C2-2	1	0	0			
+Line:	Act	LDR	Nacht3				einer bestimmten Zeit zufällig an. 			Const(#LED, C2, #InCh, 0, 127)	8	C2-2	1	0	0			
+Line:	-																	
+Line:	Act	KEYBRD1 A_Tast	SwitchA1				*** Analoge Taster ***			Const(#LED, C12, #InCh, 0, 127)	9	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA2				10 Widerstandskodierte Taster zwischen Pin 4 u 8			Const(#LED, C12, #InCh, 0, 127)	10	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA3				von Stecker KEYBOARD1			Const(#LED, C12, #InCh, 0, 127)	11	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA4				R: 0, 2K2, 4K7, 8K2, 15K, 22K, 33K, 47K, 68K, 150K			Const(#LED, C12, #InCh, 0, 127)	12	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA5				Damit werden verschiedene LEDs angesteuert			Const(#LED, C12, #InCh, 0, 127)	13	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA6							Const(#LED, C12, #InCh, 0, 127)	14	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA7							Const(#LED, C12, #InCh, 0, 127)	15	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA8							Const(#LED, C12, #InCh, 0, 127)	16	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA9							Const(#LED, C12, #InCh, 0, 127)	17	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA10							Const(#LED, C12, #InCh, 0, 127)	18	C1-2	1	0	0			
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	Act						*** Test der letzten RGB LED auf der Hauptplatine ***			// Reserve LEDs(46)	19	46	0	0	0			
+Line:	Act						Start LedNr muss 65 sein (Siehe Reserve LEDs)			RGB_Heartbeat(#LED)	65	1	0	0	0			
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Line:	-																	
+Sheet:	CAN	MB Test 5 CAN
+Line:	Act					Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																
+Line:	Act	Tast LED	SwitchD1			*** Test der Taster und LEDs ***			PushButton_RGB_0_1(#LED, #InCh, TastL0, 1, 1, 0, 0, 0, 2, 2, 0, 127, 127, 0, 0, 0, 0)	1	1	1	0	0			
+Line:	Act	Tast LED	SwitchD2			Mit den Tastern werden die LEDs der Taster			PushButton_RGB_0_1(#LED, #InCh, TastM0, 1, 1, 0, 0, 0, 2, 2, 2, 64, 64, 64, 0, 0, 0)	2	1	1	0	0			
+Line:	Act	Tast LED	SwitchD3			und zusätzlich eine Externe LED angesteuert.			PushButton_RGB_0_1(#LED, #InCh, TastR0, 1, 1, 0, 0, 0, 0, 0, 5, 0, 0, 127, 0, 0, 0)	3	1	1	0	0			
+Line:	Act	Tast LED	TastL1			LED der Taster			Mainboard_LED(1, #InCh)			1	0				
+Line:	Act	Tast LED	TastM1						Mainboard_LED(2, #InCh)			1	0				
+Line:	Act	Tast LED	TastR1						Mainboard_LED(3, #InCh)			1	0				
+Line:	-																
+Line:	-																
+Line:	Act		1	AnAus					AndreaskrRGB(#LED, #InCh)	4	2	1	0	0			
+Line:	Act								// Reserve LEDs(3)	6	3	0	0	0			
+Line:	-																
+Line:	Act	LDR				*** LDR Überprüfung ***			#define READ_LDR			0	0				
+Line:	Act	LDR				Die drei LEDs müssen bei Dunkelheit angehen.			#define READ_LDR_DEBUG			0	0				
+Line:	Act	LDR				Über den seriellen Monitor kann die Dunkelheit			Schedule(Nacht1, Nacht3, SI_1, 60, 110)			0	0				
+Line:	Act	LDR	Nacht1			angezeigt werden (Baud: 115200) Hell = 20, Dunkel > 100			Const(#LED, C2, #InCh, 0, 127)	9	C2-2	1	0	0			
+Line:	Act	LDR	Nacht2			Die verschiedenen Farben der LED gehen nach 			Const(#LED, C2, #InCh, 0, 127)	10	C2-2	1	0	0			
+Line:	Act	LDR	Nacht3			einer bestimmten Zeit zufällig an. 			Const(#LED, C2, #InCh, 0, 127)	11	C2-2	1	0	0			
+Line:	-																
+Line:	-																
+Line:	Act	KEYBRD1 A_Tast	SwitchA1			*** Analoge Taster ***			Const(#LED, C12, #InCh, 0, 127)	12	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA2			10 Widerstandskodierte Taster zwischen Pin 4 u 8			Const(#LED, C12, #InCh, 0, 127)	13	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA3			von Stecker KEYBOARD1			Const(#LED, C12, #InCh, 0, 127)	14	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA4			R: 0, 2K2, 4K7, 8K2, 15K, 22K, 33K, 47K, 68K, 150K			Const(#LED, C12, #InCh, 0, 127)	15	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA5			Damit werden verschiedene LEDs angesteuert			Const(#LED, C12, #InCh, 0, 127)	16	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	 			Anzeige in zwei Gruppen a 5 LEDs			// Reserve LEDs(3)	17	3	0	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA6						Const(#LED, C12, #InCh, 0, 127)	20	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA7						Const(#LED, C12, #InCh, 0, 127)	21	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA8						Const(#LED, C12, #InCh, 0, 127)	22	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA9						Const(#LED, C12, #InCh, 0, 127)	23	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	SwitchA10						Const(#LED, C12, #InCh, 0, 127)	24	C1-2	1	0	0			
+Line:	Act	KEYBRD1 A_Tast	 			Damit der nächste Test in einer neuen LED Zeile beginnt			// Reserve LEDs(3)	25	3	0	0	0			
+Line:	-																
+Line:	-																
+Line:	Act	RGB_LEDn				*** Test der letzten RGB LED auf der Hauptplatine ***			// Reserve LEDs(37)	28	37	0	0	0			
+Line:	Act	RGB_LEDn				Start LedNr muss 65 sein (Siehe Reserve LEDs)			RGB_Heartbeat(#LED)	65	1	0	0	0			
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Sheet:	DCC	PushButton Test 1 64 Tast
+Line:	Act					Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																
+Line:	-																
+Line:	Act		 			Mit diesem Test wird die PushButton4017			// Set_SwitchC_InpLst(2 7 8 9 10 11 12 A5)			0	0				
+Line:	Act		SwitchC1			Platine und eine angeschlossene Taster Matrix			Const(#LED, C_ALL, #InCh, 0, 50)	1	1	1	0	0			
+Line:	Act		SwitchC2			getestet. 			Const(#LED, C_ALL, #InCh, 0, 50)	2	1	1	0	0			
+Line:	Act		SwitchC3			Die Taster Matrix besteht aus 64 Tastern welche in			Const(#LED, C_ALL, #InCh, 0, 50)	3	1	1	0	0			
+Line:	Act		SwitchC4			8 Zeilen und 8 Spalten angeordnet sind.			Const(#LED, C_ALL, #InCh, 0, 50)	4	1	1	0	0			
+Line:	Act		SwitchC5			Die Zeilen werden an die Pins 1-7 und 12			Const(#LED, C_ALL, #InCh, 0, 50)	5	1	1	0	0			
+Line:	Act		SwitchC6			des Key_80 Steckers angeschlossen.			Const(#LED, C_ALL, #InCh, 0, 50)	6	1	1	0	0			
+Line:	Act		SwitchC7			Achtung C9 und R27 der Hauptplatine dürfen			Const(#LED, C_ALL, #InCh, 0, 50)	7	1	1	0	0			
+Line:	Act		SwitchC8			nicht bestückt sein.			Const(#LED, C_ALL, #InCh, 0, 50)	8	1	1	0	0			
+Line:	Act		SwitchC9			Jeder Taster aktiviert eine LED auf der			Const(#LED, C_ALL, #InCh, 0, 50)	9	1	1	0	0			
+Line:	Act		SwitchC10			LED Matrix.			Const(#LED, C_ALL, #InCh, 0, 50)	10	1	1	0	0			
+Line:	Act		SwitchC11			Mit einer PushButton Platine könnten 80 Taster			Const(#LED, C_ALL, #InCh, 0, 50)	11	1	1	0	0			
+Line:	Act		SwitchC12			abgefragt werden. Für den Test müssen zusätzliche			Const(#LED, C_ALL, #InCh, 0, 50)	12	1	1	0	0			
+Line:	Act		SwitchC13			 LEDs angeschlossen werden und die			Const(#LED, C_ALL, #InCh, 0, 50)	13	1	1	0	0			
+Line:	Act		SwitchC14			Zeilen erweitert werden.			Const(#LED, C_ALL, #InCh, 0, 50)	14	1	1	0	0			
+Line:	Act		SwitchC15						Const(#LED, C_ALL, #InCh, 0, 50)	15	1	1	0	0			
+Line:	Act		SwitchC16						Const(#LED, C_ALL, #InCh, 0, 50)	16	1	1	0	0			
+Line:	Act		SwitchC17						Const(#LED, C_ALL, #InCh, 0, 50)	17	1	1	0	0			
+Line:	Act		SwitchC18						Const(#LED, C_ALL, #InCh, 0, 50)	18	1	1	0	0			
+Line:	Act		SwitchC19						Const(#LED, C_ALL, #InCh, 0, 50)	19	1	1	0	0			
+Line:	Act		SwitchC20						Const(#LED, C_ALL, #InCh, 0, 50)	20	1	1	0	0			
+Line:	Act		SwitchC21						Const(#LED, C_ALL, #InCh, 0, 50)	21	1	1	0	0			
+Line:	Act		SwitchC22						Const(#LED, C_ALL, #InCh, 0, 50)	22	1	1	0	0			
+Line:	Act		SwitchC23						Const(#LED, C_ALL, #InCh, 0, 50)	23	1	1	0	0			
+Line:	Act		SwitchC24						Const(#LED, C_ALL, #InCh, 0, 50)	24	1	1	0	0			
+Line:	Act		SwitchC25						Const(#LED, C_ALL, #InCh, 0, 50)	25	1	1	0	0			
+Line:	Act		SwitchC26						Const(#LED, C_ALL, #InCh, 0, 50)	26	1	1	0	0			
+Line:	Act		SwitchC27						Const(#LED, C_ALL, #InCh, 0, 50)	27	1	1	0	0			
+Line:	Act		SwitchC28						Const(#LED, C_ALL, #InCh, 0, 50)	28	1	1	0	0			
+Line:	Act		SwitchC29						Const(#LED, C_ALL, #InCh, 0, 50)	29	1	1	0	0			
+Line:	Act		SwitchC30						Const(#LED, C_ALL, #InCh, 0, 50)	30	1	1	0	0			
+Line:	Act		SwitchC31						Const(#LED, C_ALL, #InCh, 0, 50)	31	1	1	0	0			
+Line:	Act		SwitchC32						Const(#LED, C_ALL, #InCh, 0, 50)	32	1	1	0	0			
+Line:	Act		SwitchC33						Const(#LED, C_ALL, #InCh, 0, 50)	33	1	1	0	0			
+Line:	Act		SwitchC34						Const(#LED, C_ALL, #InCh, 0, 50)	34	1	1	0	0			
+Line:	Act		SwitchC35						Const(#LED, C_ALL, #InCh, 0, 50)	35	1	1	0	0			
+Line:	Act		SwitchC36						Const(#LED, C_ALL, #InCh, 0, 50)	36	1	1	0	0			
+Line:	Act		SwitchC37						Const(#LED, C_ALL, #InCh, 0, 50)	37	1	1	0	0			
+Line:	Act		SwitchC38						Const(#LED, C_ALL, #InCh, 0, 50)	38	1	1	0	0			
+Line:	Act		SwitchC39						Const(#LED, C_ALL, #InCh, 0, 50)	39	1	1	0	0			
+Line:	Act		SwitchC40						Const(#LED, C_ALL, #InCh, 0, 50)	40	1	1	0	0			
+Line:	Act		SwitchC41						Const(#LED, C_ALL, #InCh, 0, 50)	41	1	1	0	0			
+Line:	Act		SwitchC42						Const(#LED, C_ALL, #InCh, 0, 50)	42	1	1	0	0			
+Line:	Act		SwitchC43						Const(#LED, C_ALL, #InCh, 0, 50)	43	1	1	0	0			
+Line:	Act		SwitchC44						Const(#LED, C_ALL, #InCh, 0, 50)	44	1	1	0	0			
+Line:	Act		SwitchC45						Const(#LED, C_ALL, #InCh, 0, 50)	45	1	1	0	0			
+Line:	Act		SwitchC46						Const(#LED, C_ALL, #InCh, 0, 50)	46	1	1	0	0			
+Line:	Act		SwitchC47						Const(#LED, C_ALL, #InCh, 0, 50)	47	1	1	0	0			
+Line:	Act		SwitchC48						Const(#LED, C_ALL, #InCh, 0, 50)	48	1	1	0	0			
+Line:	Act		SwitchC49						Const(#LED, C_ALL, #InCh, 0, 50)	49	1	1	0	0			
+Line:	Act		SwitchC50						Const(#LED, C_ALL, #InCh, 0, 50)	50	1	1	0	0			
+Line:	Act		SwitchC51						Const(#LED, C_ALL, #InCh, 0, 50)	51	1	1	0	0			
+Line:	Act		SwitchC52						Const(#LED, C_ALL, #InCh, 0, 50)	52	1	1	0	0			
+Line:	Act		SwitchC53						Const(#LED, C_ALL, #InCh, 0, 50)	53	1	1	0	0			
+Line:	Act		SwitchC54						Const(#LED, C_ALL, #InCh, 0, 50)	54	1	1	0	0			
+Line:	Act		SwitchC55						Const(#LED, C_ALL, #InCh, 0, 50)	55	1	1	0	0			
+Line:	Act		SwitchC56						Const(#LED, C_ALL, #InCh, 0, 50)	56	1	1	0	0			
+Line:	Act		SwitchC57						Const(#LED, C_ALL, #InCh, 0, 50)	57	1	1	0	0			
+Line:	Act		SwitchC58						Const(#LED, C_ALL, #InCh, 0, 50)	58	1	1	0	0			
+Line:	Act		SwitchC59						Const(#LED, C_ALL, #InCh, 0, 50)	59	1	1	0	0			
+Line:	Act		SwitchC60						Const(#LED, C_ALL, #InCh, 0, 50)	60	1	1	0	0			
+Line:	Act		SwitchC61						Const(#LED, C_ALL, #InCh, 0, 50)	61	1	1	0	0			
+Line:	Act		SwitchC62						Const(#LED, C_ALL, #InCh, 0, 50)	62	1	1	0	0			
+Line:	Act		SwitchC63						Const(#LED, C_ALL, #InCh, 0, 50)	63	1	1	0	0			
+Line:	Act		SwitchC64						Const(#LED, C_ALL, #InCh, 0, 50)	64	1	1	0	0			
+Line:	-																
+Line:	Act					*** Test der letzten RGB LED auf der Hauptplatine ***			RGB_Heartbeat(#LED)	65	1	0	0	0			
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Line:	-																
+Sheet:	CAN	PushButton Test 2 10 Tast+LED
+Line:	Act					Zeigt an, dass die LEDs angesteuert werden			RGB_Heartbeat(#LED)	0	1	0	0				
+Line:	-																
+Line:	-											0	0				
+Line:	Act		SwitchB1			Prüft die PushButton Platine in der Konfiguration 			Const(#LED, C1, #InCh, 0, 50)		C1-1	1	0	1	0		
+Line:	Act		SwitchB2			für den Anlagenrand mit 10 Tastern und integrierten LEDs			Const(#LED, C2, #InCh, 0, 50)		C2-2	1	0	1	0		
+Line:	Act		SwitchB3			Jede Taste steuert die dazu gehörige LED an.			Const(#LED, C3, #InCh, 0, 50)		C3-3	1	0	1	0		
+Line:	Act		SwitchB4						Const(#LED, C1, #InCh, 0, 50)		C1-1	1	0	1	1		
+Line:	Act		SwitchB5						Const(#LED, C2, #InCh, 0, 50)		C2-2	1	0	1	1		
+Line:	Act		SwitchB6						Const(#LED, C3, #InCh, 0, 50)		C3-3	1	0	1	1		
+Line:	Act		SwitchB7						Const(#LED, C1, #InCh, 0, 50)		C1-1	1	0	1	2		
+Line:	Act		SwitchB8						Const(#LED, C2, #InCh, 0, 50)		C2-2	1	0	1	2		
+Line:	Act		SwitchB9						Const(#LED, C3, #InCh, 0, 50)		C3-3	1	0	1	2		
+Line:	Act		SwitchB10			Bei Taster 10 wird die erste LED auf der Hauptplatine angesteuert			Mainboard_LED(1, #InCh)			1	0				
+Line:	-																
+Line:	-																

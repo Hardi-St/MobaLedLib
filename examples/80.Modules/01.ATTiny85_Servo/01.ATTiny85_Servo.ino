@@ -76,6 +76,11 @@ Zu debugging zwecken kann auch der ATTiny 84 verwendet werden.
               If the compiler switch is enabled it works fine.
               ATTiny Board package: ATTinyCore by Spencer Konde Version 1.3.2
               Prior the version 1.1.2 was used.
+ 04.08.20:  - Using 16 MHz CPU Frequenz instead of 8 MHz to read the LED PWM signal of new WS2811 chips
+              because they use a PWM signal of 2 kHz instead of 400Hz.
+              Attention: The maximal PWM signal to control a servo should be 210 and not 220 because
+              otherwise the servo movement may be delayed because 221-224 stop the servo.
+
 
  ToDo:
  ~~~~~
@@ -86,7 +91,7 @@ Zu debugging zwecken kann auch der ATTiny 84 verwendet werden.
  Arduino settings:
  ~~~~~~~~~~~~~~~~~
  Board:       ATTiny25/45/85      for tests the ATTiny 84 could also be used
- Clock:       8 Mhz
+ Clock:       16 Mhz (8 MHz)                                                                                  // 04.08.20:  Added 16 MHz
  Chip:        ATtiny85
  B.O.D:       2.7V
  Save EEPROM: "EEPROM retained"
@@ -104,13 +109,45 @@ Zu debugging zwecken kann auch der ATTiny 84 verwendet werden.
      FLASH:
        avr-nm.exe -Crtd --size-sort "C:\Users\Hardi\AppData\Local\Temp\arduino_build_516136\ATTiny85_Servo.ino.elf" | C:\Users\Hardi\AppData\Local\atom\app-1.28.0\resources\app.asar.unpacked\node_modules\dugite\git\usr\bin\grep.exe -i ' [tw] ' | sort
 
+
+ 400Hz / 2kHz                                                                                                 // 04.08.20:
+ ~~~~~~~~~~~~
+ Es gibt zwei verschiedene WS2811 Typen. Die älteren haben eine LED Frequenz von 400Hz,
+ die neueren 2 kHz! Das fürhrt zu einer 5 mal ungenaueren PWM Messung ;-(
+
+ Das wirkt sich beim Endbereich des Servos aus. Durch eine ungenaue Messung kann es passieren,
+ dass ein PWM Signal von 220 als 221-224 interpretiert wird. Dieser Breich ist nicht benutzt.
+ => Das Servo macht nichts.
+ Im Excel programm wurde bisher 220 als maximal Wert vorgegeben. Durch die Fehlmessung wurde
+ das Servo manchmal verzögert angesteuert ;-(
+ => Im Excel darf nur noch maximal 210 gesendet werden
+
+ Zur Erhöhung der Messgenauigkeit habe ich zusätzlich die CPU Frequenz vom 8 MHz auf 16 MHz erhöht.
+
+ Dummerweise ist das LED PWM Signal ungenau:
+    @400Hz:
+    Min   0.9655ms  40.23%
+    Max   0.9704ms  40.43%
+    Delta 0.0049ms   0.20%
+
+    @2kHz:
+    Min   203.6us   39.92%
+    Max   205.9us   40.37%
+    Delta   2.3us    0.45%
+
+ Das erzeugt einen Jidder auf dem Servo Signal wenn eine zwischenposition angefahren werden soll.
+ => Das Servo brummt/zuckt bei einem neuen WS2811
+
+ Als Abhilfe wurde das "delta" in "loop()" welches die PWM Signale "filtert" verdoppelt.
+ Damit ist auch bei einem 2kHz WS2811 das Signal fast ganz stabil.
+ Allerdings hat dadurch eine Änderung der LED PWM um einen Wert u.U. keinen Einfluss mehr.
 */
 
 #define MAX_CHANNEL 3
 
 #if defined __AVR_ATtiny85__ // Normal 8-pin CPU
     #define PORT_IN PORTB
-    const uint8_t Inp_Prtx[MAX_CHANNEL] = {3, 4, 5 }; // PBx number n                                         // 10.07.19:  Corrected pin assignement
+    #include "Inp_Prtx.h"                             // defines Inp_Prtx[MAX_CHANNEL]
     const uint8_t Outp_PBx[MAX_CHANNEL] = {0, 1, 2 }; // PBx number n
     #define SERIAL_DEBUG_PIN 2                        // PB2 = Pin 7 (D2)
 #else
@@ -422,18 +459,18 @@ void Proc_TerServo(uint8_t LED_pwm)
 }
 
 //------------------------------------------
-void delayHalfMicroseconds(uint16_t half_us)
+void delayPartsOfMicroseconds(uint16_t Time)
 //------------------------------------------
-// Delay for the given number of half microseconds.  Assumes 8 MHz clock.
+// Delay for the given number of half microseconds.  At 8 MHz clock.
+// At 16 MHz the delay is 1/4 microseconds
 //
 // Modifierd delayMicroseconds form
 // C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\wiring.c
+// Maximal time 32 ms / 16 ms @ 16MHz
 {
-#if F_CPU == 8000000L // for the 8 MHz internal clock
-
 	// for a 1 and 2 microsecond delay, simply return.  the overhead
 	// of the function call takes 14 (16) cycles, which is 2us
-    if (half_us <= 4) return; //  = 3 cycles, (4 when true)                                                       // 15.04.19:  Old 3
+    if (Time <= 4) return; //  = 3 cycles, (4 when true)                                                       // 15.04.19:  Old 3
 
 	// the following loop takes 1/2 of a microsecond (4 cycles)
 	// per iteration, so execute it twice for each microsecond of
@@ -443,20 +480,28 @@ void delayHalfMicroseconds(uint16_t half_us)
 	// account for the time taken in the preceeding commands.
 	// we just burned 17 (19) cycles above, remove 4, (4*4=16)
 	// us is at least 6 so we can substract 4
-    half_us -= 4; // = 2 cycles
-#else
-    #error Wrong CPU frequency
-#endif
+    Time -= 4; // = 2 cycles
 	// busy wait
 	__asm__ __volatile__ (
 		"1: sbiw %0,1" "\n\t" // 2 cycles
-        "brne 1b" : "=w" (half_us) : "0" (half_us) // 2 cycles
+        "brne 1b" : "=w" (Time) : "0" (Time) // 2 cycles
 	);
 }
 
 //--------------------------------------------------------------
 void Impuls_1_8_microseconds(uint16_t pwmTime, uint8_t PortB_Nr)
 //--------------------------------------------------------------
+#if F_CPU == 8000000L // for the 8 MHz internal clock
+#elif F_CPU == 16000000L // for the 16 MHz internal clock
+{
+  Impuls_1_16_microseconds(pwmTime*2, PortB_Nr); // At 16 MHz we multyply the time be 2
+}
+//---------------------------------------------------------------
+void Impuls_1_16_microseconds(uint16_t pwmTime, uint8_t PortB_Nr)
+//---------------------------------------------------------------
+#else
+    #error Wrong CPU frequency
+#endif
 // Unterteilung in 1/8us:
 // Der HS-311 macht nicht mehr spuerbare Schritte
 // Der CS3 "Tickt" unregelmaessig im 0.8 sec Takt
@@ -476,22 +521,22 @@ void Impuls_1_8_microseconds(uint16_t pwmTime, uint8_t PortB_Nr)
             __asm__("nop\n\t");
             __asm__("nop\n\t");
             __asm__("nop\n\t");
-            delayHalfMicroseconds(pwmTime_d4);
+            delayPartsOfMicroseconds(pwmTime_d4);
             PORTB &= And_Mask;
             break;
     case 2: PORTB |= Or_Mask;
             __asm__("nop\n\t");
             __asm__("nop\n\t");
-            delayHalfMicroseconds(pwmTime_d4);
+            delayPartsOfMicroseconds(pwmTime_d4);
             PORTB &= And_Mask;
             break;
     case 1: PORTB |= Or_Mask;
             __asm__("nop\n\t");
-            delayHalfMicroseconds(pwmTime_d4);
+            delayPartsOfMicroseconds(pwmTime_d4);
             PORTB &= And_Mask;
             break;
     case 0: PORTB |= Or_Mask;
-            delayHalfMicroseconds(pwmTime_d4);
+            delayPartsOfMicroseconds(pwmTime_d4);
             PORTB &= And_Mask;
             break;
     }
@@ -515,7 +560,7 @@ void NextChannel()
   ISR(TIM1_COMPA_vect)
   //--------------------
 #endif
-{
+{ // Tnterrupt function which is called every 20ms
   Channel_Data_t *cp = &Channel_Data[0];
   for (uint8_t Channel = 0; Channel < sizeof(Inp_Prtx) ; Channel++, cp++)                                     // 13.05.19:
       {
@@ -541,7 +586,7 @@ void NextChannel()
          Impuls_1_8_microseconds(cp->Act_pwmTime, Outp_PBx[Channel]);
          RemTime -= cp->Act_pwmTime;                                                                          // 30.05.19:  Old: RemTime =- cp->Act_pwmTime;
          }
-      delayHalfMicroseconds(RemTime>>2);  // RemTime/4
+      delayPartsOfMicroseconds(RemTime>>2);  // RemTime/4
       }
   IntProcessed = 1;
 }
@@ -636,18 +681,23 @@ void Debug_Print_Input_PWM(uint16_t PWM01) // Debug (Only avtive if ENAB_SERVO i
 void Activate_Timer_Interrupt()
 //-----------------------------
 {
-  // Setzen der Register fuer 20 ms Timerinterrupt   (https://arduino-projekte.webnode.at/meine-projekte/servosteuerung/servotest-attiny/)
-  #if F_CPU != 8000000L // for the 8 MHz internal clock
-    #error Wrong CPU frequency
-  #endif
-
+  // Setzen der Register fuer 20 ms Timerinterrupt = 50Hz  (https://arduino-projekte.webnode.at/meine-projekte/servosteuerung/servotest-attiny/)
   // Vergleichswert = OCR1C = (8.000.000 / (1024 * 50)) - 1 = 155.25
+  //
+  // For 16 MHz a prescaler of 2048 is used instead of 1024
+  //
   cli();      // Loesche globales Interruptflag
   #ifdef __AVR_ATtiny85__ // Normal 8-pin CPU
     TCNT1 = 0;  // Loesche Timer Counter 1
     TCCR1 = 0;  // Loesche Timer Counter Controll Register
     OCR1C = 155; // Setze Output Compare Register C
-    TCCR1 |= (1 << CS10) | (1 << CS11) | (1 << CS13); // Setze CS10, CS11 und CS13 - Clock Select Bit 10,11,13 (Prescaler 1024)
+    #if F_CPU == 8000000L      // 8 MHz
+      TCCR1 |= (1 << CS10) | (1 << CS11) | (1 << CS13); // Setze CS10, CS11 und CS13 - Clock Select Bit 10,11,13 (Prescaler 1024)
+    #elif F_CPU == 16000000L   // 16 MHz
+      TCCR1 |= (1 << CS12) | (1 << CS13);               // Setze CS10, CS11 und CS13 - Clock Select Bit 12,13    (Prescaler 2028)        // 04.08.20:
+    #else
+      #error Wrong CPU frequency
+    #endif
     TCCR1 |= (1 << CTC1); // CTC-Mode ein (Clear Timer and Compare)
     //Timer/Counter Interrupt Mask Register
     TIMSK |= (1 << OCIE1A); //Output Compare A Match Interrupt Enable
@@ -657,7 +707,11 @@ void Activate_Timer_Interrupt()
     TCCR1C = 0;
     TCNT1  = 0;
     OCR1A = 155;
-    TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);    // CTC mode and 1024 prescaler
+    #if F_CPU == 8000000L
+      TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);    // CTC mode and 1024 prescaler
+    #else
+      #error Wrong CPU frequency
+    #endif
     TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
   #endif
   sei(); //Setze globales Interruptflag
@@ -669,7 +723,7 @@ void setup()
 //----------
 {
   #ifdef S_DEBUG
-    softSerial.begin(9600);
+    softSerial.begin(9600);                                                                                   // Only for 8 MHz internal clock ??
     for (uint8_t i = 0; i < 50; i++) delayMicroseconds(10000); // Wait until the ArduinoISP is ready to receive characters  // 05.05.19:  Don't use delay(500) to save 146 bytes Flash
     Print(F("Tiny Servo"));
     #ifdef __AVR_ATtiny84__
@@ -1301,8 +1355,8 @@ void loop()
          if (pwm < cp->LED_pwm) cp->LED_pwm = pwm;
          uint8_t delta;
          if (pwm < 20)
-              delta = 2; // In the low range we use a delta of 2
-         else delta = 1;
+              delta = 4; // In the low range we use a delta of 2                                              // 04.08.20:  Old: 2
+         else delta = 2;                                                                                      //            Old: 1
          if (cp->max_pwm - cp->LED_pwm > delta) cp->LED_pwm = cp->max_pwm = pwm;
          #ifdef FILTER_TO_USE_LED_PWM_1
            cp->TimeOutCnt = 0;

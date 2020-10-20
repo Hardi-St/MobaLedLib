@@ -27,13 +27,16 @@ Revision History :
                The buffer overflow signaling is not changed:
                - 1 Hz 50%: active buffer owerflow 1 Hz
                - 1 Hz 10%: prior buffer owerflow, but now it's working fine
+18.10.20:  - Switching the external buffer gate which disables the TX pin in PCB version 1.7 (Not tested)
+           Versions 1.4
 */
 
-#define SKETCH_VERSION "1.2"
+#define SKETCH_VERSION "1.4"
 
 #define DCC_SIGNAL_PIN   2
 #define SEND_DISABLE_PIN A1
 #define STATUSLED_PIN    LED_BUILTIN
+#define BUF_GATE_PIN     A5                                                                                   // 18.10.20:
 
 #include "SX20.h"                             // this is the Selectrix library (We use a modified version from Wilfried which is stored localy)
 #define QUEUESIZE  512                        // Must be a "binary" number 32,64,128, ...
@@ -92,6 +95,7 @@ void Transmit_Sendchar_if_waiting()
         {
         if (DisableSerial == SERIAL_DISABLED)
             {
+            digitalWrite(BUF_GATE_PIN, 0); // enable the external buffer gate for the TX pin                  // 18.10.20:
             Serial.begin(SERIAL_BAUD);
             DisableSerial = millis() + 10 * QueueFill();
             }
@@ -106,8 +110,7 @@ void Transmit_Sendchar_if_waiting()
     else if (DisableSerial != SERIAL_DISABLED && millis() > DisableSerial)
         {
         Serial.end(); // disable the serial port to be able to flash the LED-Arduino.
-//        pinMode(0, INPUT);                                                                                    // 05.05.20:
-
+        digitalWrite(BUF_GATE_PIN, 1); // disable the external buffer gate for the TX pin                     // 18.10.20:
         DisableSerial = SERIAL_DISABLED;
         }
 
@@ -216,6 +219,9 @@ void sxisr(void)
 void setup()
 //----------
 {
+    digitalWrite(BUF_GATE_PIN, 0); // enable the external buffer gate for the TX pin                          // 18.10.20:
+    pinMode(BUF_GATE_PIN, OUTPUT);
+
     pinMode(SCOPE,OUTPUT);
     pinMode(SEND_DISABLE_PIN, INPUT_PULLUP);                    // Activate an internal pullup resistor for the input pin
     pinMode(STATUSLED_PIN,   OUTPUT);

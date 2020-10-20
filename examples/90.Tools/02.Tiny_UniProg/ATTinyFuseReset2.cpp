@@ -7,10 +7,10 @@
  Fuse Calc:
    http://www.engbedded.com/fusecalc/
 
- Siehe C:\Dat\Märklin\Datenblätter\154219-da-01-en-ATTINY45_20PU_DIL8.pdf
+ Siehe C:\Dat\Maerklin\Datenblaetter\154219-da-01-en-ATTINY45_20PU_DIL8.pdf
  Seite 158
 
- AtTiny84: C:\Dat\Märklin\Datenblätter\ATTiny24_44_84.pdf
+ AtTiny84: C:\Dat\Maerklin\Datenblaetter\ATTiny24_44_84.pdf
  Seite 167
 
  Die Fuses koennen mit der Arduino IDE gesetzt werden.
@@ -19,12 +19,12 @@
           automatisch geschlossen.
  Der Reset Pin kann aber nicht ueber die IDE geaendert werden
 
- Mit diesem Programm kann man die Fuses setzen. Zunächst habe ich es dazu verwendet
- den Reset Pin eines ATTiny85 zum Ausgang umzukonfigurieren. Danach lässt sich der
+ Mit diesem Programm kann man die Fuses setzen. Zunaechst habe ich es dazu verwendet
+ den Reset Pin eines ATTiny85 zum Ausgang umzukonfigurieren. Danach laesst sich der
  ATTiny aber nicht mehr Programmieren ;-(
- Mit dem HVReset kann man das aber wieder rückgängig machen.
+ Mit dem HVReset kann man das aber wieder rueckgaengig machen.
 
- Das Programm unterstützt jetzt auch den AtTiny84 (14 Pin Chip). Dazu habe ich einen
+ Das Programm unterstuetzt jetzt auch den AtTiny84 (14 Pin Chip). Dazu habe ich einen
  Adapterstecker gemacht (Dip8 => Dip14).
 
  Das Programm verwendet den "Seriellen Monitor" der Arduino IDE als Ein- und Ausgabe.
@@ -46,7 +46,7 @@
 
  - Nach dem Programmieren der Fuses automatisch die
    Versorgungsspannung einschalten und den REset Pin als Input konfigurieren
-   Problem: Momentan verändert das die Interruptroutine
+   Problem: Momentan veraendert das die Interruptroutine
 
                    ATMEL ATTINY45 / ARDUINO
 
@@ -260,7 +260,7 @@ void HV_Reset(uint8_t Quiet)
   PORTD |= PIN_MSKD_GND;           // Discharge the capacitors                                                // 14.05.20:  Juergen
   onOff = 0;                       // 12v Off
   delay(100);                                                                                                 //  "
-  PORTD &= PIN_MSKD_GND;                                                                                      //
+  PORTD &= ~PIN_MSKD_GND;                                                                                     // 07.08.20:  Added "~"
   digitalWrite(PIN_POWER, HIGH);   // Vcc On
   delayMicroseconds(20);
   onOff = 1;                       // 12v On

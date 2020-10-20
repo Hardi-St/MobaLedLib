@@ -154,20 +154,20 @@ typedef struct
     {
     uint8_t         Last_t;
     uint8_t         dt;
-    } TimerData_T;
+    }  __attribute__ ((packed)) TimerData_T;
 
 typedef struct
     {
     uint16_t        Last_t;
     uint16_t        dt;
-    } TimerData16_T;
+    }  __attribute__ ((packed)) TimerData16_T;
 
 typedef struct
     {
     uint16_t        Last_t;
     uint16_t        dt;
     uint8_t         State;
-    } PatternData_T;        // 5 Byte
+    } __attribute__ ((packed)) PatternData_T;        // 5 Byte
 
 typedef struct
     {
@@ -175,20 +175,20 @@ typedef struct
     uint16_t        dt;
     uint8_t         State;
     uint16_t        Start_t;
-    } AnalogPatternData_T;  // 7 Byte
+    } __attribute__ ((packed)) AnalogPatternData_T;  // 7 Byte
 
 typedef struct
     {
     uint16_t        Last_t;
     uint16_t        dt;
     uint8_t         flickertimes;  // 5 Bytes
-    } WeldingData_T;
+    }  __attribute__ ((packed)) WeldingData_T;
 
 enum DayState_E : uint8_t
     {
     Unknown = 0,
-    SunSet,
-    SunRise
+    SunSet  = 1,  // don't change the sequence
+    SunRise = 2
     } ;
 
 typedef struct
@@ -196,7 +196,7 @@ typedef struct
     uint8_t         SwitchVal;
     uint8_t         ToDoCnt;
     DayState_E      OldDayState;
-    } Schedule_T;
+    }  __attribute__ ((packed)) Schedule_T;
 
 
 typedef struct
@@ -204,34 +204,34 @@ typedef struct
     uint8_t         Hue;
     uint8_t         Sat;
     uint8_t         Val;
-    } HSV_T;
+    }  __attribute__ ((packed)) HSV_T;
 
 typedef struct                                                                                                // 07.11.18:
     {
     uint8_t         Val;
     uint8_t         Changed:1;     // Is cleared in New_Local_Var()
     uint8_t         ExtUpdated:1;  // Is set by external functions. In Set_Local_Var() this flag is copied to Changed and cleared
-    } ControlVar_t;
+    }  __attribute__ ((packed)) ControlVar_t;
 
 typedef struct
     {
     uint32_t        Cnt;
     uint32_t        On;
     uint16_t        PrintStat;
-    } House_Stat_T;
+    }  __attribute__ ((packed)) House_Stat_T;
 
 typedef struct
     {
     uint16_t        Last_t;
     uint8_t         Counter;
-    } Counter_T;
+    }  __attribute__ ((packed)) Counter_T;
 
 typedef struct
     {
     uint16_t LEDNr;
     uint16_t Start;
     uint16_t Duration;
-    } Sound_Dat_t;   // 6 Byte
+    }  __attribute__ ((packed)) Sound_Dat_t;   // 6 Byte
 
 typedef struct                                                                                                // 10.06.20:
     {
@@ -244,7 +244,29 @@ typedef struct                                                                  
     uint8_t  Candle_Change_Probability;
     uint8_t  Candle_Chg_Hue;
     uint8_t  Candle_Time_Dark;
-    } Candle_Dat_T;
+    }  __attribute__ ((packed)) Candle_Dat_T;
 
+typedef struct
+    {
+    #if _USE_SET_TVTAB                                                                                        // 10.01.20:
+      union {
+            struct {
+                   uint8_t r, g, b;
+                   } __attribute__ ((packed)) ;
+            uint8_t raw [3];
+            } ;
+    #else
+      uint8_t         r, g, b;
+    #endif
+      uint8_t         Last_t;
+      uint8_t         dt;
+    }  __attribute__ ((packed)) TV_Dat_T;     // 5 Byte
+
+typedef struct
+      {
+      uint8_t Start:1;
+      uint8_t SwitchMode:1;
+      } __attribute__ ((packed)) AD_Flags_T;
+	
 #endif // __OUTPUT_FUNCT_INTDEFS_H__
 

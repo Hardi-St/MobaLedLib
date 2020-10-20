@@ -107,14 +107,14 @@ void MobaLedLib_C::Proc_Schedule()
         uint8_t DstVar1 = pgm_read_byte_near(cp+P_SCHEDULE_DSTVAR1);
         uint8_t DstVarN = pgm_read_byte_near(cp+P_SCHEDULE_DSTVARN);
         uint8_t Cnt = 0;
-        for (uint8_t DstVar = DstVar1; DstVar <= DstVarN; DstVar++)
+        for (uint8_t DstVar = DstVar1; DstVar <= DstVarN; DstVar++)  // Count the number of active outputs
            if (Inp_Is_On(Get_Input(DstVar))) Cnt++;
 
         //Dprintf("%8lu: StCh: ", millis()); // Debug
         if (DayState == SunSet) // if() uses 28 bytes less memory than switch/case
              dp->ToDoCnt = DstVarN + 1 - DstVar1 - Cnt;
         else dp->ToDoCnt = Cnt;
-        CalcSwitchVal(dp);
+        CalcSwitchVal(dp); // Calculate the next value when an output has to be switched on or off
 
         dp->OldDayState = DayState;
         }

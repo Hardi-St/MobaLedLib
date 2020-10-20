@@ -74,7 +74,9 @@
  09.04.20:  - Corrected the power on animation
  14.05.20:  - Improved the HV_Reset() according to Juergens tipp
  05.06.20:  - Added LED_Polarity.h to change the LED polarity from excel
-
+ 07.08.20:  - Corrected Juergens change. I have forgotten to add a "~" in HV_Reset(uint8_t Quiet) ;-(
+            - Read the Fuse status at the end of the programming to update the White/Blue LED. This is
+              important because the LEDs are used to define if the HV-Reset is used or not
 
  Todo:
  ~~~~~
@@ -1184,6 +1186,7 @@ void avrisp()
                */
                Pers.Flags.Error = error;
                Save_Persist_Data();
+               Check_HV_Reset_Button(1);                // 07.08.20: Read the status to set the LEDs. Important after the Fuses are set
                break;
     case 'u':  //STK_READ_SIGN
                read_signature();

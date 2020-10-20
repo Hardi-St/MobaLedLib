@@ -3,6 +3,10 @@ REM Arduino parameters see:
 REM   https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
 REM Revision History:
 REM 05.06.20:  - Hiding the Debug messages from the compiler
+REM 04.08.20:  - Changed the CPU Clock to 16MHz (Old: 8MHz) clock=8internal => clock=16pll
+REM 15.10.20:  - Extracted the compiler call into "Compile_and_Upload_to_ATTiny85_Sub.cmd"
+REM              to be able to check the error code. Prior the Find command has overwritten
+REM              the result => Errors have not been detected ;-(
 
 
 REM Used additional resources:
@@ -38,19 +42,16 @@ ECHO * Compile and uplaod the program *
 ECHO **********************************
 ECHO.
 CHCP 65001 >NUL
-"C:\Program Files (x86)\Arduino\arduino_debug.exe" "01.ATTiny85_Servo.ino" ^
-   --upload ^
-   --port %ComPort% ^
-   --pref programmer=arduino:arduinoasisp ^
-   --board ATTinyCore:avr:attinyx5:LTO=disable,TimerClockSource=default,chip=85,clock=8internal,eesave=aenable,bod=2v7,millis=enabled ^
-   2>&1 | find /v "Set log4j store directory" | find /v " StatusLogger " | find /v "serial.SerialDiscovery"
+Call Compile_and_Upload_to_ATTiny85_Sub.cmd %ComPort% ^
+     2>&1 | find /v "Set log4j store directory" | find /v " StatusLogger " | find /v "serial.SerialDiscovery"
 
-IF ERRORLEVEL 1 (
+if exist "Compile_and_Upload_to_ATTiny85_Result.txt" (
    REM White on RED
    COLOR 4F
-   ECHO Start_Arduino_Result: %ERRORLEVEL% > "Compile_and_Upload_to_ATTiny85_Result.txt"
    ECHO   **********************************
-   ECHO   * Da ist was schief gegangen ;-( *            ERRORLEVEL %ERRORLEVEL%
+   ECHO   * Da ist was schief gegangen ;-( *
    ECHO   **********************************
    Pause
-   )
+)
+
+

@@ -107,7 +107,7 @@ void softwareReset()
 //   Eigentlich sollte das in der Hauptschleife gemacht werden damit die Check_ProgramMode() routine gar
 //   nicht erst aufgerrufen wird. Ich kann das Problem aber gar nicht generieren => Spaeter
 
-#define HEAD_STR "CP2"  // This is the magic headder which must be received at the beginning. Otherwise the
+#define HEAD_STR "CP1"  // This is the magic headder which must be received at the beginning. Otherwise the
                         // programming mode is aborted.
 
 //-------------------------

@@ -83,6 +83,7 @@ void MobaLedLib_C::Print_Comment(uint8_t Type)
     case RANDOM_T:            Dprintf("Random");            break;
     case RANDMUX_T:           Dprintf("RandMux");           break;
     case WELDING_T:           Dprintf("Welding");           break;
+    case WELDING_CONT_T:      Dprintf("WeldingCont");       break;
     case COPYLED_T:           Dprintf("CopyLED");           break;
     case SCHEDULE_T:          Dprintf("Schedule");          break;
     case COUNTER_T:           Dprintf("Counter");           break;

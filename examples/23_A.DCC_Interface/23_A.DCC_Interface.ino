@@ -157,7 +157,7 @@
 /*
 Revision History :
 ~~~~~~~~~~~~~~~~~
-15.04.20:  Versions 1.1 (Jürgen)
+15.04.20:  Versions 1.1 (Juergen)
            - don't open serial port on receive of DCC packet, reopen only if sending is allowed
              (avoid breaking sketch upload process of led arduino, see https://www.stummiforum.de/viewtopic.php?f=7&t=165060&p=2103546#p2103546)
            - add output of version numer on program startup
@@ -165,7 +165,7 @@ Revision History :
            - The serial port was not disabled at startup
              If DCC messages have been received and send to the LED Arduino it was disabled
              This generates problems when flashing the LED Arduino.
-           - The build in LED alsow shows a slow heartbeat with a period of 3 seconds if it's running normal
+           - The build in LED also shows a slow heartbeat with a period of 3 seconds if it's running normal
              The buffer overflow signaling is not changed:
              - 1 Hz 50%: active buffer owerflow 1 Hz
              - 1 Hz 10%: prior buffer owerflow, but now it's working fine
@@ -176,9 +176,11 @@ Revision History :
              solved wit a 3.9K resistor between TX and ground.
              The SPI functions are kept in the software but the are normally disabled with USE_SPI_SLAVE 0
            Versions 1.3
+18.10.20:  - Switching the external buffer gate which disables the TX pin in PCB version 1.7 (Not tested)
+           Versions 1.4
 
 */
-#define SKETCH_VERSION "1.3"
+#define SKETCH_VERSION "1.4"
 
 #include "MobaLedLib.h"
 
@@ -197,6 +199,7 @@ Revision History :
 #define DCC_SIGNAL_PIN   2
 #define SEND_DISABLE_PIN A1
 #define HEARTBEAT_PIN    3
+#define BUF_GATE_PIN     A5                                                                                   // 18.10.20:
 
 NmraDcc  Dcc ;                                // Instance of the NmraDcc class
 
@@ -228,7 +231,7 @@ uint32_t Last_SPI_Signal            = 0;
 
 #define SERIAL_BAUD      115200           // Should be equal to the DCC_Rail_Decoder_Receiver.ino program
 #define SERIAL_DISABLED  0
-uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port 1000 seconds after the start to be able to program the LED-Arduino.
+uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port x seconds after the start to be able to program the LED-Arduino.
                                           // This is important because otherwise the receive pin of the LED-Arduino is blocked by this arduino ;-(
                                           // The serial port is enabled again to transmit DCC messages
 
@@ -287,13 +290,13 @@ void AddToSendBuffer(const char *s)
 //-------------------------------------------------------
 void printf_proc(const __FlashStringHelper *format, ...)
 //-------------------------------------------------------
-// Achtung: Es durfen keine Zeichen über die serielle Schnittstelle ausgegeben werden wenn der LED Arduino
-//          programmiert wird und die Beiden über die TX Leitung verbunden sind. Die serielle Schnittstelle
+// Achtung: Es durfen keine Zeichen ueber die serielle Schnittstelle ausgegeben werden wenn der LED Arduino
+//          programmiert wird und die Beiden ueber die TX Leitung verbunden sind. Die serielle Schnittstelle
 //          muss nach jeder Ausgabe abgeschaltet werden. Sonst zieht der TX Ausgang dieses Nanos die
 //          RX Leitung des LED Arduinos auf 5V.
-//          Bei der normalen Kommunikation wird das über die A1 Leitung zwischen den beiden Rechnern gesteuert.
+//          Bei der normalen Kommunikation wird das ueber die A1 Leitung zwischen den beiden Rechnern gesteuert.
 //          Wenn der SPI Mode aktiviert ist, dann wird die A1 Leitung als Input geschaltet damit sie auf dem
-//          LED Arduino als Eingang für die Schalter genutzt werden kann.
+//          LED Arduino als Eingang fuer die Schalter genutzt werden kann.
 {
   if (Use_RS232 || (millis() - Last_SPI_Signal < 100))
      {
@@ -308,6 +311,7 @@ void printf_proc(const __FlashStringHelper *format, ...)
      va_end(ap);
      if (DisableSerial == SERIAL_DISABLED)
          {
+         digitalWrite(BUF_GATE_PIN, 0); // enable the external buffer gate for the TX pin                     // 18.10.20:
          Serial.begin(SERIAL_BAUD);
          DisableSerial = millis() + 10 * strlen(buf);
          }
@@ -324,7 +328,10 @@ void Transmit_Sendchar_if_waiting()
     if (QueueFill() && digitalRead(SEND_DISABLE_PIN) == 0)
          {
          if (DisableSerial == SERIAL_DISABLED)
+             {
+             digitalWrite(BUF_GATE_PIN, 0); // enable the external buffer gate for the TX pin                 // 18.10.20:
              Serial.begin(SERIAL_BAUD);
+             }
          DisableSerial = millis() + 10 * QueueFill();  // Disable the serial port after xx ms if it's not used to be able to flash the LED program
                                                        // which is connected to the TX pin of this Arduino
 
@@ -389,6 +396,9 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 void setup(){
 //-----------
   pinMode(13, INPUT); // IF the D13 pins are connected together they must be used as inputs. The pin is activated as OUTPUT in the boot loader ?!?
+
+  digitalWrite(BUF_GATE_PIN, 0); // enable the external buffer gate for the TX pin                            // 18.10.20:
+  pinMode(BUF_GATE_PIN, OUTPUT);
 
   // Attention: Don't use Serial.print in the program for debugging
   //            because the serial port has to be disabled after each usage
@@ -495,7 +505,7 @@ void Process_Status_and_Error_LED()                                             
          if (millis() - Last_SPI_Signal > 3000)
             {
             Deactivate_SPI();
-            //Problem: printf Ausgaben dürfen nicht kommen beim Upload
+            //Problem: printf Ausgaben duerfen nicht kommen beim Upload
             // printf("Slave disabled SPI because no signals reveived\n");
             SPI_is_Active = 0;
             }
@@ -505,7 +515,7 @@ void Process_Status_and_Error_LED()                                             
             { // enable the SPI again
             Last_SPI_Signal = millis();
             Activate_SPI();
-            //Problem: printf Ausgaben dürfen nicht kommen beim Upload
+            //Problem: printf Ausgaben duerfen nicht kommen beim Upload
             //printf("Slave reactivating SPI (D13=High)\n");
             SPI_is_Active = 1;
             }
@@ -538,6 +548,7 @@ void loop(){
   // Disable the serial port if it's not used for a while
   if (DisableSerial != SERIAL_DISABLED && millis() > DisableSerial)                                           // 13.05.20:
      {
+     digitalWrite(BUF_GATE_PIN, 1); // disable the external buffer gate for the TX pin                        // 18.10.20:
      Serial.end(); // disable the serial port to be able to flash the LED-Arduino.
      DisableSerial = SERIAL_DISABLED;
      }
