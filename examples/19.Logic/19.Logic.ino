@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Logic                                                                                     by Hardi   13.12.18
+ Logic                                                                                     by Hardi   19.01.21
  ~~~~~
 
  This example demonstrates the logic() function of the MobaLedLib to turn on the St. Andrew's Cross
@@ -55,6 +55,15 @@
  This example could be combined with other MobaLedLib examples. Just copy the configuration
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

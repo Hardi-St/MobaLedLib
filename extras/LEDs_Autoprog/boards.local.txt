@@ -1,0 +1,18 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+menu.cpu=Processor
+
+##############################################################
+
+nano.menu.cpu.atmega328fullmem=ATmega328P (New Bootloader full Mem)
+
+nano.menu.cpu.atmega328fullmem.upload.maximum_size=32256
+nano.menu.cpu.atmega328fullmem.upload.maximum_data_size=2048
+nano.menu.cpu.atmega328fullmem.upload.speed=115200
+
+nano.menu.cpu.atmega328fullmem.bootloader.low_fuses=0xFF
+nano.menu.cpu.atmega328fullmem.bootloader.high_fuses=0xDE
+nano.menu.cpu.atmega328fullmem.bootloader.extended_fuses=0xFD
+nano.menu.cpu.atmega328fullmem.bootloader.file=optiboot/optiboot_atmega328.hex
+
+nano.menu.cpu.atmega328fullmem.build.mcu=atmega328p

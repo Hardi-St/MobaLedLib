@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -66,11 +66,11 @@ void MobaLedLib_C::Proc_Welding(uint8_t withbreaks)                             
 
   if ((uint16_t)(t - dp->Last_t) >= dp->dt)
      { // waehrend der Timer laeuft, wird keiner der folgenden if / else if Bloecke ausgefuehrt:
-     CRGB *lp = &leds[pgm_read_byte_near(cp+P_WELDING_LED)];
+     CRGB *lp = &leds[pgm_read_led_nr(cp+P_WELDING_LED)];
      uint8_t Inp = Get_Input(pgm_read_byte_near(cp+P_WELDING_INP));
      if (dp->flickertimes > 0)
           { // So lange die Anzahl der Flacker mehr als 0 ist Led ansteuern (Blaeulichs Weiss)
-          byte flicker = random8(ledflickermin, ledflickermax); // Waehlt zufaelligen Flackerwert
+          uint8_t flicker = random8(ledflickermin, ledflickermax); // Waehlt zufaelligen Flackerwert
           lp->r = lp->g = qsub8(flicker, 50);
           lp->b = flicker;
           if ((withbreaks && --(dp->flickertimes) == 0) || !Inp_Is_On(Inp))

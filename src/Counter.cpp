@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -104,7 +104,7 @@ void MobaLedLib_C::Proc_Counter()
      if ((ModeL & CF_UP_DOWN) == 0 && !Inp_Is_On(Enable)) Dprintf("Achtung: Enable = 0\n");
 #if _USE_STORE_STATUS                                                                                         // 01.05.20:
      Do_Callback(CT_COUNTER_INITIAL, ProcCounterId, 0, &dp->Counter);
-     Dprintf("Counter: %i %i %i\n", ProcCounterId, Inp, dp->Counter);
+     //Dprintf("Counter: %i %i %i\n", ProcCounterId, Inp, dp->Counter);
 #endif
   }
 
@@ -200,9 +200,12 @@ void MobaLedLib_C::Proc_Counter()
                {
                uint8_t InpNr = pgm_read_byte_near(ip);
                //Dprintf("Counter Inp[%i]=%i\n", InpNr, Get_Input(InpNr));
+               #pragma GCC diagnostic push                                                                    // 17.11.20:  Disable compiler warning
+               #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
                if (ModeL & CF_BINARY)
                     { Set_Input(InpNr, Clean_Counter & Mask); Mask>>=1;}  // Enable binary pattern
                else Set_Input(InpNr, i == Clean_Counter);                 // Enable only one
+               #pragma GCC diagnostic pop
                //Dprintf("=>%i (M:%i)", Get_Input(InpNr), Mask);
                }
           //Dprintf("\n");

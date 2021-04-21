@@ -4,7 +4,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -105,6 +105,10 @@ void Darkness_Detection_Callback(int , int , int value)
 //-----------------------------------------------------
 // THis function has to be called from the AnalogScanner library
 {
+#ifdef ESP32
+	value = (value * 6)/5;		// ESP32 uses additional voltage divider at the LDR pin, so values have to be converted
+	if (value>1023) value=1023;
+#endif	
   if (++AD_Count < LDR_Check_Count)
        {
        uint8_t Val8 = value>>2;

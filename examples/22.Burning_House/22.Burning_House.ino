@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Burning House                                                                             by Hardi   12.01.19
+ Burning House                                                                             by Hardi   27.01.21
  ~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib and a complex "Push Button" action.
@@ -115,6 +115,15 @@
  This example could be combined with other MobaLedLib examples. Just copy the configuration lines and
  eventual the macros and adapt the first LED to avoid overlapping (First parameter in the configuration line).
 
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~
@@ -213,7 +222,7 @@
 // 8:  Stille.mp3
 
 #define Burning_House(LED0, B_LED, B_LED_Cx, InNr, TmpNr, Timeout)                                                     \
-            PushButton_w_LED_0_3(B_LED, B_LED_Cx, InNr, TmpNr, 0, Timeout)                                             \
+            PushButton_w_LED_0_3(B_LED, B_LED_Cx, InNr, TmpNr, 0, 0, 1, 0, Timeout)                                    \
             Logic      (TmpNr+4,    TmpNr+3 AND InNr)        /* Sound is active when TmpNr+3 and the input = 1 */      \
             Logic      (TmpNr+2,    TmpNr+2 OR TmpNr+3)      /* TmpNr+2 is also active if TmpNr+3 is active */         \
             Logic      (TmpNr+1,    TmpNr+1 OR TmpNr+2)      /* TmpNr+1 is also active if TmpNr+2 is active */         \
@@ -222,7 +231,7 @@
             Const      (LED0+7, C3, TmpNr+2, 0,63)  /* Status LED Rauch */                                             \
             Fire_truck (LED0+8,     TmpNr+3)                                                                           \
           /*Sound_Next_of_N(LED0+0, TmpNr+4, 5)*/   /* Sound 1-5 nacheinander */                                       \
-            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufaellig */                                               \
+            Sound_PlayRandom(LED0+0,TmpNr+4, 5)     /* Sound zufaellig */                                              \
             Sound_Seq8(      LED0+0,TmpNr+0)        /* Sound aus (Stille.mp3) */
 #if 0
             Const      (StatusLEDs+0,C_ALL,   TmpNr+0, 0, 10)                 /* Debug: */                             \

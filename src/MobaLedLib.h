@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 #ifndef _MOBALEDLIB_H_
 #define _MOBALEDLIB_H_
 
-#define MobaLedLib_Ver  2.0.0   // Adapt also library.properties if changed
+#define MobaLedLib_Ver  3.0.0   // Adapt also library.properties if changed
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
@@ -116,7 +116,7 @@
 
 
 
-#define  CopyLED(       LED, InCh, SrcLED)                                  COPYLED_T,   _CHKL(LED), InCh, SrcLED,
+#define  CopyLED(       LED, InCh, SrcLED)                                  COPYLED_T,   _CHKL(LED), InCh, _CHKL(SrcLED),
 #define  Schedule(      DstVar1, DstVarN, EnableCh, Start, End)             SCHEDULE_T,  DstVar1+RAM3, DstVarN, EnableCh, Start, End,  // Zeit- oder Helligkeitsgesteuertes Ein- und Ausschalten von Variablen.
 #define  New_HSV_Group()                                                    NEW_HSV_GROUP_T+RAM3,
 #define  New_Local_Var()                                                    NEW_LOCAL_VAR_T+RAM2,             // 07.11.18:
@@ -136,13 +136,13 @@
   #define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                          BIN_INCH_TO_TMPVAR_T,  FirstInCh, InCh_Cnt, // 18.01.19:
   #define  Bin_InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                         BIN_INCH_TO_TMPVAR1_T, FirstInCh, InCh_Cnt, // 07.05.20:
 #endif
-#define  Button(        LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_W_ABORT+PF_SLOW,Duration/16,_Cx2P_BLINK(Cx))
+#define  Button(        LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_W_ABORT+PF_SLOW,Duration/16,   _Cx2P_BLINK(Cx))
 #define  ButtonNOff(    LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_NO_RESTART+PF_SLOW,Duration/16,_Cx2P_BLINK(Cx)) // 12.03.19:
-#define  Blinker(       LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,0,(Period)/2,                    _Cx2P_BLINK(Cx))     // Blinker
-#define  BlinkerInvInp( LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,PF_INVERT_INP,(Period)/2,        _Cx2P_BLINK(Cx))     // Blinker with inverse input
-#define  BlinkerHD(     LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),50,  255, 0,0,(Period)/2,                    _Cx2P_BLINK(Cx))     // Hell/Dunkel Blinken
-#define  Blink2(        LED,Cx,InCh,Pause,Act,Val0,Val1)      PatternT2(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,0,0,Act,     Pause,                _Cx2P_BLINK(Cx))     // Blinken mit zwei verschiedenen Helligkeiten
-#define  Blink3(        LED,Cx,InCh,Pause,Act,Val0,Val1,Off)  PatternT2(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Off,0,Act,   Pause,                _Cx2P_BLINK(Cx))     // Blinken mit zwei verschiedenen Helligkeiten und einen Wert wenn der Blinker aus ist
+#define  Blinker(       LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,   PF_SLOW,(Period)/32,                      _Cx2P_BLINK(Cx))     // Blinker  31.10.20:  Added PF_SLOW and /16 to all Blinker functions
+#define  BlinkerInvInp( LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx), 0,  255, 0,   PF_SLOW+PF_INVERT_INP,(Period)/32,        _Cx2P_BLINK(Cx))     // Blinker with inverse input
+#define  BlinkerHD(     LED,Cx,InCh,Period)                   PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),50,  255, 0,   PF_SLOW, (Period)/32,                     _Cx2P_BLINK(Cx))     // Hell/Dunkel Blinken
+#define  Blink2(        LED,Cx,InCh,Pause,Act,Val0,Val1)      PatternT2(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,0,   PF_SLOW, Act/16,     Pause/16,            _Cx2P_BLINK(Cx))     // Blinken mit zwei verschiedenen Helligkeiten
+#define  Blink3(        LED,Cx,InCh,Pause,Act,Val0,Val1,Off)  PatternT2(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Off, PF_SLOW, Act/16,     Pause/16,            _Cx2P_BLINK(Cx))     // Blinken mit zwei verschiedenen Helligkeiten und einen Wert wenn der Blinker aus ist
 #define  BlueLight1(    LED,Cx,InCh)                          PatternT4(LED,_NStru(Cx,   4,1),InCh,_Cx2LedCnt(Cx),0,   255, 0,0,  48 ms, 74 ms,  48 ms, 496 ms,_Cx2P_DBLFL(Cx))     // Blaulicht
 #define  BlueLight2(    LED,Cx,InCh)                          PatternT4(LED,_NStru(Cx,   4,1),InCh,_Cx2LedCnt(Cx),0,   255, 0,0,  24 ms, 74 ms,  24 ms, 512 ms,_Cx2P_DBLFL(Cx))     // Blaulicht (Andere Periode damit nicht synchron)
 #define  Leuchtfeuer(   LED,Cx,InCh)                          PatternT4(LED,_NStru(Cx,   4,1),InCh,_Cx2LedCnt(Cx),0,   255, 0,0,1000 ms,500 ms,1000 ms,1500 ms,_Cx2P_DBLFL(Cx))     // Leuchtfeuer fuer Windrad
@@ -213,11 +213,16 @@
 
 // Control the charlieplexing Modul
 #define Charlie_Buttons(LED, InCh, States)    InCh_to_TmpVar(InCh, States) \
-                                              PatternT1(LED,29,SI_LocalVar,2,0,255,0,0,1 ms,15,15,35,35,55,55,75,75,95,95,115,115,135,135,155,155,175,175,195,195,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+                                              PatternT1(LED,28,SI_LocalVar,3,0,255,0,0,1 ms,15,15,15,35,35,35,55,55,55,75,75,75,95,95,95,115,115,115,135,135,135,155,155,155,175,175,175,195,195,195,215,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+// Old: Channels G & B (35 Bytes)  New 46 Bytes) 31.10.20:
+//                                            PatternT1(LED,29,SI_LocalVar,2,0,255,0,0,1 ms,15,15,35,35,55,55,75,75,95,95,115,115,135,135,155,155,175,175,195,195,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+
 
 #define _GET_BIN_SIZE(n)  (n<=1?0:(n<=2?1:(n<=4)?2:(n<=8?3:(n<=16?4:999)))) // Number of bits needed for n states (n up to 16)
 #define Charlie_Binary(LED, InCh, BinStates)  Bin_InCh_to_TmpVar(InCh, _GET_BIN_SIZE((BinStates))) \
-                                              PatternT1(LED,29,SI_LocalVar,2,0,255,0,0,1 ms,15,15,35,35,55,55,75,75,95,95,115,115,135,135,155,155,175,175,195,195,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+                                              PatternT1(LED,28,SI_LocalVar,3,0,255,0,0,1 ms,15,15,15,35,35,35,55,55,55,75,75,75,95,95,95,115,115,115,135,135,135,155,155,155,175,175,175,195,195,195,215,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
+// Old: Channels G & B (35 Bytes)  New 46 Bytes) 31.10.20:
+//                                            PatternT1(LED,29,SI_LocalVar,2,0,255,0,0,1 ms,15,15,35,35,55,55,75,75,95,95,115,115,135,135,155,155,175,175,195,195,215,215  ,63,191,191,191,191,191,191,191,191,191,191)
 
 
 // Entry signal with 3 aspects
@@ -228,48 +233,98 @@
                                                     InCh_to_TmpVar(InCh, 3)      /* 29.10.19:  Old: 500 ms */                    \
                                                     XPatternT1(LED,160,SI_LocalVar,9,0,MaxBrightness,0,0,FadeTime,64,4,104,0  ,63,191,191)  // 01.05.20: Juergen added parameter MaxBrightness and FadeTime
 
-#define EntrySignal3(LED, InCh)         InCh_to_TmpVar(InCh, 3)      /* 29.10.19:  Old: 500 ms */                    \
-                                        XPatternT1(LED,224,SI_LocalVar,3,0,128,0,0,125 ms,145,1  ,63,191,191)
+#define EntrySignal3(LED, InCh, MaxB128)                   InCh_to_TmpVar(InCh, 3)      /* 29.10.19:  Old: 500 ms */                    \
+                                                           XPatternT1(LED,224,SI_LocalVar,3,0,MaxB128,0,0,125 ms,145,1  ,63,191,191)
 
 // Departure signal with 4 aspects
-#define DepSignal4_RGB(LED, InCh)       InCh_to_TmpVar(InCh, 4)      /* 29.10.19:  Old: 7 Input channels, 500 ms */  \
-                                        XPatternT1(LED,12,SI_LocalVar,18,0,128,0,0,125 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
+#define DepSignal4_RGB(LED, InCh, MaxB128)                 InCh_to_TmpVar(InCh, 4)      /* 29.10.19:  Old: 7 Input channels, 500 ms */  \
+                                                           XPatternT1(LED,12,SI_LocalVar,18,0,MaxB128,0,0,125 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
 
-#define DepSignal4(LED, InCh)           InCh_to_TmpVar(InCh, 4)      /* 29.10.19:  Old: 7 Input channels, 500 ms */  \
-                                        XPatternT1(LED,12,SI_LocalVar,5,0,128,0,0,125 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
+#define DepSignal4(LED, InCh, MaxB128)                     InCh_to_TmpVar(InCh, 4)      /* 29.10.19:  Old: 7 Input channels, 500 ms */  \
+                                                           XPatternT1(LED,12,SI_LocalVar,5,0,MaxB128,0,0,125 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
 
 // Entry signal with 3 aspects
-#define EntrySignal3Bin_RGB(LED, InCh)  Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
-                                        XPatternT1(LED,160,SI_LocalVar,9,0,128,0,0,500 ms,64,4,104,0  ,63,191,191)
+#define EntrySignal3Bin_RGB(LED, InCh, MaxB128)            Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                                           XPatternT1(LED,160,SI_LocalVar,9,0,MaxB128,0,0,500 ms,64,4,104,0  ,63,191,191)
 
-#define EntrySignal3Bin(LED, InCh)      Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
-                                        XPatternT1(LED,224,SI_LocalVar,3,0,128,0,0,125 ms,145,1  ,63,191,191)
+#define EntrySignal3Bin(LED, InCh, MaxB128)                Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                                           XPatternT1(LED,224,SI_LocalVar,3,0,MaxB128,0,0,125 ms,145,1  ,63,191,191)
 
 // Departure signal with 4 aspects
-#define DepSignal4Bin_RGB(LED, InCh)    Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
-                                        XPatternT1(LED,12,SI_LocalVar,18,0,128,0,0,125 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
+#define DepSignal4Bin_RGB(LED, InCh, MaxB128)              Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                                           XPatternT1(LED,12,SI_LocalVar,18,0,MaxB128,0,0,125 ms,0,240,0,15,0,0,0,0,0,240,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,240,15,0,240,0,0,16,17,17,1,0  ,63,191,191,191)
 
-#define DepSignal4Bin(LED, InCh)        Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
-                                        XPatternT1(LED,12,SI_LocalVar,5,0,128,0,0,125 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
+#define DepSignal4Bin(LED, InCh, MaxB128)                  Bin_InCh_to_TmpVar(InCh, 2)  /* 29.10.19:  Old: 500 ms */                    \
+                                                           XPatternT1(LED,12,SI_LocalVar,5,0,MaxB128,0,0,125 ms,15,240,0,15,0,240,15,240,0,16  ,63,191,191,191)
 
 // 09.06.20:  New signals
-#define KS_Vorsignal_Zs3V_RGB(LED, InCh) InCh_to_LocalVar(InCh, 3)                                            \
-                                         XPatternT9(LED,128,SI_LocalVar,12,0,128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,48,224,0,0,1,0,0,237,208,14,236,192,14  ,0,63,128,63,128,64,0,0,1)
+#define KS_Vorsignal_Zs3V_RGB(LED, InCh, MaxB128)           InCh_to_LocalVar(InCh, 3)                                            \
+                                                            XPatternT9(LED,128,SI_LocalVar,12,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,48,224,0,0,1,0,0,237,208,14,236,192,14  ,0,63,128,63,128,64,0,0,1)
 
-#define KS_Vorsignal_Zs3V(LED, InCh)     InCh_to_LocalVar(InCh, 3)                                            \
-                                         XPatternT9(LED,128,SI_LocalVar,4,0,128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,144,32,224,206,12  ,0,63,128,63,128,64,0,0,1)
+#define KS_Vorsignal_Zs3V(LED, InCh, MaxB128)               InCh_to_LocalVar(InCh, 3)                                            \
+                                                            XPatternT9(LED,128,SI_LocalVar,4,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,144,32,224,206,12  ,0,63,128,63,128,64,0,0,1)
 
-#define KS_Hauptsignal_Zs3_Zs1_RGB(LED, InCh)      InCh_to_LocalVar(InCh, 4)                                  \
-                                                   XPatternT11(LED,128,SI_LocalVar,12,0,128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,128,0,0,0,8,0,112,8,0,128,224,8,142,0,8,0  ,0,63,128,63,128,63,128,64,0,0,1)
+#define KS_Hauptsignal_Zs3_Zs1_RGB(LED, InCh, MaxB128)      InCh_to_LocalVar(InCh, 4)                                  \
+                                                            XPatternT11(LED,128,SI_LocalVar,12,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,128,0,0,0,8,0,112,8,0,128,224,8,142,0,8,0  ,0,63,128,63,128,63,128,64,0,0,1)
 
-#define KS_Hauptsignal_Zs3_Zs1(LED, InCh)          InCh_to_LocalVar(InCh, 4)                                  \
-                                                   XPatternT11(LED,128,SI_LocalVar,4,0,128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,32,64,80,160,42,2  ,0,63,128,63,128,63,128,64,0,0,1)
+#define KS_Hauptsignal_Zs3_Zs1(LED, InCh, MaxB128)          InCh_to_LocalVar(InCh, 4)                                  \
+                                                            XPatternT11(LED,128,SI_LocalVar,4,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,32,64,80,160,42,2  ,0,63,128,63,128,63,128,64,0,0,1)
 
-#define KS_Hauptsignal_Zs3_Zs6_Zs1_RGB(LED, InCh)  InCh_to_LocalVar(InCh, 4)                                  \
-                                                   XPatternT11(LED,96,SI_LocalVar,15,0,128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,0,4,0,0,0,16,0,0,56,132,3,0,16,28,8,14,4,0,2,0  ,0,63,128,63,128,63,128,64,0,0,1)
+#define KS_Hauptsignal_Zs3_Zs6_Zs1_RGB(LED, InCh, MaxB128)  InCh_to_LocalVar(InCh, 4)                                  \
+                                                            XPatternT11(LED,96,SI_LocalVar,15,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,0,4,0,0,0,16,0,0,56,132,3,0,16,28,8,14,4,0,2,0  ,0,63,128,63,128,63,128,64,0,0,1)
 
-#define KS_Hauptsignal_Zs3_Zs6_Zs1(LED, InCh)      InCh_to_LocalVar(InCh, 4)                                  \
-                                                   XPatternT11(LED,32,SI_LocalVar,5,0,128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,64,0,2,42,80,74,8  ,0,63,128,63,128,63,128,64,0,0,1)
+#define KS_Hauptsignal_Zs3_Zs6_Zs1(LED, InCh, MaxB128)      InCh_to_LocalVar(InCh, 4)                                  \
+                                                            XPatternT11(LED,32,SI_LocalVar,5,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,64,0,2,42,80,74,8  ,0,63,128,63,128,63,128,64,0,0,1)
+
+// 18.01.21:  Signals from Matthias (schma29)
+#define HS_5l_RGB(LED, InCh, MaxB64)                        InCh_to_TmpVar(InCh, 4) \
+                                                            XPatternT1(LED,12,SI_LocalVar,15,0,MaxB64,0,0,500 ms,0,0,0,0,0,0,0,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,240,10,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,240,255  ,0,63,128,63,128,63,128,63)
+#define HS_5r_RGB(LED, InCh, MaxB64)                        InCh_to_TmpVar(InCh, 4) \
+                                                            XPatternT1(LED,12,SI_LocalVar,15,0,MaxB64,0,0,500 ms,0,0,0,0,0,0,0,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,240,10,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,240,255  ,0,63,128,63,128,63,128,63)
+#define HS_5_Plus_RGB(LED, InCh, MaxB64)                    InCh_to_TmpVar(InCh, 8) \
+                                                            XPatternT1(LED,12,SI_LocalVar,27,0,MaxB64,0,0,500 ms,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,5,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,128,136,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,5,0,0,4,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,112,5,0,0,4,0,0,0,52,0,0,53,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,52,0,0,53,0,0  ,0,63,128,63,128,63,128,63,128,63,128,63,128,63,128,63)
+#define Gleissperrsignal_RGB(LED, InCh, MaxB32)             InCh_to_TmpVar(InCh, 2) \
+                                                            XPatternT1(LED,12,SI_LocalVar,12,0,MaxB32,0,0,600 ms,0,0,0,0,0,0,0,64,0,0,64,0,0,0,0,0,0,0,51,3,0,51,3,0  ,0,63,128,63)
+#define HS_Einfach_RGB(LED, InCh, MaxB32)                   InCh_to_TmpVar(InCh, 3) \
+                                                            XPatternT1(LED,12,SI_LocalVar,12,0,MaxB32,0,0,500 ms,0,0,0,0,0,0,0,240,0,0,128,0,0,0,0,0,0,0,0,0,0,192,0,0,0,0,0,0,0,0,191,0,0,192,0,0  ,0,63,128,63,128,63)
+#define Vorsignal_RGB(LED, InCh, MaxB16)                    InCh_to_TmpVar(InCh, 2) \
+                                                            XPatternT1(LED,12,SI_LocalVar,12,0,MaxB16,0,0,500 ms,0,0,0,0,0,0,0,128,0,0,128,0,0,0,0,0,0,0,122,0,0,122,0,0  ,0,63,128,63)
+#define HP_2_2_RGB(LED, InCh, MaxB16)                       InCh_to_TmpVar(InCh, 2) \
+                                                            XPatternT1(LED,12,SI_LocalVar,12,0,MaxB16,0,0,500 ms,0,0,0,0,0,0,0,128,0,8,0,0,0,0,0,0,0,0,128,0,0,0,0,8  ,0,63,128,63)
+// Binary versions
+#define KS_Vorsignal_Zs3VBin_RGB(LED, InCh, MaxB128)        Bin_InCh_to_TmpVar(InCh, 2)                                            \
+                                                            XPatternT9(LED,128,SI_LocalVar,12,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,48,224,0,0,1,0,0,237,208,14,236,192,14  ,0,63,128,63,128,64,0,0,1)
+
+#define KS_Vorsignal_Zs3VBin(LED, InCh, MaxB128)            Bin_InCh_to_TmpVar(InCh, 2)                                            \
+                                                            XPatternT9(LED,128,SI_LocalVar,4,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,144,32,224,206,12  ,0,63,128,63,128,64,0,0,1)
+
+#define KS_Hauptsignal_Zs3_Zs1Bin_RGB(LED, InCh, MaxB128)   Bin_InCh_to_TmpVar(InCh, 2)                                  \
+                                                            XPatternT11(LED,128,SI_LocalVar,12,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,128,0,0,0,8,0,112,8,0,128,224,8,142,0,8,0  ,0,63,128,63,128,63,128,64,0,0,1)
+
+#define KS_Hauptsignal_Zs3_Zs1Bin(LED, InCh, MaxB128)       Bin_InCh_to_TmpVar(InCh, 2)                                  \
+                                                            XPatternT11(LED,128,SI_LocalVar,4,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,32,64,80,160,42,2  ,0,63,128,63,128,63,128,64,0,0,1)
+
+#define KS_Hauptsignal_Zs3_Zs6_Zs1Bin_RGB(LED, InCh, MaxB128) Bin_InCh_to_TmpVar(InCh, 2)                                  \
+                                                              XPatternT11(LED,96,SI_LocalVar,15,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,0,0,4,0,0,0,16,0,0,56,132,3,0,16,28,8,14,4,0,2,0  ,0,63,128,63,128,63,128,64,0,0,1)
+
+#define KS_Hauptsignal_Zs3_Zs6_Zs1Bin(LED, InCh, MaxB128)     Bin_InCh_to_TmpVar(InCh, 2)                                  \
+                                                              XPatternT11(LED,32,SI_LocalVar,5,0,MaxB128,0,0,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,500 ms,200 ms,500 ms,200 ms,64,0,2,42,80,74,8  ,0,63,128,63,128,63,128,64,0,0,1)
+
+// 18.01.21:  Signals from Matthias (schma29)
+#define HS_5lBin_RGB(LED, InCh, MaxB64)            Bin_InCh_to_TmpVar(InCh, 2) \
+                                                   XPatternT1(LED,12,SI_LocalVar,15,0,MaxB64,0,0,500 ms,0,0,0,0,0,0,0,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,240,10,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,240,255  ,0,63,128,63,128,63,128,63)
+#define HS_5rBin_RGB(LED, InCh, MaxB64)            Bin_InCh_to_TmpVar(InCh, 2) \
+                                                   XPatternT1(LED,12,SI_LocalVar,15,0,MaxB64,0,0,500 ms,0,0,0,0,0,0,0,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,240,10,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,240,255  ,0,63,128,63,128,63,128,63)
+#define HS_5_PlusBin_RGB(LED, InCh, MaxB64)        Bin_InCh_to_TmpVar(InCh, 3) \
+                                                   XPatternT1(LED,12,SI_LocalVar,27,0,MaxB64,0,0,500 ms,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,5,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,128,136,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,5,0,0,4,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,112,5,0,0,4,0,0,0,52,0,0,53,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,52,0,0,53,0,0  ,0,63,128,63,128,63,128,63,128,63,128,63,128,63,128,63)
+#define GleissperrsignalBin_RGB(LED, InCh, MaxB32) Bin_InCh_to_TmpVar(InCh, 1) \
+                                                   XPatternT1(LED,12,SI_LocalVar,12,0,MaxB32,0,0,600 ms,0,0,0,0,0,0,0,64,0,0,64,0,0,0,0,0,0,0,51,3,0,51,3,0  ,0,63,128,63)
+#define HS_EinfachBin_RGB(LED, InCh, MaxB32)       Bin_InCh_to_TmpVar(InCh, 2) \
+                                                   XPatternT1(LED,12,SI_LocalVar,12,0,MaxB32,0,0,500 ms,0,0,0,0,0,0,0,240,0,0,128,0,0,0,0,0,0,0,0,0,0,192,0,0,0,0,0,0,0,0,191,0,0,192,0,0  ,0,63,128,63,128,63)
+#define VorsignalBin_RGB(LED, InCh, MaxB16)        Bin_InCh_to_TmpVar(InCh, 1) \
+                                                   XPatternT1(LED,12,SI_LocalVar,12,0,MaxB16,0,0,500 ms,0,0,0,0,0,0,0,128,0,0,128,0,0,0,0,0,0,0,122,0,0,122,0,0  ,0,63,128,63)
+#define HP_2_2Bin_RGB(LED, InCh, MaxB16)           Bin_InCh_to_TmpVar(InCh, 1) \
+                                                   XPatternT1(LED,12,SI_LocalVar,12,0,MaxB16,0,0,500 ms,0,0,0,0,0,0,0,128,0,8,0,0,0,0,0,0,0,0,128,0,0,0,0,8  ,0,63,128,63)
 
 
 
@@ -1043,7 +1098,7 @@ inline bool Inp_Changed_or_InitOff(uint8_t Inp)
 inline uint8_t Invert_Inp(uint8_t Inp)
 //------------------------------------
 {
-  return Inp ^ B00000011;  // XOR: 00 => 11, 01 => 10, 10 => 01, 11 => 00
+  return Inp ^ 0b00000011;  // XOR: 00 => 11, 01 => 10, 10 => 01, 11 => 00
 }
 
 //--------------------------------
@@ -1249,10 +1304,10 @@ private: // Variables
  void               Proc_Counter();
 
  void               IncCP_House();
- void               IncCP_Const()         { cp += 5; }
- void               IncCP_Fire()          { cp += 4; }
+ void               IncCP_Const()         { cp += 5 + ADD_WORD_OFFSET; }
+ void               IncCP_Fire()          { cp += 4 + ADD_WORD_OFFSET; }
  #ifdef _NEW_ROOM_COL
-   void             IncCP_Set_ColTab()    { cp += ROOM_COL_CNT*3; }
+   void             IncCP_Set_ColTab()    { cp += ADD_WORD_OFFSET + ROOM_COL_CNT*3; }
    bool             Cmp_Room_Col(CRGB *lp, uint8_t ColorNr);
    uint8_t          Get_Room_Col1(uint8_t ColorNr, uint8_t Channel);
    void             Copy_Room_Col(CRGB *Dst, uint8_t ColorNr);

@@ -19,7 +19,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 
- Macros for Fire truck                                                                     by Hardi   07.10.18:
+ Macros for Fire truck                                                                     by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~~~~
  This example demonstrates the usage of macros which are used to combine the lights
  of a Fire truck to one command.
@@ -108,6 +108,15 @@
  This example could be combined with other MobaLedLib examples. Just copy the configuration
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

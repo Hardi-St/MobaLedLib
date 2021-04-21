@@ -3,7 +3,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -435,7 +435,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
   if (Inp_Changed_or_InitOff(Inp) || (dp->State != PT_INACTIVE && (uint16_t)(Timer - dp->Last_t) >= dp->dt)) // switch changed or next update time reached.
      {
      //Dprintf("Init %i Inp %i %i\n", Initialize, Inp, Inp_Is_TurnedOff_or_InitOff(Inp)); // Debug
-     uint8_t Led0 = pgm_read_byte_near(cp+P_PATERN_LED);
+     ledNr_t Led0 = pgm_read_led_nr(cp+P_PATERN_LED);
 
      #ifndef USE_XFADE
        union { Par_t p; uint32_t u32; }; // unnamed union                                                     // 11.10.18:  Old position
@@ -452,9 +452,9 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
      const uint8_t *BitMaskCntP = cp+P_PATERN_T1_L + 2*TimeCnt; // Calculate the position where the count of pattern bytes is stored
 
      uint16_t BitMaskCnt        = pgm_read_word_near(BitMaskCntP);                                            // 23.10.18:  Old: uint8_t
-     uint8_t BitsPerChannel     = ((NStru>>2)&0x07)+1;                                                        // 23.10.18:  Old: ((NStru>>2)&0x03)+1;
-     uint8_t FreeBits           = NStru>>5;
-     uint8_t BitsPerState       = p.LEDs * BitsPerChannel;
+     uint8_t  BitsPerChannel    = ((NStru>>2)&0x07)+1;                                                        // 23.10.18:  Old: ((NStru>>2)&0x03)+1;
+     uint8_t  FreeBits          = NStru>>5;
+     uint16_t BitsPerState      = p.LEDs * BitsPerChannel;                                                    // 20.01.21:  Juergen: Old uint8_t
      if (GotoMode) BitsPerState += 8; // One additional byte for the "Goto table"                             // 09.11.18:
      const uint8_t *PatternP    = BitMaskCntP + 2;                                                            // 23.10.18:  Old: BitMaskCntP + 1;
      uint8_t LastState          = (BitMaskCnt * 8 - FreeBits) / BitsPerState - 1 ;
@@ -568,11 +568,21 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
               if (AnalogMode)
                  {
                  #ifdef USE_XFADE
-                   if (XFade)                                                                                 // 11.10.18:
+                   if (XFade)
+                        {                                                                           // 11.10.18:
+                        #pragma GCC diagnostic push                                                           // 17.11.20:  Disable warning "LEDRamP uninitialized..."
+                        #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
                         v0 = *(LEDRamP++);
+                        #pragma GCC diagnostic pop
+                        }
                    else
                  #endif
+                        {
+                        #pragma GCC diagnostic push                                                           // 17.11.20:  Disable warning "L0 uninitialized..."
+                        #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
                         v0 = ScaleValue(GetLEDVal(L0++, BitsPerChannel, PatternP),BitsPerChannel,p.Val0,p.Val1);
+                        #pragma GCC diagnostic pop
+                        }
                  }
               v1           = ScaleValue(GetLEDVal(L1++, BitsPerChannel, PatternP),BitsPerChannel,p.Val0,p.Val1);
               //if (!Initialize && AnalogMode) Dprintf("%i %i", (int)v0, (int)v1); // Debug 24.10.19:
@@ -580,7 +590,10 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
          // Update one LED
          if (AnalogMode && (Inp_Is_On(Inp) || (HSV_mode && !Initialize))) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added: HSV_mode to correctly turn off the LEDs
               {                                                                                                                // 20.10.19:  Added: !Initialize because otherwise the Cave_Illumination shows random colors at startup
+              #pragma GCC diagnostic push                                                                     // 17.11.20:  Disable warning "v0 uninitialized..."
+              #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
               v1 = Calculate_V(v0, v1, Duration, dp->Start_t, Timer, EaseInOut); // Calculate the analog value and write it to lp
+              #pragma GCC diagnostic pop
               //if (!Initialize && AnalogMode) Dprintf(" %i\n", v1); // Debug 24.10.19:
               if (HSV_mode)
                    {
@@ -612,7 +625,10 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
         bool Jump = false;                                                                                    // 10.11.18:
         if (GotoMode)
              {
+             #pragma GCC diagnostic push                                                                      // 17.11.20:  Disable warning "GotoTable_p uninitialized..."
+             #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
              uint8_t GotoTabVal = pgm_read_byte_near(GotoTable_p+dp->State);
+             #pragma GCC diagnostic pop
              //Dprintf("GotoTabVal[%i] = %i\n", dp->State, GotoTabVal); // debug
              uint8_t GotoNr = (GotoTabVal & GOTO_MASK);
              if (GotoNr)

@@ -4,6 +4,7 @@ REM   https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
 REM
 REM Revision History:
 REM 05.06.20:  - Hiding the Debug messages from the compiler
+REM 29.12.20:  - Added error message if Arduino debugger is missing
 
 REM Used additional resources:
 REM ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,6 +49,16 @@ ECHO * Compile and uplaod the program *
 ECHO **********************************
 ECHO.
 CHCP 65001 >NUL
+
+if not exist "C:\Program Files (x86)\Arduino\arduino_debug.exe" (
+  ECHO.
+  ECHO ************************************
+  ECHO Error: Arduino program not installed
+  ECHO ************************************
+  ECHO .
+  Goto ErrorMsg
+  )
+
 "C:\Program Files (x86)\Arduino\arduino_debug.exe" "02.Tiny_UniProg.ino" ^
    --upload ^
    --port %ComPort% ^
@@ -55,6 +66,7 @@ CHCP 65001 >NUL
    2>&1 | find /v "Set log4j store directory" | find /v " StatusLogger " | find /v "serial.SerialDiscovery"
 
 IF ERRORLEVEL 1 (
+:ErrorMsg
    REM White on RED
    COLOR 4F
    ECHO Start_Arduino_Result: %ERRORLEVEL% > "Compile_and_Upload_to_Uno_Result.txt"

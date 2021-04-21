@@ -29,6 +29,9 @@ Neu: Seit Version 0.9.0 der Bibliothek gibt es ein Excel Programm mit dem die Fu
          Prog_Generator
          MobaLedLib
 
+ Im Wiki findet man alle Informationen zur MobaLedLib:
+   https://wiki.mobaledlib.de/doku.php
+
 
 
 Dieses Beispiel wurde eingefügt, weil es manchmal schwierig zu verstehen ist was sich
@@ -243,7 +246,7 @@ Feuerwehr Auto, Sound und Burg Beleuchtung)
 
 *******************
 * English version *
-******************* 
+*******************
 
 
 Overview of all examples:
@@ -269,6 +272,9 @@ New: Since version 0.9.0 of the library there is an Excel program with which the
      is started:
          Prog_Generator
          MobaLedLib
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
 
 

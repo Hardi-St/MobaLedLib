@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- CAN Bus from MS2 controlled Railway Signal                                                by Hardi   16.11.18
+ CAN Bus from MS2 controlled Railway Signal                                                by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  This example describes how to use the CAN bus from a Maerklin MS2 to control a Railway Light Signal.
@@ -73,6 +73,15 @@
  ~~~~~~
  This video demonstrates the example:
    https://vimeo.com/308898588
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

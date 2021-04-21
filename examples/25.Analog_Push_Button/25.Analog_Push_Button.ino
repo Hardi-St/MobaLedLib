@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- 10 Analog Push Buttons                                                                    by Hardi   30.03.19
+ 10 Analog Push Buttons                                                                    by Hardi   27.01.21
  ~~~~~~~~~~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib for several "Push Button" actions.
@@ -83,6 +83,15 @@
  eventual the macros and adapt the first LED to avoid overlapping (First parameter in the configuration line).
 
 
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
+
  Hardware:
  ~~~~~~~~~
  The example needs at least 5 push buttons which are connected to analog input A6
@@ -117,6 +126,7 @@
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
+#include <AnalogScanner.h>                                                                                    // 27.01.21:
 #include "Analog_Buttons10.h"
 
 #define NUM_LEDS        32  // Number of LEDs
@@ -195,12 +205,13 @@
 #define Castle_Off(LED,InNr)   XPatternT1(LED,192,InNr,18,0,255,0,PM_SEQUENZ_STOP,2 Sek,0,0,0)  // Slowly turn off the LIGHTS
 #define Castle_On(LED,InNr)    XPatternT1(LED,128,InNr,18,0,255,0,PM_SEQUENZ_STOP,500 ms,7,0,252,0,240,31,192,255,3,255,127,252,255,15)
 
+
 // Uses: 6 LEDs, 3 Temp variables
-#define Castle_Illumination(LED0, B_LED, Cx, InNr, TmpNr, Timeout)  \
-    PushButton_w_LED_0_2( B_LED, Cx, InNr, TmpNr, 1, Timeout)       \
-    Castle_Off        (LED0, TmpNr+0 )                              \
-    Castle_On         (LED0, TmpNr+1 )                              \
-    Castle_Illu_Fade  (LED0, TmpNr+2)                               \
+#define Castle_Illumination(LED0, B_LED, Cx, InNr, TmpNr, Timeout)           \
+    PushButton_w_LED_0_2( B_LED, Cx, InNr, TmpNr, 1, 0, 1, 0, Timeout)       \
+    Castle_Off        (LED0, TmpNr+0)                                        \
+    Castle_On         (LED0, TmpNr+1)                                        \
+    Castle_Illu_Fade  (LED0, TmpNr+2)                                        \
 
 //--------------- Push Buttons which toggle a variable and the state of a LED which shows the button status ---------
 #define BUTTON_LED_TYP 1
@@ -251,11 +262,15 @@ MobaLedLib_Configuration()
   };
 //*******************************************************************
 
+AnalogScanner scanner;                                                                                        // 27.01.21:
+
 CRGB leds[NUM_LEDS];     // Define the array of leds
 
 MobaLedLib_Create(leds); // Define the MobaLedLib instance
 
 LED_Heartbeat_C LED_Heartbeat(LED_BUILTIN); // Use the build in LED as heartbeat
+
+int scanOrder[] = {ANA_BUTTON_PIN};                                                                           // 27.01.21:
 
 //----------
 void setup(){
@@ -263,6 +278,10 @@ void setup(){
 // This function is called once to initialize the program
 //
   FastLED.addLeds<NEOPIXEL, LED_DO_PIN>(leds, NUM_LEDS);
+  Serial.begin(9600);
+
+  scanner.setScanOrder(1, scanOrder);
+  scanner.beginScanning();
 }
 
 
@@ -276,6 +295,13 @@ void loop(){
 
   uint16_t Button = AButtons.Get();
   MobaLedLib_Copy_to_InpStruct((uint8_t*)&Button, 2, 0);  // Copy the buttons states to the input structure
+
+  static uint16_t OldButton = 0; // Debug
+  if (Button != OldButton)
+     {
+     Serial.print(F("Buttons:")); Serial.println(Button);
+     OldButton = Button;
+     }
 
   MobaLedLib.Update();    // Update the LEDs in the configuration
 
@@ -297,8 +323,8 @@ void loop(){
         C3 | [ ]A3       \_0_/       D6[ ]~|   D6   -> WS281x LED stripe pin DIN
         C4 | [ ]A4/SDA               D5[ ]~|   D5
         C5 | [ ]A5/SCL               D4[ ] |   D4
-           | [ ]A6              INT1/D3[ ]~|   D3
- Buttons   | [ ]A7              INT0/D2[ ] |   D2
+ Buttons   | [ ]A6              INT1/D3[ ]~|   D3
+           | [ ]A7              INT0/D2[ ] |   D2
            | [ ]5V                  GND[ ] |
         C6 | [ ]RST                 RST[ ] |   C6
            | [ ]GND   5V MOSI GND   TX1[ ] |   D0
