@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- St. Andrew's Cross                                                                        by Hardi   03.10.18
+ St. Andrew's Cross                                                                        by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib to control the alternating flashing lights
@@ -52,6 +52,15 @@
  ~~~~~~
  This video demonstrates the example:
    https://vimeo.com/308719531
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

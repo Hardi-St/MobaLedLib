@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -106,6 +106,7 @@ void MobaLedLib_C::Set_Test_Outp(uint8_t &Ch)
     {
     case TM_LED_TEST: MaxChannel = Num_Leds - 1; break;
     case TM_INP_TEST: MaxChannel = 255;          break;
+    default:          MaxChannel = 255;                                                                       // 17.11.20:  Added to disable the "uninitialized..." compiler warning, but not checked
     }
 
   if (Ch == 255) Ch = MaxChannel;

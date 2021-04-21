@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Sound and Keyboard                                                                        by Hardi   24.11.18
+ Sound and Keyboard                                                                        by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib with a MP3-TF-16P or a JQ6500 sound module
@@ -46,6 +46,16 @@
 
  In the "extras" directory of the library there are the schematics and printed circuit boards for
  this example (S3PO_Modul_WS2811.zip).
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
+
  */
 
 #define USE_MP3_TF_16P_SOUND_MODULE // Enable this line to use the MP3-TF-16P sound module

@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Illumination Pattern Function                                                             by Hardi   26.11.18
+ Illumination Pattern Function                                                             by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib with the pattern function to generate
@@ -117,6 +117,15 @@
  ~~~~~~
  This video demonstrates the example:
    https://vimeo.com/309065937
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

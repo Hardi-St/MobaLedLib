@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Schedule                                                                                  by Hardi   13.12.18
+ Schedule                                                                                  by Hardi   19.01.21
  ~~~~~~~~
 
  This example shows the usage of Schedule() function of the MobaLedLib to control different lights
@@ -68,6 +68,15 @@
  This example could be combined with other MobaLedLib examples. Just copy the configuration
  lines and eventual the macros and adapt the first LED to avoid overlapping (First parameter
  in the configuration line).
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

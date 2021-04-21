@@ -4,7 +4,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -50,13 +50,19 @@
  ~~~~~~~~~~~~~~~~~
  17.11.18:  - Started
  24.11.18:  - It doesn't matter which CTR_CHANNELS is greater
+ 20.11.20:  - Juergen - add ESP32 Support
 
  ToDo:
  ~~~~~
  - Testen wieviel FLASH das Modul braucht
 */
 
-#include <TimerOne.h> // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+#ifndef ESP32
+  #include <TimerOne.h> // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+  #define IRAM_ATTR     // Only used for the ESP32
+#else
+  hw_timer_t * timer = NULL;      // see https://diyprojects.io/esp32-timers-alarms-interrupts-arduino-code/#.X7eeZLN7laQ
+#endif
 #include <DIO2.h>     // The library for I/O 2 functions must be installed also
                       // "Blink" without delay 400 kHz (Normal digitalWrite: 145 kHz => 2.8 times faster
 
@@ -107,14 +113,15 @@ uint8_t Keys_Array_1[KEYS_ARRAY_BYTE_SIZE_1];                       // Array whi
 
 uint8_t Counter = 0;
 
-//------------------------------
-void WriteData_to_Keys_Array_1()
-//------------------------------
+//----------------------------------------
+void IRAM_ATTR WriteData_to_Keys_Array_1()
+//----------------------------------------
 // Write the actual button states into the Keys_Array_1[]
 {
-  uint8_t Nr = Counter*BUTTON_INP_CNT;
-  uint8_t Byte = Nr / 8;
-  uint8_t Bit  = Nr % 8;
+  uint16_t Nr = Counter*BUTTON_INP_CNT;																// change to uint16_t, otherwise it may not work with more then 256 buttons...
+  uint8_t Byte = (uint8_t)(Nr / 8);
+  uint8_t Bit  = (uint8_t)(Nr % 8);
+
   for (uint8_t i = 0; ; )
     {
     uint8_t Mask = 1 << Bit;
@@ -135,14 +142,14 @@ void WriteData_to_Keys_Array_1()
 }
 
 #ifdef KEYMATRIX_2
-//------------------------------
-void WriteData_to_Keys_Array_2()
-//------------------------------
+//----------------------------------------
+void IRAM_ATTR WriteData_to_Keys_Array_2()
+//----------------------------------------
 // Write the actual button states into the Keys_Array_2[]
 {
-  uint8_t Nr = Counter*BUTTON_INP_CNT_2;
-  uint8_t Byte = Nr / 8;
-  uint8_t Bit  = Nr % 8;
+  uint16_t Nr = Counter*BUTTON_INP_CNT_2;																// change to uint16_t, otherwise it may not work with more then 256 buttons...
+  uint8_t Byte = (uint8_t)(Nr / 8);
+  uint8_t Bit  = (uint8_t)(Nr % 8);
   for (uint8_t i = 0; ; )
     {
     uint8_t Mask = 1 << Bit;
@@ -163,9 +170,9 @@ void WriteData_to_Keys_Array_2()
 }
 #endif
 
-//--------------
-void TimerInt1()      // ~6 us per button input line
-//--------------
+//------------------------
+void IRAM_ATTR TimerInt1()      // ~6 us per button input line
+//------------------------
 // Am Anfang der Interrupt Routine wird der CLK_PIN auf 0 gesetzt.
 // Am Ende wird er wieder auf 1 gesetzt. Damit Zaehlt der 4017 weiter.
 // Die Signale der Taster haben Zeit zum einschwingen bis zum naechsten Interrupt.
@@ -201,8 +208,18 @@ void Keys_4017_Setup()
   pinMode(CLK_PIN,    OUTPUT);
   pinMode(RESET_PIN,  OUTPUT);
   digitalWrite2(RESET_PIN, 1); // Reset
+#ifndef ESP32	
   Timer1.initialize(100000/(_MAX_CTR_CHANNELS)); // [us]   Kann aus irgend einem Grund nicht im Konstruktor aufgerufen werden. Dann stimmt Periode gar nicht ;-(
   Timer1.attachInterrupt(TimerInt1);             //        Darum ist es jetzt eine Normale Funktion und keine Klasse.
+
+#else																							// Add ESP32 Support, 20.11.2020 Juergen 
+	for (uint8_t pin = 0; pin < BUTTON_INP_CNT; pin++)		// Pins are not INPUTS by default -> set it to intput
+		pinMode(Button_Pins[pin],INPUT);													
+	timer = timerBegin(0, 80, true);								// divide with Clock freq (returned in MHz) -> so timer runs with 1MHz by default
+	timerAttachInterrupt(timer, TimerInt1, false);	
+	timerAlarmWrite(timer, 100000/(_MAX_CTR_CHANNELS), true);
+	timerAlarmEnable(timer);
+#endif	
 }
 
 #endif // _KEYS_4017_H_

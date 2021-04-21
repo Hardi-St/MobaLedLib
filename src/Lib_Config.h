@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,8 @@
 //#define _TEST_BUTTONS                 // Enable this to use three buttons connected to the Arduino pins for testing (04.08.18: FLASH: 1390, RAM 18 without DEBUG_PRINT_BUTTONS())
 
 //#define _PRINT_DEBUG_MESSAGES         // Enable this line to print debug messages to the PC (USB)
+
+//#define _DUMP_CONFIG					// Enable this line to print the configuration memory on startup
 
 //#define _FAST_TIMES                   // Enable this for debugging with fast timing for the houses
 

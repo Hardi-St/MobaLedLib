@@ -4,7 +4,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -45,11 +45,37 @@
 
 */
 
-#include <AnalogScanner.h>
-extern AnalogScanner scanner;
+#ifdef ESP32
+	#include "AnalogScannerESP32.h"
+  extern AnalogScannerESP32 scanner;
+#else
+	#include <AnalogScanner.h>
+  extern AnalogScanner scanner;
+#endif
 
 // Table containing the delta from one compare value to the next. We don't store the 16 bit values to save memory.
+#ifdef ESP32
+//const PROGMEM uint8_t DeltaTab[10] = { 33, 76, 101, 123, 114, 102, 95, 70, 114, 98};
+const PROGMEM uint8_t DeltaTab[10] = { 30, 74, 96, 120, 114, 98, 88, 80, 145, 80 };
+/*
+ESP32 ADC Values - minimum per key
+	
+Key	Jürgen 	Dominik
+01	00		00
+02	62		57
+03	152		143
+04	263		240
+05	399		376
+06	491		468
+07	602		565
+08	681		642
+09	828		717
+10	910		856
+*/ 
+
+#else
 const PROGMEM uint8_t DeltaTab[10] = { 88, 86, 89, 113, 112, 96, 88, 77, 94, 101};
+#endif
 
 //:::::::::::::::::::::::
 class Analog_Buttons10_C   // Attention this class will be moved to the library in the next version
@@ -81,11 +107,16 @@ public:
        else SameCnt = 0;
        LastKey = Key;
        }
+    if (SameCnt >=127)
+       {
+       SameCnt = 4;
+       }			 
     if (SameCnt >= 4)    // Wenn 4 mal hintereinander der gleiche Wert gelesen wird, dann wird der Taster als gedrueckt gemeldet
          return LastKey; // Das ist wichtig weil der analog Wert mit einem 1uF Kondensator gefiltert wird
     else return 0;
   }
 
+//uint16_t maxVal = 0;
 private:
   //--------------------
   uint16_t Get_Act_Key()
@@ -95,10 +126,15 @@ private:
     uint16_t Cmp = 0;
     uint16_t Bit = 1;
     uint16_t val = scanner.getValue(APin);
+		//if (val>maxVal) maxVal = val;
     while (Bit < 513)
         {
         Cmp += pgm_read_byte_near(p);
-        if (val < Cmp) return Bit;
+        if (val < Cmp)
+				{
+					//Serial.printf("cmp=%d, val=%d, bit=%d, maxVal=%d\n", Cmp, val, Bit, maxVal);
+					return Bit;
+				}
         p++;
         Bit <<= 1;
         }

@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Animated house with 7 rooms which are illuminated randomly                                by Hardi   02.10.18
+ Animated house with 7 rooms which are illuminated randomly                                by Hardi   19.01.21:
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib with one animated house.
@@ -58,6 +58,15 @@
 
  The "03.Switched_Houses" example demonstrates how several houses can be turned on and
  off with switches.
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Video:
  ~~~~~~

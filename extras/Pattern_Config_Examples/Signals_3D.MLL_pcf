@@ -1,0 +1,473 @@
+SheetName¯HS 5l 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯15
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯64
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯HS_5l_RGB
+Dauer¯500 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯E
+LED_Tab¯¯¯¯¯¯¯15
+LED_Tab¯LED5¯¯¯¯¯¯10
+LED_Tab¯
+LED_Tab¯¯¯8¯¯¯¯¯¯8
+LED_Tab¯LED4
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯LED1¯¯¯¯8¯¯8
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED2
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯15
+LED_Tab¯¯¯¯¯¯¯¯¯15
+LED_Tab¯¯¯¯¯¯¯¯¯15
+LED_Attr¯13.1¯
+LED_Attr¯15¯
+LED_Attr¯15¯
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯i4697456
+LED_Attr¯15¯i4697456
+LED_Attr¯15¯i4697456
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoShapeOval¯626;189;19;19¯LED_M99O01L5
+msoTextBox0¯492;0;554;183.5653¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals (WS2812-2020).Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias Schmidt
+
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F102,118,255 F276,332,255 B1,357
+msoPicture¯312.5;734.1;33.34229;166.2282¯HS_rot.jpg
+msoPicture¯389;733.35;33.34229;166.2282¯HS_gn.jpg
+msoPicture¯466.25;734.1;33.34229;166.2282¯HS_gn_ge.jpg
+msoPicture¯545.75;733.35;33.34229;166.2282¯HS_rot_ws.jpg
+msoPicture¯626.7502;733.35;28.22213;77.55¯Signal5_01_100Pro_2020-10-27_P4.jpg
+
+SheetName¯HS 5r 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯15
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯64
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯HS_5r_RGB
+Dauer¯500 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯E
+LED_Tab¯¯¯¯¯¯¯15
+LED_Tab¯LED5¯¯¯¯¯¯10
+LED_Tab¯
+LED_Tab¯¯¯8¯¯¯¯¯¯8
+LED_Tab¯LED4
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯LED1¯¯¯¯8¯¯8
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED2
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯15
+LED_Tab¯¯¯¯¯¯¯¯¯15
+LED_Tab¯¯¯¯¯¯¯¯¯15
+LED_Attr¯13.1¯
+LED_Attr¯15¯
+LED_Attr¯15¯
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i65279
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯i4697456
+LED_Attr¯15¯i4697456
+LED_Attr¯15¯i4697456
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoShapeOval¯626;189;19;19¯LED_M99O01L5
+msoTextBox0¯492;0;554;183¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals (WS2812-2020).Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias Schmidt
+
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F102,118,255 F276,332,255 B1,357
+msoPicture¯626;732.4;28;77¯Signal5_01_100Pro_2020-10-27_P4.jpg
+msoPicture¯391.25;730.65;33.34229;166.2282¯HS_gn_r.jpg
+msoPicture¯317;730.65;33.34229;166.2282¯HS_rot_r.jpg
+msoPicture¯469.25;729.15;33.34229;166.2282¯HS_gn_ge_r.jpg
+msoPicture¯546.5;729.15;33.34229;166.2282¯HS_rot_ws_r.jpg
+
+SheetName¯HS 5 Plus 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯27
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯64
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯HS_5_Plus_RGB
+Dauer¯500 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E¯S¯E¯S¯E¯S¯E¯S¯E¯S¯E
+LED_Tab¯¯¯¯¯¯¯7¯¯¯¯7¯¯7
+LED_Tab¯LED  4 li¯¯¯¯¯¯5¯¯¯¯5¯¯5
+LED_Tab¯
+LED_Tab¯¯¯8¯¯¯¯¯¯8
+LED_Tab¯LED 2 li
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯LED 1 li¯¯¯¯4¯¯4¯¯¯¯4¯¯4¯¯4¯¯4
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED 2 re
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯8
+LED_Tab¯LED 5 ws¯¯¯¯¯¯¯¯8
+LED_Tab¯¯¯¯¯¯¯¯¯8
+LED_Tab¯¯¯¯¯¯¯¯¯¯¯¯¯4¯¯¯¯4
+LED_Tab¯VS or¯¯¯¯¯¯¯¯¯¯¯¯3¯¯¯¯3
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯VS oi¯¯¯¯¯¯¯¯¯¯3¯¯¯¯3
+LED_Tab¯
+LED_Tab¯¯¯¯¯¯¯¯¯¯¯¯¯5¯¯¯¯5
+LED_Tab¯VS ur¯¯¯¯¯¯¯¯¯¯¯¯3¯¯¯¯3
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯VS ul¯¯¯¯¯¯¯¯¯¯3¯¯¯¯3
+LED_Tab¯
+LED_Attr¯13.1¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i14277081
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i5296274
+LED_Attr¯15¯i5296274
+LED_Attr¯15¯i5296274
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i6740479
+LED_Attr¯15¯i5296274
+LED_Attr¯15¯i5296274
+LED_Attr¯15¯i5296274
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoShapeOval¯626;189;19;19¯LED_M99O01L5
+msoTextBox0¯492;0;554;183.5653¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals mit Vorsignalwiederholung (WS2812-2020).
+Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias Schmidt
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F128,144,255 F302,358,255 B1,383
+msoShapeOval¯660;189;19;19¯LED_M99O01L6
+msoShapeOval¯690;189;19;19¯LED_M99O01L7
+msoShapeOval¯717.75;188.25;19;19¯LED_M99O01L8
+msoShapeOval¯745.5;187.5;19;19¯LED_M99O01L9
+msoPicture¯308.75;902.7;34.79197;163.812¯vorsignal_rot.jpg
+msoPicture¯387.5;904.2;34.79197;163.812¯vorsignal_grün.jpg
+msoPicture¯464.75;903.45;34.79197;163.812¯vorsignal_gelb.jpg
+msoPicture¯546.5;904.2;34.79197;163.812¯vorsignal_weis.jpg
+msoPicture¯625.25;904.2;34.79197;163.812¯vorsignal_grün_gelb_grün.jpg
+msoPicture¯701;903.45;34.79197;163.812¯vorsignal_grün_gelb_gelb.jpg
+msoPicture¯780.5;903.45;34.79276;163.8161¯hs_vorsignal_grün_grün.fw.png
+msoPicture¯860;903.45;34.79197;163.812¯hs_vorsignal_grün_gelb.jpg
+msoPicture¯932.7502;982.95;38.5;37.58811¯Vorsignal_100Pro1_2020-10-27.jpg
+msoPicture¯938.7502;906.45;27.24992;74.87835¯Signal5_01_100Pro_2020-10-27_P4.jpg
+
+SheetName¯Gleissperrsignal 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯32
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Gleissperrsignal_RGB
+Dauer¯600 ms
+Goto Tabelle¯¯E¯S¯E
+LED_Tab¯¯¯¯¯3
+LED_Tab¯LED 1¯¯¯¯3
+LED_Tab¯¯¯¯¯3
+LED_Tab¯¯¯4
+LED_Tab¯LED 2
+LED_Tab¯
+LED_Tab¯¯¯¯¯3
+LED_Tab¯LED 3¯¯¯¯3
+LED_Tab¯¯¯¯¯3
+LED_Tab¯¯¯4
+LED_Tab¯LED 4
+LED_Tab¯
+LED_Attr¯13.1¯
+LED_Attr¯15¯
+LED_Attr¯15¯
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯
+LED_Attr¯15¯
+LED_Attr¯15¯
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoTextBox0¯492;0;554;183.5653¯Dieses Blatt zeigt die Konfiguration eines Gleissperrsignales (WS2812-2020).
+Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias Schmidt
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F105,121,255 F279,335,255 B1,360
+msoPicture¯297.5;688.95;49.28858;36.24157¯sperrsig_rt.jpg
+msoPicture¯375.5;688.95;49.28858;36.24157¯sperrsig_ws.jpg
+msoPicture¯452.7501;690.4501;47.5;34.18653¯Gleissperrsignal_100Pro_2020.jpg
+
+SheetName¯HS einfach 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯32
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯HS_Einfach_RGB
+Dauer¯500 ms
+Goto Tabelle¯¯E¯S¯E¯S¯E
+LED_Tab¯¯¯¯¯¯¯15
+LED_Tab¯LED 1¯¯¯¯¯¯11
+LED_Tab¯
+LED_Tab¯¯¯15
+LED_Tab¯LED 2
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯LED 3¯¯¯¯12¯¯12
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED 4
+LED_Tab¯
+LED_Attr¯13.1¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯i5287936
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoTextBox0¯492;0;554;183.5653¯Dieses Blatt zeigt die Konfiguration eines Ausfahrtsignals (WS2812-2020).
+Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias Schmidt
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F102,118,255 F276,332,255 B1,357
+msoPicture¯304.25;689.7;33.34229;168.1611¯2r.jpg
+msoPicture¯383;691.2;33.34229;168.1611¯1g.jpg
+msoPicture¯461.75;692.7;33.34229;168.1611¯1g1g.jpg
+msoPicture¯533.2498;694.9501;29.46276;64.79992¯Signal4_01_100Pro_2020-10-27.jpg
+
+SheetName¯Vorsignal 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯16
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯Vorsignal_RGB
+Dauer¯500 ms
+Goto Tabelle¯¯E¯S¯E
+LED_Tab¯¯¯¯¯10
+LED_Tab¯LED 1¯¯¯¯7
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED 2
+LED_Tab¯
+LED_Tab¯¯¯¯¯10
+LED_Tab¯LED 3¯¯¯¯7
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED 4
+LED_Tab¯
+LED_Attr¯13.1¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯i65535
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯c16777215,i255
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoTextBox0¯492;0;554;183.5653¯Dieses Blatt zeigt die Konfiguration eines Vorsignales (WS2812-2020).
+Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias Schmidt
+Hier müssen zur Mischung der Farben Gelb und Weis mehrere LEDs angesprochen werden.Die Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F98,114,255 F272,328,255 B1,353
+msoPicture¯440.2499;693.45;81.60165;79.66874¯Vorsignal_100Pro1_2020-10-27.jpg
+msoPicture¯269;685.2;82.5;82.5¯VS_rot.jpg
+msoPicture¯351.5;689.7;82.5;82.5¯VS_gelb.jpg
+
+SheetName¯HP 2-2 2812 2020
+Version¯1
+Erste RGB LED: ¯1
+Startkanal der RGB LED: ¯0
+Schalter Nummer: ¯SI_1
+Anzahl der Ausgabe Kanäle: ¯12
+Bits pro Wert: ¯4
+Wert Min: ¯0
+Wert Max: ¯16
+Wert ausgeschaltet: ¯0
+Mode: ¯0
+Analoges Überblenden: ¯X
+Goto Mode: ¯1
+Goto Aktivierung: ¯N_Buttons
+Grafische Anzeige: ¯1
+Spezial Mode: ¯
+RGB Modul Nummer: ¯
+Charlieplexing LED Zuordnung: ¯
+Analoge Eingänge: ¯
+Makro Name: ¯HP_2_2_RGB
+Dauer¯500 ms
+Goto Tabelle¯¯E¯S¯E
+LED_Tab¯
+LED_Tab¯LED 1 (unten rechts)¯¯¯¯8
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED 2 (oben rechts)
+LED_Tab¯
+LED_Tab¯¯¯8
+LED_Tab¯LED 3 (oben links)
+LED_Tab¯
+LED_Tab¯
+LED_Tab¯LED 4 (unten links)¯¯¯¯8
+LED_Tab¯
+LED_Attr¯13.1¯i46080
+LED_Attr¯15¯c16777215,i46080
+LED_Attr¯15¯i46080
+LED_Attr¯15¯i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯c16777215,i255
+LED_Attr¯15¯i255
+LED_Attr¯15¯c16777215,i46080
+LED_Attr¯15¯c16777215,i46080
+LED_Attr¯15¯c16777215,i46080
+RGB_LED_CheckBox¯           1
+msoShapeOval¯506;189;19;19¯LED_M99O01L1
+msoShapeOval¯536;189;19;19¯LED_M99O01L2
+msoShapeOval¯566;189;19;19¯LED_M99O01L3
+msoShapeOval¯596;189;19;19¯LED_M99O01L4
+msoTextBox0¯492;0;554;183.5653¯Dieses Blatt zeigt die Konfiguration eines Hauptsignales (WS2812-2020).
+ACHTUNG: Bei den Anschlüsse 'DO' und 'DI' wurde leider die Platinenbeschriftung vertauscht!Wir gebe die Bauteille zum Selbstkostenpreis weiter, auch die passenden 3D Druckvorlagen könnt Ihr kostenlos habenvon mir bestückte Platinen sind möglich. Bei interesse bitte eine Mail an mich unter:ms@media-studios-muenchen.de  am bestem mit Telefonnummer. Gruss Matthias SchmidtDie Signalbilder werden über die Goto Funktion angesprungen. Die entsprechende Nummer (0-3) wird im Programm z.B. per DCC eingelesen. Der "E"-Pfeil deutet an, das das Modul nach der Anzeige eines Bildes beendet wird.
+Die Lampen sollen nicht schlagartig an oder aus gehen. Das wird über den Schaler "Analoges Überblenden" aktiviert. Die Visualisierung mit den verschiedenen Dreiecken zeigt das die Helligkeit einer Lampe sich langsam von einem unbekannten Anfangswert zum vorgegebenen Endwert verändert. Die beiden roten Lampen sollen bei HP0 an sein. Abhängig davon ob die Lampe vorher an oder aus war verändert sich die Helligkeit innerhalb der vorgegebenen 500 ms so, dass die Lampe am Ende leuchtet. {Attrib}F73,163,255 F192,208,255 F366,422,255 B1,448
+msoPicture¯460.25;692.25;39.45205;90¯HPS2-2x1.jpg
+msoPicture¯307.25;687.75;33.34229;168.1611¯HS_2-2_rot.jpg
+msoPicture¯383.75;688.5;33.34229;168.1611¯HS_2-2_gn.jpg
+msoPicture¯461.75;796.95;37.5;32.25¯achtung.jpg

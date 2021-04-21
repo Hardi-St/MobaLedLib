@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -375,7 +375,9 @@
                 => On this platforms the random numbers are always the same
                 ==> ToDo: An othe method has to be implemted to get true random numbers.
               - Moved the initialisation of Update_TV_Data() down after Room_ColP is initialized
-
+ 31.10.20:  - Charlie_Buttons and Charlie_Binary control 3 channels (RGB) instead of 2 (GB)
+ 22.02.21:  - Corrected the "fire" macro
+ 04.03.21:	- Jürgen adds ESP32 Support for Analog and 16384 Leds
 
 
 
@@ -684,10 +686,10 @@ MobaLedLib_C::MobaLedLib_C(
   // - Initialisation of the serial port in the constructor could hang up the program for some reasons ;-(
   // - Some characters may get lost
   // - If the baudrate is equal to the Flash Tool it seams to be better
-   // #ifdef _PRINT_DEBUG_MESSAGES
-     // Serial.begin(115200); //   Attention: The serial monitor in the Arduino IDE must use the same baudrate
-   // #endif
-  // Dprintf("MobaLedLib_C Constructor\n");
+   #ifdef _PRINT_DEBUG_MESSAGES
+     Serial.begin(115200); //   Attention: The serial monitor in the Arduino IDE must use the same baudrate
+   #endif
+   Dprintf("MobaLedLib_C Constructor\n");
 
   //memset(_leds, 3, sizeof(CRGB)*Num_Leds); // Debug line to find initialization problems
   memset(TV_Dat, 0, sizeof(TV_Dat));
@@ -741,7 +743,7 @@ inline uint8_t* MobaLedLib_C::Get_LEDPtr(uint8_t &cnt)
 //----------------------------------------------------
 {
   cnt = 1;
-  uint8_t LEDNr = pgm_read_byte_near(cp+P_LEDNR);
+  ledNr_t LEDNr = pgm_read_led_nr(cp+P_LEDNR);
   CRGB *LED_p = &leds[LEDNr];
   uint8_t ChanelMsk = pgm_read_byte_near(cp+P_CHANELMSK);
   //Dprintf("%i %i\n", LEDNr, ChanelMsk);
@@ -824,7 +826,7 @@ void MobaLedLib_C::Proc_Fire()
      {
      *Last_t = t & 0xFF;
      uint8_t Inp    = Get_Input(pgm_read_byte_near(cp+P_FIRE_INCH));
-     uint8_t Led0   = pgm_read_byte_near(cp+P_FIRE_LED0);
+     ledNr_t Led0   = pgm_read_byte_near(cp+P_FIRE_LED0);
      uint8_t Bright = pgm_read_byte_near(cp+P_FIRE_BRIGHT);
 
      // Array of temperature readings at each simulation cell
@@ -1144,11 +1146,11 @@ void MobaLedLib_C::Proc_CopyLED()
 //-------------------------------
 {
   uint8_t Inp = Get_Input(pgm_read_byte_near(cp+P_COPYLED_INP));
-  CRGB *lp = &leds[pgm_read_byte_near(cp+P_COPYLED_LED)];
+  CRGB *lp = &leds[pgm_read_led_nr(cp+P_COPYLED_LED)];
 
   if (Inp_Is_On(Inp))
        {
-       *lp = leds[pgm_read_byte_near(cp+P_COPYLED_SRCLED)];
+       *lp = leds[pgm_read_led_nr(cp+P_COPYLED_SRCLED)];
        }
   else lp->r = lp->g = lp->b = 0;
 }
@@ -1261,8 +1263,8 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
   #ifdef _NEW_ROOM_COL
     Room_ColP = Default_Room_Col_Tab;
   #endif
-	
-  Update_TV_Data();																							  // 17.10.20: must be called AFTER Room_ColP is initialized - Jürgen 
+
+  Update_TV_Data();																							  // 17.10.20: must be called AFTER Room_ColP is initialized - Jürgen
 
   #if _USE_CANDLE                                                                                             // 10.06.20:
     Candle_DatP = &Default_Candle_Dat;
@@ -1363,6 +1365,31 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
 
   if (Initialize != false)
   {
+#if defined(_DUMP_CONFIG) && defined(_PRINT_DEBUG_MESSAGES)
+			const uint8_t* end2 = cp;
+			cp = Config;
+			int cntX = 0;
+			Dprintf("\nDumping configuration Len=%d\n", end2-cp);
+			if (end2-cp<128) end2=cp+128;
+			for (;cp<end2;cp++)
+			{	
+			  uint8_t cell = pgm_read_byte_near(cp);				
+				Dprintf("%02X ", (uint8_t)cell);
+				if (cntX>0 && (cntX&0x07)==0)
+				{
+					Dprintf("- ");
+				}
+				if (++cntX==32)
+				{
+					Dprintf("\n");
+					cntX=0;					
+				}
+#ifndef ESP32				
+				Serial.flush();																																												 // 14.03.21 Juergen: Nano needs a flush, otherwise startup blocks
+#endif				
+			}
+			Dprintf("\r\nconfiguration end\n");
+#endif			
       Dprintf("reset initialize\n");                                                                          // 01.05.20:
       Initialize = false;
   }

@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -589,7 +589,7 @@ void MobaLedLib_C::Proc_House()
   uint8_t  Inp    = Get_Input(pgm_read_byte_near(cp+P_HOUSE_INCH));
   if (!Initialize && pgm_read_byte_near(cp+P_HOUSE_ON_MIN) & 0x80) Inp = Invert_Inp(Inp);                     // 13.01.20:
   uint8_t LED_cnt = pgm_read_byte_near(cp+P_HOUSE_CNT);
-  uint8_t Led0    = pgm_read_byte_near(cp+P_HOUSE_LED);
+  ledNr_t Led0    = pgm_read_led_nr(cp+P_HOUSE_LED);
   CRGB *lp;
 
   #ifdef _HOUSE_STATISTIC

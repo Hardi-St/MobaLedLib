@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- Huge configuration                                                                        by Hardi   06.12.18
+ Huge configuration                                                                        by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~
 
  This example demonstrates the usage of the MobaLedLib with a huge configuration array.
@@ -63,6 +63,15 @@
  This example could NOT be combined with other MobaLedLib examples because it contains
  already everything...
 
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~

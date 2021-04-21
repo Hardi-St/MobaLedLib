@@ -1,9 +1,9 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New: Faster uploading to Arduino / Fast Bootloader prog. / Day & Night Timer / Mainboard HW Tests / 64 Time entries in Pattern_Config / several new (LED) functions / Support for MB Ver. 1.7 / Bug fixes **
+**New in release 3.0.0: ESP32 support driving up to 49152 LEDs / DMX512 support / Bootloader Update and "New Bootloader full Mem" / Important bug fixes**
 
-**Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern_Configurator and Program_Generator!**
+**Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
 To start the excel program press the Win+r key together and copy the following line
 into the "Run" dialog and press enter:
@@ -16,6 +16,7 @@ into the "Run" dialog and press enter:
   into a multiple socket
 - **Extremely affordable** - 100 LEDs for the price of three "normal" lights
 - Up to **256 RGB LEDs (768 channels)** can be controlled by an Arduino
+- Up to **16384 RGB LEDs (49152 channels)** can be controlled by an ESP32
 - Controlling other components is just as easy
   - Sound modules
   - Servo and stepper motors
@@ -30,13 +31,11 @@ This makes the wiring extremely easy.
 
 A lot of **examples** show the usage of the library. They could be use as startup for own programs.
 
+A huge wiki describes the complete MobaLedLib in detail: https://wiki.mobaledlib.de/doku.php<br/>
+This library is used and supported by a big community, see https://www.stummiforum.de/viewtopic.php?f=7&t=165060.
+All software and hardware parts are free of license and avaiable for download.
 
-This library is described in detail here:<br/>
-https://wiki.mobaledlib.de/doku.php<br/>
-https://www.stummiforum.de/viewtopic.php?f=7&t=165060&sid=e3b7f6122766c330d04cecf18b7b4878
-
-Several videos which demonstrate the library are available in the following pages in the forum
-You could also search for MobaLedLib in the internet.
+Several videos demonstrate the possibilites of the library. You will find a lot of articles when searching for MobaLedLib in the internet.
 
 ATTENTION: Always use the actual Arduino IDE
 (Old versions 1.6.x and below don't support the directory structure used in the library examples)
@@ -221,3 +220,41 @@ Questions / suggestions / praise / ...
 
 **Ver.: 2.0.0** 18.10.20:
 - Support for the new buffer gate on mainboard version 1.7 added
+
+**Ver.: 2.1.0** 02.11.20:
+- 8% additional configuration memory by changing the reserved size of the fast bootloader from 2K to 512 byte
+- Corrected the support for 64 time entries in the pattern_Configurator. Unfortunately the prior changes have been made in a wrong worksheet and not in the Main sheet => They have been lost when the release version was build ;-(
+- Corrected the importing of data from old Prog_Generator
+- Define at least 20 LEDs to be able to test them with the color test program
+- Disabling the Event which is called when Enter is pressed when the workbook is closed. Hopefully this solves the problem that the Pattern_Config is opened sometimes unintentionally
+- Prevent crash if a wrong formula is entered like "-Test"
+- Updating the arduino type in the "Options" dialog if the USB Port detection is started
+- Charlie_Buttons and Charlie_Binary control 3 channels (RGB) instead of 2 (GB)
+- Corrected the maximal time for the Blinker function by adding PF_SLOW
+- Disable the mouse scroll function for Office <= 2007 because here excel generates a crash
+
+**Ver.: 2.1.1** 14.11.20:
+- Removed the old Debug functions to simulate DDC commands
+  TEST_PUSH_BUTTONS(), TEST_TOGGLE_BUTTONS() and TEST_BUTTONS_INCH()
+- Experimental support for ESP32 added
+
+**Ver.: 3.0.0** 21.04.21:
+- Release support of ESP32 and up to 49152 single LEDs
+- Support controling DMX512 devices (up to 300 per channel)
+- Bootloader Update and "New Bootloader full Mem"
+- Up to nine independent LED channels
+- Search function in macro selection 
+- TinyUniProg improvements
+- Fixed problem scaling the house dialog for small screens (1366x768)
+- Added seven new railway signal macros
+- Ability to switch the LED portocol to WS2811 where the Red and Green channel are swapped
+- Faster method to download and execute the color test program
+- Use only one column for start led number display, may be configured on config page
+- Add Macro #define COMMANDS_DEBUG traces DCC messages
+- Corrected the "fire" macro
+- Fix issue where directory names contain blanks
+- Fix DCC offset problem when sending simulated DCC commands
+- Speed up ResetTestButtons function
+- And many, many more features and bugfixes, ...  Let yourself be surprised!
+
+

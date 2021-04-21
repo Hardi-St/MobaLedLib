@@ -20,7 +20,7 @@
  -------------------------------------------------------------------------------------------------------------
 
 
- DCC rail signal decoder and transmitter to LED Arduino                                    by Hardi   14.01.19
+ DCC rail signal decoder and transmitter to LED Arduino                                    by Hardi   19.01.21
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  This example describes how to read DCC signals (Digital Command Control) from the rail signal
@@ -130,6 +130,15 @@
  all input channels are shown here with LEDs for a better understanding. For this the LED numbers
  42 to 63 are used.
  The LEDs of the momentary inputs are red or Green, the toggle LEDs Blue.
+
+ Extras:
+ ~~~~~~~
+ The MobaLedLib could be used without any programming experience by using excel sheets which are
+ located in the directory extras. With the help of the program "Prog_Generator_MobaLedLib.xlsm"
+ all effects could be used very comfortable.
+
+ In the Wiki you find any information:
+   https://wiki.mobaledlib.de/doku.php
 
  Hardware:
  ~~~~~~~~~
