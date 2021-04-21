@@ -103,8 +103,13 @@ public:
        LastCheck = t;
        uint16_t Key = Get_Act_Key();
        if (Key == LastKey)
-            SameCnt++;
-       else SameCnt = 0;
+					{
+          if (SameCnt<4) SameCnt++;
+					}
+       else 
+					{
+					SameCnt = 0;
+					}
        LastKey = Key;
        }
     if (SameCnt >=127)
