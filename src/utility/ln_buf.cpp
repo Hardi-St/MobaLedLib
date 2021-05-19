@@ -56,7 +56,7 @@
  *****************************************************************************/
 
 #include <string.h>
-#include "loconetStream.h"
+#include "LocoNetStream.h"
 #include "ln_config.h"
 #include "ln_buf.h"
 #ifndef NO_SOFTWARE_UART
