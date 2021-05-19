@@ -34,12 +34,6 @@
  track signal and echos any function command found on the serial line using the same
  format than the DCC version so the receiver side can be reused.
 
- Note: The underlying MM2 library does not handle addresses above 256 properly, those
- are mapped to other addresses so you can not use this on a system where such addresses
- are used. You also have to use a patched library available at
- https://github.com/oliwel/MaerklinMotorola/ until the library has been updated by the
- arduino team.
-
  Video:
  ~~~~~~
  This video demonstrates the example:
@@ -265,6 +259,8 @@ void setup(){
     // Initialises the Input defined by MM2_SIGNAL_PIN to process the MM2 track signal
     attachInterrupt(digitalPinToInterrupt(MM2_SIGNAL_PIN), isr, CHANGE);
 
+    // We use the pullup of the signal PIN to measure the voltage drop
+    pinMode(MM2_SIGNAL_PIN, INPUT_PULLUP);
     AddToSendBuffer("Init Done\n"); // This message is send to the LED Arduino over RS232  (If the Arduino is already active)
 
     pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin. This is importand to disable the communikation while the LED Arduino is flashed
@@ -332,14 +328,15 @@ void loop() {
         Serial.println();
         */
 
+        // The last decoder (317..320) has group address zero
+        if (Data->Address == 0) {
+            Data->Address = 80;
+        }
+        uint16_t PortAddress = (( Data->Address - 1) * 4) + ( Data->SubAddress >> 1 ) + 1;
+
         char cmd[20];
         cmd[0] = 0;
-        if (Data->DecoderState == MM2DecoderState_Green) {
-            sprintf(cmd, "@%4i %02X %02X\n", Data->PortAddress, 0, 0);
-        } else if (Data->DecoderState == MM2DecoderState_Red) {
-            sprintf(cmd, "@%4i %02X %02X\n", Data->PortAddress, 1, 0);
-        }
-
+        sprintf(cmd, "@%4i %02X %02X\n", PortAddress, Data->SubAddress & 1, 1);
         /* MM2 devices repeat the command several times and the library has no
          * internal debounce mechanism so each action will show up here more than
          * once. To avoid this noise we suppres identical commands received within
