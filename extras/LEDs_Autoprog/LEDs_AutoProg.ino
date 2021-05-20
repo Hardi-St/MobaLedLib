@@ -195,9 +195,11 @@
  14.11.20:  - Added the experimental ESP32 support
  19.01.21:  - Added DMX support by Juergen
  10.04.21:  - add new FarbTest protocol without need to reset CPU 
+ 23.04.21:  - ubit: Added ServoMP3 commands
 
 */
 #include <Arduino.h>
+#include "MP3.h"
 
 #ifndef __LEDS_AUTOPROG_H__
   #define FASTLED_ESP32_FLASH_LOCK 1
