@@ -827,10 +827,18 @@
 
 #define MobaLedLib_Configuration()          const PROGMEM unsigned char Config[] =
 
-#if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
+#if _USE_STORE_STATUS && _USE_EXT_PROC                                                                                       // 26.09.21: Juergen
+#define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL, NULL)
+#define MobaLedLib_CreateEx(leds, callback, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
+                                            MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback, processor); // MobaLedLib_C class definition
+#elif _USE_STORE_STATUS 
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, callback)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
+#elif _USE_EXT_PROC 
+#define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
+#define MobaLedLib_CreateEx(leds, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
+                                            MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), processor); // MobaLedLib_C class definition
 #else
 #define MobaLedLib_Create(leds)             uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM)); // MobaLedLib_C class definition
@@ -1174,6 +1182,9 @@ extern uint8_t    TestMode;
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
    typedef void(*Callback_t) (uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t* NewValue);
 #endif
+#if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
+   typedef uint8_t(*ExtProc_t) (uint8_t Type, const uint8_t* progmemAddress, bool process);
+#endif
 
 //:::::::::::::::::::
 class MobaLedLib_C
@@ -1182,9 +1193,17 @@ class MobaLedLib_C
 public:
 
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
+  #if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
+                    MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize, Callback_t Function, ExtProc_t Processor); // Konstruktor mit 2xcallback
+  #else                       
                     MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize, Callback_t Function); // Konstruktor mit callback
+  #endif                        
 #else
+  #if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
+                    MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize, ExtProc_t Processor); // Konstruktor mit callback
+  #else                       
                     MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize); // Konstruktor OHNE callback
+  #endif                        
 #endif
 #if _USE_USE_GLOBALVAR
  void               Assigne_GlobalVar(ControlVar_t *GlobalVar, uint8_t GlobalVar_Cnt);
@@ -1227,9 +1246,12 @@ private: // Variables
  Callback_t         CallbackFunc;                                      //  4 Byte
  uint8_t            ProcCounterId;                                     //  1 Byte
 #endif
+#if _USE_EXT_PROC                                                                                             // 26.09.21: Jürgen
+ ExtProc_t          CommandProcessorFunc;                              //  4 Byte
+#endif
                                                                        // 47 Byte RoomCol[]
                                                                        // -------
-                                                                       //154 Byte  + 1 StoreStatus
+                                                                       //154 Byte  + 5 StoreStatus + 4 ExtProc
 
 #if _USE_DEF_NEON                                                                                             // 12.01.20:
  uint8_t            Rand_On_DefNeon; // probability that the neon light starts.             0 = don't start, 1 start seldom,  255 = Start immediately

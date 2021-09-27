@@ -669,6 +669,9 @@ MobaLedLib_C::MobaLedLib_C(
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
     , Callback_t Function
 #endif
+#if _USE_EXT_PROC                                                                                             // 26.09.21: Juergen
+    , ExtProc_t Processor
+#endif
     ) // Constructor
 //------------------------------------------------------------------------------------------------------------------------------
  : leds(_leds),
@@ -699,6 +702,10 @@ MobaLedLib_C::MobaLedLib_C(
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
   CallbackFunc = Function;
 #endif
+#if _USE_EXT_PROC                                                                                             // 21.06.21: Juergen
+  CommandProcessorFunc = Processor;
+#endif
+  
   Set_Input(SI_Enable_Sound, 1); // Could be changed by the configuration
 
   Set_Default_TV_Dat_p();                                                                                     // 09.01.20:
@@ -1356,10 +1363,21 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
                                        uint8_t TimeCnt = Type - pt + 1;
                                        Proc_AnalogPattern(TimeCnt, pt != PATTERNT1_T);
                                        IncCP_Pattern(TimeCnt); // Increment the configuration pointer to point to the next block
+                                       break;
                                        }
-                                  else
 #                                                                                                                 endif
-                                       Dprintf("Unknown Typ %i\n", Type);
+#                                                                                                                 if _USE_EXT_PROC  // 26.09.21: Juergen
+                                  if (CommandProcessorFunc!=NULL) 
+                                      { 
+                                        uint8_t size = CommandProcessorFunc(Type, cp, true);
+                                        if (size) // if size >0 then command could by handled by command processor
+                                          {
+                                            cp += size;
+                                            break;
+                                          }
+                                      }
+#                                                                                                                 endif
+                                  Dprintf("Unknown Typ %i\n", Type);
       }
     }
 
@@ -1479,7 +1497,11 @@ void MobaLedLib_C::Inc_cp(uint8_t Type)
 #                                                                                                                  if _USE_PATTERN
      default:                     uint8_t pt = Is_Pattern(Type);
                                   if (pt) IncCP_Pattern(Type - pt + 1);
-#                                                                                                                 endif
+#                                                                                                                  endif
+#                                                                                                                  if _USE_EXT_PROC  // 26.09.21: Juergen
+                                  if (CommandProcessorFunc!=NULL) cp += CommandProcessorFunc(Type, cp, false);
+#                                                                                                                  endif
+
      }
 }
 
