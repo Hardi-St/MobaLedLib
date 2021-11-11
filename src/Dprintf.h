@@ -48,7 +48,9 @@
 
 
 #include <stdarg.h>
+#ifndef ARDUINO_RASPBERRY_PI_PICO
 #include <WString.h>
+#endif
 
 void Dprintf_proc(const __FlashStringHelper *format, ...);
 

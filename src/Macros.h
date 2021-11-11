@@ -687,6 +687,8 @@ Ueberlegung zur Erweiterung der Anzahl der Timing Parameter                     
 #endif
 
 #define LOGIC_T                 184
+  
+#define EXT_PROC_BASE_T         240    // Makro extensions may use type ids >=l EXT_PROC_BASE_T up to 255     // 21.10.21: Juergen
 
 // Only used in the Charliplexing modul
 #define CPX_LED_ASSIGNEMENT     200    // Define the LED assignement

@@ -51,23 +51,28 @@
  17.11.18:  - Started
  24.11.18:  - It doesn't matter which CTR_CHANNELS is greater
  20.11.20:  - Juergen - add ESP32 Support
+ 24.04.21:  - Juergen - add PICO Support
 
  ToDo:
  ~~~~~
  - Testen wieviel FLASH das Modul braucht
 */
 
-#ifndef ESP32
-  #include <TimerOne.h> // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+#if defined(ESP32)
+  hw_timer_t * timer = NULL;      // see https://diyprojects.io/esp32-timers-alarms-interrupts-arduino-code/#.X7eeZLN7laQ
+#elif defined(ARDUINO_RASPBERRY_PI_PICO) 
+  struct repeating_timer timer;
   #define IRAM_ATTR     // Only used for the ESP32
 #else
-  hw_timer_t * timer = NULL;      // see https://diyprojects.io/esp32-timers-alarms-interrupts-arduino-code/#.X7eeZLN7laQ
+  #include <TimerOne.h> // The TimerOne library must be installed in addition if you got the error message "..fatal error: TimerOne.h: No such file or directory"
+  #define IRAM_ATTR     // Only used for the ESP32
 #endif
+		
+#if !defined(ARDUINO_RASPBERRY_PI_PICO) 	
 #include <DIO2.h>     // The library for I/O 2 functions must be installed also
                       // "Blink" without delay 400 kHz (Normal digitalWrite: 145 kHz => 2.8 times faster
-
-
 // The following #defines could be changed before this modul module is included in the main moudule
+#endif
 #ifndef CTR_CHANNELS_1
   #define  CTR_CHANNELS_1    10       // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, Up to 19 if two 4017 are used, ...
 #endif
@@ -171,7 +176,11 @@ void IRAM_ATTR WriteData_to_Keys_Array_2()
 #endif
 
 //------------------------
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+bool TimerInt1(struct repeating_timer *t)
+#else
 void IRAM_ATTR TimerInt1()      // ~6 us per button input line
+#endif
 //------------------------
 // Am Anfang der Interrupt Routine wird der CLK_PIN auf 0 gesetzt.
 // Am Ende wird er wieder auf 1 gesetzt. Damit Zaehlt der 4017 weiter.
@@ -198,6 +207,9 @@ void IRAM_ATTR TimerInt1()      // ~6 us per button input line
        digitalWrite2(RESET_PIN, 1);
        }
   else digitalWrite2(CLK_PIN, 1);
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+	 return true;
+#endif
 }
 
 
@@ -208,17 +220,18 @@ void Keys_4017_Setup()
   pinMode(CLK_PIN,    OUTPUT);
   pinMode(RESET_PIN,  OUTPUT);
   digitalWrite2(RESET_PIN, 1); // Reset
-#ifndef ESP32	
+#if defined(ESP32)                               // Add ESP32 Support, 20.11.2020 Juergen 
+  for (uint8_t pin = 0; pin < BUTTON_INP_CNT; pin++)		// Pins are not INPUTS by default -> set it to intput
+    pinMode(Button_Pins[pin],INPUT);													
+  timer = timerBegin(0, 80, true);								// divide with Clock freq (returned in MHz) -> so timer runs with 1MHz by default
+  timerAttachInterrupt(timer, TimerInt1, false);	
+  timerAlarmWrite(timer, 100000/(_MAX_CTR_CHANNELS), true);
+  timerAlarmEnable(timer);
+#elif defined(ARDUINO_RASPBERRY_PI_PICO)         // Add Pico Support, 21.04.2021 Juergen 
+  add_repeating_timer_ms(100/(_MAX_CTR_CHANNELS), TimerInt1, NULL, &timer);
+#else																							
   Timer1.initialize(100000/(_MAX_CTR_CHANNELS)); // [us]   Kann aus irgend einem Grund nicht im Konstruktor aufgerufen werden. Dann stimmt Periode gar nicht ;-(
   Timer1.attachInterrupt(TimerInt1);             //        Darum ist es jetzt eine Normale Funktion und keine Klasse.
-
-#else																							// Add ESP32 Support, 20.11.2020 Juergen 
-	for (uint8_t pin = 0; pin < BUTTON_INP_CNT; pin++)		// Pins are not INPUTS by default -> set it to intput
-		pinMode(Button_Pins[pin],INPUT);													
-	timer = timerBegin(0, 80, true);								// divide with Clock freq (returned in MHz) -> so timer runs with 1MHz by default
-	timerAttachInterrupt(timer, TimerInt1, false);	
-	timerAlarmWrite(timer, 100000/(_MAX_CTR_CHANNELS), true);
-	timerAlarmEnable(timer);
 #endif	
 }
 

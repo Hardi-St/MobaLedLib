@@ -33,13 +33,16 @@
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+#include "PicoFastLED.h"				// Juergen: a small self made implementation of FastLED for PICO (only FastLED code needed by MLL)
+#else
 #include "FastLED.h"            // The FastLED library must be installed in addition if you got the
                                 // error message "..fatal error: FastLED.h: No such file or directory"
                                 // Arduino IDE: Sketch / Include library / Manage libraries                    Deutsche IDE: Sketch / Bibliothek einbinden / Bibliothek verwalten
                                 //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                                 //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
-
+#endif
 #include "Dprintf.h"            // Debug Ausgaben
 
 #include "Lib_Config.h"         // Library configurarion
@@ -725,6 +728,68 @@
 #define Sound_Next_of_N(LED, InCh, MaxSoundNr)                                                                       \
              Sound_Next_of_N_Reset(LED, InCh, SI_0, MaxSoundNr)
 
+//--------------------------------------- MP3-TF-16P Sound modul with 4.7uF capacitor and 2KHz WS2811 ------------------------ 13.10.21:
+// The new WS2811 modules (model year >2016) generate a 2 kHz PWM Signal (Old 400 Hz)
+// Here the filter capacitor could be reduced 4.7uF (Instead of 22uF) to support also the new
+// MP3-TF-16P modul which use the GDB3200B chip. With 22uF the new sound modules didn't work.
+// Modules with the old MH2024K chip could also be used this macros if the 4.7uF capacitor is used.
+
+#define SOUND_New_ADKEY10            11  //  Play Mode   14
+#define SOUND_New_ADKEY9             18  //  U/SD/SPI    13
+#define SOUND_New_ADKEY8             23  //  Loop All    12
+#define SOUND_New_ADKEY7             27  //  Pause/Play  11
+#define SOUND_New_ADKEY6             31  //  Prev/Vol-   10
+#define SOUND_New_ADKEY5             39  //  Next/Vol+   9
+#define SOUND_New_ADKEY4             53  //  4   8
+#define SOUND_New_ADKEY3             75  //  3   7
+#define SOUND_New_ADKEY2             148 //  2   6
+#define SOUND_New_ADKEY1             255 //  1   5
+
+#define Sound_New_Prev(      LED, InCh)         Sound_ADKey(LED, InCh, SOUND_New_ADKEY5,  0)
+#define Sound_New_Next(      LED, InCh)         Sound_ADKey(LED, InCh, SOUND_New_ADKEY6,  0)
+#define Sound_New_PausePlay( LED, InCh)         Sound_ADKey(LED, InCh, SOUND_New_ADKEY7,  0)
+#define Sound_New_Loop(      LED, InCh)         Sound_ADKey(LED, InCh, SOUND_New_ADKEY8,  0)
+#define Sound_New_USDSPI(    LED, InCh)         Sound_ADKey(LED, InCh, SOUND_New_ADKEY9,  0)  // ? U / SD / SPI
+#define Sound_New_PlayMode(  LED, InCh)         Sound_ADKey(LED, InCh, SOUND_New_ADKEY10, 0)  // If Loop is active the button toggles between  Sequence, Sequence, Repeat same, Random, Loop off
+
+// Volume
+// First Volume change after 1000 ms
+// Then volume is changed every 150 ms
+// According to the documentation there are 30 stepps                                         // Incremented the time from 850 to 950 for the new sound modules. Otherwise sometimes the next/prev sound was played.
+#define Sound_New_DecVol(    LED, InCh, Steps)  Sound_ADKeyTime(LED, InCh, SOUND_New_ADKEY5,  0, 950 ms - 75 ms + (Steps-1) * 150 ms)
+#define Sound_New_IncVol(    LED, InCh, Steps)  Sound_ADKeyTime(LED, InCh, SOUND_New_ADKEY6,  0, 950 ms - 75 ms + (Steps-1) * 150 ms)
+
+#define Sound_New_Seq1( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_New_ADKEY1, 0)
+#define Sound_New_Seq2( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_New_ADKEY2, 0)
+#define Sound_New_Seq3( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_New_ADKEY3, 0)
+#define Sound_New_Seq4( LED, InCh)    Sound_ADKey(LED, InCh, SOUND_New_ADKEY4, 0)
+#define Sound_New_Seq5( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY1)
+#define Sound_New_Seq6( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY2)
+#define Sound_New_Seq7( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY3)
+#define Sound_New_Seq8( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY4)
+#define Sound_New_Seq9( LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY5)
+#define Sound_New_Seq10(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY6)
+#define Sound_New_Seq11(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY7)
+#define Sound_New_Seq12(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY8)
+#define Sound_New_Seq13(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY9)
+#define Sound_New_Seq14(LED, InCh)    Sound_ADKey(LED, InCh, 0, SOUND_New_ADKEY10)
+
+#define _LocalVar_New_Sound(LED)  PatternT1(LED,28,SI_LocalVar,2,0,255,0,0,200 ms,0,0,SOUND_New_ADKEY1,0,SOUND_New_ADKEY2,0,SOUND_New_ADKEY3,0,SOUND_New_ADKEY4,0,0,SOUND_New_ADKEY1,0,SOUND_New_ADKEY2,0,SOUND_New_ADKEY3,0,SOUND_New_ADKEY4,0,SOUND_New_ADKEY5,0,SOUND_New_ADKEY6,0,SOUND_New_ADKEY7,0,SOUND_New_ADKEY8,0,SOUND_New_ADKEY9,0,SOUND_New_ADKEY10,0,0  ,1,129,129,129,129,129,129,129,129,129,129,129,129,129,129,127)
+
+#define Sound_New_PlayRandom(LED, InCh, MaxSoundNr)                                                                      \
+              New_Local_Var()                                                                                        \
+              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, MaxSoundNr+1)                    \
+              _LocalVar_New_Sound(LED)
+
+#define Sound_New_Next_of_N_Reset(LED, InCh, InReset, MaxSoundNr)                                                        \
+              New_Local_Var()                                                                                        \
+              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, MaxSoundNr+1) \
+              _LocalVar_New_Sound(LED)
+
+#define Sound_New_Next_of_N(LED, InCh, MaxSoundNr)                                                                       \
+             Sound_New_Next_of_N_Reset(LED, InCh, SI_0, MaxSoundNr)
+// 13.10.21:  End od the new section
+
 //---------------------------- JQ6500 Sound modul ---------------------------------                           // 13.02.19:
 
 // Sound functions could be disable / enabled with the variable SI_Enable_Sound
@@ -922,6 +987,11 @@
 #define PM_HSV                  6              // Use HSV values instead of RGB for the channels
 #define PM_RES                  7              // Reserved mode
 #define PM_MODE_MASK            0x07           // Defines the number of bits used for the modes (currently 3 => Modes 0..7)
+
+#define PM_SEQUENCE_W_RESTART   1              // To be able to use the correct spelling also    07.10.21:
+#define PM_SEQUENCE_W_ABORT     2
+#define PM_SEQUENCE_NO_RESTART  3
+#define PM_SEQUENCE_STOP        4
 
 // Flags for the Pattern function
 #define _PF_XFADE               0x08           // Special fade mode which starts from the actual brightness value instead of the value of the previous state

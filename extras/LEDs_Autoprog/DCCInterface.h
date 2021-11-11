@@ -11,7 +11,7 @@ private:
 	static InMemoryStream* pStream;
 
 public:
-	static void	setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream);
+	static void	setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup = true);
 	static void	process();
 	static char	read();
 	static int 	available();

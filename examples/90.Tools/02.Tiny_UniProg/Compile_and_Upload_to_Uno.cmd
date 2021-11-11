@@ -5,6 +5,7 @@ REM
 REM Revision History:
 REM 05.06.20:  - Hiding the Debug messages from the compiler
 REM 29.12.20:  - Added error message if Arduino debugger is missing
+REM 29.10.21:  - Adapted to 32 bit windows
 
 REM Used additional resources:
 REM ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,6 +22,12 @@ ECHO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ECHO Mit diesem Programm wird das Programm zum Tiny_UniProg Programmiergeraet geschickt.
 ECHO Dieser Vorgang muss nur einmal durchgefuehrt werden.
 ECHO.
+
+
+REM 29.10.21: Adapt to 32-Bit windows.
+IF EXIST "%PROGRAMFILES(X86)%" (set "ProgDir=%PROGRAMFILES(X86)%") ELSE (set "ProgDir=%PROGRAMFILES%")
+ECHO ProgDir: %ProgDir%
+
 
 SET DefaultPort=7
 
@@ -39,7 +46,7 @@ IF NOT EXIST "%USERPROFILE%\Documents\Arduino\libraries\TimerOne\" (
    ECHO * Installing TimerOne library... *
    ECHO **********************************
    ECHO.
-   "C:\Program Files (x86)\Arduino\arduino_debug.exe" --install-library "TimerOne"
+   "%ProgDir%\Arduino\arduino_debug.exe" --install-library "TimerOne"
    )
 
 ECHO.
@@ -50,7 +57,7 @@ ECHO **********************************
 ECHO.
 CHCP 65001 >NUL
 
-if not exist "C:\Program Files (x86)\Arduino\arduino_debug.exe" (
+if not exist "%ProgDir%\Arduino\arduino_debug.exe" (
   ECHO.
   ECHO ************************************
   ECHO Error: Arduino program not installed
@@ -59,7 +66,7 @@ if not exist "C:\Program Files (x86)\Arduino\arduino_debug.exe" (
   Goto ErrorMsg
   )
 
-"C:\Program Files (x86)\Arduino\arduino_debug.exe" "02.Tiny_UniProg.ino" ^
+"%ProgDir%\Arduino\arduino_debug.exe" "02.Tiny_UniProg.ino" ^
    --upload ^
    --port %ComPort% ^
    --board arduino:avr:uno --pref programmer=arduino:arduinoisp ^
