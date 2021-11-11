@@ -1,7 +1,7 @@
 #ifndef INMEMORYSTREAM_H
 #define INMEMORYSTREAM_H
 
-#ifdef ESP32
+#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -17,5 +17,5 @@ public:
 	bool  write(const char *s);
 	bool  write(char s);
 };
-#endif //ESP32
+#endif //defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
 #endif //INMEMORYSTREAM

@@ -6,6 +6,8 @@ REM 05.06.20:  - Hiding the Debug messages from the compiler
 REM 15.10.20:  - Extracted the compiler call into "Compile_and_Upload_to_ATTiny85_Sub.cmd"
 REM              to be able to check the error code. Prior the Find command has overwritten
 REM              the result => Errors have not been detected ;-(
+REM 29.10.21:  - Adapted to 32 bit windows
+
 
 REM Used additional resources:
 REM ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,6 +40,11 @@ IF NOT "%ComPort%" == "" Goto PortIsSet
    SET ComPort=\\.\COM%PortNr%
 :PortIsSet
 
+REM 29.10.21: Adapt to 32-Bit windows.
+IF EXIST "%PROGRAMFILES(X86)%" (set "ProgDir=%PROGRAMFILES(X86)%") ELSE (set "ProgDir=%PROGRAMFILES%")
+ECHO ProgDir: %ProgDir%
+
+
 IF EXIST "Compile_and_Upload_to_ATTiny85_Result.txt" DEL "Compile_and_Upload_to_ATTiny85_Result.txt" > NUL
 
 IF NOT EXIST "%USERPROFILE%\AppData\Local\Arduino15\packages\ATTinyCore\hardware\avr\" (
@@ -62,7 +69,7 @@ IF NOT EXIST "%USERPROFILE%\AppData\Local\Arduino15\packages\ATTinyCore\hardware
    IF EXIST "%USERPROFILE%\AppData\Local\Arduino15\staging\packages\ATTinyCore*.tar.gz" DEL "%USERPROFILE%\AppData\Local\Arduino15\staging\packages\ATTinyCore*.tar.gz"
 
    REM The additional url is just added temporary
-   "C:\Program Files (x86)\Arduino\arduino_debug.exe" ^
+   "%ProgDir%\Arduino\arduino_debug.exe" ^
      --pref "boardsmanager.additional.urls=http://drazzy.com/package_drazzy.com_index.json" ^
      --install-boards "ATTinyCore:avr"
    ECHO Errorlevl=%errorlevel%
@@ -76,7 +83,7 @@ IF NOT EXIST "%USERPROFILE%\Documents\Arduino\libraries\EWMA\" (
    ECHO * Installing EWMA filter package... *
    ECHO *************************************
    ECHO.
-   "C:\Program Files (x86)\Arduino\arduino_debug.exe" --install-library "EWMA"
+   "%ProgDir%\Arduino\arduino_debug.exe" --install-library "EWMA"
    )
 
 IF NOT EXIST "%USERPROFILE%\Documents\Arduino\libraries\FastLED\" (
@@ -85,7 +92,7 @@ IF NOT EXIST "%USERPROFILE%\Documents\Arduino\libraries\FastLED\" (
    ECHO *********************************
    ECHO.
    REM                                                                        14.03.20: Old "EWMA" => "FastLED"
-   "C:\Program Files (x86)\Arduino\arduino_debug.exe" --install-library "FastLED"
+   "%ProgDir%\Arduino\arduino_debug.exe" --install-library "FastLED"
    )
 
 ECHO.

@@ -2,8 +2,8 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
- this file: Copyright (C) 2020 Jürgen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ this file: Copyright (C) 2021 Jürgen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -36,9 +36,11 @@
 Revision History :
 ~~~~~~~~~~~~~~~~~
 18.10.20:  Versions 1.0 (Jürgen)
+24.04.21:  Add PICO support (Jürgen)
+25.04.21:  Improve DCC signal detection and led display (Jürgen)
 */
 
-#ifdef ESP32
+#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
 // Disable the warning:                                                                                       // 26.12.19:
 //   ... warning: 'EEPROM' defined but not used [-Wunused-variable]
 //   static EEPROMClass EEPROM;
@@ -56,16 +58,17 @@ Revision History :
 
 static NmraDcc  Dcc ;                                // Instance of the NmraDcc class
 
-static uint8_t          Error           = 0;
-static uint32_t         NextStatusFlash = 0;
-static int 				StatusLedPin	= -1;
+static uint8_t  Error               = 0;             
+static uint32_t NextStatusFlash     = 0;
+static uint32_t LastSignalTime      = 0;
+static int      StatusLedPin        = -1;
 InMemoryStream* DCCInterface::pStream;
 
 
 //                                       States On    Off   On  Off  On   Off
-static uint16_t RS232_Flash_Table[]         = { 2,     1500, 1500                     };
-static uint16_t BufferFull_Flash_Table[]    = { 2,     250,  250                      };
-static uint16_t PriorBuddFull_Flash_Table[] = { 2,     50,   450                      };
+static uint16_t OK_Flash_Table[]          = { 2,     1500, 1500                     };
+static uint16_t BufferFull_Flash_Table[]  = { 6,     100,  100, 100, 100, 100, 400  };
+static uint16_t NoDCC_Flash_Table[]       = { 2,     50,   450                      };
 static uint8_t  FlashState = 1;
 
 //---------------------------------
@@ -75,12 +78,14 @@ void DCCInterface::addToSendBuffer(const char *s)
 {
 	if (!pStream->write(s))
 	{
-	  if (Error < 16) Error += 2; // buffer overflow	
+	  Error = 50;   // show this state at least 5 seconds
 	}
 }
 
 #include <stdarg.h>
+#ifndef ARDUINO_RASPBERRY_PI_PICO
 #include <WString.h>
+#endif
 
 #define printf(Format, ...) printf_proc(F(Format), ##__VA_ARGS__)   // see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
 
@@ -134,14 +139,19 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
   //printf("notifyDccSigState: %i,%02X\r\n", Addr, State) ;
 }
 
+void notifyDccMsg( DCC_MSG * Msg )
+{
+  LastSignalTime = millis();;
+}
+
 //-----------
-void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream){
+void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup){
 //-----------
   pStream = &stream;
   StatusLedPin = statusLedPin;
 
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
-  Dcc.pin(DCCSignalPin, 1);
+  Dcc.pin(DCCSignalPin, enablePullup ? 1 : 0);
 
   // Call the main DCC Init function to enable the DCC Receiver
   Dcc.init( MAN_ID_DIY, 10, CV29_ACCESSORY_DECODER | CV29_OUTPUT_ADDRESS_MODE, 0 );  // ToDo: Was bedeuten die Konstanten ?
@@ -158,23 +168,27 @@ void DCCInterface::processErrorLed()
 {
   if (StatusLedPin<0) return;
   
-  static uint16_t *Flash_Table_p     = RS232_Flash_Table;
-  static uint16_t *Old_Flash_Table_p = RS232_Flash_Table;
+  static uint16_t *Flash_Table_p     = OK_Flash_Table;
+  static uint16_t *Old_Flash_Table_p = OK_Flash_Table;
   static uint32_t NextCheck = 0;
 
   uint32_t t = millis();
   if (t >= NextCheck) // Check the Status and the error every 100 ms
      {
      NextCheck = t + 100;
-     if (Error) // Fast flash frequency if an buffer overflow was detected
-          {
-          if (Error > 1)
-               Flash_Table_p = BufferFull_Flash_Table;
-          else Flash_Table_p = PriorBuddFull_Flash_Table; // Prior error detected but not longer activ
-          }
-     else {
-             Flash_Table_p = RS232_Flash_Table;
-          }
+     if (LastSignalTime==0)   // no DCC signal
+        {
+        Flash_Table_p = NoDCC_Flash_Table;
+        }
+     else if (Error) // Fast flash frequency if an buffer overflow was detected
+        {
+        Flash_Table_p = BufferFull_Flash_Table;
+        Error--; // Decrement the error counter if the communication is working again
+        }
+     else 
+        {
+           Flash_Table_p = OK_Flash_Table;
+        }
 
      if (Old_Flash_Table_p != Flash_Table_p) // If the state has changed show it immediately
         {
@@ -196,6 +210,11 @@ void DCCInterface::processErrorLed()
 void DCCInterface::process(){
 //-----------
   Dcc.process(); // You MUST call the NmraDcc.process() method frequently from the Arduino loop() function for correct library operation
+  if ((millis()-LastSignalTime) > 1000)
+  {
+    LastSignalTime = 0;
+    Error = 0;              // don't show an error when DCC signal comes back
+  }
   processErrorLed();                                                                             // 13.05.20:
 }
 #endif

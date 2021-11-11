@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -149,7 +149,7 @@
  18       D13        LED 3 (Right  switch) or LED Bus 4 
  19       D12        LED Bus 5
  23       D11        LED Bus 6
- 0        -          LED Bus 7  (not available on 30 pin ESP32 module)
+ 0        D5         LED Bus 7  (not available on 30 pin ESP32 module)
  13       D2         DCC Signal   with voltage divider 510/1K if Selctrix is used
  15       A0         CLOCK_K    (RX2), with 3,3V -> 5V level shifter
  34       A2         BUTTONS         , with 1K/2K voltage divider
@@ -169,11 +169,58 @@
    Voltage divider
         R1
 5V   --[1K]--*---->-  ESP (3.3V)
-              |
-             |2| R2      
-             |K|         
-              |          
-             _|_
+             |
+            |2| R2      
+            |K|         
+             |          
+            _|_
+
+
+
+
+ Adapter to connect the Raspberry PICO to the Mainboard
+
+ !! The PICO Leds BUS must have consecutive pin numbers !!
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ PICO    LED / DCC Arduino
+ 8        D9         Right  switch
+ 9        D8         Middle switch
+ 10       D7         Left   switch
+ 0        D6         LED Bus 0
+(1)       A4         LED Bus 1
+(2)                  LED Bus 2
+(3)                  LED Bus 3
+(4)                  LED Bus 4
+(5)       D12        LED Bus 5
+(6)       D11        LED Bus 6
+(7)       -          LED Bus 7
+ 13       D3         LED 1 (Left   switch) 
+ 12       D4         LED 2 (Middle switch) 
+ 11       D5         LED 3 (Right  switch)  
+ 22       D2         DCC Signal   with voltage divider 510/1K if Selctrix is used
+ 14       A0         CLOCK_K    (RX2), with 3,3V -> 5V level shifter
+ 16       A2         BUTTONS         , with 1K/2K voltage divider
+ 15       A3         RESET_K         , with 3,3V -> 5V level shifter
+          A5         Analog buttons or KEY_80, with 1K/2K voltage divider, change to 100k/220k when using as analog buttons
+          A6         Analog buttons  , with 100K/220K voltage divider
+          A7         Day & Night     , with 100K/220K voltage divider
+ 25       -          Onboard LED
+          -          SDA I2C Display
+          -          SCL I2C Display
+          (A1)       CAN Rx or A1 via Jumper or Selectrix, with optional voltage divider
+          -          CAN Tx
+          D0         USB Tx
+          D1         USB Rx
+ 40       5V         5V Supply
+ 
+   Voltage divider
+        R1
+5V   --[1K]--*---->-  PICO (3.3V)
+             |
+            |2| R2      
+            |K|         
+             |          
+            _|_
 
  Revision History:
  ~~~~~~~~~~~~~~~~~
@@ -195,9 +242,20 @@
  14.11.20:  - Added the experimental ESP32 support
  19.01.21:  - Added DMX support by Juergen
  10.04.21:  - add new FarbTest protocol without need to reset CPU 
+ 21.04.21:  - Juergen: release ESP32 and DMX512 support
  23.04.21:  - ubit: Added ServoMP3 commands
-
+ 24.04.21:  - Juergen: add Pico support 
+ 25.04.21:  - Juergen: improve signaling of DCC status using onboard led (ESP & PICO)
+ 14.09.21:  - Juergen: add signalling of DCC status with ESP32 onboard led
+ 29.09.21:  - Juergen: add new feature to enable processing of extra commands outside the core library
+ 12.10.21:  - Juergen: add new feature to control sound modules attached to the mainboard  (currently limited to Arduino Nano and JQ6500)
 */
+
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+  #include "pico/stdlib.h"
+  #include <pico/multicore.h>
+#endif
+
 #include <Arduino.h>
 #include "MP3.h"
 
@@ -213,6 +271,7 @@
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   #include "esp_task_wdt.h"																					  // 05.03.21: Juergen - needed to reset watchdog timer while Farbtest is active
   #define USE_DCC_INTERFACE
+  #define DCC_STATUS_PIN  2  // Build in LED
   #include "DCCInterface.h"
   #include "InMemoryStream.h"
 
@@ -221,7 +280,27 @@
   #ifdef USE_SPI_COM
 	#error "USE_SPI_COM can't be used on ESP32 platform"
   #endif
+  #define DCC_SIGNAL_PIN   13
+  
 #endif
+
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+  const uint DATA_IN_PIN = 29;
+  const uint DATA_OUT_PIN = 28;
+  const uint NUM_LEDS_TO_EMULATE = 1;
+  #include "ws2811.hpp"
+  #define USE_DCC_INTERFACE
+  #define DCC_STATUS_PIN  LED_BUILTIN
+  #include "DCCInterface.h"
+  #include "InMemoryStream.h"
+  #ifdef USE_SPI_COM
+  #error "USE_SPI_COM can't be used on ESP32 platform"
+  #endif
+  #define DCC_SIGNAL_PIN   22
+  void ws281x_receive_thread();
+  WS2811Client<NUM_LEDS_TO_EMULATE, GRB>* pWS2811;
+#endif
+
 
 #define LED_DO_PIN          6  // Pin D6 is connected to the LED stripe
 #define CAN_CS_PIN          10 // Pin D10 is used as chip select for the CAN bus
@@ -233,8 +312,8 @@
 #define DISABLE_SPI_DELAY 3000 // After this time the SPI pins are disabled if they are not used
                                // The programm also sends a command to the DCC/SX slave to deactivate his pins
 
-#ifdef ESP32                                                                                                  // 30.10.20: Juergen
-  #define LED0_PIN    2          // LED Bus 2
+#if defined(ESP32)                                                                                                  // 30.10.20: Juergen
+  #define LED0_PIN    2          // Onboard Led
   #define LED1_PIN    16         // Left   Yellow LED on the mainboard
   #define LED2_PIN    14         // Middle White  LED on the mainboard
   #define LED3_PIN    0          // Right  Blue   LED on the mainboard
@@ -251,6 +330,10 @@
   #define LED14_PIN   32         // KEY_80, Pin 11
   #define LED15_PIN   39         // KEY_80, Pin 12
   #define LED16_PIN   15         // KEYBRD, Pin 5
+#elif defined(ARDUINO_RASPBERRY_PI_PICO)                                                                            // 24.04.21: Juergen
+  #define LED1_PIN    13          // Left   Yellow LED on the mainboard
+  #define LED2_PIN    12          // Middle White  LED on the mainboard
+  #define LED3_PIN    11          // Right  Blue   LED on the mainboard
 #else // Nano
   #define LED0_PIN    2          // LED Bus 2
   #define LED1_PIN    3          // Left   Yellow LED on the mainboard
@@ -372,8 +455,10 @@ Benoetig als 142 byte
    #endif
 #else // not USE_CAN_AS_INPUT
   #ifndef LED_HEARTBEAT_PIN
-    #ifdef ESP32                                                                                              // 30.10.20: Juergen
-      #define LED_HEARTBEAT_PIN  2  // Build in LED
+    #if defined(ESP32)                                                                                              // 30.10.20: Juergen
+      #define DCC_STATUS_PIN  2  // Build in LED
+    #elif defined(ARDUINO_RASPBERRY_PI_PICO)                                                                        // 24.04.21: Juergen
+      #define DCC_STATUS_PIN  LED_BUILTIN
     #else
       #define LED_HEARTBEAT_PIN  13 // Build in LED
     #endif
@@ -381,8 +466,8 @@ Benoetig als 142 byte
 #endif
 
 #ifdef USE_SPI_COM                                                                                            // 13.05.20:
-  #ifdef ESP32
-	#error "USE_SPI_COM can't be used  on ESP32 platform"
+  #if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
+  #error "USE_SPI_COM can't be used on this platform"
   #endif
 
   #ifdef USE_CAN_AS_INPUT
@@ -399,10 +484,28 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20: Juergen
   void On_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue);
-  MobaLedLib_CreateEx(leds, On_Callback);       // Define the MobaLedLib instance
-#else
-  MobaLedLib_Create(leds);       // Define the MobaLedLib instance
 #endif
+#if _USE_EXT_PROC && defined(_ENABLE_EXT_PROC)                                                                    // 26.09.21: Juergen
+  uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process);
+#endif
+
+// Define the MobaLedLib instance
+  MobaLedLib_CreateEx(leds
+#if _USE_STORE_STATUS
+  #if defined(ENABLE_STORE_STATUS)                                                                             // 19.05.20: Juergen
+    , On_Callback
+  #else
+    , NULL
+  #endif
+#endif
+#if _USE_EXT_PROC                                                                                              // 26.09.21: Juergen
+  #if defined(_ENABLE_EXT_PROC)
+    , Handle_Command
+  #else
+    , NULL
+  #endif
+#endif
+    );
 
 
 
@@ -419,11 +522,14 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   TaskHandle_t  MLLTaskHnd ;
   TaskHandle_t  Core1TaskHnd ;
-  InMemoryStream stream(256);
-  #if defined USE_DCC_INTERFACE
-	DCCInterface dccInterface;
-  #endif
   #include "esp_log.h"
+#endif
+
+#if defined USE_DCC_INTERFACE || defined USE_LOCONET_INTERFACE
+InMemoryStream stream(256);
+#endif
+#if defined USE_DCC_INTERFACE 
+DCCInterface dccInterface;
 #endif
 
 bool Send_Disable_Pin_Active = 1;                                                                             // 13.05.20:
@@ -509,7 +615,10 @@ void Receive_LED_Color_per_RS232()                                              
                            switch (*Buffer)
                              {
 #ifdef LEDS_PER_CHANNEL							 
-							 case '?':  Serial.print("#?");															   // 13.03.21 Juergen inform farbtest about led count per channel	
+							 case '?': 
+//                       char s[100]; sprintf(s, "#?%s%s", START_MSG,LEDS_PER_CHANNEL); Serial.println(s);  // Debug
+                             
+                             Serial.print("#?");															   // 13.03.21 Juergen inform farbtest about led count per channel	
 										Serial.print(START_MSG);
 										 Serial.println(LEDS_PER_CHANNEL);
 										break;
@@ -647,6 +756,20 @@ void Receive_LED_Color_per_RS232()                                              
 
 #endif // USE_EXT_ADDR
 
+     
+#if defined(_ENABLE_EXT_PROC) && _USE_EXT_PROC                                                                     // 26.09.21: Juergen
+   
+
+uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
+{
+  //{ char s[80]; sprintf(s, "Handle Command type %d argumentsMem %d.", Type, arguments); Serial.println(s); Serial.flush();} // Debug
+  
+#ifdef _ENABLE_EXT_PROC
+  if (Type==SOUND_CHANNEL_TYPE_T) return soundProcessor.handle(arguments, process);
+#endif
+  return 0;
+}
+#endif
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                     // 19.05.20: Juergen
 // if function returns TRUE the calling loop stops
@@ -670,7 +793,7 @@ void Receive_LED_Color_per_RS232()                                              
    //--------------------------------------------------------------------------------------------------------------------------------------
    {
      #if defined(DEBUG_STORE_STATUS) && 1
-       { char s[80]; sprintf(s, "Handle callback type %d for %d. %d@EEAdr %d=%d options=0x%02X", CallbackType, ValueId, TargetValueId, EEPromAddr, *Value, Options); Serial.println(s); } // Debug
+       { char s[80]; sprintf(s, "Handle callback type %d for %d. %d@EEAdr %d=%d options=0x%02X", CallbackType, ValueId, TargetValueId, EEPromAddr, *Value, Options); Serial.println(s); Serial.flush();} // Debug
      #endif
      if (CallbackType == CT_COUNTER_CHANGED || CallbackType == CT_COUNTER_INITIAL)
         {
@@ -685,12 +808,12 @@ void Receive_LED_Color_per_RS232()                                              
            *Value = EEPROM.read(EEPromAddr);
 #endif
            #if defined(DEBUG_STORE_STATUS) && 1
-             { char s[80]; sprintf(s, "Initialite Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); } // Debug
+             { char s[80]; sprintf(s, "Initialite Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
 
         #if defined(DEBUG_STORE_STATUS) && 1
-          { char s[80]; sprintf(s, "Store Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); } // Debug
+          { char s[80]; sprintf(s, "Store Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
         #endif
         StoreStatus(EEPromAddr, *Value);
         return true;
@@ -721,7 +844,7 @@ void Receive_LED_Color_per_RS232()                                              
                status = (status << 1) + tmp;
                }
            #if defined(DEBUG_STORE_STATUS) && 0
-               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); } // Debug
+               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
         else // pulse type
@@ -729,7 +852,7 @@ void Receive_LED_Color_per_RS232()                                              
            if (*Value != INP_ON && *Value != INP_TURNED_ON) return false;
            status = ValueId - TargetValueId;
            #if defined(DEBUG_STORE_STATUS) && 0
-               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); } // Debug
+               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
         StoreStatus(EEPromAddr, status);
@@ -749,9 +872,9 @@ void Receive_LED_Color_per_RS232()                                              
         {
         #if defined(DEBUG_STORE_STATUS) && 1
            if (CallbackType == CT_CHANNEL_CHANGED)
-              { char s[80]; sprintf(s, "On_Value_Changed: channel %d changed from %d to %d", ValueId, OldValue, *NewValue); Serial.println(s); } // Debug
+              { char s[80]; sprintf(s, "On_Value_Changed: channel %d changed from %d to %d", ValueId, OldValue, *NewValue); Serial.println(s); Serial.flush();} // Debug
            else if (CallbackType == CT_COUNTER_CHANGED)
-                   { char s[80]; sprintf(s, "On_Value_Changed: counter %d changed from %d to %d", ValueId, OldValue, *NewValue); Serial.println(s); } // Debug
+                   { char s[80]; sprintf(s, "On_Value_Changed: counter %d changed from %d to %d", ValueId, OldValue, *NewValue); Serial.println(s); Serial.flush();} // Debug
         #endif
         ForAllStoreValues(CallbackType, ValueId, NewValue, Handle_Callback);
         #if defined(DEBUG_STORE_STATUS) && 1
@@ -768,7 +891,7 @@ void Receive_LED_Color_per_RS232()                                              
    //-----------------------------------------------------------------------------------------------------------------------------------------
    {
      #if defined(DEBUG_STORE_STATUS) && 1
-       { char s[80]; sprintf(s, " restore state for %d@EEAdr %d, options=0x%02X", TargetValueId, EEPromAddr, Options); Serial.println(s); } // Debug
+       { char s[80]; sprintf(s, " restore state for %d@EEAdr %d, options=0x%02X", TargetValueId, EEPromAddr, Options); Serial.println(s); Serial.flush();} // Debug
      #endif
      if ((Options & IS_COUNTER) == IS_COUNTER) return false;
 
@@ -782,12 +905,12 @@ void Receive_LED_Color_per_RS232()                                              
      if (status > (1 << InCnt))
         {
         #if defined(DEBUG_STORE_STATUS) && 1
-          { char s[80]; sprintf(s, " don't restore state, stored status for InCh %d@EEAdr %d=%d is invalid", TargetValueId, EEPromAddr, status); Serial.println(s); } // Debug
+          { char s[80]; sprintf(s, " don't restore state, stored status for InCh %d@EEAdr %d=%d is invalid", TargetValueId, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
         #endif
         return false;
         }
      #if defined(DEBUG_STORE_STATUS) && 1
-       { char s[80]; sprintf(s, " stored status for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); } // Debug
+       { char s[80]; sprintf(s, " stored status for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
      #endif
      if ((Options & IS_PULSE) != IS_PULSE)
           {
@@ -834,7 +957,7 @@ void Receive_LED_Color_per_RS232()                                              
      if (eeValue != status)
         {
         #if defined(DEBUG_STORE_STATUS) && 1
-           { char s[80]; sprintf(s, " updating status for EEAdr %d=%d", EEPromAddr, status); Serial.println(s); } // Debug
+           { char s[80]; sprintf(s, " updating status for EEAdr %d=%d", EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
         #endif
 #ifndef ESP32
         eeprom_busy_wait();
@@ -1199,7 +1322,7 @@ void Receive_LED_Color_per_RS232()                                              
    }
 #endif // USE_CAN_AS_INPUT
 
-#if !defined(ESP32) && !defined(ARDUINO_AVR_NANO_EVERY)                                                       // 19.01.21: Juergen: Added Every
+#if !defined(ESP32) && !defined(ARDUINO_AVR_NANO_EVERY) && !defined(ARDUINO_RASPBERRY_PI_PICO)                // 19.01.21: Juergen: Added Every
   #include <avr/boot.h>
   //----------------------
   void Debug_Print_Fuses()                                                                                    // 29.10.20:
@@ -1222,6 +1345,7 @@ void Receive_LED_Color_per_RS232()                                              
 //-----------
 void setup(){
 //-----------
+  Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
   #ifdef SETUP_FASTLED // Use a special FastLED Setup macro defined in the LEDs_AutoProg.h                    // 26.04.20:
     SETUP_FASTLED();
 
@@ -1241,9 +1365,6 @@ void setup(){
       controller.setCorrection(COLOR_CORRECTION); // Attention: Can't be used with Servos, Sound Modules, Charliplexing, ...
     #endif
   #endif
-
-  Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
-
 
   #ifdef START_MSG
     Serial.println(F(START_MSG));
@@ -1462,12 +1583,20 @@ void setup(){
   #endif
 #endif
 
-#ifdef ESP32                                                                                                  // 30.10.20: Juergen
-  #define DCC_SIGNAL_PIN   13
-  #ifdef USE_DCC_INTERFACE
-  dccInterface.setup(DCC_SIGNAL_PIN, -1, stream);
+#ifdef USE_DCC_INTERFACE
+  #ifndef DCC_STATUS_PIN
+  #define DCC_STATUS_PIN -1
   #endif
+  dccInterface.setup(DCC_SIGNAL_PIN, DCC_STATUS_PIN, stream, 
+#ifdef NO_DCC_PULLUP
+  false
+#else
+  true
+#endif    
+  );
+#endif
 
+#ifdef ESP32                                                                                                  // 30.10.20: Juergen
   // reset the GPIO pin mapping - caused by a bug in FastLED 3.3.3 rmt module GPIO0 was remapped and not      // 02.12.20:  Juergen
   // accessbile as a GPIO anymore.
   // remove workaround when fix is available in FastLED library
@@ -1871,16 +2000,20 @@ void Set_Mainboard_LEDs()
 //-----------
 void loop(){
 //-----------
-#ifdef ESP32
-  #ifdef USE_DCC_INTERFACE
-    dccInterface.process();
-  #endif
-#else
+#ifdef USE_DCC_INTERFACE
+  dccInterface.process();
+#endif
+
+#ifndef ESP32
   MLLMainLoop();
 #endif
 
 #ifdef USE_ESP32_EXTENSIONS
   loopESP32Extensions();
+#endif
+  
+#ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low prority loop, on multicore platforms running on seperate core 
+  Additional_Loop_Proc2();                                                                                        // 26.09.21: Juergen
 #endif
 }
 
@@ -1989,13 +2122,6 @@ void MLLMainLoop(){
           Serial.println(cnt);
        }
        cnt=0;
-
-       if (dcc<90)
-          {
-          Serial.print("DCC  in 1000ms: ");
-          Serial.println(dcc);
-          }
-       dcc=0;
 
        lastMillis=millis();
        //for (int i=0;i<NUM_LEDS;i++){ leds[i].r = random(0,255);leds[i].g = random(0,255);leds[i].b = random(0,255); }

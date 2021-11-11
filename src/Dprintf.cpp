@@ -28,8 +28,9 @@
 */
 
 #include "Dprintf.h"
+#ifndef ARDUINO_RASPBERRY_PI_PICO
 #include "HardwareSerial.h"  // Defines "Serial"
-
+#endif
 
 #ifdef _PRINT_DEBUG_MESSAGES
   //-------------------------------------------------------

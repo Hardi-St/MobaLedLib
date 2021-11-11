@@ -79,7 +79,8 @@
 #define _USE_STORE_STATUS   1           // 22.04.20:    138    5                                              // 19.05.20: Juergen
 #define _USE_INCH_TRIGGER   1           // 08.06.20:    -12    0
 #define _USE_CANDLE         1           // 10.06.20:    352    2                                              // 09.06.20:
-                                        //             8750        Sum
+#define _USE_EXT_PROC       1           // 26.09.21:     48    4                                              // 26.09.21: Juergen
+                                        //             8800    Sum
 
 // Hardware pin definitions
 
