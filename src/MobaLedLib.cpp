@@ -378,8 +378,8 @@
  31.10.20:  - Charlie_Buttons and Charlie_Binary control 3 channels (RGB) instead of 2 (GB)
  22.02.21:  - Corrected the "fire" macro
  04.03.21:	- Jürgen adds ESP32 Support for Analog and 16384 Leds
-
-
+ 29.09.21:  - Jürgen add new feature to enable processing of extra commands outside the core library
+ 13.10.21:  - Hardi added new Sound_New_... functions for new and old MP3-TF-16P Sound modules (use 4.7uF instead of 22uF and 2 new 2 KHz WS2811)
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
