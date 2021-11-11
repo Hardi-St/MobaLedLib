@@ -581,7 +581,7 @@ void LocoNetThrottleClass::updateSpeed(uint8_t Speed, uint8_t ForceNotify )
 
 void LocoNetThrottleClass::updateState(TH_STATE State, uint8_t ForceNotify )
 {
-  TH_STATE  PrevState ;
+  TH_STATE PrevState ;
 
   if( ForceNotify || myState != State )
   {

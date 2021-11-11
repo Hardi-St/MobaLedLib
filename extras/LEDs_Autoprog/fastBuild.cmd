@@ -92,7 +92,7 @@ if exist "%atemp%\build.options.json" (
 						set items=%%b
 						goto :repeat
 					)
-				)				
+				)
 			)
 		)
 	)
@@ -118,7 +118,7 @@ for /f "delims=: tokens=1,*" %%i in (%atemp%\includes.cache) do (
 			)
 		)
 	)
-)	
+)
 echo off
 
 call :write %%%%* >>"%atemp%\compile.cmd"
