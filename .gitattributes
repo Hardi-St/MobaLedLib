@@ -17,5 +17,6 @@
 *.bmp binary
 *.ico binary
 *.docx binary
+*.xlsm binary
 *.MLL_pcf binary
 *.MLL_pgf binary
