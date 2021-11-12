@@ -1,7 +1,7 @@
 #ifndef _ANALOG_BUTTONS10_H_
 #define _ANALOG_BUTTONS10_H_
 /*
- MobaLedLib: LED library for model railways New
+ MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
