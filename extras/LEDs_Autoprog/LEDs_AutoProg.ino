@@ -990,11 +990,11 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 			#define INCH_CNT 0
 		#endif
 	#endif
-
-	#define STRINGIFY(s) XSTRINGIFY(s)
-	#define XSTRINGIFY(s) #s
-	#pragma message ("INCH_CNT=" STRINGIFY(INCH_CNT))
-	#pragma message ("START_SEND_CHANNEL=" STRINGIFY(START_SEND_CHANNEL))
+                                                                                                        // 12.11.21 Juergen remove debug output
+//	#define STRINGIFY(s) XSTRINGIFY(s)
+//	#define XSTRINGIFY(s) #s
+//	#pragma message ("INCH_CNT=" STRINGIFY(INCH_CNT))
+//	#pragma message ("START_SEND_CHANNEL=" STRINGIFY(START_SEND_CHANNEL))
 
  	void Send_Inputs(char type, bool forceSend)
 	{
