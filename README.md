@@ -1,6 +1,8 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
+**New in release 3.1.0: Improved macro selection dialog, Mainboard sound module support, MP3 module via ATTiny, PinAlias feature,  bugfixes**
+
 **New in release 3.0.0: ESP32 support driving up to 49152 LEDs / DMX512 support / Bootloader Update and "New Bootloader full Mem" / Important bug fixes**
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
@@ -183,7 +185,7 @@ Questions / suggestions / praise / ...
 
 **Ver.: 1.9.6 F** 07.10.20:
 - Programming of the fast bootloader added
-- Jürgen has added "Update_Start_LedNr" to the end of Read_PGF_from_String_V1_0() because other wise NUM_LEDS is 0
+- JÃ¼rgen has added "Update_Start_LedNr" to the end of Read_PGF_from_String_V1_0() because other wise NUM_LEDS is 0
 - New function "Mainboard_LED(MB_LED, InCh)" which could be used to use the mainboard LEDs as status LEDs
 - Added macro "WeldingCont()" which continuously flickers while the input is active.
 - Don't use the Heartbeat LED at PIN A3 if the CAN bus is used AND the SwitchB or SwitchC is used.
