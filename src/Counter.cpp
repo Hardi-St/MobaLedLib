@@ -1,5 +1,5 @@
 /*
- MobaLedLib: LED library for model railways
+ MobaLedLib: LED library for model railways and more
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
