@@ -61,13 +61,13 @@ Questions / suggestions / praise / ...
 **Revision History:**
 
 
-**Ver.: 3.1.0** 25.11.21:
+**Ver.: 3.1.0** 28.11.21:
 
 *Features*
-- Add ServoMP3 feature - sound modules are attached to the servo board and controlled via serial line 
 - New TreeView based macro selection dialog with grouping and icons
 - Add feature to control sound modules attached to the mainboard
-- Add feature Pin_Alias and 
+- Add ServoMP3 feature - sound modules are attached to the servo board and controlled via serial line
+- Add feature Pin_Alias
 - Add #define SWITCH_DAMPING_FACT to the Lib_Macros
 - Add possibility to scroll with the mouse in the description box of the TreeView dialog
 - UserForm_Other is resizable now
@@ -86,22 +86,22 @@ Questions / suggestions / praise / ...
 - Improved the scrolling in the userform others
 - Added a scroll bar to description in the TreeView dialog
 - As ESP32 is no longer experimental set library U8g2 to mandatory
-- Motorola II protocol for interface Arduino 
+- Motorola II protocol for interface Arduino
 - Allow relative path in ImageBoxAdder
 - Reload all Icons when running GenReleaseVersion
 - Support of BETA update directly from github
 - Add the build date as a tooltip to the version information cell
 - Add Excel version check
-- Add library external command processing 
- 
+- Add library external command processing
+
 *Bugfixes*
-- Corrected start focus and tab index of the Userform_Other (Prior sometimes the 'Abort' button had the focus)
 - Solved problem if the user has no additional board installed. In this case the "packages" directory  has to be created in C:\Users\<Name>\AppData\Local\Arduino15\
+- Adapted the cmd files to work with 32 bit windows (Arduino is installed to "Program Files" and not to "Program Files (x86)")
+- Corrected start focus and tab index of the Userform_Other (Prior sometimes the 'Abort' button had the focus)
 - Added "On Error Resume Next" to prevent crash with Office 365 in EnableDisableAllButtons()
 - Replaced ".Add2" by ".Add" in Sort_by_Column because this new function is not supported by Office 365
 - (Hopefully) prevent formatting the "Start LEDNr" as date by setting the NumberFormat to "General" when importing files.
-- Adapted the cmd files to work with 32 bit windows (Arduino is installed to "Program Files" and not to "Program Files (x86)")
-- Fixed bug when loadimg the Excel File. Thge Pattern Configurator icons in the lines have been deleted
+- Fixed bug when loadimg the Excel File. The Pattern Configurator icons in the lines have been deleted
 - Fix issue on Scroll in UserForm_Other (focus lost)
 - Prevent crash when the TreeView is closed with the 'x' button and reopened again
 - Fix some typos in start page text
@@ -113,14 +113,13 @@ Questions / suggestions / praise / ...
 - Workaround for Excel 2007 isNumericBug
 - Add missing EspSoftwareSerial library
 - Fix Platform_Parameters: with AM328 SPI Pins are only usable if no CAN module is in use
-- Remove invalid default 'KEY80_P1' from Pin_Number Parameter
 
 **Ver.: 3.0.0** 21.04.21:
 - Release support of ESP32 and up to 49152 single LEDs
 - Support controling DMX512 devices (up to 300 per channel)
 - Bootloader Update and "New Bootloader full Mem"
 - Up to nine independent LED channels
-- Search function in macro selection 
+- Search function in macro selection
 - TinyUniProg improvements
 - Fixed problem scaling the house dialog for small screens (1366x768)
 - Added seven new railway signal macros
