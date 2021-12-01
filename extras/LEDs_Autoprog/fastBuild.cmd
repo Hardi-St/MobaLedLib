@@ -4,7 +4,7 @@ goto :start
 
  Fast Build Script for building ESP32 version of LEDs_AutoProg
 
- Copyright (C) 2020  Jürgen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2020-2021  Jürgen Winkler: MobaLedLib@gmx.at
 
  This script is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
