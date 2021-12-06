@@ -55,65 +55,9 @@ Revision History :
 #pragma GCC diagnostic pop
 
 #include "DCCInterface.h"
+#include "Helpers.h"
 
 static NmraDcc  Dcc ;                                // Instance of the NmraDcc class
-
-static uint8_t  Error               = 0;             
-static uint32_t NextStatusFlash     = 0;
-static uint32_t LastSignalTime      = 0;
-static int      StatusLedPin        = -1;
-InMemoryStream* DCCInterface::pStream;
-
-
-//                                       States On    Off   On  Off  On   Off
-static uint16_t OK_Flash_Table[]          = { 2,     1500, 1500                     };
-static uint16_t BufferFull_Flash_Table[]  = { 6,     100,  100, 100, 100, 100, 400  };
-static uint16_t NoDCC_Flash_Table[]       = { 2,     50,   450                      };
-static uint8_t  FlashState = 1;
-
-//---------------------------------
-void DCCInterface::addToSendBuffer(const char *s)
-//---------------------------------
-// Attention this is called in the interrupt
-{
-	if (!pStream->write(s))
-	{
-	  Error = 50;   // show this state at least 5 seconds
-	}
-}
-
-#include <stdarg.h>
-#ifndef ARDUINO_RASPBERRY_PI_PICO
-#include <WString.h>
-#endif
-
-#define printf(Format, ...) printf_proc(F(Format), ##__VA_ARGS__)   // see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
-
-//-------------------------------------------------------
-void printf_proc(const __FlashStringHelper *format, ...)
-//-------------------------------------------------------
-// Achtung: Es durfen keine Zeichen über die serielle Schnittstelle ausgegeben werden wenn der LED Arduino
-//          programmiert wird und die Beiden über die TX Leitung verbunden sind. Die serielle Schnittstelle
-//          muss nach jeder Ausgabe abgeschaltet werden. Sonst zieht der TX Ausgang dieses Nanos die
-//          RX Leitung des LED Arduinos auf 5V.
-//          Bei der normalen Kommunikation wird das über die A1 Leitung zwischen den beiden Rechnern gesteuert.
-//          Wenn der SPI Mode aktiviert ist, dann wird die A1 Leitung als Input geschaltet damit sie auf dem
-//          LED Arduino als Eingang für die Schalter genutzt werden kann.
-{
-#ifdef DEBUG_INTERFACE	
-     char buf[50];
-     va_list ap;
-     va_start(ap, format);
-     #ifdef __AVR__
-        vsnprintf_P(buf, sizeof(buf), (const char *)format, ap); // progmem for AVR
-     #else
-        vsnprintf  (buf, sizeof(buf), (const char *)format, ap); // for the rest of the world
-     #endif
-     va_end(ap);
-     Serial.print(buf);
-#endif		 
-}
-
 
 //-------------------------------------------------------------------------------------
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
@@ -123,7 +67,7 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
   //if (!OutputPower) return ; // debug: Simulate the Lenz LZV100 behavior which doesn't send the button release signal
 	char s[20];
   sprintf(s, "@%4i %02X %02X\n", Addr, Direction, OutputPower);
-  DCCInterface::addToSendBuffer(s);
+  CommInterface::addToSendBuffer(s);
   //printf("%4i notifyDccAccTurnoutOutput: %i, %i, %02X\r\n", millis(), Addr, Direction, OutputPower);
 }
 
@@ -135,20 +79,21 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 {
   char s[20];
   sprintf(s, "$%4i %02X\n", Addr, State); // Bei der CAN Geschichte hab ich herausgefunden dass es 2048 Adressen gibt. Ich hoffe das stimmt...
-  DCCInterface::addToSendBuffer(s);
+  CommInterface::addToSendBuffer(s);
   //printf("notifyDccSigState: %i,%02X\r\n", Addr, State) ;
 }
 
 void notifyDccMsg( DCC_MSG * Msg )
 {
-  LastSignalTime = millis();;
+  CommInterface::setLastSignalTime(millis());
 }
 
 //-----------
-void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup){
+void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup)
+{
 //-----------
-  pStream = &stream;
-  StatusLedPin = statusLedPin;
+  
+  CommInterface::setup(statusLedPin, stream);
 
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
   Dcc.pin(DCCSignalPin, enablePullup ? 1 : 0);
@@ -157,64 +102,14 @@ void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& str
   Dcc.init( MAN_ID_DIY, 10, CV29_ACCESSORY_DECODER | CV29_OUTPUT_ADDRESS_MODE, 0 );  // ToDo: Was bedeuten die Konstanten ?
 
   //addToSendBuffer("Init Done\r\n"); // This message is send to the LED Arduino over RS232 or SPI (If the Arduino is already active)
-  if (StatusLedPin>=0) pinMode(StatusLedPin, OUTPUT);
   
   printf("DCCInterface using pin %d has been started.\r\n", DCCSignalPin);
-}
-
-//---------------------------------
-void DCCInterface::processErrorLed()
-//---------------------------------
-{
-  if (StatusLedPin<0) return;
-  
-  static uint16_t *Flash_Table_p     = OK_Flash_Table;
-  static uint16_t *Old_Flash_Table_p = OK_Flash_Table;
-  static uint32_t NextCheck = 0;
-
-  uint32_t t = millis();
-  if (t >= NextCheck) // Check the Status and the error every 100 ms
-     {
-     NextCheck = t + 100;
-     if (LastSignalTime==0)   // no DCC signal
-        {
-        Flash_Table_p = NoDCC_Flash_Table;
-        }
-     else if (Error) // Fast flash frequency if an buffer overflow was detected
-        {
-        Flash_Table_p = BufferFull_Flash_Table;
-        Error--; // Decrement the error counter if the communication is working again
-        }
-     else 
-        {
-           Flash_Table_p = OK_Flash_Table;
-        }
-
-     if (Old_Flash_Table_p != Flash_Table_p) // If the state has changed show it immediately
-        {
-        Old_Flash_Table_p = Flash_Table_p;
-        NextStatusFlash = 0;
-        FlashState = 1;
-        }
-     }
-  if (t >= NextStatusFlash) // Flash the status LED
-     {
-     if (FlashState > Flash_Table_p[0]) FlashState = 1;
-     NextStatusFlash = t + Flash_Table_p[FlashState];
-     digitalWrite(StatusLedPin, FlashState%2);
-     FlashState++;
-     }
 }
 
 //-----------
 void DCCInterface::process(){
 //-----------
   Dcc.process(); // You MUST call the NmraDcc.process() method frequently from the Arduino loop() function for correct library operation
-  if ((millis()-LastSignalTime) > 1000)
-  {
-    LastSignalTime = 0;
-    Error = 0;              // don't show an error when DCC signal comes back
-  }
-  processErrorLed();                                                                             // 13.05.20:
+  CommInterface::process();                                                                             // 13.05.20:
 }
 #endif

@@ -3,21 +3,13 @@
 
 #include <EEPROM.h>
 #include <NmraDcc.h>
-#include "InMemoryStream.h"
+#include "CommInterface.h"
 
-class DCCInterface
+class DCCInterface : public CommInterface
 {
-private:
-	static InMemoryStream* pStream;
-
 public:
-	static void	setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup = true);
-	static void	process();
-	static char	read();
-	static int 	available();
-	static void addToSendBuffer(const char *s);
-private:	
-	static void processErrorLed();
+	virtual void	setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup = true);
+	virtual void	process();
 };
 
 #endif
