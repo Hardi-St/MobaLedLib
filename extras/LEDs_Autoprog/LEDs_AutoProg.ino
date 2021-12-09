@@ -819,7 +819,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
            *Value = EEPROM.read(EEPromAddr);
 #endif
            #if defined(DEBUG_STORE_STATUS) && 1
-             { char s[80]; sprintf(s, "Initialite Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
+             { char s[80]; sprintf(s, "Initialize Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
 
@@ -1608,16 +1608,17 @@ void setup(){
 #endif    
   );
 #endif
-#ifdef USE_SX_INTERFACE
-  #ifndef SX_STATUS_PIN
-  #define SX_STATUS_PIN -1
-  #endif
-  SXInterface* interf = new SXInterface();
-  commInterface = interf;
-  interf->setup(SX_SIGNAL_PIN, SX_CLOCK_PIN, SX_STATUS_PIN, stream);
-#endif
-
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
+
+  #ifdef USE_SX_INTERFACE
+    #ifndef SX_STATUS_PIN
+      #define SX_STATUS_PIN -1
+    #endif
+    SXInterface* interf = new SXInterface();
+    commInterface = interf;
+    interf->setup(SX_SIGNAL_PIN, SX_CLOCK_PIN, SX_STATUS_PIN, stream);
+  #endif  
+  
   // reset the GPIO pin mapping - caused by a bug in FastLED 3.3.3 rmt module GPIO0 was remapped and not      // 02.12.20:  Juergen
   // accessbile as a GPIO anymore.
   // remove workaround when fix is available in FastLED library
