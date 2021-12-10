@@ -374,6 +374,10 @@
              APatternT2(LED,192,SI_1,1,0,255,0,PM_HSV,60 Sek,0 ms,1)  \
              APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,1 Sek,1)            // 18.01.19:
 
+#define  RGB_Heartbeat_Color(LED, MinBrightness, MaxBrightness, Color)            \
+             New_HSV_Group()                                          \
+             APatternT1(LED,224,SI_1,1,Color,Color,0,PM_HSV,0 ms,1)  \
+             APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,1 Sek,1)            // 18.01.19:
 
 // Push Button functions which count the button press and activates temporary variables
 // The button flashes n times if the button was pressed n times.
@@ -892,21 +896,34 @@
 
 #define MobaLedLib_Configuration()          const PROGMEM unsigned char Config[] =
 
+#define MobaLedLib_PreparePtr()             MobaLedLib_C* MobaLedLib; \
+                                            uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/
 #if _USE_STORE_STATUS && _USE_EXT_PROC                                                                                       // 26.09.21: Juergen
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL, NULL)
 #define MobaLedLib_CreateEx(leds, callback, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback, processor); // MobaLedLib_C class definition
+#define MobaLedLib_CreatePtr(leds)   MobaLedLib_CreatePtrEx(leds, NULL, NULL)
+#define MobaLedLib_CreatePtrEx(leds, callback, processor) \
+                                            MobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback, processor); // MobaLedLib_C class definition
 #elif _USE_STORE_STATUS 
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, callback)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
+#define MobaLedLib_CreatePtr(leds)   MobaLedLib_CreatePtrEx(leds, NULL)
+#define MobaLedLib_CreatePtrEx(leds, callback) \
+                                            MobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
 #elif _USE_EXT_PROC 
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), processor); // MobaLedLib_C class definition
+#define MobaLedLib_CreatePtr(leds)   MobaLedLib_CreatePtrEx(leds, NULL)
+#define MobaLedLib_CreatePtrEx(leds, processor) \
+                                            MobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), processor); // MobaLedLib_C class definition
 #else
 #define MobaLedLib_Create(leds)             uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM)); // MobaLedLib_C class definition
+#define MobaLedLib_CreatePtr(leds)          \
+                                            MobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM)); // MobaLedLib_C class definition
 #endif
 
 #if _USE_USE_GLOBALVAR
