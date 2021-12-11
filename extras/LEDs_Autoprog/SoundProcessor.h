@@ -88,7 +88,7 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
   //#define DEBUG_SOUND_CHANNEL 0x0f
 #endif
 
-extern  MobaLedLib_C MobaLedLib;
+extern MobaLedLib_C* MobaLedLib;
 
 class SoundPlayer 
 {
@@ -173,7 +173,7 @@ class SoundProcessor
 #endif      
     if (doProcess)
     {
-      if (MobaLedLib.Get_Input(tmp&0xff)==INP_TURNED_ON)
+      if (MobaLedLib!=NULL && MobaLedLib->Get_Input(tmp&0xff)==INP_TURNED_ON)
       {
 #if (DEBUG_SOUND_CHANNEL&0x01)==0x01
         { char s[80]; sprintf(s, "Command %d on module %d added to queue.", cmdAndIndex&0x0f, (cmdAndIndex>>4)&0x0f); Serial.println(s); Serial.flush();} // Debug
