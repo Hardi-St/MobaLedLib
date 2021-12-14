@@ -500,7 +500,8 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
   uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process);
 #endif
 
-MobaLedLib_PreparePtr();
+MobaLedLib_Prepare();
+#define MobaLedLib (*pMobaLedLib)
 
 #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0
   LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
@@ -514,7 +515,6 @@ MobaLedLib_PreparePtr();
 
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   TaskHandle_t  MLLTaskHnd ;
-  TaskHandle_t  Core1TaskHnd ;
   #include "esp_log.h"
 #endif
 
@@ -696,7 +696,7 @@ void Receive_LED_Color_per_RS232()                                              
 #endif					   
                        if (OutputPower > 0)
                             {
-                            MobaLedLib->Set_Input(Channel, Direction > 0);
+                            MobaLedLib.Set_Input(Channel, Direction > 0);
                             }
                        return ;
                        }
@@ -712,11 +712,11 @@ void Receive_LED_Color_per_RS232()                                              
 #ifdef COMMANDS_DEBUG					   
                              char s[48]; sprintf(s, "%s Button Addr %i: Channel[%i]=%i", ChkBut==B_RED?"Red":"Green", Addr, Channel,OutputPower); Serial.println(s); // Debug
 #endif						
-                             MobaLedLib->Set_Input(Channel, OutputPower);
+                             MobaLedLib.Set_Input(Channel, OutputPower);
                              #ifdef GEN_BUTTON_RELEASE
                                if (OutputPower)
                                   {
-                                  if (LastTime && LastChannel != Channel) MobaLedLib->Set_Input(LastChannel, 0); // Send release
+                                  if (LastTime && LastChannel != Channel) MobaLedLib.Set_Input(LastChannel, 0); // Send release
                                   LastTime = millis();
                                   LastChannel = Channel;
                                   }
@@ -829,7 +829,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
            for (uint8_t cnt = InCnt; cnt > 0;)
                {
                cnt--;
-               byte tmp = MobaLedLib->Get_Input(TargetValueId + cnt);
+               byte tmp = MobaLedLib.Get_Input(TargetValueId + cnt);
                tmp = (tmp == INP_ON || tmp == INP_TURNED_ON) ? 1 : 0;
                #if defined(DEBUG_STORE_STATUS) && 0
                    char s[80]; sprintf(s, "State of InCh %d=%d", InCh+cnt, tmp); Serial.println(s);  // Debug
@@ -909,12 +909,12 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
           {
           for (uint8_t cnt = 0; cnt < InCnt; cnt++)
               {
-              MobaLedLib->Set_Input(TargetValueId + cnt, status & 0x01);
+              MobaLedLib.Set_Input(TargetValueId + cnt, status & 0x01);
               status = status >> 1;
               }
           }
      else {
-          MobaLedLib->Set_Input(TargetValueId + status, 1);
+          MobaLedLib.Set_Input(TargetValueId + status, 1);
           }
      return false;
    }
@@ -997,7 +997,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 			uint8_t input;
 			uint8_t chkSum = (uint8_t)~(SEND_LEN^0xD0);												        // compiler will make correct value out of it (saves memory)
 			for (uint8_t i=0;i<INCH_CNT &&!forceSend;i++) {
-				input = MobaLedLib->Get_Input(START_SEND_CHANNEL+i);
+				input = MobaLedLib.Get_Input(START_SEND_CHANNEL+i);
 				forceSend |= (input==INP_TURNED_ON);
 				forceSend |= (input==INP_TURNED_OFF);
 			}
@@ -1007,7 +1007,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 			Serial.write(SEND_LEN);
 			for (uint8_t i=0;i<INCH_CNT;i++) {																	// align to 7 bits
 
-				input = MobaLedLib->Get_Input(START_SEND_CHANNEL+i);
+				input = MobaLedLib.Get_Input(START_SEND_CHANNEL+i);
 				outByte = outByte<<1;
 				if ((input == INP_ON || input == INP_TURNED_ON))
 					outByte |= 0x01;
@@ -1199,7 +1199,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #ifdef GEN_BUTTON_RELEASE                                                                                // 23.05.19:
        if (LastTime && millis()-LastTime > 400) // Use 1100 if no repeat is wanted
           {
-          MobaLedLib->Set_Input(LastChannel, 0); // Send release
+          MobaLedLib.Set_Input(LastChannel, 0); // Send release
           LastTime = 0;
           // Serial.print(F("Release Button Channel[")); Serial.print(LastChannel); Serial.println("]=0"); // Debug
           }
@@ -1346,7 +1346,7 @@ void setup(){
   }
   esp_log_level_set("*", ESP_LOG_NONE);
 #endif
-  MobaLedLib_CreatePtrEx(leds
+  MobaLedLibPtr_CreateEx(leds
 #if _USE_STORE_STATUS
   #if defined(ENABLE_STORE_STATUS)                                                                             // 19.05.20: Juergen
     , On_Callback
@@ -1444,7 +1444,7 @@ void setup(){
 
   #endif
 
-  Set_Start_Values(*MobaLedLib); // The start values are defined in the "MobaLedLib->h" file if entered by the user
+  Set_Start_Values(MobaLedLib); // The start values are defined in the "MobaLedLib.h" file if entered by the user
 
   #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                              // 19.05.20: Juergen
     RestoreStatus();
@@ -1617,11 +1617,6 @@ void setup(){
     interf->setup(SX_SIGNAL_PIN, SX_CLOCK_PIN, SX_STATUS_PIN, stream);
   #endif  
   
-  // reset the GPIO pin mapping - caused by a bug in FastLED 3.3.3 rmt module GPIO0 was remapped and not      // 02.12.20:  Juergen
-  // accessbile as a GPIO anymore.
-  // remove workaround when fix is available in FastLED library
-  gpio_matrix_out(gpio_num_t(0), 0x100, false, false);                                                                                   // 02.12.20: Juergen
-
   #if !defined(Mainboard_LED1)																				  // 12.11.20: Juergen initialize Mainboard leds
 	#if defined(USE_NEW_LED_ARRAY)																			  // if mainboard led isn't configured at all just clear the output
 		FastPin<LED1_PIN>::setInput();
@@ -1684,7 +1679,7 @@ void setup(){
 #endif // READ_LDR_DEBUG
 #if USE_NEW_LED_ARRAY                                                                                         // 30.10.20: Juergen
   #define FAST_SET_MAINBOARDLED(LEDNr)                     \
-          if (MobaLedLib->Get_Input(Mainboard_LED##LEDNr))  \
+          if (MobaLedLib.Get_Input(Mainboard_LED##LEDNr))  \
                FastPin<LED##LEDNr##_PIN>::hi();            \
           else FastPin<LED##LEDNr##_PIN>::lo();
 #else
@@ -1697,7 +1692,7 @@ void setup(){
     // The fast methode uses 11 Bytes more
     #define FAST_SET_MAINBOARDLED(LEDNr, PortLetter, Mask)                     \
         {                                                                      \
-        uint8_t Inp = MobaLedLib->Get_Input(Mainboard_LED##LEDNr);              \
+        uint8_t Inp = MobaLedLib.Get_Input(Mainboard_LED##LEDNr);              \
         if (Inp == INP_ON)                                                     \
            {                                                                   \
            PORT##PortLetter = PORT##PortLetter | Mask;                         \
@@ -1708,7 +1703,7 @@ void setup(){
            }                                                                   \
         }
   #else
-    #define FAST_SET_MAINBOARDLED(LEDNr, PortLetter, Mask) digitalWrite(LED##LEDNr##_PIN, MobaLedLib->Get_Input(Mainboard_LED##LEDNr))
+    #define FAST_SET_MAINBOARDLED(LEDNr, PortLetter, Mask) digitalWrite(LED##LEDNr##_PIN, MobaLedLib.Get_Input(Mainboard_LED##LEDNr))
   #endif
 #endif
 
@@ -1913,7 +1908,7 @@ void Set_Mainboard_LEDs()
   //----------------------------
   {
     #ifdef DayAndNightTimer_InCh // The Day/Night change is triggered by a variable
-      uint8_t Inp = MobaLedLib->Get_Input(DayAndNightTimer_InCh);
+      uint8_t Inp = MobaLedLib.Get_Input(DayAndNightTimer_InCh);
       static uint8_t OldInp = INP_OFF;  // ToDo: Speichern des letzten Wertes ?
       if (OldInp != Inp) // INP_TURNED_ON / ..OFF can't be used because it's cleared in the lib
          {
@@ -2000,7 +1995,7 @@ void Set_Mainboard_LEDs()
               case T_BIN_MASK:       Res =  (LED_Val &  Val); break;
               case T_NOT_BIN_MASK:   Res = !(LED_Val &  Val); break;
               }
-           MobaLedLib->Set_Input(Var_Nr, Res);
+           MobaLedLib.Set_Input(Var_Nr, Res);
            #if 0 // Debug
               uint32_t PERIOD = 500;
               static uint32_t Disp = PERIOD;
@@ -2044,7 +2039,7 @@ void MLLTask( void * parameter ) {
   while(1) {
     MLLMainLoop();
     yield();
-    delay (10);
+    delay (1);
   }
 }
 #endif
@@ -2071,7 +2066,7 @@ void MLLMainLoop(){
      Send_Inputs('*', false);
   #endif
 
-  MobaLedLib->Update();                  // Update the LEDs in the configuration
+  MobaLedLib.Update();                  // Update the LEDs in the configuration
 
   #ifdef DayAndNightTimer_Period                                                                              // 07.10.20:
     Update_DayAndNightTimer();
