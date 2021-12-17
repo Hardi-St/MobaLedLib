@@ -695,10 +695,18 @@ MobaLedLib_C::MobaLedLib_C(
    Dprintf("MobaLedLib_C Constructor\n");
 
   //memset(_leds, 3, sizeof(CRGB)*Num_Leds); // Debug line to find initialization problems
-  memset(TV_Dat, 0, sizeof(TV_Dat));
   memset(RAM,    0, RamSize);
 
-  memset(InpStructArray, 0x00, _INP_STRUCT_ARRAY_SIZE);
+  // Juergen 17.12.2021: fix problem that TempVar is uninitialized at startup -> leading to non-deterministic initial state 
+  // of ActVal and subsequently to wrong behavior of functions controled by InCh_To_TmpVar*
+  // extend memory clear range to also clear some further variabels
+  // init memory of TV_Dat, InpStructArray,HSV_p(2),ActualVar_p(2),TempVar(2),GlobalVar_Cnt(1)
+#if _USE_USE_GLOBALVAR
+  //also init GlobalVar
+  memset(TV_Dat, 0, sizeof(TV_Dat)+_INP_STRUCT_ARRAY_SIZE+2+2+2+1 + 2);
+#else
+  memset(TV_Dat, 0, sizeof(TV_Dat)+_INP_STRUCT_ARRAY_SIZE+2+2+2+1 + 0);
+#endif
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
   CallbackFunc = Function;
 #endif
