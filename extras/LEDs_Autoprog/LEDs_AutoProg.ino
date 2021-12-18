@@ -1362,6 +1362,9 @@ void setup(){
   #endif
 #endif
     );
+  #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                              // 19.05.20: Juergen
+    RestoreStatus();
+  #endif
   #ifdef SETUP_FASTLED // Use a special FastLED Setup macro defined in the LEDs_AutoProg.h                    // 26.04.20:
     SETUP_FASTLED();
 
@@ -1446,9 +1449,6 @@ void setup(){
 
   Set_Start_Values(MobaLedLib); // The start values are defined in the "MobaLedLib.h" file if entered by the user
 
-  #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                              // 19.05.20: Juergen
-    RestoreStatus();
-  #endif
 
   #if defined TEST_TOGGLE_BUTTONS || defined TEST_PUSH_BUTTONS
     Setup_Toggle_Buttons();

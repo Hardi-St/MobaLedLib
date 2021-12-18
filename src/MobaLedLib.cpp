@@ -695,18 +695,10 @@ MobaLedLib_C::MobaLedLib_C(
    Dprintf("MobaLedLib_C Constructor\n");
 
   //memset(_leds, 3, sizeof(CRGB)*Num_Leds); // Debug line to find initialization problems
+  memset(TV_Dat, 0, sizeof(TV_Dat));
   memset(RAM,    0, RamSize);
 
-  // Juergen 17.12.2021: fix problem that TempVar is uninitialized at startup -> leading to non-deterministic initial state 
-  // of ActVal and subsequently to wrong behavior of functions controled by InCh_To_TmpVar*
-  // extend memory clear range to also clear some further variabels
-  // init memory of TV_Dat, InpStructArray,HSV_p(2),ActualVar_p(2),TempVar(2),GlobalVar_Cnt(1)
-#if _USE_USE_GLOBALVAR
-  //also init GlobalVar
-  memset(TV_Dat, 0, sizeof(TV_Dat)+_INP_STRUCT_ARRAY_SIZE+2+2+2+1 + 2);
-#else
-  memset(TV_Dat, 0, sizeof(TV_Dat)+_INP_STRUCT_ARRAY_SIZE+2+2+2+1 + 0);
-#endif
+  memset(InpStructArray, 0x00, _INP_STRUCT_ARRAY_SIZE);
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
   CallbackFunc = Function;
 #endif
@@ -727,8 +719,8 @@ MobaLedLib_C::MobaLedLib_C(
   srandom(random_seed);
   random16_set_seed(random());
 #endif
-
-  Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
+  // 18.12.2021 remove initial update to be able to set initial values after contructor and before first update run
+  //Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
 
   #ifdef _TEST_BUTTONS
     Setup_Test_Buttons();
@@ -1036,24 +1028,30 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
       ActualVar_p->Val = *rp;
       rp++;
       }
-
+    else
+      {
+      ActualVar_p->Val = 0;
+      }
   for (; InCh <= EndInCh; InCh++, Nr++)                                                                       // 31.05.20:  J: "<=" instead of "<" because EndInCh is now 0..63 instead of 1..64
     {
     uint8_t Inp = Get_Input(InCh);
-    //if (p) Dprintf("Get_Input(%i)=%i ", InCh, Inp); // Debug
+    //Dprintf("Get_Input(%i)=%i ", InCh, Inp); // Debug
     if (Inp == INP_TURNED_ON)
        {
-       if (Use_LocalVar == false || ActualVar_p->Val != Nr)                                                   // 08.06.20:
+       if (Use_LocalVar == false || ActualVar_p->Val != Nr|| Initialize)                                     // 08.06.20:
           {
+          if (Initialize&& arg & I2X_USE_START1)        // goto Mode pattern with a "off" state will initilize to "off"
+            ActualVar_p->Changed = 0;
+          else
           ActualVar_p->Changed = 1;
           ActualVar_p->Val = Nr;
           if (Use_LocalVar) *(rp-1) = Nr;                                                                     // 09.06.20:
-          //if (p) Dprintf(" ActualVar=%i Trig\n", ActualVar_p->Val); // Debug
+          //Dprintf(" ActualVar=%i Trig\n", ActualVar_p->Val); // Debug
           }
        return ;
        }
     }
-  //if (p) Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
+  //Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
   ActualVar_p->Changed = 0; // If nothing has changed
 }
 
@@ -1635,7 +1633,7 @@ void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
        InpStructArray[ByteNr] |=  BitMask;
   else InpStructArray[ByteNr] &= ~BitMask;
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
-  //Dprintf("Set_Input Inp[%i] changed from %i to %i (On=%i)\n", channel, oldValue2, InpStructArray[ByteNr], On);
+  //Dprintf("Set_Input Inp[%d] changed from %d to %d (On=%d/%d)\n", channel, oldValue2, (InpStructArray[ByteNr]), On, BitMask);
   Do_Callback(CT_CHANNEL_CHANGED, channel, oldValue, &On);
 #endif
 }
@@ -1673,7 +1671,7 @@ void MobaLedLib_C::Update()
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
 void MobaLedLib_C::Do_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue)
 {
-    //Dprintf("Do_Callback ValueId %i OldValue %i NewValue %i\n", ValueId, OldValue, *NewValue);
+    //Dprintf("Do_Callback CallbackType %d ValueId %i OldValue %i NewValue %i\n", CallbackType, ValueId, OldValue, *NewValue);
     if (CallbackFunc!=NULL) CallbackFunc(CallbackType, ValueId, OldValue, NewValue);
 }
 #endif
