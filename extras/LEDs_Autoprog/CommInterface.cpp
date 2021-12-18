@@ -31,6 +31,7 @@ Documents:
 Revision History :
 ~~~~~~~~~~~~~~~~~
 06.12.21:  Versions 1.0 (Jürgen)
+18.12.21:  fix signal reappear detection bug
 */
 
 #if defined(ESP32)
@@ -84,6 +85,11 @@ void CommInterface::processErrorLed()
   if (t >= NextCheck) // Check the Status and the error every 100 ms
   {
     NextCheck = t + 100;
+    if ((millis()-LastSignalTime) > 1000)
+    {
+      LastSignalTime = 0;
+      Error = 0;              // don't show an error when signal comes back
+    }
     if (LastSignalTime==0)   // no SX signal
     {
       Flash_Table_p = NoSignal_Flash_Table;
@@ -124,7 +130,7 @@ void CommInterface::setLastSignalTime(uint32_t lastSignalTime)
   if ((millis()-lastSignalTime) > 1000)
   {
     LastSignalTime = 0;
-    Error = 0;              // don't show an error when SX signal comes back
+    Error = 0;              // don't show an error when signal comes back
   }
   else
   {
