@@ -719,9 +719,12 @@ MobaLedLib_C::MobaLedLib_C(
   srandom(random_seed);
   random16_set_seed(random());
 #endif
-  // 18.12.2021 remove initial update to be able to set initial values after contructor and before first update run
+  
+#ifdef _NEW_INITIALIZE  
+  // 18.12.2021 remove initial update to be able to set initial values after constructor and before first update run
   //Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
-
+#endif
+  
   #ifdef _TEST_BUTTONS
     Setup_Test_Buttons();
   #endif
@@ -1032,6 +1035,7 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
       {
       ActualVar_p->Val = 0;
       }
+  ActualVar_p->Changed = 0;                                                                                   // 18.12.21: Set default to "nothing has changed"
   for (; InCh <= EndInCh; InCh++, Nr++)                                                                       // 31.05.20:  J: "<=" instead of "<" because EndInCh is now 0..63 instead of 1..64
     {
     uint8_t Inp = Get_Input(InCh);
@@ -1040,19 +1044,17 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
        {
        if (Use_LocalVar == false || ActualVar_p->Val != Nr|| Initialize)                                     // 08.06.20:
           {
-          if (Initialize&& arg & I2X_USE_START1)        // goto Mode pattern with a "off" state will initilize to "off"
-            ActualVar_p->Changed = 0;
-          else
-          ActualVar_p->Changed = 1;
+          if (!Initialize || !(arg & I2X_USE_START1))                                                        // 18.12.21: goto Mode pattern with a "off" state will initilize to "off"
+            ActualVar_p->Changed = 1;
+          
           ActualVar_p->Val = Nr;
           if (Use_LocalVar) *(rp-1) = Nr;                                                                     // 09.06.20:
           //Dprintf(" ActualVar=%i Trig\n", ActualVar_p->Val); // Debug
           }
        return ;
        }
-    }
+     }
   //Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
-  ActualVar_p->Changed = 0; // If nothing has changed
 }
 
 //-------------------------------------------------------
@@ -1083,7 +1085,10 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()
   if (ActualVar_p->Changed)
       {
       ActualVar_p->Val = Nr + Start;                                                                             // 07.05.20:  Added + Start
-      Dprintf("ActualVar=%i\n", Nr + Start);                                                                     // 31.05.20:  J: Start also added to log output
+      if (Initialize && (arg & I2X_USE_START1))                                                                  // 18.12.21: goto Mode pattern with a "off" state will initilize to "off"
+        ActualVar_p->Changed = 0;                                                                                // only set Val, but don't trigger Pattern
+
+      Dprintf("ActualVar=%d Changed=%d\n", Nr + Start, ActualVar_p->Changed);                                    // 31.05.20:  J: Start also added to log output
       }
 }
 
