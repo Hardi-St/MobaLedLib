@@ -462,6 +462,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
 
      const uint8_t *GotoTable_p;
      if (GotoMode) GotoTable_p = cp + P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2 - (LastState+1);  // 10.11.18:
+     // 18.12.21: GOTO mode Find_GotoState is moved down into "case  INP_TURNED_ON" handling, because previously Retrigger_Stop and Retrigger were not supported in GOTO mode
 
      // *** Mode flags ***
      bool Run2endAndWait = false; // Run to the end state and wait. No reaction if the switch is turned off.
@@ -499,17 +500,18 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
                                   dp->State = LastState; // Stop the state machine if the last state is not reached or restarte it if the end is reached
                              else {
                                   if (Retrigger || dp->State == PT_INACTIVE)  // Normaly Retrigger is active
-                                       {
+                                     {
 	   		                             if (GotoMode)
   				                              {
 				                                if (ActualVar_p)
 				                                   {
-				                                   if (ActualVar_p->Changed || Initialize)                                                                        // 18.01.19:  Added: "|| Initialize" otherwise State is set to PT_INACTIVE
+				                                   if (ActualVar_p->Changed || Initialize)                                                          // 18.12.21: Goto1 Patters will initialite to Goto State 0
+                                                                                                                                            // 18.01.19:  Added: "|| Initialize" otherwise State is set to PT_INACTIVE
 				                                      {                                                                                             //            which causes wrong startup values because "L1 = p.LEDs * dp->State;"
-				                                      // goto pattern init to 0 by default. 
-					                                    // But also Changed may be set to true while Initialize in case the last state is set by EEPROM stored status
-					                                    uint8_t val = (!ActualVar_p->Changed && Initialize) ? 0 : ActualVar_p->Val;
-				                                      dp->State = Find_GotoState(val, START_BIT, GotoTable_p, LastState);              //            generates garbage
+                                                                                                                              
+					                                    uint8_t val = (!ActualVar_p->Changed && Initialize) ? 0 : ActualVar_p->Val;                   // 18.12.21 goto pattern init to 0 by default. But also Changed may be set to true
+                                                                                                                                            // while Initialize in case the last state is set by EEPROM stored status
+				                                      dp->State = Find_GotoState(val, START_BIT, GotoTable_p, LastState);                           
 				                                      //if (dp->State > LastState) { dp->State = LastState; Dprintf("Goto state not found => Goto LastState\n");}
 				                                      }
 				                                   }
