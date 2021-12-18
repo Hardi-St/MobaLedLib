@@ -34,7 +34,7 @@ Revision History :
 18.12.21:  fix signal reappear detection bug
 */
 
-#if defined(ESP32)
+#if defined(ESP32) || defined (ARDUINO_RASPBERRY_PI_PICO)
 
 #include "CommInterface.h"
 #include "Helpers.h"

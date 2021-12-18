@@ -3,7 +3,11 @@
 
 #include <stdarg.h>
 #ifndef ARDUINO_RASPBERRY_PI_PICO
-#include <WString.h>
+  #include <WString.h>
+#else
+  #if defined(ARDUINO) && ARDUINO >= 100
+    #include "Arduino.h"
+  #endif
 #endif
 
 #define printf(Format, ...) printf_proc(F(Format), ##__VA_ARGS__)   // see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
