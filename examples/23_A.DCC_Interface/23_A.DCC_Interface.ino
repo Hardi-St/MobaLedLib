@@ -17,7 +17,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -187,9 +187,11 @@ Revision History :
            Versions 1.3
 18.10.20:  - Switching the external buffer gate which disables the TX pin in PCB version 1.7 (Not tested)
            Versions 1.4
+18.12.21:  - Add DCC Signal detection on Signall loss indication
+           Versions 1.5
 
 */
-#define SKETCH_VERSION "1.4"
+#define SKETCH_VERSION "1.5"
 
 #include "MobaLedLib.h"
 
@@ -223,6 +225,7 @@ volatile char    *EndSendBuffer   = SendBuffer+sizeof(SendBuffer);
 uint8_t           Error           = 0;
 uint32_t          NextStatusFlash = 0;
 uint8_t           SPI_is_Active   = 1;
+static uint32_t   LastSignalTime  = 0;
 
 //                                       States On    Off   On  Off  On   Off
 uint16_t RS232_Flash_Table[]         = { 2,     1500, 1500                     };
@@ -230,6 +233,7 @@ uint16_t SPI_Act_Flash_Table[]       = { 4,     500,  500, 500, 1500           }
 uint16_t SPI_Deact_Flash_Table[]     = { 6,     500,  500, 500, 500, 500, 1500 };
 uint16_t BufferFull_Flash_Table[]    = { 2,     250,  250                      };
 uint16_t PriorBuddFull_Flash_Table[] = { 2,     50,   450                      };
+uint16_t NoSignal_Flash_Table[]      = { 2,     50,   450                      };
 uint8_t  FlashState = 1;
 
 uint8_t LED_Arduino_signal_detected = 0;  // Activated if a signal from the LED Arduino is detected
@@ -248,6 +252,20 @@ uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port x seconds a
 #define QueueFill() ((sizemask + 1 + wp - rp) & sizemask)
 
 uint8_t Use_RS232 = 1;                    // Flag which enables the RS232 to send the DCC states to the LED Arduino
+void setLastSignalTime(uint32_t lastSignalTime) 
+{
+  if ((millis()-lastSignalTime) > 1000)
+  {
+    LastSignalTime = 0;
+    LED_Arduino_signal_detected &= ~2;
+    Error = 0;              // don't show an error when SX signal comes back
+  }
+  else
+  {
+    LED_Arduino_signal_detected |= 2;
+    LastSignalTime = lastSignalTime;
+  }
+}
 
 #if USE_SPI_SLAVE
   #define SPI_RCV_BUF_SIZE 10
@@ -273,6 +291,7 @@ uint8_t Use_RS232 = 1;                    // Flag which enables the RS232 to sen
               }
          else SPDR = 0;
          }
+    setLastSignalTime(millis());
     LED_Arduino_signal_detected |= 2;
   }
 #endif // USE_SPI_SLAVE
@@ -380,6 +399,12 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
   // printf("notifyDccSigState: %i,%02X\n", Addr, State) ;
 }
 
+//---------------------------------------------------------
+void notifyDccMsg( DCC_MSG * Msg )
+//---------------------------------------------------------
+{
+  setLastSignalTime(millis());
+}
 #if USE_SPI_SLAVE                                                                                             // 13.05.20:
    //-----------------
    void Activate_SPI()
@@ -456,12 +481,27 @@ void Process_Status_and_Error_LED()                                             
           {
           if (Error > 1)
                Flash_Table_p = BufferFull_Flash_Table;
-          else Flash_Table_p = PriorBuddFull_Flash_Table; // Prior error detected but not longer activ
+          else 
+            Flash_Table_p = PriorBuddFull_Flash_Table; // Prior error detected but not longer activ
           if (Error > 1 && LED_Arduino_signal_detected) Error--; // Decrement the error counter if the communication is working again
           }
-     else {
+    else 
+    {
           if (Use_RS232)
-               Flash_Table_p = RS232_Flash_Table;
+	    {
+	    if ((millis()-LastSignalTime) > 1000)
+	      {
+	      LastSignalTime = 0;
+	      Error = 0;              // don't show an error when signal comes back
+	      }
+	    if (LastSignalTime==0)   // no SX signal
+	      {
+	      Flash_Table_p = NoSignal_Flash_Table;
+  	      }
+	    else
+	      {
+              Flash_Table_p = RS232_Flash_Table;
+	      }
           #if USE_SPI_SLAVE
           else {
                if (SPI_is_Active)
@@ -470,6 +510,7 @@ void Process_Status_and_Error_LED()                                             
                }
           #endif
           }
+    }
 
      if (Old_Flash_Table_p != Flash_Table_p) // If the state has changed show it immediately
         {
@@ -477,7 +518,9 @@ void Process_Status_and_Error_LED()                                             
         NextStatusFlash = 0;
         FlashState = 1;
         }
+    #ifdef USE_SPI_SLAVE
      LED_Arduino_signal_detected = 0;
+    #endif
      }
   if (t >= NextStatusFlash) // Flash the status LED
      {
