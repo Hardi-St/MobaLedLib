@@ -412,14 +412,14 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
 
   if (Initialize)
      {
-     //Dprintf("Init Proc_AnalogPattern ModeAFlag %i, LEDs %i\n", ModeAFlag, pgm_read_byte_near(cp+P_PATERN_LEDS)); // Debug
-     //Dprintf("Initialize0: Inp=%i\n", Inp); // Debug
+     Dprintf("Init Proc_AnalogPattern ModeAFlag %i, LEDs %i\n", ModeAFlag, pgm_read_byte_near(cp+P_PATERN_LEDS)); // Debug
+     Dprintf("Initialize0: Inp=%i\n", Inp); // Debug
      if (Inp_Is_On(Inp))
           Inp =  INP_TURNED_ON;
      else Inp =  INP_INIT_OFF; // To initialize the LEDs to "Off" value
      dp->State = PT_INACTIVE;
-     //Dprintf("Initialize1: Inp=%i\n", Inp); // Debug
-     //if (GotoMode) Dprintf("Initialize Goto: %i Changed %i\n", ActualVar_p->Val, ActualVar_p->Changed); // Debug
+     Dprintf("Initialize1: Inp=%i\n", Inp); // Debug
+     if (GotoMode) Dprintf("Initialize Goto: %i Changed %i\n", ActualVar_p->Val, ActualVar_p->Changed); // Debug
      }
 
   if (GotoMode)
@@ -461,19 +461,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
      //if (Initialize) {Dprintf("BitMaskCnt=%i BpC=%i ", BitMaskCnt, BitsPerChannel); Dprintf("FreeBits=%i LastState=%i\n", FreeBits, LastState); }
 
      const uint8_t *GotoTable_p;
-     if (GotoMode)
-        {
-        GotoTable_p = cp + P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2 - (LastState+1);  // 10.11.18:
-        if (ActualVar_p)
-             {
-             if (ActualVar_p->Changed || Initialize)                                                          // 18.01.19:  Added: "|| Initialize" otherwise State is set to PT_INACTIVE
-                {                                                                                             //            which causes wrong startup values because "L1 = p.LEDs * dp->State;"
-                dp->State = Find_GotoState(ActualVar_p->Val, START_BIT, GotoTable_p, LastState);              //            generates garbage
-                //if (dp->State > LastState) { dp->State = LastState; Dprintf("Goto state not found => Goto LastState\n");}
-                }
-             }
-        else { if (!Initialize) Dprintf("Error: New_Local_Var() not called before the GotoMode is used in pattern function\n"); }
-        }
+     if (GotoMode) GotoTable_p = cp + P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2 - (LastState+1);  // 10.11.18:
 
      // *** Mode flags ***
      bool Run2endAndWait = false; // Run to the end state and wait. No reaction if the switch is turned off.
@@ -512,12 +500,35 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
                              else {
                                   if (Retrigger || dp->State == PT_INACTIVE)  // Normaly Retrigger is active
                                        {
-                                       if (!GotoMode)
+	   		                             if (GotoMode)
+  				                              {
+				                                if (ActualVar_p)
+				                                   {
+				                                   if (ActualVar_p->Changed || Initialize)                                                                        // 18.01.19:  Added: "|| Initialize" otherwise State is set to PT_INACTIVE
+				                                      {                                                                                             //            which causes wrong startup values because "L1 = p.LEDs * dp->State;"
+				                                      // goto pattern init to 0 by default. 
+					                                    // But also Changed may be set to true while Initialize in case the last state is set by EEPROM stored status
+					                                    uint8_t val = (!ActualVar_p->Changed && Initialize) ? 0 : ActualVar_p->Val;
+				                                      dp->State = Find_GotoState(val, START_BIT, GotoTable_p, LastState);              //            generates garbage
+				                                      //if (dp->State > LastState) { dp->State = LastState; Dprintf("Goto state not found => Goto LastState\n");}
+				                                      }
+				                                   }
+				                                else 
+                                           { if (!Initialize) Dprintf("Error: New_Local_Var() not called before the GotoMode is used in pattern function\n"); 
+                                           }
+  				                              }
+   				                           else
+ 				                                {
                                           dp->State = 0;
                                        if (AnalogMode) dp->Start_t = Timer;
-                                       //Dprintf("Start State=%i\n", dp->State+1); // Debug
-                                       }
-                                  else return;  // Don't update the LEDs and the state if Retrigger is disabled and StateP != PT_INACTIVE
+                                        }
+                                     Dprintf("Start State=%i\n", dp->State); // Debug
+                                     }
+                                  else 
+                                     {
+                                     Dprintf("Don't retrigger\n"); // Debug
+                                     return;  // Don't update the LEDs and the state if Retrigger is disabled and StateP != PT_INACTIVE
+                                     }
                                   }
                              #ifdef USE_XFADE
                                if (XFade)                                                                     // 11.10.18:
