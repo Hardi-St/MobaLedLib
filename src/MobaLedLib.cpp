@@ -720,9 +720,9 @@ MobaLedLib_C::MobaLedLib_C(
   random16_set_seed(random());
 #endif
   
-#ifdef _NEW_INITIALIZE  
+#ifndef _NEW_INITIALIZE  
   // 18.12.2021 remove initial update to be able to set initial values after constructor and before first update run
-  //Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
+  Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
 #endif
   
   #ifdef _TEST_BUTTONS
