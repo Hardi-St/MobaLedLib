@@ -406,7 +406,12 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
     union { Par_t p; uint32_t u32; }; // unnamed union                                                        // 11.10.18:  Moved up
     u32  = pgm_read_dword_near(cp+P_PATERN_LEDS); // Read LEDs, Val0, Val1, Off at once. Attention: Don't change the sequence of the parameters
     uint8_t XFade = false;
+  
+    #pragma GCC diagnostic push                                                           // 19.12.21:  Disable warning "LEDRamP uninitialized..." with ESP32 build
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     uint8_t *LEDRamStart, *LEDRamP;
+    #pragma GCC diagnostic pop
+    
     if (ModeAFlag & _PF_XFADE) { XFade = true; LEDRamStart = rp; rp += p.LEDs; }
   #endif
 
