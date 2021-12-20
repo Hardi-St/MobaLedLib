@@ -187,7 +187,7 @@ Revision History :
            Versions 1.3
 18.10.20:  - Switching the external buffer gate which disables the TX pin in PCB version 1.7 (Not tested)
            Versions 1.4
-18.12.21:  - Add DCC Signal detection on Signall loss indication
+18.12.21:  - Add DCC Signal detection on Signal loss indication
            Versions 1.5
 
 */
