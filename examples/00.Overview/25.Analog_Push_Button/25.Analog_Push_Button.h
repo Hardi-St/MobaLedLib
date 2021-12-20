@@ -130,7 +130,11 @@
 #include "Analog_Buttons10.h"
 
 #define NUM_LEDS        32  // Number of LEDs
-#define LED_DO_PIN      6   // Pin D6 is connected to the LED stripe
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
+#define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#else 
+#error this example does not support this plattform
+#endif
 #define ANA_BUTTON_PIN  A6  // Pin which is connected to the analog buttons
                             // Attention: Use an other analog input if a Arduino UNO is used.
 

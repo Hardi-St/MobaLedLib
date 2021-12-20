@@ -49,9 +49,17 @@
 #define BAUDRATE    19200
 #include "Printf.h"
 
-#define NUM_LEDS      32 // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
-#define LED_DO_PIN    6  // Pin D6 is connected to the LED stripe
-
+#define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
+#define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#elif defined(ESP32)
+#define LED_DO_PIN   27  // Pin 27 is connected to the LED stripe
+#ifndef LED_BUILTIN 
+#define LED_BUILTIN  2   // Built in LED
+#endif
+#else 
+#error this example does not support this plattform
+#endif
 
 #define PWM_BUTTON1   205
 #define PWM_SEL_LED0  225

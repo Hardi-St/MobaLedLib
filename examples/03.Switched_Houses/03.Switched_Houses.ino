@@ -117,11 +117,24 @@
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
 #define SWITCH0_PIN  7   // Pin D7 is connected to switch 0
 #define SWITCH1_PIN  8   // Pin D8 is connected to switch 1
 #define SWITCH2_PIN  9   // Pin D9 is connected to switch 2
 #define SWITCH3_PIN  10  // Pin D10 is connected to switch 3
+#elif defined(ESP32)
+#define LED_DO_PIN   27  // Pin 27 is connected to the LED stripe
+#define SWITCH0_PIN  12  // Pin 12 is connected to switch 0
+#define SWITCH1_PIN  26  // Pin 26 is connected to switch 1
+#define SWITCH2_PIN  25  // Pin 25 is connected to switch 2
+#define SWITCH3_PIN  5   // Pin 5 is connected to switch 3
+#ifndef LED_BUILTIN 
+#define LED_BUILTIN  2   // Built in LED
+#endif
+#else 
+#error this example does not support this plattform
+#endif
 
 #define INCH_HOUSE_A 0   // Define names for the input channels to be able to change them easily.
 #define INCH_HOUSE_B 1   // In this small example this is not necessary, but it's useful in a
@@ -279,4 +292,3 @@ void loop(){
            |  UNO_R3    GND MOSI 5V  ____________/
             \_______________________/
 */
-

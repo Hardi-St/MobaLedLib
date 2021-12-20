@@ -95,7 +95,16 @@
 #define SERIAL_BAUD 9600 // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#elif defined(ESP32)
+#define LED_DO_PIN   27  // Pin 27 is connected to the LED stripe
+#ifndef LED_BUILTIN 
+#define LED_BUILTIN  2   // Built in LED
+#endif
+#else 
+#error this example does not support this plattform
+#endif
 
 #define INCH0        0   // Define names for the input channels to be able to change them easily.
 #define INCH1        1   // In this small example this is not necessary, but it's useful in a

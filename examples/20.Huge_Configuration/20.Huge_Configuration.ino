@@ -113,7 +113,11 @@
 #include "Check_UpdateTime.h"
 
 #define NUM_LEDS     256 // Number of LEDs without spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#else 
+#error this example does not support this plattform
+#endif
 #define CAN_CS_PIN   10  // Pin D10 is used as chip select for the CAN bus
 
 #define LED_HEARTBEAT_PIN 17 // The build in LED can't be use because the pin is used as clock port for the SPI bus
