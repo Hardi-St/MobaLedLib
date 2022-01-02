@@ -38,9 +38,10 @@ Revision History :
 18.10.20:  Versions 1.0 (Jürgen)
 24.04.21:  Add PICO support (Jürgen)
 25.04.21:  Improve DCC signal detection and led display (Jürgen)
+02.01.21:  add support for DCC receive on LED Arduino
 */
 
-#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
+#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(__AVR__)                                  // 02.01.22: Juergen add support for DCC receive on LED Arduino
 // Disable the warning:                                                                                       // 26.12.19:
 //   ... warning: 'EEPROM' defined but not used [-Wunused-variable]
 //   static EEPROMClass EEPROM;
@@ -58,19 +59,29 @@ Revision History :
 #include "Helpers.h"
 
 static NmraDcc  Dcc ;                                // Instance of the NmraDcc class
+  
+#if defined(__AVR__)                                                                                         // 02.01.22: Juergen add support for DCC receive on LED Arduino
+  // forward declaration..
+  void Update_InputCh_if_Addr_exists(uint16_t ReceivedAddr, uint8_t Direction, uint8_t OutputPower);
+#endif
 
 //-------------------------------------------------------------------------------------
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
 //-------------------------------------------------------------------------------------
 // This function is called whenever a normal DCC Turnout Packet is received
 {
+#ifdef __AVR__                                                                                               // 02.01.22: Juergen add support for DCC receive on LED Arduino
+  Update_InputCh_if_Addr_exists(Addr, Direction, OutputPower);  
+#else
   //if (!OutputPower) return ; // debug: Simulate the Lenz LZV100 behavior which doesn't send the button release signal
 	char s[20];
   sprintf(s, "@%4i %02X %02X\n", Addr, Direction, OutputPower);
   CommInterface::addToSendBuffer(s);
   //printf("%4i notifyDccAccTurnoutOutput: %i, %i, %02X\r\n", millis(), Addr, Direction, OutputPower);
+#endif
 }
 
+#ifndef __AVR__                                                                                             // 02.01.22: Juergen add support for DCC receive on LED Arduino
 //---------------------------------------------------------
 void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 //---------------------------------------------------------
@@ -82,6 +93,7 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
   CommInterface::addToSendBuffer(s);
   //printf("notifyDccSigState: %i,%02X\r\n", Addr, State) ;
 }
+#endif
 
 void notifyDccMsg( DCC_MSG * Msg )
 {
@@ -89,12 +101,22 @@ void notifyDccMsg( DCC_MSG * Msg )
 }
 
 //-----------
-void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& stream, bool enablePullup)
+void DCCInterface::setup(
+    int DCCSignalPin, 
+    int statusLedPin, 
+#if !defined(__AVR__)                                                                                      // 02.01.22: Juergen add support for DCC receive on LED Arduino
+    InMemoryStream& stream, 
+#endif
+    bool enablePullup)
 {
 //-----------
   
+#if !defined(__AVR__)                                                                                     // 02.01.22: Juergen add support for DCC receive on LED Arduino
   CommInterface::setup(statusLedPin, stream);
+#else
+  CommInterface::setup(statusLedPin);
 
+#endif  
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
   Dcc.pin(DCCSignalPin, enablePullup ? 1 : 0);
 
@@ -103,7 +125,7 @@ void DCCInterface::setup(int DCCSignalPin, int statusLedPin, InMemoryStream& str
 
   //addToSendBuffer("Init Done\r\n"); // This message is send to the LED Arduino over RS232 or SPI (If the Arduino is already active)
   
-  printf("DCCInterface using pin %d has been started.\r\n", DCCSignalPin);
+  //printf("DCCInterface using pin %d has been started.\r\n", DCCSignalPin);
 }
 
 //-----------
