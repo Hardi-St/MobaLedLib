@@ -508,6 +508,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
                                      {
 	   		                             if (GotoMode)
   				                              {
+
 				                                if (ActualVar_p)
 				                                   {
 				                                   if (ActualVar_p->Changed || Initialize)                                                          // 18.12.21: Goto1 Patters will initialite to Goto State 0
@@ -527,8 +528,8 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
    				                           else
  				                                {
                                           dp->State = 0;
-                                       if (AnalogMode) dp->Start_t = Timer;
                                         }
+                                     if (AnalogMode) dp->Start_t = Timer;
                                      Dprintf("Start State=%i\n", dp->State); // Debug
                                      }
                                   else 
