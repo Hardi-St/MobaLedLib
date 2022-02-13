@@ -4,7 +4,7 @@
 #if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
 
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
+#include <Arduino.h>
 #endif
 
 class InMemoryStream

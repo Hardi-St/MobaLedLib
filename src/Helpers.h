@@ -6,7 +6,7 @@
   #include <WString.h>
 #else
   #if defined(ARDUINO) && ARDUINO >= 100
-    #include "Arduino.h"
+    #include <Arduino.h>
   #endif
 #endif
 
