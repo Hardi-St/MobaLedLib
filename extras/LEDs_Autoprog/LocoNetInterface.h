@@ -62,7 +62,7 @@ Revision History :
 #endif
 
 #ifdef LOCONET_USE_SOCKET
-#include "WiFi.h"
+#include <WiFi.h>
 #endif
 
 #include <LocoNetStream.h>

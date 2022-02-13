@@ -30,7 +30,7 @@
 */
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
-#include "Arduino.h"
+#include <Arduino.h>
 #include "PicoFastLED.h"
 #include <hardware/clocks.h>
 #include <hardware/pio.h>
