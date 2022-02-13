@@ -41,11 +41,11 @@
   #define USE_WIFI
   #endif
   #include <ArduinoOTA.h>
-  #ifndef WIFI_DNS_NAME 
-    #define WIFI_DNS_NAME "MobaLedLib"
-  #endif
 #endif
 #ifdef USE_WIFI
+  #ifndef WIFI_DNS_NAME 
+    #define WIFI_DNS_NAME "MobaLedLib"
+#endif
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
