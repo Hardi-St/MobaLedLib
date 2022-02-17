@@ -548,8 +548,8 @@ InMemoryStream stream(256);
 CommInterface* commInterface;
 #endif
 
-#if defined(USE_MLL_EXTENSIONS)
-ExtensionProcessor extensions(mllExtensions,MLL_EXTENSION_COUNT);
+#if defined(MLL_EXTENSIONS_COUNT)
+ExtensionProcessor extensions(mllExtensions,MLL_EXTENSIONS_COUNT);
 #endif
 bool Send_Disable_Pin_Active = 1;                                                                             // 13.05.20:
 
@@ -1703,7 +1703,7 @@ void setup(){
   dmxInterface.setup(USE_DMX_PIN,&(leds[DMX_LED_OFFSET].r), DMX_CHANNEL_COUNT);
 #endif
 
-#if defined(USE_MLL_EXTENSIONS)
+#if defined(MLL_EXTENSIONS_COUNT)
   extensions.setup(MobaLedLib);
 #endif  
   //Eigene_setup();
@@ -2092,7 +2092,7 @@ void loop(){
 #ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low prority loop, on multicore platforms running on seperate core 
   Additional_Loop_Proc2();                                                                                        // 26.09.21: Juergen
 #endif
-#if defined(USE_MLL_EXTENSIONS)
+#if defined(MLL_EXTENSIONS_COUNT)
   extensions.loop(MobaLedLib);
 #endif  
 }
@@ -2108,7 +2108,7 @@ void MLLTask( void * parameter ) {
 #endif
     yield();
     delay (1);
-#if defined(USE_MLL_EXTENSIONS)
+#if defined(MLL_EXTENSIONS_COUNT)
     extensions.loop2(MobaLedLib);
 #endif  
   }
