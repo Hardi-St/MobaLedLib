@@ -1461,6 +1461,7 @@ private: // Variables
    const uint8_t     *TV_Dat_p[_TV_CHANNELS];
 #endif
 
+friend class MLLExtension;
 }; // class MobaLedLib_C
 
 

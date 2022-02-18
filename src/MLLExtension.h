@@ -50,6 +50,11 @@ class MLLExtension
     // On multicore CPUs the additional loop. FastLED and MobaLedLib is always processed in main (=other) loop
     virtual void loop2(MobaLedLib_C& mobaLedLib) {};
 #endif    
+  protected:
+    CRGB* Get_LEDPtr(MobaLedLib_C& mobaLedLib, ledNr_t ledNr)
+    {
+        return &mobaLedLib.leds[ledNr];
+    };
 };
 
 class ExtensionProcessor
