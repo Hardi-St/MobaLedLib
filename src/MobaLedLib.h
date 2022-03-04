@@ -33,6 +33,7 @@
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
+#ifndef CONFIG_ONLY
 #ifdef ARDUINO_RASPBERRY_PI_PICO
 #include "PicoFastLED.h"				// Juergen: a small self made implementation of FastLED for PICO (only FastLED code needed by MLL)
 #else
@@ -42,6 +43,7 @@
                                 //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                                 //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
+#endif
 #endif
 #include "Dprintf.h"            // Debug Ausgaben
 
@@ -893,8 +895,11 @@
 #define EndCfg END_T
 
 
-
+#ifdef CONFIG_ONLY
+#define MobaLedLib_Configuration()          const unsigned char Config[] __attribute__ ((section (".MLLLedConfig"))) =
+#else
 #define MobaLedLib_Configuration()          const PROGMEM unsigned char Config[] =
+#endif
 
 #define MobaLedLib_Prepare()             MobaLedLib_C* pMobaLedLib; \
                                          uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/                                         
