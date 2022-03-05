@@ -756,7 +756,7 @@ void Receive_LED_Color_per_RS232()                                              
                              }
                        }
                   }
-             // Addr dosn't match => Check the next possible address / InTyp for this entry
+             // Addr doesn't match => Check the next possible address / InTyp for this entry
              //Serial.print("Don't match In="); Serial.println(In); // Debug
              Channel++;
              In++;
