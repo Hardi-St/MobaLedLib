@@ -37,6 +37,7 @@ Revision History :
 #else
   #include <Arduino.h>
 #endif
+#include "Helpers.h"
 
 class CommInterface
 {
@@ -47,15 +48,18 @@ private:
 
 public:
   virtual void	process();
+#if !defined(__AVR__)                                                                                     // 02.01.22: Juergen add support for DCC receive on LED Arduino
+  static void   addToSendBuffer(const char *s);
+#endif
+  static void   setLastSignalTime(unsigned long lastSignalTime);
 
+protected:
 // dual core CPUs use a stream to exchange data between cores
 #if !defined(__AVR__)                                                                                     // 02.01.22: Juergen add support for DCC receive on LED Arduino
   virtual void	setup(int statusLedPin, InMemoryStream& stream);
-  static void   addToSendBuffer(const char *s);
 #else
   virtual void	setup(int statusLedPin);
 #endif
-  static void   setLastSignalTime(unsigned long lastSignalTime);
 
 private:	
   static void   processErrorLed();
