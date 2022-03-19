@@ -310,6 +310,43 @@ void AddToSendBuffer(const char *s)
     if (DisableSerial != SERIAL_DISABLED) DisableSerial = millis() + 10 * QueueFill();
 }
 
+#include <stdarg.h>
+#include <WString.h>
+
+#define printf(Format, ...) printf_proc(F(Format), ##__VA_ARGS__)   // see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
+
+//-------------------------------------------------------
+void printf_proc(const __FlashStringHelper *format, ...)
+//-------------------------------------------------------
+// Achtung: Es durfen keine Zeichen ueber die serielle Schnittstelle ausgegeben werden wenn der LED Arduino
+//          programmiert wird und die Beiden ueber die TX Leitung verbunden sind. Die serielle Schnittstelle
+//          muss nach jeder Ausgabe abgeschaltet werden. Sonst zieht der TX Ausgang dieses Nanos die
+//          RX Leitung des LED Arduinos auf 5V.
+//          Bei der normalen Kommunikation wird das ueber die A1 Leitung zwischen den beiden Rechnern gesteuert.
+//          Wenn der SPI Mode aktiviert ist, dann wird die A1 Leitung als Input geschaltet damit sie auf dem
+//          LED Arduino als Eingang fuer die Schalter genutzt werden kann.
+{
+  if (Use_RS232 || (millis() - Last_SPI_Signal < 100))
+     {
+     char buf[50];
+     va_list ap;
+     va_start(ap, format);
+     #ifdef __AVR__
+        vsnprintf_P(buf, sizeof(buf), (const char *)format, ap); // progmem for AVR
+     #else
+        vsnprintf  (buf, sizeof(buf), (const char *)format, ap); // for the rest of the world
+     #endif
+     va_end(ap);
+     if (DisableSerial == SERIAL_DISABLED)
+         {
+         digitalWrite(BUF_GATE_PIN, 0); // enable the external buffer gate for the TX pin                     // 18.10.20:
+         Serial.begin(SERIAL_BAUD);
+         DisableSerial = millis() + 10 * strlen(buf);
+         }
+     Serial.print(buf);
+     }
+}
+
 //---------------------------------
 void Transmit_Sendchar_if_waiting()
 //---------------------------------
