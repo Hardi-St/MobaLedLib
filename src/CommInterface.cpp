@@ -36,7 +36,6 @@ Revision History :
 */
 
 #include "CommInterface.h"
-#include "Helpers.h"
 
 static uint8_t       Error               = 0;             
 static unsigned long NextStatusFlash     = 0;

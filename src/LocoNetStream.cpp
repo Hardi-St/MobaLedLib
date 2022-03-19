@@ -70,6 +70,7 @@
 #include "utility/ln_sw_uart.h"
 #include "utility/ln_config.h"
 #include "utility/utils.h"
+#include "Helpers.h"
 
 extern LN_STATUS sendLocoNetPacketTry(lnMsg *TxData, unsigned char ucPrioDelay);
 
@@ -358,8 +359,8 @@ uint8_t LocoNetClass::processSwitchSensorMessage( lnMsg *LnPacket )
   Address = (LnPacket->srq.sw1 | ( ( LnPacket->srq.sw2 & 0x0F ) << 7 )) ;
   if( LnPacket->sr.command != OPC_INPUT_REP )
     Address++;
-	Serial.print("Process Command:");
-	Serial.println(LnPacket->sr.command, HEX);
+  
+  if_printf("Process Command: %d\r\n", LnPacket->sr.command, HEX);
   switch( LnPacket->sr.command )
   {
   case OPC_INPUT_REP:

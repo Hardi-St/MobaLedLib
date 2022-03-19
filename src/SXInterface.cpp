@@ -65,7 +65,7 @@ void SXInterface::setup(int SXSignalPin, int SXClockPin, int statusLedPin, InMem
 
   attachInterrupt(digitalPinToInterrupt(SXClockPin), SXInterface::isr, RISING);      // only the rising edge may be triggered
   
-  printf("SXInterface using pin %d/%4 has been started.\r\n", SXSignalPin, SXClockPin);
+  if_printf("SXInterface using pin %d/%4 has been started.\r\n", SXSignalPin, SXClockPin);
 }
 
 void SXInterface::isr()

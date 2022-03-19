@@ -77,7 +77,7 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
 	char s[20];
   sprintf(s, "@%4i %02X %02X\n", Addr, Direction, OutputPower);
   CommInterface::addToSendBuffer(s);
-  //printf("%4i notifyDccAccTurnoutOutput: %i, %i, %02X\r\n", millis(), Addr, Direction, OutputPower);
+  if_printf("%4i notifyDccAccTurnoutOutput: %i, %i, %02X\r\n", millis(), Addr, Direction, OutputPower);
 #endif
 }
 
@@ -91,7 +91,7 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
   char s[20];
   sprintf(s, "$%4i %02X\n", Addr, State); // Bei der CAN Geschichte hab ich herausgefunden dass es 2048 Adressen gibt. Ich hoffe das stimmt...
   CommInterface::addToSendBuffer(s);
-  //printf("notifyDccSigState: %i,%02X\r\n", Addr, State) ;
+  if_printf("notifyDccSigState: %i,%02X\r\n", Addr, State) ;
 }
 #endif
 
@@ -125,7 +125,7 @@ void DCCInterface::setup(
 
   //addToSendBuffer("Init Done\r\n"); // This message is send to the LED Arduino over RS232 or SPI (If the Arduino is already active)
   
-  //printf("DCCInterface using pin %d has been started.\r\n", DCCSignalPin);
+  if_printf("DCCInterface using pin %d has been started.\r\n", DCCSignalPin);
 }
 
 //-----------
