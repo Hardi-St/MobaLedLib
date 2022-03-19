@@ -50,22 +50,23 @@ A "Non Disclosure Agreement" is not required for use of LocoNet Personal Edition
 
 */
 
+#define DEBUG_PACKET
 #ifdef ESP32
 #include "LocoNetInterface.h"
+#include "Helpers.h"
 
-#define printf(Format, ...) printf_proc(F(Format), ##__VA_ARGS__)   // see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
-extern void printf_proc(const __FlashStringHelper *format, ...);
 
 #ifdef LOCONET_USE_SOCKET
 WiFiClient locoNetClient;
 #endif
 
+#if !defined(LOCONET_NO_EEPROM)
 LocoNetSystemVariableClass LocoNetSV;
+#endif
 LocoNetFastClockClass LocoFCClass;
-InMemoryStream* LocoNetInterface::pStream = 0;
 
-void LocoNetInterface::setup(InMemoryStream& stream) {
-	LocoNetInterface::pStream = &stream;
+void LocoNetInterface::setup(int DCCSignalPin, InMemoryStream& stream) {
+  CommInterface::setup(DCCSignalPin, stream);
 #ifdef LOCONET_USE_SOCKET
 	locoNetServer.begin(1001);
 #endif
@@ -74,7 +75,7 @@ void LocoNetInterface::setup(InMemoryStream& stream) {
 SV_STATUS SvStatus ;
 bool powerIsOn = false;
 
-void LocoNetInterface::loop()
+void LocoNetInterface::process()
 {
 #ifdef LOCONET_USE_SOCKET
 	if (!locoNetClient) locoNetClient = locoNetServer.available();	
@@ -82,7 +83,7 @@ void LocoNetInterface::loop()
 		if (!locoNetClient.connected())
 		{
 			locoNetClient.stop();
-			printf("LocoNetClient disconnected\n");
+			if_printf("LocoNetClient disconnected\n");
 			return;
 		}
 	}
@@ -101,23 +102,25 @@ void LocoNetInterface::handlePacket(lnMsg *LnPacket)
 	// First print out the packet in HEX
 
 #ifdef DEBUG_PACKET
-	printf("RX: ");
+	if_printf("RX: ");
 	uint8_t msgLen = getLnMsgSize(LnPacket);
 	for (uint8_t x = 0; x < msgLen; x++)
 	{
 	  uint8_t val = LnPacket->data[x];
  
-	  printf("%02X ", val);
+	  if_printf("%02X ", val);
 	}
-	printf("Command: %02X\n", LnPacket->sr.command);
+	if_printf("Command: %02X\n", LnPacket->sr.command);
 #endif	
 	// mirror the message
 	LocoNetStream.send(LnPacket);
+#if !defined(LOCONET_NO_EEPROM)
 	if( LocoNetSV.processMessage( LnPacket ) == SV_DEFERRED_PROCESSING_NEEDED)
 	  SvStatus = SV_DEFERRED_PROCESSING_NEEDED;
 
 	if(SvStatus == SV_DEFERRED_PROCESSING_NEEDED)
 	  SvStatus = LocoNetSV.doDeferredProcessing();
+#endif  
 
 	LocoFCClass.processMessage( LnPacket );
 
@@ -151,7 +154,7 @@ void LocoNetInterface::send(byte out)
 }
 
 void notifyPower (uint8_t Power) {
-	if (Power) printf("Power ON\n"); else printf("Power OFF\n");
+	if (Power) if_printf("Power ON\n"); else if_printf("Power OFF\n");
   powerIsOn = Power !=0;
 }
 
@@ -181,36 +184,28 @@ LN_STATUS sendLocoNetPacketTry(lnMsg *TxData, unsigned char ucPrioDelay)
   return LN_DONE;
 }
 
-//---------------------------------
-void LocoNetInterface::addToSendBuffer(const char *s)
-//---------------------------------
-// Attention this is called in the interrupt
-{
-	pStream->write(s);
-}
-
-// This call-back function is called from LocoNetStream.processSwitchSensorMessage
+// This call-back function is called from LocoNet.processSwitchSensorMessage
 // for all Sensor messages
 void notifySensor( uint16_t Address, uint8_t State ) {
-  //printf("Sensor: ");
+  //if_printf("Sensor: ");
   //Serial.print(Address, DEC);
   //Serial.print(" - ");
   //Serial.println( State ? "Active" : "Inactive" );
 }
 
-// This call-back function is called from LocoNetStream.processSwitchSensorMessage
+// This call-back function is called from LocoNet.processSwitchSensorMessage
 // for all Switch Request messages
 void notifySwitchRequest( uint16_t Address, uint8_t Output, uint8_t Direction ) {
-  printf("Switch Request: %d:%d - %d\n", Address, Direction, Output);
+  if_printf("Switch Request: %d:%d - %d\n", Address, Direction, Output);
 	char s[20];
   sprintf(s, "@%4i %02X %02X\n", Address, Direction, Output);
-	LocoNetInterface::addToSendBuffer(s);
+	CommInterface::addToSendBuffer(s);
 }
 
-// This call-back function is called from LocoNetStream.processSwitchSensorMessage
+// This call-back function is called from LocoNet.processSwitchSensorMessage
 // for all Switch Output Report messages
 void notifySwitchOutputsReport( uint16_t Address, uint8_t ClosedOutput, uint8_t ThrownOutput) {
-  //printf("Switch Outputs Report: ");
+  //if_printf("Switch Outputs Report: ");
   // Serial.print(Address, DEC);
   // Serial.print(": Closed - ");
   // Serial.print(ClosedOutput ? "On" : "Off");
@@ -218,10 +213,10 @@ void notifySwitchOutputsReport( uint16_t Address, uint8_t ClosedOutput, uint8_t 
   // Serial.println(ThrownOutput ? "On" : "Off");
 }
 
-// This call-back function is called from LocoNetStream.processSwitchSensorMessage
+// This call-back function is called from LocoNet.processSwitchSensorMessage
 // for all Switch Sensor Report messages
 void notifySwitchReport( uint16_t Address, uint8_t State, uint8_t Sensor ) {
-  //printf("Switch Sensor Report: ");
+  //if_printf("Switch Sensor Report: ");
   // Serial.print(Address, DEC);
   // Serial.print(':');
   // Serial.print(Sensor ? "Switch" : "Aux");
@@ -229,10 +224,10 @@ void notifySwitchReport( uint16_t Address, uint8_t State, uint8_t Sensor ) {
   // Serial.println( State ? "Active" : "Inactive" );
 }
 
-// This call-back function is called from LocoNetStream.processSwitchSensorMessage
+// This call-back function is called from LocoNet.processSwitchSensorMessage
 // for all Switch State messages
 void notifySwitchState( uint16_t Address, uint8_t Output, uint8_t Direction ) {
-  //printf("Switch State: ");
+  //if_printf("Switch State: ");
   // Serial.print(Address, DEC);
   // Serial.print(':');
   // Serial.print(Direction ? "Closed" : "Thrown");

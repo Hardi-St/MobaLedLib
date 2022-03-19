@@ -194,7 +194,7 @@ void setupESP32Extensions() {
 	}
 #endif
 #ifdef USE_LOCONET
-	interface.setup(stream);
+	interface.setup(2 /*Built in LED*/, stream);
 #endif
 #endif
 }
@@ -222,7 +222,7 @@ void loopESP32Extensions() {
 	#endif
 
 	#ifdef USE_LOCONET
-	interface.loop();
+	interface.process();
 	#endif	
 #endif	
 
