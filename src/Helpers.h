@@ -2,12 +2,13 @@
 #define HELPERS_H
 
 #include <stdarg.h>
-#ifdef ARDUINO_RASPBERRY_PI_PICO
+
+#ifndef ARDUINO_RASPBERRY_PI_PICO
   #include <WString.h>
-#else
-  #if defined(ARDUINO) && ARDUINO >= 100
-    #include <Arduino.h>
-  #endif
+#endif
+
+#if defined(ARDUINO) && ARDUINO >= 100
+  #include <Arduino.h>
 #endif
 
 //#define _DEBUG_INTERFACE
