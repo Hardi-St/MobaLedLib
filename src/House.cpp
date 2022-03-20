@@ -200,9 +200,9 @@ uint8_t MobaLedLib_C::Get_RawNr(uint8_t Room_Typ)
 {
   switch (Room_Typ)
     {                                                                                            // 06.09.19:  Added SINGLE_LEDxy
-    case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: case SINGLE_LED1: case SINGLE_LED1D: return 0;
-    case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: case SINGLE_LED2: case SINGLE_LED2D: return 1;
-    case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case SINGLE_LED3: case SINGLE_LED3D: return 2;
+    case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: case NEON_LIGHT1L: case SINGLE_LED1: case SINGLE_LED1D: return 0;
+    case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: case NEON_LIGHT2L: case SINGLE_LED2: case SINGLE_LED2D: return 1;
+    case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case NEON_LIGHT3L: case SINGLE_LED3: case SINGLE_LED3D: return 2;
 #if _USE_DEF_NEON                                                                                             // 13.01.20:
     case NEON_DEF1D:  case NEON_DEF2D:  case NEON_DEF3D:  return Room_Typ - NEON_DEF1D; // ToDo: Integerate to the lines above if _USE_DEF_NEON is always active
 #endif
