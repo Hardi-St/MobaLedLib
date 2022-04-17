@@ -29,11 +29,17 @@
 
 int main()
 {
-#ifdef USE_EXT_ADDR
-  return (int)&Config[0]+(int)&Ext_Addr[0];
+#if defined(USE_EXT_ADDR)
+    int ex = (int)&Ext_Addr[0];
 #else
-  return (int)&Config[0];
+    int ex = 0;
 #endif
+#if defined(USE_LED_TO_VAR)
+    int ldv = (int)&LED2Var_Tab[0];
+#else
+    int ldv = 0;
+#endif
+  return (int)&Config[0]+ex+ldv;
 }
 /*
 //-----------

@@ -22,6 +22,8 @@ Rem "%toolPath%/avr-readelf" -a "%scriptDir%Configuration.elf" >"%scriptDir%Conf
 if errorlevel 1 goto :error
 "%toolPath%/avr-objcopy" -O binary -j .MLLAddressConfig "%scriptDir%Configuration.elf" "%scriptDir%AddressConfig.bin"
 if errorlevel 1 goto :error
+"%toolPath%/avr-objcopy" -O binary -j .MLLL2VConfig "%scriptDir%Configuration.elf" "%scriptDir%L2VConfig.bin"
+if errorlevel 1 goto :error
 if exist %errorfile% del  %errorfile%
 goto :eof
 
