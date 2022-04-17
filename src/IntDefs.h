@@ -128,13 +128,13 @@
 
 #define P_RANDMUX_DSTVAR1      0
 #define P_RANDMUX_DSTVARN      1
-#define P_RANDMUX_INP          (P_INPCHANEL_W_CM+ADD_WORD_OFFSET)   // 2
-#define P_RANDMUX_MODE         (3+ADD_WORD_OFFSET)
-#define P_RANDMUX_MINTIME_L    (4+ADD_WORD_OFFSET)
-#define P_RANDMUX_MINTIME_H    (5+ADD_WORD_OFFSET)
-#define P_RANDMUX_MAXTIME_L    (6+ADD_WORD_OFFSET)    // must be direct after P_RANDMUX_MINTIME_H
-#define P_RANDMUX_MAXTIME_H    (7+ADD_WORD_OFFSET)
-#define EP_RANDMUX_INCREMENT   (8+ADD_WORD_OFFSET)    // Insert additional parameters before
+#define P_RANDMUX_INP          (P_INPCHANEL_W_CM)   // 2
+#define P_RANDMUX_MODE         (3)
+#define P_RANDMUX_MINTIME_L    (4)
+#define P_RANDMUX_MINTIME_H    (5)
+#define P_RANDMUX_MAXTIME_L    (6)    // must be direct after P_RANDMUX_MINTIME_H
+#define P_RANDMUX_MAXTIME_H    (7)
+#define EP_RANDMUX_INCREMENT   (8)    // Insert additional parameters before
 
 
 #define P_WELDING_LED          0
