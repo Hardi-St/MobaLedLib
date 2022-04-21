@@ -1423,7 +1423,7 @@ private: // Variables
  void               IncCP_Const()         { cp += 5 + ADD_WORD_OFFSET; }
  void               IncCP_Fire()          { cp += 4 + ADD_WORD_OFFSET; }
  #ifdef _NEW_ROOM_COL
-   void             IncCP_Set_ColTab()    { cp += ADD_WORD_OFFSET + ROOM_COL_CNT*3; }
+   void             IncCP_Set_ColTab()    { cp += ROOM_COL_CNT*3; }
    bool             Cmp_Room_Col(CRGB *lp, uint8_t ColorNr);
    uint8_t          Get_Room_Col1(uint8_t ColorNr, uint8_t Channel);
    void             Copy_Room_Col(CRGB *Dst, uint8_t ColorNr);
