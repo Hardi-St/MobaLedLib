@@ -418,43 +418,11 @@ Benoetig als 142 byte
 
 #ifdef USE_CAN_AS_INPUT
   #ifdef ESP32
-	  #include "CAN.h"			   // The Sandeep Mistry library must be installed (0.3.1)
+	  #include "MLL_CAN/CAN.h"			   // It's a pachted copy of the Sandeep Mistry library (0.3.1)
 	  
-	  // START Workaround for filterExtended bug in Mistry library (0.3.1)
-	  #define REG_BASE                   0x3ff6b000
-	  #define REG_MOD                    0x00
-	  #define REG_ACRn(n)                (0x10 + n)
-	  #define REG_AMRn(n)                (0x14 + n)
 	  
-	  void writeRegister(uint8_t address, uint8_t value)
-	  {
-	    volatile uint32_t* reg = (volatile uint32_t*)(REG_BASE + address * 4);
-	    *reg = value;
-	  }
 	  
-	  void modifyRegister(uint8_t address, uint8_t mask, uint8_t value)
-	  {
-	    volatile uint32_t* reg = (volatile uint32_t*)(REG_BASE + address * 4);
-	    *reg = (*reg & ~mask) | value;
-	  }
 	  
-	  int filterExtended(long id, long mask)
-	  {
-	    id &= 0x1FFFFFFF;
-	    mask = ~(mask & 0x1FFFFFFF);
-	    modifyRegister(REG_MOD, 0x17, 0x01); // reset
-	    writeRegister(REG_ACRn(0), id >> 21);
-	    writeRegister(REG_ACRn(1), id >> 13);
-	    writeRegister(REG_ACRn(2), id >> 5);
-	    writeRegister(REG_ACRn(3), id << 5);
-	    writeRegister(REG_AMRn(0), mask >> 21);
-	    writeRegister(REG_AMRn(1), mask >> 13);
-	    writeRegister(REG_AMRn(2), mask >> 5);
-	    writeRegister(REG_AMRn(3), (mask << 5) |0x1f);
-	    modifyRegister(REG_MOD, 0x17, 0x00); // normal
-	    return 1;
-	  }
-	  // END Workaround for filterExtended bug in Mistry library (0.3.1)
 	  
   #else
 	  #include "mcp_can_nd.h"      // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can_nd.h: No such file or directory"
@@ -1449,18 +1417,17 @@ void setup(){
 		CAN.setPins(4, 5);																						// 08.03.21 Juergen
 		if (CAN.begin(250E3)) 
 			 {
-			 //if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 08.03.21 Juergen: the original implementation of filterExtended has a bug, so need to do it outselfs
-			 if (filterExtended(0x160000, 0x1FFF0000))
-			 {
+			 if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 13.07.22 Juergen: use library function again
+			     {
 			 	 Serial.println(F("Filter OK!"));
-			 }
+    		     Serial.println(F("CAN Init OK!"));
+                 CAN_ok = true;
+			     }
 			 else
-			 {
+			     {
 			 	 Serial.println(F("Filter failed!"));
-			 }
-			 
-    		 Serial.println(F("CAN Init OK!"));
-			 CAN_ok = true;
+                 CAN_ok = false;
+			     }
 			 }
 	#else
 		if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz

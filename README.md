@@ -60,6 +60,21 @@ Questions / suggestions / praise / ...
 
 **Revision History:**
 
+**Ver.: 3.2.0** xx.08.22:
+
+*Features*
+- LED simulator 
+- Selectrix support for ESP32
+- ColorPicker for Const Makro
+- Macro RGB_Heartbeat_Color
+- MobaLedLib Extensions support
+
+*Bugfixes*
+- fix CAN baudrate issue with ESP32 V1 chips
+- fix ESP32 build issue with non-default arduino home directory
+- fix issue in case Arduino home directory doesn't exist
+- add missing macros InCh_toTmpVar1 and BinCh_toTmpVar1
+
 
 **Ver.: 3.1.0** 28.11.21:
 
