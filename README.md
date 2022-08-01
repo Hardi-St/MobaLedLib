@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.1.0: Improved macro selection dialog with icons and grouping, Mainboard sound module support, MP3 module via ATTiny, bugfixes**
+**New in release 3.2.0: LED simulator, Selectrix support for ESP32, bugfixes**
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
