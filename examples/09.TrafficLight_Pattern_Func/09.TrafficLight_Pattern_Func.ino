@@ -212,8 +212,18 @@
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
 #define SWITCH_PIN   7   // Pin D7 is connected to the switch
+#elif defined(ESP32)
+#define LED_DO_PIN   27  // Pin 27 is connected to the LED stripe
+#define SWITCH_PIN   12  // Pin 12 is connected to the switch
+#ifndef LED_BUILTIN 
+#define LED_BUILTIN  2   // Built in LED
+#endif
+#else 
+#error this example does not support this plattform
+#endif
 
 
 // *** Macro definitions ***

@@ -24,7 +24,7 @@
 #ifndef DMXINTERFACE_H
 #define DMXINTERFACE_H
 
-#include "Arduino.h"
+#include <Arduino.h>
 
 #ifdef ESP32
 #include <driver/uart.h>

@@ -56,6 +56,7 @@
 
 #define _NEW_ROOM_COL // Saves 162 Byte FLASH and 43 Bytes RAM
 
+#define _NEW_INITIALIZE                 // allows to restore input state after constructor before first initialize run    
 
 
 // Memory usage tests / optimisation                  Flash  Ram   Attention _PRINT_DEBUG_MESSAGES must be disabled

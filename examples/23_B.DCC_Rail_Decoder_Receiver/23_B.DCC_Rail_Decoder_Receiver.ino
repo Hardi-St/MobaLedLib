@@ -152,7 +152,11 @@
 #define LED_HEARTBEAT_PIN     13
 
 #define NUM_LEDS              64  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN            6   // Pin D6 is connected to the LED stripe
+#else 
+#error this example does not support this plattform
+#endif
 
 // Define which accessoires CAN messages should be used.
 #define DCC_FIRST_LOC_ID      1                      // First local ID which should be copied to the InpStructArray[] of the MobaLedLib

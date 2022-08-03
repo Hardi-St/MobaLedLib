@@ -37,7 +37,7 @@
   void Dprintf_proc(const __FlashStringHelper *format, ...)  // uses 812 byte FLASH and 173 Bytes RAM if enabled ;-(
   //-------------------------------------------------------
   {
-    char buf[50];
+    char buf[80];
     va_list ap;
     va_start(ap, format);
     #ifdef __AVR__

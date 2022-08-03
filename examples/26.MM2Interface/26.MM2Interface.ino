@@ -1,9 +1,13 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#include <MaerklinMotorola.h>
-#pragma GCC diagnostic pop
 
+
+#include <MaerklinMotorola.h> // The MaerklinMotorola library must be installed in addition if you got the error message "..fatal error: MaerklinMotorola: No such file or directory"
+                              // Download the ZIP file from https://github.com/oliwel/MaerklinMotorola/
+                              // Arduino IDE: Sketch / Include library / Add .ZIP library...                 Deutsche IDE: Sketch / Bibliothek einbinden / .ZIP Bibliothek hinzufuegen...
+                              //              Navigate to the download directory and select the file                       Zum Download Verzeichnis werchseln und die Datei auswaehlen
+#pragma GCC diagnostic pop
 
 /*
  MobaLedLib: LED library for model railways

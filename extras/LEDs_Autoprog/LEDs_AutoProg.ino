@@ -249,6 +249,8 @@
  14.09.21:  - Juergen: add signalling of DCC status with ESP32 onboard led
  29.09.21:  - Juergen: add new feature to enable processing of extra commands outside the core library
  12.10.21:  - Juergen: add new feature to control sound modules attached to the mainboard  (currently limited to Arduino Nano and JQ6500)
+ 02.01.22:  - Juergen add support for DCC receive on LED Arduino
+ 02.01.22:  - improve ESP32/PICO EEProm handling
 */
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
@@ -270,18 +272,34 @@
 
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   #include "esp_task_wdt.h"																					  // 05.03.21: Juergen - needed to reset watchdog timer while Farbtest is active
-  #define USE_DCC_INTERFACE
-  #define DCC_STATUS_PIN  2  // Build in LED
-  #include "DCCInterface.h"
-  #include "InMemoryStream.h"
-
+  #include <EEPROM.h>
   #define EEPROM_SIZE 512			// maximum size of the eeprom
   //#define EEPROM_OFFSET 0			// (the first 96 byte are reserved for WIFI configuration)  // 28.11.2020 comment out -> WIFI config no longer stored in EEPROM
+  #ifdef USE_SX_INTERFACE
+    #define SX_SIGNAL_PIN 4
+    #define SX_CLOCK_PIN 13
+    #define SX_STATUS_PIN  2  // Built in LED
+    #include "SXInterface.h"
+    #define USE_COMM_INTERFACE
+  #else
+    #define USE_DCC_INTERFACE
+    #define DCC_STATUS_PIN  2  // Built in LED
+    #include "DCCInterface.h"
+    #define DCC_SIGNAL_PIN   13
+    #define USE_COMM_INTERFACE
+  #endif
+  #include "InMemoryStream.h"
+
   #ifdef USE_SPI_COM
 	#error "USE_SPI_COM can't be used on ESP32 platform"
   #endif
-  #define DCC_SIGNAL_PIN   13
   
+#endif
+#ifdef USE_DCC_INTERFACE
+  #ifndef USE_COMM_INTERFACE
+    #define USE_COMM_INTERFACE
+  #endif
+  #include "DCCInterface.h"
 #endif
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
@@ -290,6 +308,7 @@
   const uint NUM_LEDS_TO_EMULATE = 1;
   #include "ws2811.hpp"
   #define USE_DCC_INTERFACE
+  #define USE_COMM_INTERFACE
   #define DCC_STATUS_PIN  LED_BUILTIN
   #include "DCCInterface.h"
   #include "InMemoryStream.h"
@@ -399,43 +418,11 @@ Benoetig als 142 byte
 
 #ifdef USE_CAN_AS_INPUT
   #ifdef ESP32
-	  #include "CAN.h"			   // The Sandeep Mistry library must be installed (0.3.1)
+	  #include "MLL_CAN/CAN.h"			   // It's a pachted copy of the Sandeep Mistry library (0.3.1)
 	  
-	  // START Workaround for filterExtended bug in Mistry library (0.3.1)
-	  #define REG_BASE                   0x3ff6b000
-	  #define REG_MOD                    0x00
-	  #define REG_ACRn(n)                (0x10 + n)
-	  #define REG_AMRn(n)                (0x14 + n)
 	  
-	  void writeRegister(uint8_t address, uint8_t value)
-	  {
-	    volatile uint32_t* reg = (volatile uint32_t*)(REG_BASE + address * 4);
-	    *reg = value;
-	  }
 	  
-	  void modifyRegister(uint8_t address, uint8_t mask, uint8_t value)
-	  {
-	    volatile uint32_t* reg = (volatile uint32_t*)(REG_BASE + address * 4);
-	    *reg = (*reg & ~mask) | value;
-	  }
 	  
-	  int filterExtended(long id, long mask)
-	  {
-	    id &= 0x1FFFFFFF;
-	    mask = ~(mask & 0x1FFFFFFF);
-	    modifyRegister(REG_MOD, 0x17, 0x01); // reset
-	    writeRegister(REG_ACRn(0), id >> 21);
-	    writeRegister(REG_ACRn(1), id >> 13);
-	    writeRegister(REG_ACRn(2), id >> 5);
-	    writeRegister(REG_ACRn(3), id << 5);
-	    writeRegister(REG_AMRn(0), mask >> 21);
-	    writeRegister(REG_AMRn(1), mask >> 13);
-	    writeRegister(REG_AMRn(2), mask >> 5);
-	    writeRegister(REG_AMRn(3), (mask << 5) |0x1f);
-	    modifyRegister(REG_MOD, 0x17, 0x00); // normal
-	    return 1;
-	  }
-	  // END Workaround for filterExtended bug in Mistry library (0.3.1)
 	  
   #else
 	  #include "mcp_can_nd.h"      // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can_nd.h: No such file or directory"
@@ -450,17 +437,30 @@ Benoetig als 142 byte
 	  #include <SPI.h>
 	  #include "Add_Message_to_Filter_nd.h"
 	  #ifndef LED_HEARTBEAT_PIN
-		 #define LED_HEARTBEAT_PIN A3 // The build in LED can't be use because the pin is used as clock port for the SPI bus
+		 #define LED_HEARTBEAT_PIN A3 // The built in LED can't be use because the pin is used as clock port for the SPI bus
 	  #endif
    #endif
 #else // not USE_CAN_AS_INPUT
   #ifndef LED_HEARTBEAT_PIN
     #if defined(ESP32)                                                                                              // 30.10.20: Juergen
-      #define DCC_STATUS_PIN  2  // Build in LED
+      #define DCC_STATUS_PIN  2  // Built in LED
     #elif defined(ARDUINO_RASPBERRY_PI_PICO)                                                                        // 24.04.21: Juergen
       #define DCC_STATUS_PIN  LED_BUILTIN
     #else
-      #define LED_HEARTBEAT_PIN  13 // Build in LED
+      // in case of DCC Interface directly running on LED Nano we need the onboard led for the DCC status signaling
+      #if !defined(USE_DCC_INTERFACE)
+        #define LED_HEARTBEAT_PIN  13 // Built in LED
+      #else
+        // we are using the DCC interface directly on the LED Arduino
+        #ifndef DCC_SIGNAL_PIN
+          #define DCC_SIGNAL_PIN   2
+          // save some memory
+          #undef SEND_DISABLE_PIN
+          #undef USE_RS232_OR_SPI_AS_INPUT
+          #undef RECEIVE_LED_COLOR_PER_RS232
+        #endif
+        unsigned long dccLastIdleMs = 0;
+      #endif
     #endif
   #endif
 #endif
@@ -474,7 +474,7 @@ Benoetig als 142 byte
      #error "USE_CAN_AS_INPUT can't be used together with USE_CAN_AS_INPUT"
   #endif
   #ifndef LED_HEARTBEAT_PIN
-    #define LED_HEARTBEAT_PIN A3 // The build in LED can't be use because the pin is used as clock port for the SPI bus
+    #define LED_HEARTBEAT_PIN A3 // The built in LED can't be use because the pin is used as clock port for the SPI bus
   #endif
   #include <SPI.h>
 #endif // USE_SPI_COM
@@ -489,31 +489,14 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
   uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process);
 #endif
 
-// Define the MobaLedLib instance
-  MobaLedLib_CreateEx(leds
-#if _USE_STORE_STATUS
-  #if defined(ENABLE_STORE_STATUS)                                                                             // 19.05.20: Juergen
-    , On_Callback
-  #else
-    , NULL
-  #endif
-#endif
-#if _USE_EXT_PROC                                                                                              // 26.09.21: Juergen
-  #if defined(_ENABLE_EXT_PROC)
-    , Handle_Command
-  #else
-    , NULL
-  #endif
-#endif
-    );
-
-
+MobaLedLib_Prepare();
+#define MobaLedLib (*pMobaLedLib)
 
 #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0
   LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
 #endif
 
-#if defined USE_SPI_COM || defined USE_LOCONET_INTERFACE || defined USE_DCC_INTERFACE                         // 12.11.20 Juergen use second buffer for DCC interface communication
+#if defined USE_SPI_COM || defined USE_LOCONET_INTERFACE || defined USE_COMM_INTERFACE                        // 12.11.20 Juergen use second buffer for DCC interface communication
   char Buffer[2][13] = {"",""};
 #else
   char Buffer[1][13] = {""};
@@ -521,17 +504,21 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
 
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   TaskHandle_t  MLLTaskHnd ;
-  TaskHandle_t  Core1TaskHnd ;
   #include "esp_log.h"
 #endif
 
-#if defined USE_DCC_INTERFACE || defined USE_LOCONET_INTERFACE
+#if defined USE_COMM_INTERFACE || defined USE_LOCONET_INTERFACE
+#if !defined(__AVR__)
 InMemoryStream stream(256);
 #endif
-#if defined USE_DCC_INTERFACE 
-DCCInterface dccInterface;
+#endif
+#if defined USE_COMM_INTERFACE 
+CommInterface* commInterface;
 #endif
 
+#if defined(MLL_EXTENSIONS_COUNT)
+ExtensionProcessor extensions(mllExtensions,MLL_EXTENSIONS_COUNT);
+#endif
 bool Send_Disable_Pin_Active = 1;                                                                             // 13.05.20:
 
 
@@ -577,10 +564,12 @@ void Proc_Color_Cmd(const char *Buffer)                                         
   //Serial.println(Buffer); //
 }
 
-void (* ResetArduino)(void) = 0; // Restart the Arduino
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   void MLLTask(void* parameter);
   void MLLMainLoop();
+  void ResetArduino() { ESP.restart();} // Restart the ESP32
+#else
+  void (* ResetArduino)(void) = 0; // Restart the Arduino
 #endif
 
 //--------------------------------
@@ -628,6 +617,7 @@ void Receive_LED_Color_per_RS232()                                              
 #endif
                              case 'L': Proc_Color_Cmd(Buffer); break;
                              default:  Serial.print(F("#Unknown cmd:'")); Serial.print(Buffer); Serial.println(F("'"));// Debug
+                                       return;									       // 02.01.22: Juergen avoid hangup
                              }
                            }
                       break;
@@ -678,8 +668,10 @@ void Receive_LED_Color_per_RS232()                                              
    void Update_InputCh_if_Addr_exists(uint16_t ReceivedAddr, uint8_t Direction, uint8_t OutputPower)
    //-----------------------------------------------------------------------------------------------
    {
+     #ifdef USE_CAN_AS_INPUT                                                          // 02.01.2022 Juergen process ADDR_OFFSET here to be more generic
+        ReceivedAddr += ADDR_OFFSET;
+     #endif
      //Serial.print(F("Update_InputCh_if_Addr_exists ")); Serial.println(ReceivedAddr); // Debug
-     //if (ReceivedAddr<1000) dcc++;  // Debug                                                                  // 19.01.21: Juergen
      uint16_t Channel = DCC_INPSTRUCT_START;
      for (const uint8_t *p = (const uint8_t*)Ext_Addr, *e = p + sizeof(Ext_Addr); p < e; )
          {
@@ -732,7 +724,7 @@ void Receive_LED_Color_per_RS232()                                              
                              }
                        }
                   }
-             // Addr dosn't match => Check the next possible address / InTyp for this entry
+             // Addr doesn't match => Check the next possible address / InTyp for this entry
              //Serial.print("Don't match In="); Serial.println(In); // Debug
              Channel++;
              In++;
@@ -801,14 +793,14 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         if (ValueId != TargetValueId) return false;
         if (CallbackType == CT_COUNTER_INITIAL)
            {
-#ifndef ESP32
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
            eeprom_busy_wait();
            *Value = eeprom_read_byte((const uint8_t*)EEPromAddr);
 #else
            *Value = EEPROM.read(EEPromAddr);
 #endif
            #if defined(DEBUG_STORE_STATUS) && 1
-             { char s[80]; sprintf(s, "Initialite Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
+             { char s[80]; sprintf(s, "Initialize Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
 
@@ -895,7 +887,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #endif
      if ((Options & IS_COUNTER) == IS_COUNTER) return false;
 
-#ifndef ESP32
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
      eeprom_busy_wait();
      uint8_t status = eeprom_read_byte((const uint8_t*)EEPromAddr);
 #else
@@ -946,7 +938,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #if defined(DEBUG_STORE_STATUS) && 0
        { char s[80];sprintf(s, "store status for EEAdr %i value:%i", EEPromAddr, value); Serial.println(s);}  // Debug
 	#endif
-#ifndef ESP32
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
      uint8_t eeValue = eeprom_read_byte((const uint8_t*)EEPromAddr);
 #else
 	 uint8_t eeValue = EEPROM.read(EEPromAddr);
@@ -959,7 +951,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         #if defined(DEBUG_STORE_STATUS) && 1
            { char s[80]; sprintf(s, " updating status for EEAdr %d=%d", EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
         #endif
-#ifndef ESP32
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
         eeprom_busy_wait();
         eeprom_write_byte((uint8_t*)EEPromAddr, status);
 #else
@@ -1043,7 +1035,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      //case '@': if (sscanf(Buffer+1, "%i %x %x", &Addr, &Direction, &OutputPower) == 3)                      // 28.11.20: Old
        case '@': if (sscanf(Buffer+1, "%" SCNu16 " %" SCNu16 " %" SCNu16, &Addr, &Direction, &OutputPower) == 3)
                     {
-                    Update_InputCh_if_Addr_exists(Addr+ADDR_OFFSET, Direction, OutputPower);                  // 26.09.19:  Added: ADDR_OFFSET
+                    Update_InputCh_if_Addr_exists(Addr+ADDR_OFFSET, Direction, OutputPower);                  // 02.01.22:  remove ADDR_OFFSET, move offset handling to Update_InputCh_if_Addr_exists
                     return ;
                     }
                  break;
@@ -1173,15 +1165,16 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 		}
 	#endif
 
-#if defined USE_DCC_INTERFACE || defined USE_LOCONET_INTERFACE                                                // Juergen: get Data from DCCInterface
+#if defined USE_COMM_INTERFACE || defined USE_LOCONET_INTERFACE                                                // Juergen: get Data from DCCInterface
+#if !defined(__AVR__)											       // 02.01.22: Juergen add support for DCC receive on LED Arduino
     if (stream.available())
     {
       Buff_Nr = 1;                                                                                             // Juergen: ESP32 doesn't use SPI buffer, so re-use Buffe1
       c = stream.read();
       return 1;
     }
+#endif    
 #endif
-
 	if (Serial.available() > 0)
 		{
 		Buff_Nr = 0;
@@ -1346,6 +1339,37 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 void setup(){
 //-----------
   Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
+#ifdef ESP32
+  if (!EEPROM.begin(EEPROM_SIZE))                                                                             // 19.01.21: Juergen: Old: 100
+  {
+    Serial.println("failed to initialise EEPROM");
+  }
+  esp_log_level_set("*", ESP_LOG_NONE);
+#endif
+  MobaLedLibPtr_CreateEx(leds
+#if _USE_STORE_STATUS
+  #if defined(ENABLE_STORE_STATUS)                                                                             // 19.05.20: Juergen
+    , On_Callback
+  #else
+    , NULL
+  #endif
+#endif
+#if _USE_EXT_PROC                                                                                              // 26.09.21: Juergen
+  #if defined(_ENABLE_EXT_PROC)
+    , Handle_Command
+  #else
+    , NULL
+  #endif
+#endif
+    );
+  #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                              // 19.05.20: Juergen
+    RestoreStatus();
+  #endif
+
+  #ifdef _NEW_INITIALIZE                                                                                      // 18.12.2021 moved initialisation out of constructor
+    MobaLedLib.Update();   // Must be called once before the inputs are read.
+  #endif
+  
   #ifdef SETUP_FASTLED // Use a special FastLED Setup macro defined in the LEDs_AutoProg.h                    // 26.04.20:
     SETUP_FASTLED();
 
@@ -1376,13 +1400,6 @@ void setup(){
 	  Serial.print(F("#Color Test LED cnt:")); Serial.println(NUM_LEDS); // Without this message the program fails with the message
 	#endif
   #endif                                                                 //   "Error ARDUINO is not answering"
-  #ifdef ESP32
-    if (!EEPROM.begin(512))                                                                                   // 19.01.21: Juergen: Old: 100
-    {
-      Serial.println("failed to initialise EEPROM");
-    }
-	esp_log_level_set("*", ESP_LOG_NONE);
-  #endif
 
 //  #define GCC_VERSION (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)
 //  Serial.print(F("GCC_VERSION:")); Serial.println(GCC_VERSION);
@@ -1400,18 +1417,17 @@ void setup(){
 		CAN.setPins(4, 5);																						// 08.03.21 Juergen
 		if (CAN.begin(250E3)) 
 			 {
-			 //if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 08.03.21 Juergen: the original implementation of filterExtended has a bug, so need to do it outselfs
-			 if (filterExtended(0x160000, 0x1FFF0000))
-			 {
+			 if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 13.07.22 Juergen: use library function again
+			     {
 			 	 Serial.println(F("Filter OK!"));
-			 }
+    		     Serial.println(F("CAN Init OK!"));
+                 CAN_ok = true;
+			     }
 			 else
-			 {
+			     {
 			 	 Serial.println(F("Filter failed!"));
-			 }
-			 
-    		 Serial.println(F("CAN Init OK!"));
-			 CAN_ok = true;
+                 CAN_ok = false;
+			     }
 			 }
 	#else
 		if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
@@ -1436,10 +1452,6 @@ void setup(){
   #endif
 
   Set_Start_Values(MobaLedLib); // The start values are defined in the "MobaLedLib.h" file if entered by the user
-
-  #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                              // 19.05.20: Juergen
-    RestoreStatus();
-  #endif
 
   #if defined TEST_TOGGLE_BUTTONS || defined TEST_PUSH_BUTTONS
     Setup_Toggle_Buttons();
@@ -1467,8 +1479,12 @@ void setup(){
             sprintf(tmp, "%04x", eeAddr);
             Serial.print(tmp);
         }
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
         eeprom_busy_wait();
         uint8_t value = eeprom_read_byte((const uint8_t*)eeAddr);
+#else
+        uint8_t value = EEPROM.read(EEPromAddr);
+#endif
         sprintf(tmp, " %02x", value);
         Serial.print(tmp);
     }
@@ -1585,23 +1601,41 @@ void setup(){
 
 #ifdef USE_DCC_INTERFACE
   #ifndef DCC_STATUS_PIN
-  #define DCC_STATUS_PIN -1
+    #ifdef __AVR__											     // 02.01.22: Juergen add support for DCC receive on LED Arduino
+      #define DCC_STATUS_PIN 13
+    #else      
+      #define DCC_STATUS_PIN -1
+    #endif
   #endif
-  dccInterface.setup(DCC_SIGNAL_PIN, DCC_STATUS_PIN, stream, 
+  DCCInterface* interf = new DCCInterface();
+#ifdef USE_COMM_INTERFACE  										    // 02.01.22: Juergen add support for DCC receive on LED Arduino
+  commInterface = interf;
+#endif  
+  interf->setup(
+    DCC_SIGNAL_PIN, 
+    DCC_STATUS_PIN, 
+// dual core CPUs use a stream to exchange data between cores
+#if !defined(__AVR__)                                                                                      // 02.01.22: Juergen add support for DCC receive on LED Arduino
+    stream, 
+#endif    
 #ifdef NO_DCC_PULLUP
-  false
+    false
 #else
-  true
+    true
 #endif    
   );
 #endif
-
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
-  // reset the GPIO pin mapping - caused by a bug in FastLED 3.3.3 rmt module GPIO0 was remapped and not      // 02.12.20:  Juergen
-  // accessbile as a GPIO anymore.
-  // remove workaround when fix is available in FastLED library
-  gpio_matrix_out(gpio_num_t(0), 0x100, false, false);                                                                                   // 02.12.20: Juergen
 
+  #ifdef USE_SX_INTERFACE
+    #ifndef SX_STATUS_PIN
+      #define SX_STATUS_PIN -1
+    #endif
+    SXInterface* interf = new SXInterface();
+    commInterface = interf;
+    interf->setup(SX_SIGNAL_PIN, SX_CLOCK_PIN, SX_STATUS_PIN, stream);
+  #endif  
+  
   #if !defined(Mainboard_LED1)																				  // 12.11.20: Juergen initialize Mainboard leds
 	#if defined(USE_NEW_LED_ARRAY)																			  // if mainboard led isn't configured at all just clear the output
 		FastPin<LED1_PIN>::setInput();
@@ -1636,6 +1670,9 @@ void setup(){
   dmxInterface.setup(USE_DMX_PIN,&(leds[DMX_LED_OFFSET].r), DMX_CHANNEL_COUNT);
 #endif
 
+#if defined(MLL_EXTENSIONS_COUNT)
+  extensions.setup(MobaLedLib);
+#endif  
   //Eigene_setup();
 }
 
@@ -2000,12 +2037,19 @@ void Set_Mainboard_LEDs()
 //-----------
 void loop(){
 //-----------
-#ifdef USE_DCC_INTERFACE
-  dccInterface.process();
+#ifdef USE_COMM_INTERFACE
+  commInterface->process();
 #endif
 
 #ifndef ESP32
   MLLMainLoop();
+  #if defined(__AVR__) && defined(USE_DCC_INTERFACE)                    // 02.01.22: Juergen add support for DCC receive on LED Arduino
+    // give DCC interface some time to handle interrupts
+    // target 50 LED updates per second 
+    int elapsed = millis()-dccLastIdleMs;
+    if (elapsed<20) delay(20-elapsed);
+    dccLastIdleMs = millis();
+  #endif    
 #endif
 
 #ifdef USE_ESP32_EXTENSIONS
@@ -2015,6 +2059,9 @@ void loop(){
 #ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low prority loop, on multicore platforms running on seperate core 
   Additional_Loop_Proc2();                                                                                        // 26.09.21: Juergen
 #endif
+#if defined(MLL_EXTENSIONS_COUNT)
+  extensions.loop(MobaLedLib);
+#endif  
 }
 
 #ifdef ESP32
@@ -2023,8 +2070,14 @@ void MLLTask( void * parameter ) {
 //--------------------------------
   while(1) {
     MLLMainLoop();
+#ifdef USE_ESP32_EXTENSIONS
+  loopESP32Extensions2();
+#endif
     yield();
-    delay (10);
+    delay (1);
+#if defined(MLL_EXTENSIONS_COUNT)
+    extensions.loop2(MobaLedLib);
+#endif  
   }
 }
 #endif

@@ -134,6 +134,27 @@ for %%f in ("%buildDir%\sketch\%filter%") do (
 	if errorlevel 1 goto :eof
 )
 
+if "%1"=="additional" (
+    if exist AdditionalBuildFiles.txt (
+       for /F %%f in (AdditionalBuildFiles.txt) do (
+          if exist "%%f" (
+            echo Building extra file %%f
+            call "%atemp%\compile.cmd" "%buildDir%\sketch\%%f" -o "%buildDir%\sketch\%%f.o"
+            if errorlevel 1 goto :eof
+          )
+        )
+    )
+    if exist AdditionalLibFiles.txt (
+       for /F "tokens=1,2 delims=," %%f in (AdditionalLibFiles.txt) do (
+          if exist "%userlibs%\%%f" (
+            echo Building extra file %%f
+            call "%atemp%\compile.cmd" "%userlibs%\%%f" -o "%buildDir%\libraries\%%g.o"
+            if errorlevel 1 goto :eof
+          )
+        )
+    )
+)
+
 :: generate a linker script with a list of object files
 SetLocal EnableDelayedExpansion
 

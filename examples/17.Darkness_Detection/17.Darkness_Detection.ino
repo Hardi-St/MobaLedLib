@@ -142,7 +142,11 @@
 #define SERIAL_BAUD 9600  // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
 #define NUM_LEDS     32   // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
-#define LED_DO_PIN   6    // Pin D6 is connected to the LED stripe
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
+#define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#else 
+#error this example does not support this plattform
+#endif
 #define LDR_PIN      A7   // Use A7 if the MobaLedLib "LEDs Main Module" is used
 
 AnalogScanner scanner;    // Creates an instance of the analog pin scanner.

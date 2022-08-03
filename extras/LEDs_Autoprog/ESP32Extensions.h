@@ -34,13 +34,24 @@
 //#define USE_WIFI
 //#define USE_OTA
 //#define USE_LOCONET
-#define USE_UI
+//#define USE_UI
 
+#ifdef USE_OTA
+  #ifndef USE_WIFI
+  #define USE_WIFI
+  #endif
+  #include <ArduinoOTA.h>
+#endif
 #ifdef USE_WIFI
+  #ifndef WIFI_DNS_NAME 
+    #define WIFI_DNS_NAME "MobaLedLib"
+    #undef Sec
+#endif
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 #include <WiFiUdp.h>
+#include <ESPmDNS.h>
 //#include "RASCIIInterface.h"
 //RASCIIInterface interface;
 
@@ -50,11 +61,6 @@ LocoNetInterface interface;
 #endif
 #endif
 
-#ifdef USE_OTA
-#include <ArduinoOTA.h>
-#endif
-
-
 #define DEBUG Serial
 
 #ifdef USE_UI
@@ -63,6 +69,7 @@ UserInterface ui(getUserInterface);
 
 #ifdef USE_WIFI
 bool isConnected = false;
+bool isInOTA = false;
 WiFiManager wm; // global wm instance
 String hostString;
 
@@ -90,6 +97,7 @@ void setConnected(bool connected)
 
 		ArduinoOTA.onStart([]() {
 			String type;
+                        isInOTA = true;
 			if (ArduinoOTA.getCommand() == U_FLASH)
 			type = "sketch";
 			else // U_SPIFFS
@@ -102,6 +110,7 @@ void setConnected(bool connected)
 		})
 		.onEnd([]() {
 			Serial.println("\nEnd");
+                        isInOTA = false;
 		})
 		.onProgress([](unsigned int progress, unsigned int total) {
 			//Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
@@ -113,11 +122,17 @@ void setConnected(bool connected)
 			else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
 			else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
 			else if (error == OTA_END_ERROR) Serial.println("End Failed");
+                        isInOTA = false;
 			FastLED.setBrightness(255); // turn leds on
 		});
 
 		ArduinoOTA.begin();
 #endif
+
+    if(!MDNS.begin(WIFI_DNS_NAME)) {
+       Serial.println("Error starting mDNS");
+    }
+   
 	}
 
 #ifdef USE_UI
@@ -147,6 +162,7 @@ void setupESP32Extensions() {
     //wm.resetSettings();
 
     wm.setConfigPortalBlocking(false);
+    wm.setTitle(String(WIFI_DNS_NAME).c_str());
 
     //automatically connect using saved credentials if they exist
     //If connection fails it starts an access point with the specified name
@@ -179,7 +195,7 @@ void setupESP32Extensions() {
 	}
 #endif
 #ifdef USE_LOCONET
-	interface.setup(stream);
+	interface.setup(2 /*Built in LED*/, stream);
 #endif
 #endif
 }
@@ -189,11 +205,25 @@ void loopESP32Extensions() {
 #ifdef USE_WIFI
 	wm.process();
 	#ifdef USE_OTA
-	if (isConnected) ArduinoOTA.handle();
+	if (isConnected) 
+  {
+    // handle and OTA upload and block other operations while OTA running
+    do
+    {
+       ArduinoOTA.handle();   
+       if (isInOTA) 
+       {
+         esp_task_wdt_reset();                                                                                    // 05.03.21: Juergen -  reset watchdog timer, because we are in an endless loop
+         vTaskDelay(10);
+         yield();
+       }
+    } 
+    while(isInOTA);
+  }
 	#endif
 
 	#ifdef USE_LOCONET
-	interface.loop();
+	interface.process();
 	#endif	
 #endif	
 
@@ -201,5 +231,17 @@ void loopESP32Extensions() {
 	ui.loop();
 #endif	
 }
-
+void loopESP32Extensions2() {
+#ifdef USE_WIFI
+#ifdef USE_OTA
+   // block other operations while OTA upload
+   while (isInOTA) 
+   {
+     esp_task_wdt_reset();                                                                                    // 05.03.21: Juergen -  reset watchdog timer, because we are in an endless loop
+     vTaskDelay(10);
+     yield();
+   }
+#endif
+#endif
+}
 #endif //ESP32EXTENSIONS_H
