@@ -139,7 +139,7 @@
 #define DCC_LAST_LOC_ID_SW      19  // Last    "                         "
 #define DCC_INPSTRUCT_START_SW  0   // Start number in the InpStructArray[]
 
-MCP_CAN  CAN(CAN_CS_PIN);
+MCP_CAN  can(CAN_CS_PIN);
 
 
 #define INCH0        0   // Define names for the input channels to be able to change them easily.
@@ -210,14 +210,14 @@ void setup(){
   Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
   // *** Initialize the CAN bus ***
-  if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
+  if (can.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
        {
        Serial.println(F("CAN Init OK!"));
        CAN_ok = true;
-       CAN.setMode(MCP_NORMAL); // Important to use the filters
+       can.setMode(MCP_NORMAL); // Important to use the filters
        // Set the message filters
-       Add_Message_to_Filter(CAN, 0x80000000 | 0x0016FFFF, 0); // Filter 0 initializes the CAN chip
-       Add_Message_to_Filter(CAN, 0x80000000 | 0x00160000, 6); // Filter >= 6 uses also channel 0
+       Add_Message_to_Filter(can, 0x80000000 | 0x0016FFFF, 0); // Filter 0 initializes the CAN chip
+       Add_Message_to_Filter(can, 0x80000000 | 0x00160000, 6); // Filter >= 6 uses also channel 0
        }                                                       // => Filter is addapte to pass both messages
   else Serial.println(F("CAN Init Fail!"));                    //    => Messages matching 0x0016???? are passed
 }
@@ -259,9 +259,9 @@ void Process_CAN()
 uint8_t  len;
 uint32_t rxId;
 uint8_t rxBuf[8];
-if (CAN_ok && CAN.checkReceive() == CAN_MSGAVAIL)
+if (CAN_ok && can.checkReceive() == CAN_MSGAVAIL)
    {
-   if (CAN.readMsgBuf(&rxId, &len, rxBuf) == CAN_OK)
+   if (can.readMsgBuf(&rxId, &len, rxBuf) == CAN_OK)
       {
       if (((rxId>>16) & 0xFF) == 0x16) Proc_Accessoires(rxBuf); // Check if it's a accessoires message
       }
