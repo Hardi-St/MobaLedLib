@@ -33,9 +33,9 @@ A lot of **examples** show the usage of the library. They could be use as startu
 
 A huge wiki describes the complete MobaLedLib in detail: https://wiki.mobaledlib.de/doku.php<br/>
 This library is used and supported by a big community, see https://www.stummiforum.de/viewtopic.php?f=7&t=165060.
-All software and hardware parts are free of license and avaiable for download.
+All software and hardware parts are free of license and available for download.
 
-Several videos demonstrate the possibilites of the library. You will find a lot of articles when searching for MobaLedLib in the internet.
+Several videos demonstrate the possibilities of the library. You will find a lot of articles when searching for MobaLedLib in the internet.
 
 ATTENTION: Always use the actual Arduino IDE
 (Old versions 1.6.x and below don't support the directory structure used in the library examples)
@@ -68,13 +68,18 @@ Questions / suggestions / praise / ...
 - ColorPicker for Const Makro
 - Macro RGB_Heartbeat_Color
 - MobaLedLib Extensions support
+- "Virtual pin" feature
+- Retrigger support for patterns using GOTO mode 
+- DCC signal state signaled with ESP32 onboard LED
 
 *Bugfixes*
 - fix CAN baudrate issue with ESP32 V1 chips
-- fix ESP32 build issue with non-default arduino home directory
+- fix ESP32 build issue with non-default Arduino home directory
 - fix issue in case Arduino home directory doesn't exist
 - add missing macros InCh_toTmpVar1 and BinCh_toTmpVar1
-
+- fix RandMux bug on ESP32
+- fix Set_ColTab bug on ESP32
+- fix issue that Analog Pattern flags were ignored in Goto mode 
 
 **Ver.: 3.1.0** 28.11.21:
 
