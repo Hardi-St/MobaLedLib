@@ -68,13 +68,18 @@ Questions / suggestions / praise / ...
 - ColorPicker for Const Makro
 - Macro RGB_Heartbeat_Color
 - MobaLedLib Extensions support
+- "virtual pin" feature
+- Retrigger support for patterns using GOTO mode 
+- DCC signal state signalled with ESP32 onboard LED
 
 *Bugfixes*
 - fix CAN baudrate issue with ESP32 V1 chips
 - fix ESP32 build issue with non-default arduino home directory
 - fix issue in case Arduino home directory doesn't exist
 - add missing macros InCh_toTmpVar1 and BinCh_toTmpVar1
-
+- fix RandMux bug on ESP32
+- fix Set_ColTab bug on ESP32
+- fix issue that Analog Pattern flags were ignored in Goto mode 
 
 **Ver.: 3.1.0** 28.11.21:
 
