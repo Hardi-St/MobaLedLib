@@ -195,8 +195,12 @@
 #define NUM_LEDS_1       148 // Number of LEDs for the first stripe
 #define NUM_LEDS_2        12 // Number WS2811 modules for the second "stripe"
 
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN_1       6 // Pin D6 is connected to the LED stripe 1
 #define LED_DO_PIN_2      A4 // Pin A2 is connected to the LED stripe 2
+#else 
+#error this example does not support this plattform
+#endif
 
 
 #define CTR_CHANNELS_1    10                   // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, up to 18 if two CD4017 are used, ...

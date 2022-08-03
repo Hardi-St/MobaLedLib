@@ -147,7 +147,7 @@
 
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
-#include <mcp_can.h>     // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can.h: No such file or directory" https://github.com/coryjfowler/MCP_CAN_lib
+#include "mcp_can_nd.h"  // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can.h: No such file or directory" https://github.com/coryjfowler/MCP_CAN_lib
                          // Download the ZIP file from https://github.com/coryjfowler/MCP_CAN_lib
                          // Arduino IDE: Sketch / Include library / Add .ZIP library...                 Deutsche IDE: Sketch / Bibliothek einbinden / .ZIP Bibliothek hinzufuegen...
                          //              Navigate to the download directory and select the file                       Zum Download Verzeichnis werchseln und die Datei auswaehlen
@@ -159,11 +159,15 @@
                          //            If your program uses to much memory you get the following warning:
                          //              "Low memory available, stability problems may occur."
 #include <SPI.h>
-#include "Add_Message_to_Filter.h"
+#include "Add_Message_to_Filter_nd.h"
 
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#else 
+#error this example does not support this plattform
+#endif
 #define CAN_CS_PIN   10  // Pin D10 is used as chip select for the CAN bus
 
 #define LED_HEARTBEAT_PIN 17 // The build in LED can't be use because the pin is used as clock port for the SPI bus
@@ -173,7 +177,7 @@
 #define DCC_LAST_LOC_ID      19  // Last    "                         "
 #define DCC_INPSTRUCT_START  0   // Start number in the InpStructArray[]
 
-MCP_CAN  CAN(CAN_CS_PIN);
+MCP_CAN  can(CAN_CS_PIN);
 
 // *** Macros ***
 // Entry signal with 3 aspects
@@ -221,14 +225,14 @@ void setup(){
   Serial.begin(9600); // Attention: The serial monitor in the Arduino IDE must use the same baudrate
 
   // *** Initialize the CAN bus ***
-  if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
+  if (can.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
        {
        Serial.println(F("CAN Init OK!"));
        CAN_ok = true;
-       CAN.setMode(MCP_NORMAL); // Important to use the filters
+       can.setMode(MCP_NORMAL); // Important to use the filters
        // Set the message filters
-       Add_Message_to_Filter(CAN, 0x80000000 | 0x0016FFFF, 0); // Filter 0 initializes the CAN chip
-       Add_Message_to_Filter(CAN, 0x80000000 | 0x00160000, 6); // Filter >= 6 uses also channel 0
+       Add_Message_to_Filter(can, 0x80000000 | 0x0016FFFF, 0); // Filter 0 initializes the CAN chip
+       Add_Message_to_Filter(can, 0x80000000 | 0x00160000, 6); // Filter >= 6 uses also channel 0
        }                                                       // => Filter is addapte to pass both messages
   else Serial.println(F("CAN Init Fail!"));                    //    => Messages matching 0x0016???? are passed
 
@@ -273,9 +277,9 @@ void Process_CAN()
 uint8_t  len;
 uint32_t rxId;
 uint8_t rxBuf[8];
-if (CAN_ok && CAN.checkReceive() == CAN_MSGAVAIL)
+if (CAN_ok && can.checkReceive() == CAN_MSGAVAIL)
    {
-   if (CAN.readMsgBuf(&rxId, &len, rxBuf) == CAN_OK)
+   if (can.readMsgBuf(&rxId, &len, rxBuf) == CAN_OK)
       {
       if (((rxId>>16) & 0xFF) == 0x16) Proc_Accessoires(rxBuf); // Check if it's a accessoires message
       }

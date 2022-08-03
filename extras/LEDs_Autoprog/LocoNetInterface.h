@@ -62,17 +62,15 @@ Revision History :
 #endif
 
 #ifdef LOCONET_USE_SOCKET
-#include "WiFi.h"
+#include <WiFi.h>
 #endif
 
 #include <LocoNetStream.h>
-#include "InMemoryStream.h"
+#include "CommInterface.h"
 
-class LocoNetInterface 
+class LocoNetInterface : CommInterface  
 {
-	
 private:
-	static InMemoryStream* pStream;
 
 	#ifdef LOCONET_USE_SOCKET
 		WiFiServer locoNetServer;
@@ -83,12 +81,10 @@ public:
 	#endif
 private:
 	void handlePacket(lnMsg *LnPacket);
-public:
-	void setup(InMemoryStream& stream);
-	void loop();
 	void send(byte out);
-	static void addToSendBuffer(const char *s);
-	
+public:
+	void setup(int DCCSignalPin, InMemoryStream& stream);
+	void process();
 };
 
 #endif

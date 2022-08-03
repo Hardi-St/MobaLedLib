@@ -719,9 +719,12 @@ MobaLedLib_C::MobaLedLib_C(
   srandom(random_seed);
   random16_set_seed(random());
 #endif
-
+  
+#ifndef _NEW_INITIALIZE  
+  // 18.12.2021 remove initial update to be able to set initial values after constructor and before first update run
   Int_Update(millis());   // Must be called once before the inputs are read. (Attention: srandom() must be called before to get unpredictable random numbers)
-
+#endif
+  
   #ifdef _TEST_BUTTONS
     Setup_Test_Buttons();
   #endif
@@ -1028,25 +1031,30 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
       ActualVar_p->Val = *rp;
       rp++;
       }
-
+    else
+      {
+      ActualVar_p->Val = 0;
+      }
+  ActualVar_p->Changed = 0;                                                                                   // 18.12.21: Set default to "nothing has changed"
   for (; InCh <= EndInCh; InCh++, Nr++)                                                                       // 31.05.20:  J: "<=" instead of "<" because EndInCh is now 0..63 instead of 1..64
     {
     uint8_t Inp = Get_Input(InCh);
-    //if (p) Dprintf("Get_Input(%i)=%i ", InCh, Inp); // Debug
+    //Dprintf("Get_Input(%i)=%i ", InCh, Inp); // Debug
     if (Inp == INP_TURNED_ON)
        {
-       if (Use_LocalVar == false || ActualVar_p->Val != Nr)                                                   // 08.06.20:
+       if (Use_LocalVar == false || ActualVar_p->Val != Nr|| Initialize)                                     // 08.06.20:
           {
-          ActualVar_p->Changed = 1;
+          if (!Initialize || !(arg & I2X_USE_START1))                                                        // 18.12.21: goto Mode pattern with a "off" state will initilize to "off"
+            ActualVar_p->Changed = 1;
+          
           ActualVar_p->Val = Nr;
           if (Use_LocalVar) *(rp-1) = Nr;                                                                     // 09.06.20:
-          //if (p) Dprintf(" ActualVar=%i Trig\n", ActualVar_p->Val); // Debug
+          //Dprintf(" ActualVar=%i Trig\n", ActualVar_p->Val); // Debug
           }
        return ;
        }
-    }
-  //if (p) Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
-  ActualVar_p->Changed = 0; // If nothing has changed
+     }
+  //Dprintf(" ActualVar=%i\n", ActualVar_p->Val); // Debug
 }
 
 //-------------------------------------------------------
@@ -1077,7 +1085,10 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()
   if (ActualVar_p->Changed)
       {
       ActualVar_p->Val = Nr + Start;                                                                             // 07.05.20:  Added + Start
-      Dprintf("ActualVar=%i\n", Nr + Start);                                                                     // 31.05.20:  J: Start also added to log output
+      if (Initialize && (arg & I2X_USE_START1))                                                                  // 18.12.21: goto Mode pattern with a "off" state will initilize to "off"
+        ActualVar_p->Changed = 0;                                                                                // only set Val, but don't trigger Pattern
+
+      Dprintf("ActualVar=%d Changed=%d\n", Nr + Start, ActualVar_p->Changed);                                    // 31.05.20:  J: Start also added to log output
       }
 }
 
@@ -1627,7 +1638,7 @@ void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
        InpStructArray[ByteNr] |=  BitMask;
   else InpStructArray[ByteNr] &= ~BitMask;
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
-  //Dprintf("Set_Input Inp[%i] changed from %i to %i (On=%i)\n", channel, oldValue2, InpStructArray[ByteNr], On);
+  //Dprintf("Set_Input Inp[%d] changed from %d to %d (On=%d/%d)\n", channel, oldValue2, (InpStructArray[ByteNr]), On, BitMask);
   Do_Callback(CT_CHANNEL_CHANGED, channel, oldValue, &On);
 #endif
 }
@@ -1665,7 +1676,7 @@ void MobaLedLib_C::Update()
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
 void MobaLedLib_C::Do_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue)
 {
-    //Dprintf("Do_Callback ValueId %i OldValue %i NewValue %i\n", ValueId, OldValue, *NewValue);
+    //Dprintf("Do_Callback CallbackType %d ValueId %i OldValue %i NewValue %i\n", CallbackType, ValueId, OldValue, *NewValue);
     if (CallbackFunc!=NULL) CallbackFunc(CallbackType, ValueId, OldValue, NewValue);
 }
 #endif

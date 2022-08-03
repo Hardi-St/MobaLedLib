@@ -93,7 +93,7 @@ class JQ6500SoundPlayer : public SoundPlayer
 #if (DEBUG_SOUND_CHANNEL&0x04)==0x04
         { char s[80]; sprintf(s, "JQ6500SoundPlayer(%d) volume %s.", moduleId, command ? "DOWN" : "UP"); Serial.println(s); Serial.flush();} // Debug
 #endif          
-        buffer[2] = JQ6500_CMD_VOL_UP + command; 
+        cmd = JQ6500_CMD_VOL_UP + command; 
         argumentCount--;
         break;
 

@@ -33,6 +33,7 @@
 
 #define FASTLED_INTERNAL        // Disable version number message in FastLED library (looks like an error)
 
+#ifndef CONFIG_ONLY
 #ifdef ARDUINO_RASPBERRY_PI_PICO
 #include "PicoFastLED.h"				// Juergen: a small self made implementation of FastLED for PICO (only FastLED code needed by MLL)
 #else
@@ -42,6 +43,7 @@
                                 //              Type "FastLED" in the "Filter your search..." field                          "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
                                 //              Select the entry and click "Install"                                         Gefundenen Eintrag auswaehlen und "Install" anklicken
 
+#endif
 #endif
 #include "Dprintf.h"            // Debug Ausgaben
 
@@ -373,7 +375,11 @@
              New_HSV_Group()                                          \
              APatternT2(LED,192,SI_1,1,0,255,0,PM_HSV,60 Sek,0 ms,1)  \
              APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,1 Sek,1)            // 18.01.19:
-
+                                                                                                              // 14.12.21: add additional heartbeat macro
+#define  RGB_Heartbeat_Color(LED, MinBrightness, MaxBrightness, Color, Duration) \
+             New_HSV_Group()                                          \
+             APatternT1(LED,224,SI_1,1,Color,Color,0,PM_HSV,0 ms,1)  \
+             APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,Duration,1)       
 
 // Push Button functions which count the button press and activates temporary variables
 // The button flashes n times if the button was pressed n times.
@@ -889,24 +895,42 @@
 #define EndCfg END_T
 
 
-
+#ifdef CONFIG_ONLY
+#define MobaLedLib_Configuration()          const unsigned char Config[] __attribute__ ((section (".MLLLedConfig"))) =
+#else
 #define MobaLedLib_Configuration()          const PROGMEM unsigned char Config[] =
+#endif
 
+#define MobaLedLib_Prepare()             MobaLedLib_C* pMobaLedLib; \
+                                         uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/                                         
+                                             
 #if _USE_STORE_STATUS && _USE_EXT_PROC                                                                                       // 26.09.21: Juergen
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL, NULL)
 #define MobaLedLib_CreateEx(leds, callback, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback, processor); // MobaLedLib_C class definition
+#define MobaLedLibPtr_Create(leds)   MobaLedLib_CreatePtrEx(leds, NULL, NULL)
+#define MobaLedLibPtr_CreateEx(leds, callback, processor) \
+                                            pMobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback, processor); // MobaLedLib_C class definition
 #elif _USE_STORE_STATUS 
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, callback)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
+#define MobaLedLibPtr_Create(leds)   MobaLedLib_CreatePtrEx(leds, NULL)
+#define MobaLedLibPtr_CreateEx(leds, callback) \
+                                            pMobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
 #elif _USE_EXT_PROC 
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), processor); // MobaLedLib_C class definition
+#define MobaLedLibPtr_Create(leds)   MobaLedLib_CreatePtrEx(leds, NULL)
+#define MobaLedLibPtr_CreateEx(leds, processor) \
+                                            pMobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), processor); // MobaLedLib_C class definition
 #else
 #define MobaLedLib_Create(leds)             uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM)); // MobaLedLib_C class definition
+#define MobaLedLibPtr_Create(leds)          \
+                                            pMobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM)); /* MobaLedLib_C class definition */ \
+                                            MobaLedLib_C& MobaLedLib = *pMobaLedLib;
 #endif
 
 #if _USE_USE_GLOBALVAR
@@ -1399,7 +1423,7 @@ private: // Variables
  void               IncCP_Const()         { cp += 5 + ADD_WORD_OFFSET; }
  void               IncCP_Fire()          { cp += 4 + ADD_WORD_OFFSET; }
  #ifdef _NEW_ROOM_COL
-   void             IncCP_Set_ColTab()    { cp += ADD_WORD_OFFSET + ROOM_COL_CNT*3; }
+   void             IncCP_Set_ColTab()    { cp += ROOM_COL_CNT*3; }
    bool             Cmp_Room_Col(CRGB *lp, uint8_t ColorNr);
    uint8_t          Get_Room_Col1(uint8_t ColorNr, uint8_t Channel);
    void             Copy_Room_Col(CRGB *Dst, uint8_t ColorNr);
@@ -1442,6 +1466,7 @@ private: // Variables
    const uint8_t     *TV_Dat_p[_TV_CHANNELS];
 #endif
 
+friend class MLLExtension;
 }; // class MobaLedLib_C
 
 

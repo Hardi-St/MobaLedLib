@@ -74,7 +74,11 @@
 #include "MobaLedLib.h"  // Use the Moba Led Library
 
 #define NUM_LEDS     32  // Number of LEDs with some spare channels (Maximal 256 RGB LEDs could be used)
+#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
 #define LED_DO_PIN   6   // Pin D6 is connected to the LED stripe
+#else 
+#error this example does not support this plattform
+#endif
 
 #define CTR_CHANNELS_1    10                   // Number of used counter channels for keyboard 1. Up to 10 if one 4017 is used, up to 18 if two CD4017 are used, ...
 #define BUTTON_INP_LIST_1 2,7,8,9,10,11,12,A1  // Comma separated list of the button input pins (Example use A0-A3: 14, 15, 16, 17)   Attention: Not A6, A7 (See blow)
