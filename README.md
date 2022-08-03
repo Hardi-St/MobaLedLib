@@ -60,7 +60,7 @@ Questions / suggestions / praise / ...
 
 **Revision History:**
 
-**Ver.: 3.2.0** xx.08.22:
+**Ver.: 3.2.0** 04.08.22:
 
 *Features*
 - LED simulator 
