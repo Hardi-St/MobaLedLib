@@ -2,7 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2023  Hardi Stengelin: MobaLedLib@gmx.de
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -331,7 +331,9 @@
 #define HP_2_2Bin_RGB(LED, InCh, MaxB16)           Bin_InCh_to_TmpVar(InCh, 1) \
                                                    XPatternT1(LED,12,SI_LocalVar,12,0,MaxB16,0,0,500 ms,0,0,0,0,0,0,0,128,0,8,0,0,0,0,0,0,0,0,128,0,0,0,0,8  ,0,63,128,63)
 
-
+// 14.01.23: A signal consisting of one 2-color red/green LED 
+#define SingleLedSignal(LED,InCh,Single_Cx, FadeTime) InCh_to_LocalVar(InCh, 4) \
+                                                   XPatternT1(LED,_Cx2StCh(Single_Cx)+64,SI_LocalVar,2,0,128,0,0,FadeTime,132,12  ,0,63,128,63,128,63,191)
 
 #define  ButtonFunc(                DstVar, InCh, Duration)                      Random(DstVar, InCh, RF_STAY_ON, 0, 0, (Duration), (Duration))             // DstVar is turned on if InCh is activated and stays on for duration (Static (Not Edge) retiggerable mono flop)
 
