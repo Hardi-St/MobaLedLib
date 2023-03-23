@@ -529,7 +529,7 @@ bool Send_Disable_Pin_Active = 1;                                               
 
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20:  New feature from Juergen
-    #define EEPROM_START 32                                                                                   // 05.03.23:  Juergen reserve some space for common settings
+    #define EEPROM_START 0
     void StoreStatus(uint16_t EEPromAddr, uint8_t status);                                                    // 01.05.20:
 #endif
 
