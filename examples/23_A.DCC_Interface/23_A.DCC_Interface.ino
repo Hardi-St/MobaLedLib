@@ -18,6 +18,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2021 - 2023  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -189,9 +190,11 @@ Revision History :
            Versions 1.4
 18.12.21:  - Add DCC Signal detection on Signal loss indication
            Versions 1.5
+13.12.22: - Add GEN_BUTTON_RELEASE_COM feature that generates a "Button Release" in case the DCC central doesn't do it e.g. Lenz LZV100
+           Versions 1.6
 
 */
-#define SKETCH_VERSION "1.5"
+#define SKETCH_VERSION "1.6"
 
 #include "MobaLedLib.h"
 
@@ -250,6 +253,35 @@ uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port x seconds a
 
 #define sizemask    (QUEUESIZE-1)         // Bitmask for queue
 #define QueueFill() ((sizemask + 1 + wp - rp) & sizemask)
+/*
+  Problem:
+  Bei der Lenz Zentrale LZV100 von Rolf wird keine Message beim
+  loslassen des Tasters geschickt ;-(
+  Das fuehrt dazu, dass die mit den Tasten verknuepften Ausgaenge nicht mehr aus gehen.
+  Als Abhilfe wird die letzte Taste und der Zeitpunkt zu dem sie empfangen wurde
+  gespeichert. Nach 400ms wird automatisch das Taste losgelassen Ereignis generiert.
+  Wenn eine andere Taste empfangen wird wird die alte Taste ebenfalls "losgelassen".
+*/
+uint16_t LastAddr;
+uint8_t  LastDirection;
+uint32_t LastTime = 0;
+uint8_t release_mode;   // 0 = off, 1 = on, 2=detection phase
+// possible behavior of sending a button release
+#define GEN_OFF  0      // never send a button release
+#define GEN_AUTOMATIC 1 // automatic detect necessity to send a button release
+#define GEN_ON 2        // always send a button release
+// set default value of GEN_BUTTON_RELEASE_COM to automatic
+#ifndef GEN_BUTTON_RELEASE_COM  
+  #define GEN_BUTTON_RELEASE_COM GEN_AUTOMATIC
+#endif 
+#ifndef GEN_BUTTON_RELEASE_DETECTION_SECONDS
+  #define GEN_BUTTON_RELEASE_DETECTION_SECONDS 30
+#endif 
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+  #include <EEPROM.h>
+  static uint32_t   recentButtonPressTime  = 0;
+  static bool releaseModeChangeDetection = false;
+#endif
 
 uint8_t Use_RS232 = 1;                    // Flag which enables the RS232 to send the DCC states to the LED Arduino
 void setLastSignalTime(uint32_t lastSignalTime) 
@@ -328,7 +360,7 @@ void printf_proc(const __FlashStringHelper *format, ...)
 {
   if (Use_RS232 || (millis() - Last_SPI_Signal < 100))
      {
-     char buf[50];
+     char buf[100];           // increase buffer size                                                         // 16.12.2022
      va_list ap;
      va_start(ap, format);
      #ifdef __AVR__
@@ -373,12 +405,54 @@ void Transmit_Sendchar_if_waiting()
     if (digitalRead(SEND_DISABLE_PIN) == 0) LED_Arduino_signal_detected |= 1;
 }
 
+void StoreReleaseMode(bool isOn)
+{
+  EEPROM.write(0, isOn?0xaa:0x55);
+}
 //-------------------------------------------------------------------------------------
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
 //-------------------------------------------------------------------------------------
 // This function is called whenever a normal DCC Turnout Packet is received
 {
-  //if (!OutputPower) return ; // debug: Simulate the Lenz LZV100 behavior which doesn't send the button release signal
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+    // automatic detection
+    if (OutputPower==0)   // got a turn off
+    {
+      // turn off one time detectection
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+      if (releaseModeChangeDetection) printf("GEN_BUTTON_RELEASE automatic mode change detection turned OFF\n");
+#endif
+      releaseModeChangeDetection = false;
+      // turn OFF the automatic generation of button release  
+      if (release_mode!=0)
+      {
+        release_mode = 0;
+        StoreReleaseMode(false);
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+      printf("button release detected, GEN_BUTTON_RELEASE turned OFF\n");
+#endif
+      }
+    }
+    else
+    {
+      // store last Button On Time
+      if (recentButtonPressTime==0) recentButtonPressTime = millis();
+    }
+#endif        
+  sendToLEDArduino(Addr, Direction, OutputPower);
+}
+void sendToLEDArduino( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
+{
+  if (OutputPower)
+  {
+    if (LastTime && (LastAddr != Addr || LastDirection != Direction)) 
+    {
+      if (release_mode!=0) sendToLEDArduino(LastAddr, LastDirection, 0);
+    }
+    LastTime = millis();
+    LastAddr = Addr;
+    LastDirection = Direction;
+  }
 
   char s[20];
   sprintf(s, "@%4i %02X %02X\n", Addr, Direction, OutputPower);
@@ -450,6 +524,51 @@ void setup(){
       printf("SPI Mode supported.\n");
       printf("Connect J13 and remove TX pin from DCC/Selectrix Nano\n");
       Activate_SPI();
+  #endif
+  #if GEN_BUTTON_RELEASE_COM==GEN_OFF
+    release_mode = 0;
+  #elif GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+    releaseModeChangeDetection = true;
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+    printf("GEN_BUTTON_RELEASE automatic mode change detection turned ON (%i seconds)\n", GEN_BUTTON_RELEASE_DETECTION_SECONDS);
+#endif
+    switch(EEPROM.read(0))
+    {
+      case 0x55: // automatic send is OFF
+        release_mode = 0;
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE mode from EEPROM is OFF\n");
+#endif
+        break;
+      case 0xAA: // automatic send is ON
+        release_mode = 1;
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE mode from EEPROM is ON\n");
+#endif
+        break;
+      default:
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE mode from EEPROM is undefined\n");
+#endif
+        release_mode = 0xff;  // automatic discover phase
+        break;
+    }
+  #else
+    release_mode = 1;  // automatic release fixed to ON
+  #endif
+  #ifdef DEBUG_GEN_BUTTON_RELEASE
+    switch(release_mode)
+    {
+      case 0: 
+        printf("GEN_BUTTON_RELEASE mode is OFF\n");
+        break;
+      case 1: 
+        printf("GEN_BUTTON_RELEASE mode is AUTOMATIC\n");
+        break;
+      case 2: 
+        printf("GEN_BUTTON_RELEASE mode is ON\n");
+        break;
+    }
   #endif
 
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
@@ -578,6 +697,58 @@ void Process_Status_and_Error_LED()                                             
 //-----------
 void loop(){
 //-----------
+    if (release_mode!=0)
+    {
+      if (LastTime && millis()-LastTime > 400) // Use 1100 if no repeat is wanted
+      {
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE sends release for %4i %i\n", LastAddr, LastDirection);
+#endif
+        sendToLEDArduino(LastAddr, LastDirection, 0);
+        LastTime = 0;
+        // Serial.print(F("Release Button Addr ")); Serial.print(LastAddr); Serial.print("/");Serial.println(LastDirection); // Debug
+      }
+    }
+  /* one time detection after process startup
+     applies only if automatic detection is enabled 
+     use-case: a customer may change the DCC central, and the changed central
+     may have a different behavior for sending button releases
+     so EEPROM stored value may no longer be correct
+     after program restart it still operates in mode stored in EEPROM
+     but a one-time mode detection is active, that looks for a button release DCC packet 
+     within 30 seconds after the first button press
+     Note: this must be a on time detection, because a customer may use DCC switches,
+     e.g. for turning a light on (for long time). In this case no button release will occur 
+     as long the function is turned on.
+     Side effect: in case you use a central that generates a button release, but the first and ONLY
+     DCC packet after startup is a Switch turned on, without a release within 30 seconds
+     the mode is set to automatic generation of button release and the switch is turned off. This wrong
+     situation is fixed with the first button release DCC packet
+     */
+  if (releaseModeChangeDetection)      
+  {
+    if (recentButtonPressTime && millis()-recentButtonPressTime > (1000*GEN_BUTTON_RELEASE_DETECTION_SECONDS)) // no button release within 30 seconds
+    {
+      recentButtonPressTime = 0;
+      // turn ON the automatic generation of button release  
+      if (release_mode!=1)
+      {
+        release_mode = 1;
+        StoreReleaseMode(true);
+        releaseModeChangeDetection = false;
+  #ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("no button release within %i seconds, GEN_BUTTON_RELEASE turned ON\n", GEN_BUTTON_RELEASE_DETECTION_SECONDS);
+        printf("GEN_BUTTON_RELEASE automatic mode change detection turned OFF\n");
+#endif
+        // and turn off the switch
+        if (LastTime) 
+        {
+          sendToLEDArduino(LastAddr, LastDirection, 0);
+          LastTime = 0;
+        }
+      }
+    }
+  }
   Dcc.process(); // You MUST call the NmraDcc.process() method frequently from the Arduino loop() function for correct library operation
 
   if (Use_RS232) Transmit_Sendchar_if_waiting();

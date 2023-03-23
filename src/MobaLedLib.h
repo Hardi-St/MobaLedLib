@@ -334,6 +334,9 @@
 // 14.01.23: A signal consisting of one 2-color red/green LED 
 #define SingleLedSignal(LED,InCh,Single_Cx, FadeTime) InCh_to_LocalVar(InCh, 4) \
                                                    XPatternT1(LED,_Cx2StCh(Single_Cx)+64,SI_LocalVar,2,0,128,0,0,FadeTime,132,12  ,0,63,128,63,128,63,191)
+#define SingleLedSignalEx(LED,InCh,Single_Cx, FadeTime, State0_0, State0_1, State1_0, State1_1, State2_0, State2_1, State3_0, State3_1) InCh_to_LocalVar(InCh, 4) \
+                                                   XPatternT1(LED,_Cx2StCh(Single_Cx)+28,SI_LocalVar,2,0,255,0,0,250,0,0,STATE0_0,STATE0_1,0,0,STATE1_0,STATE1_1,0,0,STATE2_0,STATE2_1,0,0, \
+                                                   STATE3_0,STATE3_1  ,0,63,128,63,128,63,128,63)
 
 #define  ButtonFunc(                DstVar, InCh, Duration)                      Random(DstVar, InCh, RF_STAY_ON, 0, 0, (Duration), (Duration))             // DstVar is turned on if InCh is activated and stays on for duration (Static (Not Edge) retiggerable mono flop)
 

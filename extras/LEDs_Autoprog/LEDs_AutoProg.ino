@@ -2,7 +2,8 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2018 - 2023  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2023  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -251,6 +252,11 @@
  12.10.21:  - Juergen: add new feature to control sound modules attached to the mainboard  (currently limited to Arduino Nano and JQ6500)
  02.01.22:  - Juergen add support for DCC receive on LED Arduino
  02.01.22:  - improve ESP32/PICO EEProm handling
+ 13.02.23:  - Added functions to read ATTiny GBM signals which is enabled by #define USE_ATTiny_CAN_GBM
+              - Tested with
+                - Single switch macro: Const(#LED, C2, #InCh, 0, 127)
+                - 3 input macro: EntrySignal3_RGB(#LED, #InCh)
+ 21.03.23:  - if SEND_INPUT is enabled also SwitchA, SwitchD and Variable changes are notified		
 */
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
@@ -523,7 +529,7 @@ bool Send_Disable_Pin_Active = 1;                                               
 
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20:  New feature from Juergen
-    #define EEPROM_START 0
+    #define EEPROM_START 32                                                                                   // 05.03.23:  Juergen reserve some space for common settings
     void StoreStatus(uint16_t EEPromAddr, uint8_t status);                                                    // 01.05.20:
 #endif
 
@@ -657,7 +663,7 @@ void Receive_LED_Color_per_RS232()                                              
    gespeichert. Nach 400ms wird automatisch das Taste losgelassen Ereignis generiert.
    Wenn eine andere Taste empfangen wird wird die alte Taste ebenfalls "losgelassen".
   */
-  #define GEN_BUTTON_RELEASE
+  //#define GEN_BUTTON_RELEASE                                                        // 13.12.22: Juergen - disable GEN_BUTTON_RELEASE by default
   #ifdef GEN_BUTTON_RELEASE
     uint8_t  LastChannel;
     uint32_t LastTime = 0;
@@ -682,13 +688,17 @@ void Receive_LED_Color_per_RS232()                                              
          //Serial.print("Addr:"); Serial.print(Addr); Serial.print(" InTyp:"); Serial.print(InTyp,HEX); Serial.print(" InCnt:"); Serial.println(InCnt); // Debug
          uint16_t ChkBut = InTyp;
 
-         for (uint8_t In = 0; ; )
+         for (uint8_t In = 0; ; ) // Loop over InCnt
              {
              //Serial.print(In); Serial.print(" "); // Debug
              //Serial.print("In="); Serial.print(In); Serial.print(" ChkBut="); Serial.print(ChkBut,HEX); Serial.print(" Dir "); Serial.println(Direction); // Debug
              if (Addr == ReceivedAddr) // Addr is matching
                   {
-                  if (ChkBut == S_ONOFF) // OnOff switch
+                  if  (ChkBut == S_ONOFF // OnOff switch
+                       #if defined(USE_ATTiny_CAN_GBM)                                                        // 12.02.23:
+                           || ChkBut == O_RET_MSG
+                       #endif
+                      )
                        {
 #ifdef COMMANDS_DEBUG					   
                        char s[48]; sprintf(s, "OnOff: Addr %i Channel[%i]=%i Pow=%i", Addr, Channel, Direction, OutputPower); Serial.println(s);  // Debug
@@ -731,9 +741,15 @@ void Receive_LED_Color_per_RS232()                                              
              if (In < InCnt)
                 {
                 #if TWO_BUTTONS_PER_ADDRESS
-                   if (ChkBut == S_ONOFF) Addr++;
-                   else if (ChkBut == B_RED)    ChkBut = B_GREEN;
-                   else if (ChkBut == B_GREEN) {ChkBut = B_RED;   Addr++; }
+                   switch (ChkBut)                                                                            // 13.02.23:  Hardi: Changed to switch/case
+                    {
+                    case B_GREEN: ChkBut = B_RED; // No break to continue with the next line
+                   #if defined(USE_ATTiny_CAN_GBM)                                                            // 13.02.23:  Hardi
+                    case O_RET_MSG:               // No Break to continue with the next line
+                   #endif
+                    case S_ONOFF: Addr++;                   break;
+                    case B_RED:   ChkBut = B_GREEN;         break;
+                    }
                 #else
                    Addr++;
                 #endif
@@ -1263,11 +1279,35 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    #endif
    bool CAN_ok = false;
 
+//#if 0 // Moved to the h-File
+//#define ATTINY_GBM_MASK_BUFF1    0x1300  // Bits to check
+//#define ATTINY_GBM_FILTER_BUFF1  0x0300
+//#define ATTINY_GBM_SW_FILTER
+//#ifdef ATTINY_GBM_SW_FILTER                                                                                   // 13.02.23:
+//  const PROGMEM uint8_t ATTINY_GBM_SW_Filter[] =
+//         {
+//         0x25, 0x26, 0x04,
+//         };
+//  //------------------------------------------------
+//  uint8_t Is_in_ATTINY_GBM_SW_Filter(uint32_t MsgId)
+//  //------------------------------------------------
+//  {
+//    const uint8_t *p = (const uint8_t*)ATTINY_GBM_SW_Filter;
+//    const uint8_t *e = p + sizeof(ATTINY_GBM_SW_Filter);
+//    uint8_t MsgID_Byte = MsgId & 0xFF; // Check only the lower byte. The upper byte is always 0x03)
+//    for (; p < e; p++)
+//        {
+//        if (MsgID_Byte == *p) return 1;
+//        }
+//    return 0;
+//  }
+//#endif // ATTINY_GBM_SW_FILTER
+//#endif
    //-----------------------------------
    void Proc_Accessory(uint8_t *rxBuf)
    //-----------------------------------
    // Process accessory CAN messages
-   // See: https://www.maerklin.de/fileadmin/media/produkte/CS2_can-protokoll_1-0.pdf
+   // See: https://streaming.maerklin.de/public-media/cs2/cs2CAN-Protokoll-2_0.pdf
    {
      uint8_t Pos     = rxBuf[4];  // 0 = Aus, Rund, Rot, Rechts, HP0 / 1 = Ein, Gruen, Gerade, HP1 / 2 = Gelb, Links, HP2 / 3 = Weiss, SH0
      uint8_t Current = rxBuf[5];  // 0 = Ausschalten, 1-31 Einschalten mit Dimmwert (sofern Protokoll dies unterstuetzt), 1 = ein
@@ -1276,6 +1316,32 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      Update_InputCh_if_Addr_exists(Loc_ID+1, Pos, Current);
    }
 
+   #if defined(USE_ATTiny_CAN_GBM)                                                                            // 12.02.23:
+     //-----------------------------------------------------------------
+     void Proc_ATTiny_GBM_Return_Messages(uint32_t rxId, uint8_t *rxBuf)
+     //-----------------------------------------------------------------
+     // The ATTiny GBM (https://github.com/Hardi-St/MobaLedLib_Docu/blob/master/Platinen/GBM_o_LED_CAN.zip)
+     // Sends a CAN message with two bytes:
+     //  Example: 0x300: 03 00
+     // The first bytes contains the bitmask of the channels (Example 03 => Channel 1 and 2 are activ)
+     // The second byte contains the error mask (line broken)
+     // Each module has an own individual message ID. The first MsgId is 300.
+     {
+       uint8_t j = 0;
+       #ifdef ATTINY_GBM_CHECK_ERROR
+         for (j = 0; j < 2; j++)
+       #endif
+            {
+            for (uint8_t i = 0; i < 8; i++)
+              {
+              uint8_t Pos     = rxBuf[j] & (1 << i)?1:0;
+              uint16_t Loc_ID = (rxId<<4) - 0x3000 + i + j * 8 ;
+              Update_InputCh_if_Addr_exists(Loc_ID, Pos, 1);
+              }
+            }
+     }
+   #endif // USE_ATTiny_CAN_GBM
+          //
    //----------------
    void Process_CAN()
    //----------------
@@ -1299,7 +1365,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
          {
    #endif
 #ifdef COMMANDS_DEBUG
-         Serial.print("CAN: "); Serial.print(rxId,HEX); Serial.print(" Len="); Serial.print(len); // Debug
+         Serial.print("CAN: "); Serial.print(rxId,HEX); Serial.print(" Len:"); Serial.print(len); // Debug
 		 for (uint8_t i=0;i<len;i++) 
 		 {
 			if (i==0) Serial.print(" Data ");
@@ -1310,6 +1376,10 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 		 Serial.println();
 #endif
          if (((rxId>>16) & 0xFF) == 0x16) Proc_Accessory(rxBuf); // Check if it's a accessory message
+         #if defined(USE_ATTiny_CAN_GBM)
+           else if (len == 2 && Is_in_ATTINY_GBM_SW_Filter(rxId))
+              Proc_ATTiny_GBM_Return_Messages(rxId, rxBuf);
+         #endif
          }
       }
    }
@@ -1334,6 +1404,29 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 #endif
 
 //#include "Eigene_Ergaenzungen.h"
+#ifdef USE_CAN_AS_INPUT                                                                                       // 13.02.23:
+  #if !defined(ESP32)
+     //-------------------------------------------------------------------
+     void Set_Mask_a_Filter1(MCP_CAN &CAN, uint32_t Mask, uint32_t Filter)
+     //-------------------------------------------------------------------
+     // Set the mask and filter for buffer 1
+     {
+       uint8_t Ext;
+       if (Mask > 0x1FFF)
+            { // Ext. 29 Bit Messages
+            Ext = 1;
+            }
+       else { // 11 bit messages
+            Ext = 0;
+            Mask   = Mask   << 16;
+            Filter = Filter << 16;
+            }
+       CAN.init_Mask(1, Ext, Mask);
+       for (uint8_t i = 2; i < 6; i++)
+           CAN.init_Filt(i, Ext, Filter);
+     }
+  #endif // !ESP32
+#endif // USE_CAN_AS_INPUT
 
 //-----------
 void setup(){
@@ -1429,15 +1522,44 @@ void setup(){
                  CAN_ok = false;
 			     }
 			 }
+             #if defined(ATTINY_GBM_FILTER1) || defined(ATTINY_GBM_FILTER2) || defined(ATTINY_GBM_FILTER3) || defined(ATTINY_GBM_FILTER4)
+               #error "ATTINY_GBM_FILTER1 Filters are not implemented for the ESP at the moment"
+             #endif
 	#else
 		if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
 			 {
 			 Serial.println(F("CAN Init OK!"));
 			 CAN_ok = true;
 			 CAN.setMode(MCP_NORMAL); // Important to use the filters
+             // Der MSP2515 hat zwei Eingangsbuffer.                                                          13.02.23:
+             // Zum Filtern der Messages hat Buffer0 hat zwei Filter Register Buffer1 hat 4.
+             // Die Eingangsbuffer können entweder 11 Bit oder 21 Bit Messages filtern.
+             // - Die Märklin Zubehörbefehle werden im Buffer0 empfangen weil nur eine Message 0016???? empfangen
+             //   werden muss.
+             // - Beim ATTiny GBM wird pro GBM eine eigene Message verwendet. => Die Filter werden komplizierter.
+             //   Die Messages liegen im Bereich von 300 - 6FF.
+             // - Die aktuelle Implementierung (Juli 22) von "Add_Message_to_Filter_nd.h" verwendet Buffer0 wenn
+             //   mehr als 6 Messages empfangen werden sollen. Das ist ungünstig weil dieser Buffer schon für
+             //   die 29 Bit Messages verwendet wird.
+             //   => für mehr als 4 Messages bei Buffer1 muss das Programm angepasst werden.
 			 // Set the message filters
 			 Add_Message_to_Filter(CAN, 0x80000000 | 0x0016FFFF, 0); // Filter 0 initializes the CAN chip
 			 Add_Message_to_Filter(CAN, 0x80000000 | 0x00160000, 6); // Filter >= 6 uses also channel 0
+             #ifdef ATTINY_GBM_FILTER1
+               Add_Message_to_Filter(CAN, ATTINY_GBM_FILTER1, 1);
+             #endif
+             #ifdef ATTINY_GBM_FILTER2
+               Add_Message_to_Filter(CAN, ATTINY_GBM_FILTER2, 3);
+             #endif
+             #ifdef ATTINY_GBM_FILTER3
+               Add_Message_to_Filter(CAN, ATTINY_GBM_FILTER3, 4);
+             #endif
+             #ifdef ATTINY_GBM_FILTER4
+               Add_Message_to_Filter(CAN, ATTINY_GBM_FILTER4, 5);
+             #endif
+             #if defined(ATTINY_GBM_MASK_BUFF1) && defined(ATTINY_GBM_FILTER_BUFF1)
+                 Set_Mask_a_Filter1(CAN, ATTINY_GBM_MASK_BUFF1, ATTINY_GBM_FILTER_BUFF1);
+             #endif
 			 }                                                       // => Filter is addapte to pass both messages
 	#endif
     else Serial.println(F("CAN Init Fail!"));                    //    => Messages matching 0x0016???? are passed
@@ -2100,10 +2222,6 @@ void MLLMainLoop(){
     LED_HeartBeat.Update();
   #endif
 
-  #if defined SEND_INPUTS                                                                                     // 28.11.20: Juergen
-     Send_Inputs('*', false);
-  #endif
-
   MobaLedLib.Update();                  // Update the LEDs in the configuration
 
   #ifdef DayAndNightTimer_Period                                                                              // 07.10.20:
@@ -2162,6 +2280,10 @@ void MLLMainLoop(){
     Update_LED2Var();
   #endif
 
+  #if defined SEND_INPUTS                                                                                     // 28.11.20: Juergen 21.03.23: move after Update_LED2Var to avoid sending two changes
+     Send_Inputs('*', false);
+  #endif
+  
   #if 0 // Debug
     static unsigned long lastMillis = 0;
     static unsigned long lastMillis2 = 0;
