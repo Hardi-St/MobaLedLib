@@ -265,14 +265,14 @@ uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port x seconds a
 uint16_t LastAddr;
 uint8_t  LastDirection;
 uint32_t LastTime = 0;
-uint8_t release_mode;   // 0 = off, 1 = on, 2=detection phase
+uint8_t release_mode;   // 0 = off, 1=automatic detection, 2 = on
 // possible behavior of sending a button release
-#define GEN_OFF  0      // never send a button release
-#define GEN_AUTOMATIC 1 // automatic detect necessity to send a button release
-#define GEN_ON 2        // always send a button release
-// set default value of GEN_BUTTON_RELEASE_COM to automatic
+#define GEN_OFF  0      // never simulate a button release
+#define GEN_AUTOMATIC 1 // automatic detect necessity to simulate a button release
+#define GEN_ON 2        // always simulate a button release
+// set default value of GEN_BUTTON_RELEASE_COM to off
 #ifndef GEN_BUTTON_RELEASE_COM  
-  #define GEN_BUTTON_RELEASE_COM GEN_AUTOMATIC
+  #define GEN_BUTTON_RELEASE_COM GEN_OFF
 #endif 
 #ifndef GEN_BUTTON_RELEASE_DETECTION_SECONDS
   #define GEN_BUTTON_RELEASE_DETECTION_SECONDS 30
@@ -405,10 +405,12 @@ void Transmit_Sendchar_if_waiting()
     if (digitalRead(SEND_DISABLE_PIN) == 0) LED_Arduino_signal_detected |= 1;
 }
 
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
 void StoreReleaseMode(bool isOn)
 {
   EEPROM.write(0, isOn?0xaa:0x55);
 }
+#endif
 //-------------------------------------------------------------------------------------
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
 //-------------------------------------------------------------------------------------
@@ -541,7 +543,7 @@ void setup(){
 #endif
         break;
       case 0xAA: // automatic send is ON
-        release_mode = 1;
+        release_mode = 2;
 #ifdef DEBUG_GEN_BUTTON_RELEASE
         printf("GEN_BUTTON_RELEASE mode from EEPROM is ON\n");
 #endif
@@ -550,11 +552,11 @@ void setup(){
 #ifdef DEBUG_GEN_BUTTON_RELEASE
         printf("GEN_BUTTON_RELEASE mode from EEPROM is undefined\n");
 #endif
-        release_mode = 0xff;  // automatic discover phase
+        release_mode = 1;  // automatic discover phase
         break;
     }
   #else
-    release_mode = 1;  // automatic release fixed to ON
+    release_mode = 2;  // automatic release fixed to ON
   #endif
   #ifdef DEBUG_GEN_BUTTON_RELEASE
     switch(release_mode)
@@ -725,15 +727,16 @@ void loop(){
      the mode is set to automatic generation of button release and the switch is turned off. This wrong
      situation is fixed with the first button release DCC packet
      */
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
   if (releaseModeChangeDetection)      
   {
     if (recentButtonPressTime && millis()-recentButtonPressTime > (1000*GEN_BUTTON_RELEASE_DETECTION_SECONDS)) // no button release within 30 seconds
     {
       recentButtonPressTime = 0;
       // turn ON the automatic generation of button release  
-      if (release_mode!=1)
+      if (release_mode!=2)
       {
-        release_mode = 1;
+        release_mode = 2;
         StoreReleaseMode(true);
         releaseModeChangeDetection = false;
   #ifdef DEBUG_GEN_BUTTON_RELEASE
@@ -749,6 +752,7 @@ void loop(){
       }
     }
   }
+#endif  
   Dcc.process(); // You MUST call the NmraDcc.process() method frequently from the Arduino loop() function for correct library operation
 
   if (Use_RS232) Transmit_Sendchar_if_waiting();

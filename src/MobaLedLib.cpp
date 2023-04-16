@@ -3,6 +3,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2021  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public

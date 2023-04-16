@@ -1741,10 +1741,11 @@ void setup(){
     stream, 
 #endif    
 #ifdef NO_DCC_PULLUP
-    false
+    false,
 #else
-    true
+    true,
 #endif    
+    GEN_BUTTON_RELEASE_COM                                                                                    // 09.04.23: possible behavior of sending a button release    
   );
 #endif
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
