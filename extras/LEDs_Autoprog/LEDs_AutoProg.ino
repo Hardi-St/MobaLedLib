@@ -722,7 +722,7 @@ void Receive_LED_Color_per_RS232()                                              
                              char s[48]; sprintf(s, "%s Button Addr %i: Channel[%i]=%i", ChkBut==B_RED?"Red":"Green", Addr, Channel,OutputPower); Serial.println(s); // Debug
 #endif						
                              MobaLedLib.Set_Input(Channel, OutputPower);
-                             #ifdef GEN_BUTTON_RELEASE
+                             #if defined(GEN_BUTTON_RELEASE) && defined(USE_EXT_ADDR)                           // 16.04.23: Juergen - add check for USE_EXT_ADDR
                                if (OutputPower)
                                   {
                                   if (LastTime && LastChannel != Channel) MobaLedLib.Set_Input(LastChannel, 0); // Send release
@@ -1212,7 +1212,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    //  "$ 123 00\n":     Addr, State
    // For tests with the serial monitor use "Neue Zeile" instead of "Zeilenumbruch (CR)"
    {
-     #ifdef GEN_BUTTON_RELEASE                                                                                // 23.05.19:
+     #if defined(GEN_BUTTON_RELEASE) && defined(USE_EXT_ADDR)                           // 16.04.23: Juergen - add check for USE_EXT_ADDR
        if (LastTime && millis()-LastTime > 400) // Use 1100 if no repeat is wanted
           {
           MobaLedLib.Set_Input(LastChannel, 0); // Send release
