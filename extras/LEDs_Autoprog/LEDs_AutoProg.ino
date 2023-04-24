@@ -979,8 +979,6 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 #endif // ENABLE_STORE_STATUS                                                                                 // 01.05.20:
 
 
-#if defined USE_RS232_OR_SPI_AS_INPUT
-
 #if defined SEND_INPUTS
 	#if defined START_SWITCHES_1
 		#define START_SEND_CHANNEL START_SWITCHES_1
@@ -1038,6 +1036,8 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 		#endif
 	}
 #endif
+
+#if defined USE_RS232_OR_SPI_AS_INPUT
    //----------------------------
    void Proc_Buffer(char *Buffer)                                                                             // 13.05.20:  Added: Buffer
    //----------------------------
