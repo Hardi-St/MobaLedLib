@@ -192,15 +192,17 @@ Revision History :
            Versions 1.5
 13.12.22: - Add GEN_BUTTON_RELEASE_COM feature that generates a "Button Release" in case the DCC central doesn't do it e.g. Lenz LZV100
            Versions 1.6
+27.04.23: - Improve signal loss detection
+           Versions 1.61
 
 */
-#define SKETCH_VERSION "1.6"
+#define SKETCH_VERSION "1.61"
 
 #include "MobaLedLib.h"
 
 #include "23_A.DCC_Interface.h" // Is written by the Excel Tool Program_Generator to set compiler switches
 
-#if USE_SPI_SLAVE                                                                                             // 13.05.20:
+#if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0                                                                                             // 13.05.20:
   #include<SPI.h>
   #define STATUSLED_PIN  8
   #define STATUSLED_MOD  !  // LED is connected to GND => It has to be inverted
@@ -215,6 +217,10 @@ Revision History :
 #define HEARTBEAT_PIN    3
 #define BUF_GATE_PIN     A5                                                                                   // 18.10.20:
 
+#ifndef DCC_SIGNAL_DETECTION_SECONDS
+#define DCC_SIGNAL_DETECTION_SECONDS 1                                                                        // set to 1 second by default
+#endif
+
 NmraDcc  Dcc ;                                // Instance of the NmraDcc class
 
 LED_Heartbeat_C LED_HeartBeat(HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
@@ -228,14 +234,18 @@ volatile char    *EndSendBuffer   = SendBuffer+sizeof(SendBuffer);
 uint8_t           Error           = 0;
 uint32_t          NextStatusFlash = 0;
 uint8_t           SPI_is_Active   = 1;
-static uint32_t   LastSignalTime  = 0;
+static uint32_t   LastSyncTime  = 0;
+static bool       DCCMsgTimeout;
+static uint32_t   LastMsgTime = 0;
 
-//                                       States On    Off   On  Off  On   Off
+
+//                                       States On    Off   On  Off  On   Off  On   Off
 uint16_t RS232_Flash_Table[]         = { 2,     1500, 1500                     };
 uint16_t SPI_Act_Flash_Table[]       = { 4,     500,  500, 500, 1500           };
 uint16_t SPI_Deact_Flash_Table[]     = { 6,     500,  500, 500, 500, 500, 1500 };
 uint16_t BufferFull_Flash_Table[]    = { 2,     250,  250                      };
 uint16_t PriorBuddFull_Flash_Table[] = { 2,     50,   450                      };
+uint16_t NoSSync_Flash_Table[]       = { 8,     0,    200,  50, 200, 50, 200 , 50,  800   };        // start with off to see 3 blinks also on trnasistion to NoSync
 uint16_t NoSignal_Flash_Table[]      = { 2,     50,   450                      };
 uint8_t  FlashState = 1;
 
@@ -284,22 +294,22 @@ uint8_t release_mode;   // 0 = off, 1=automatic detection, 2 = on
 #endif
 
 uint8_t Use_RS232 = 1;                    // Flag which enables the RS232 to send the DCC states to the LED Arduino
-void setLastSignalTime(uint32_t lastSignalTime) 
+void setLastSyncTime(uint32_t lastSyncTime)
 {
-  if ((millis()-lastSignalTime) > 1000)
+  if ((millis() - lastSyncTime) > 1000)
   {
-    LastSignalTime = 0;
+    LastSyncTime = 0;
     LED_Arduino_signal_detected &= ~2;
     Error = 0;              // don't show an error when SX signal comes back
   }
   else
   {
     LED_Arduino_signal_detected |= 2;
-    LastSignalTime = lastSignalTime;
+    LastSyncTime = lastSyncTime;
   }
 }
 
-#if USE_SPI_SLAVE
+#if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0
   #define SPI_RCV_BUF_SIZE 10
   volatile char SPI_Rcv_Buff[SPI_RCV_BUF_SIZE];
   volatile char *SPI_Rcv_Ptr = SPI_Rcv_Buff;
@@ -323,7 +333,7 @@ void setLastSignalTime(uint32_t lastSignalTime)
               }
          else SPDR = 0;
          }
-    setLastSignalTime(millis());
+    setLastSyncTime(millis());
     LED_Arduino_signal_detected |= 2;
   }
 #endif // USE_SPI_SLAVE
@@ -402,7 +412,11 @@ void Transmit_Sendchar_if_waiting()
              if (rp >= EndSendBuffer) rp = SendBuffer;
              }
          }
-    if (digitalRead(SEND_DISABLE_PIN) == 0) LED_Arduino_signal_detected |= 1;
+    if (digitalRead(SEND_DISABLE_PIN) == 0)
+      {
+      setLastSyncTime(millis());
+      LED_Arduino_signal_detected |= 1;
+      }
 }
 
 #if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
@@ -478,8 +492,10 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 void notifyDccMsg( DCC_MSG * Msg )
 //---------------------------------------------------------
 {
-  setLastSignalTime(millis());
+  DCCMsgTimeout = false;
+  LastMsgTime = millis();
 }
+
 #if USE_SPI_SLAVE                                                                                             // 13.05.20:
    //-----------------
    void Activate_SPI()
@@ -500,9 +516,8 @@ void notifyDccMsg( DCC_MSG * Msg )
    }
 #endif // USE_SPI_SLAVE
 
-
 //-----------
-void setup(){
+void setup() {
 //-----------
   pinMode(13, INPUT); // IF the D13 pins are connected together they must be used as inputs. The pin is activated as OUTPUT in the boot loader ?!?
 
@@ -522,7 +537,7 @@ void setup(){
                                                                      // disabled if the RGB LEDs are updated.
                                                                      // The next message is only shown if the SEND_DISABLE signal
                                                                      // connected to ground by the LED-Arduino..
-  #if USE_SPI_SLAVE
+  #if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0
       printf("SPI Mode supported.\n");
       printf("Connect J13 and remove TX pin from DCC/Selectrix Nano\n");
       Activate_SPI();
@@ -573,6 +588,8 @@ void setup(){
     }
   #endif
 
+  DCCMsgTimeout = false;
+
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
   Dcc.pin(0, DCC_SIGNAL_PIN, 1);
 
@@ -581,7 +598,8 @@ void setup(){
 
   AddToSendBuffer("Init Done\n"); // This message is send to the LED Arduino over RS232 or SPI (If the Arduino is already active)
 
-  pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin. This is importand to disable the communikation while the LED Arduino is flashed
+  pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin. 
+                                           // This is important to disable the communication while the LED Arduino is flashed
   pinMode(STATUSLED_PIN, OUTPUT);
 }
 
@@ -603,26 +621,31 @@ void Process_Status_and_Error_LED()                                             
                Flash_Table_p = BufferFull_Flash_Table;
           else 
             Flash_Table_p = PriorBuddFull_Flash_Table; // Prior error detected but not longer activ
-          if (Error > 1 && LED_Arduino_signal_detected) Error--; // Decrement the error counter if the communication is working again
+          if (Error > 0 && LED_Arduino_signal_detected) Error--; // Decrement the error counter if the communication is working again
           }
     else 
     {
-          if (Use_RS232)
+      if (DCCMsgTimeout)
+        {
+          Error = 0;              // don't show an error when signal comes back
+          Flash_Table_p = NoSignal_Flash_Table;
+        }
+      else if (Use_RS232)
 	    {
-	    if ((millis()-LastSignalTime) > 1000)
+	    if ((millis()-LastSyncTime) > 1000)
 	      {
-	      LastSignalTime = 0;
+	      LastSyncTime = 0;
 	      Error = 0;              // don't show an error when signal comes back
 	      }
-	    if (LastSignalTime==0)   // no SX signal
+        if (LastSyncTime == 0)   // no signal
 	      {
-	      Flash_Table_p = NoSignal_Flash_Table;
+          Flash_Table_p = NoSSync_Flash_Table;
   	      }
 	    else
 	      {
               Flash_Table_p = RS232_Flash_Table;
 	      }
-          #if USE_SPI_SLAVE
+          #if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0
           else {
                if (SPI_is_Active)
                      Flash_Table_p = SPI_Act_Flash_Table;
@@ -638,16 +661,17 @@ void Process_Status_and_Error_LED()                                             
         NextStatusFlash = 0;
         FlashState = 1;
         }
-    #ifdef USE_SPI_SLAVE
      LED_Arduino_signal_detected = 0;
-    #endif
      }
   if (t >= NextStatusFlash) // Flash the status LED
      {
      if (FlashState > Flash_Table_p[0]) FlashState = 1;
      NextStatusFlash = t + Flash_Table_p[FlashState];
+    if (Flash_Table_p[FlashState]>0)
+      {
      digitalWrite(STATUSLED_PIN, STATUSLED_MOD (FlashState%2));
-     #if USE_SPI_SLAVE                                                                                        // 15.05.20:
+      }
+#if USE_SPI_SLAVE                                                                                        // 15.05.20:
         if (!Use_RS232)
            { // SPI Mode is active
            if (DisableSerial == SERIAL_DISABLED) // Flash also the RX LED if the SPI mode is used in case the user has no LED connected to pin D8
@@ -661,14 +685,14 @@ void Process_Status_and_Error_LED()                                             
      }
 }
 
-#if USE_SPI_SLAVE                                                                                           // 15.05.20:
+#if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0                                                                                           // 15.05.20:
   //-------------------------
   void SPI_Sleep_and_Wakeup()
   //-------------------------
   {
     if (LED_Arduino_signal_detected & 2)
        {
-       Use_RS232 = 0;               // Disable the RS232 communikation
+       Use_RS232 = 0;               // Disable the RS232 communication
        Last_SPI_Signal = millis();
        }
 
@@ -757,7 +781,7 @@ void loop(){
 
   if (Use_RS232) Transmit_Sendchar_if_waiting();
 
-  #if USE_SPI_SLAVE                                                                                           // 15.05.20:
+  #if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0                                                                                           // 15.05.20:
     static uint8_t Show_Message_Once = 1;
     if (Use_RS232 == 0 && Show_Message_Once)
        {
@@ -768,6 +792,11 @@ void loop(){
 
     SPI_Sleep_and_Wakeup();
   #endif
+
+  if ((millis() - LastMsgTime) > (uint32_t)DCC_SIGNAL_DETECTION_SECONDS * 1000)
+  {
+    DCCMsgTimeout = true;
+  }
 
   Process_Status_and_Error_LED();                                                                             // 13.05.20:
 
