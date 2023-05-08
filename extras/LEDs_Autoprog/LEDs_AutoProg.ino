@@ -256,7 +256,9 @@
               - Tested with
                 - Single switch macro: Const(#LED, C2, #InCh, 0, 127)
                 - 3 input macro: EntrySignal3_RGB(#LED, #InCh)
- 21.03.23:  - if SEND_INPUT is enabled also SwitchA, SwitchD and Variable changes are notified		
+ 21.03.23:  - if SEND_INPUTS is enabled also SwitchA, SwitchD and Variable changes are notified	
+ 26.04.23:  - Avoid loosing triggers if on/off message comes very fast (LNet)
+ 08.04.23:  - Improve detection of change switches/variables for SEND_INPUTS feature
 */
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
@@ -306,6 +308,10 @@
     #define USE_COMM_INTERFACE
   #endif
   #include "DCCInterface.h"
+#endif
+
+#ifndef GEN_BUTTON_RELEASE_COM                                                          // 02.05.23 Juergen add default value if undefined
+  #define GEN_BUTTON_RELEASE_COM GEN_AUTOMATIC
 #endif
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
@@ -547,6 +553,23 @@ void MLLTask( void * parameter );
 void MLLMainLoop();
 
 
+//-------------------------------------
+void Set_Input(uint8_t channel, uint8_t On)                                                   // 18.04.23: additional helper function
+//-------------------------------------
+{
+// the LNet protocol sends on/off messages only once. If off message comes very fast after an on, e.g. if messages are buffered by the communication arduino, 
+// MobaLedLib will miss the trigger. So we need to do an extra MobaLedLib.update() to handle INP_TURNED_ON and INP_TURNED_OFF cases.
+// it has not been reported, but it may also occur with DCC or CAN
+
+    byte inp = MobaLedLib.Get_Input(channel);
+    if (inp==INP_TURNED_OFF && On ||inp==INP_TURNED_ON && !On)
+        {
+        MobaLedLib.Update();
+        }
+    MobaLedLib.Set_Input(channel, On);
+}
+
+
 #ifdef RECEIVE_LED_COLOR_PER_RS232
 //-------------------------------------
 void Proc_Color_Cmd(const char *Buffer)                                                                       // 03.11.19:
@@ -577,7 +600,7 @@ void Proc_Color_Cmd(const char *Buffer)                                         
 #else
   void (* ResetArduino)(void) = 0; // Restart the Arduino
 #endif
-
+    
 //--------------------------------
 void Receive_LED_Color_per_RS232()                                                                            // 03.11.19:
 //--------------------------------
@@ -705,7 +728,7 @@ void Receive_LED_Color_per_RS232()                                              
 #endif					   
                        if (OutputPower > 0)
                             {
-                            MobaLedLib.Set_Input(Channel, Direction > 0);
+                            Set_Input(Channel, Direction > 0);                                                // 18.04.23: Juergen call helper function
                             }
                        return ;
                        }
@@ -721,11 +744,11 @@ void Receive_LED_Color_per_RS232()                                              
 #ifdef COMMANDS_DEBUG					   
                              char s[48]; sprintf(s, "%s Button Addr %i: Channel[%i]=%i", ChkBut==B_RED?"Red":"Green", Addr, Channel,OutputPower); Serial.println(s); // Debug
 #endif						
-                             MobaLedLib.Set_Input(Channel, OutputPower);
+                             Set_Input(Channel, OutputPower);                                                   // 18.04.23: Juergen call helper function
                              #if defined(GEN_BUTTON_RELEASE) && defined(USE_EXT_ADDR)                           // 16.04.23: Juergen - add check for USE_EXT_ADDR
                                if (OutputPower)
                                   {
-                                  if (LastTime && LastChannel != Channel) MobaLedLib.Set_Input(LastChannel, 0); // Send release
+                                  if (LastTime && LastChannel != Channel) Set_Input(LastChannel, 0); // Send release // 18.04.23: Juergen call helper function
                                   LastTime = millis();
                                   LastChannel = Channel;
                                   }
@@ -979,60 +1002,47 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 #endif // ENABLE_STORE_STATUS                                                                                 // 01.05.20:
 
 
-#if defined SEND_INPUTS
-	#if defined START_SWITCHES_1
-		#define START_SEND_CHANNEL START_SWITCHES_1
-		#ifdef START_SWITCHES_2
-			#define INCH_CNT START_SWITCHES_2+8-START_SWITCHES_1													// no expicit define in Leds_Autoprog.h -> in the meantime take this as a workaround
-		#else
-			#define TMP_INCH_CNT 32
-		#endif
-	#else
-		#if defined START_SWITCHES_2
-			#define START_SEND_CHANNEL START_SWITCHES_2
-			#define INCH_CNT 8																			// align to byte size
-		#else
-			#define START_SEND_CHANNEL 0
-			#define INCH_CNT 0
-		#endif
+#if defined SEND_INPUTS 
+	#ifndef START_SEND_INPUTS                                                                            // 27.04.23 Juergen
+        #define START_SEND_INPUTS 0
+    #endif  
+    #ifndef TOTAL_SEND_INPUTS
+        #define TOTAL_SEND_INPUTS 0
 	#endif
                                                                                                         // 12.11.21 Juergen remove debug output
 //	#define STRINGIFY(s) XSTRINGIFY(s)
 //	#define XSTRINGIFY(s) #s
-//	#pragma message ("INCH_CNT=" STRINGIFY(INCH_CNT))
-//	#pragma message ("START_SEND_CHANNEL=" STRINGIFY(START_SEND_CHANNEL))
+//	#pragma message ("START_SEND_INPUTS=" STRINGIFY(START_SEND_INPUTS))
+//	#pragma message ("TOTAL_SEND_INPUTS=" STRINGIFY(TOTAL_SEND_INPUTS))
 
  	void Send_Inputs(char type, bool forceSend)
 	{
-		#if INCH_CNT!= 0
-			#define SEND_LEN ((uint8_t)((INCH_CNT+6)/7))+1														// add one byte for checksum
+		#if TOTAL_SEND_INPUTS!= 0
+			#define SEND_LEN (uint8_t)((((TOTAL_SEND_INPUTS+6)/7))+1)                                   // add one byte for checksum
+            static uint8_t send_buffer[SEND_LEN+1];
 			uint8_t outByte = 0;
-			uint8_t input;
-			uint8_t chkSum = (uint8_t)~(SEND_LEN^0xD0);												        // compiler will make correct value out of it (saves memory)
-			for (uint8_t i=0;i<INCH_CNT &&!forceSend;i++) {
-				input = MobaLedLib.Get_Input(START_SEND_CHANNEL+i);
-				forceSend |= (input==INP_TURNED_ON);
-				forceSend |= (input==INP_TURNED_OFF);
-			}
-			if (!forceSend) return;
+			uint8_t chkSum = (uint8_t)~(SEND_LEN^0xD0);												    // compiler will make correct value out of it (saves memory)
 
-			Serial.write(0xD0);
-			Serial.write(SEND_LEN);
-			for (uint8_t i=0;i<INCH_CNT;i++) {																	// align to 7 bits
-
-				input = MobaLedLib.Get_Input(START_SEND_CHANNEL+i);
+			send_buffer[0]=0xD0;
+			send_buffer[1]=SEND_LEN;
+			for (uint8_t i=0;;) {                                                       // align to 7 bits
 				outByte = outByte<<1;
-				if ((input == INP_ON || input == INP_TURNED_ON))
-					outByte |= 0x01;
-				if ((i%7)==6 || i==(INCH_CNT-1)) {																// every 7 bits or with the last bit
+				if ((MobaLedLib.Get_Input(START_SEND_INPUTS+i) & 0x01) && i<TOTAL_SEND_INPUTS)
+					outByte |= 1;
+				if ((++i%7)==0) {                                                                       // every 7 bits or with the last bit
 					//if (outByte<16)Serial.print("0");
 					//Serial.print(outByte,HEX);
-					Serial.write(outByte);
+                    if (outByte!=send_buffer[i/7+1]) forceSend = true;
+                    send_buffer[i/7+1] = outByte;
 					chkSum ^= outByte;
 					outByte=0;
+                    if (i>=TOTAL_SEND_INPUTS) break;
 				}
 			}
-			Serial.write(chkSum);		//checksum
+            if (forceSend) {
+                send_buffer[SEND_LEN+1] = chkSum;
+                Serial.write(send_buffer, SEND_LEN+2);
+            }
 		#endif
 	}
 #endif
@@ -1215,7 +1225,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #if defined(GEN_BUTTON_RELEASE) && defined(USE_EXT_ADDR)                           // 16.04.23: Juergen - add check for USE_EXT_ADDR
        if (LastTime && millis()-LastTime > 400) // Use 1100 if no repeat is wanted
           {
-          MobaLedLib.Set_Input(LastChannel, 0); // Send release
+          Set_Input(LastChannel, 0); // Send release                                    // 18.04.23: Juergen call helper function
           LastTime = 0;
           // Serial.print(F("Release Button Channel[")); Serial.print(LastChannel); Serial.println("]=0"); // Debug
           }
