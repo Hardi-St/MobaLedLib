@@ -104,6 +104,7 @@ void MobaLedLib_C::Proc_Counter()
      if ((ModeL & CF_UP_DOWN) == 0 && !Inp_Is_On(Enable)) Dprintf("Achtung: Enable = 0\n");
 #if _USE_STORE_STATUS                                                                                         // 01.05.20:
      Do_Callback(CT_COUNTER_INITIAL, ProcCounterId, 0, &dp->Counter);
+     if (dp->Counter > MaxCnt) dp->Counter = MaxCnt;                                                        // 20.05.23: avoid incorrect values from EEPRom
      //Dprintf("Counter: %i %i %i\n", ProcCounterId, Inp, dp->Counter);
 #endif
   }
