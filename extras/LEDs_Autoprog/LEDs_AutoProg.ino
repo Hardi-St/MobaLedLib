@@ -535,7 +535,7 @@ bool Send_Disable_Pin_Active = 1;                                               
 
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20:  New feature from Juergen
-    #define EEPROM_START 0
+    #define EEPROM_START 64                                                                                   // 18.05.23:  reserve first 32 byte for global storage
     void StoreStatus(uint16_t EEPromAddr, uint8_t status);                                                    // 01.05.20:
 #endif
 
@@ -1449,6 +1449,23 @@ void setup(){
   }
   esp_log_level_set("*", ESP_LOG_NONE);
 #endif
+
+#if defined(CLEAR_STORE_STATUS)                                                                               // 20.05.23: Juergen
+  #ifndef EEPROM_SIZE
+  #define EEPROM_SIZE 512
+  #endif
+  for (uint16_t EEPromAddr = 0; EEPromAddr<EEPROM_SIZE; EEPromAddr++)
+  {
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
+    eeprom_busy_wait();
+    eeprom_write_byte((uint8_t*)EEPromAddr, 0);
+#else
+    EEPROM.write(EEPromAddr, 0);
+    EEPROM.commit();
+#endif
+  }
+#endif
+
   MobaLedLibPtr_CreateEx(leds
 #if _USE_STORE_STATUS
   #if defined(ENABLE_STORE_STATUS)                                                                             // 19.05.20: Juergen
