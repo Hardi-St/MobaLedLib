@@ -141,10 +141,18 @@
 #define P_WELDING_INP          (1+ADD_WORD_OFFSET)
 #define EP_WELDING_INCREMENT   (2+ADD_WORD_OFFSET)    // Insert additional parameters before
 
+#if _USE_COPY_N_LEDS                                                                                          // 18.09.23:
+  #define P_COPYLED_CNT        0
+  #define P_COPYLED_LED        1
+  #define P_COPYLED_INP        (2+ADD_WORD_OFFSET)
+  #define P_COPYLED_SRCLED     (3+ADD_WORD_OFFSET)
+  #define EP_COPYLED_INCREMENT (4+ADD_WORD_OFFSET*2)    // Insert additional parameters before
+#else
 #define P_COPYLED_LED          0
 #define P_COPYLED_INP          (1+ADD_WORD_OFFSET)
 #define P_COPYLED_SRCLED       (2+ADD_WORD_OFFSET)
 #define EP_COPYLED_INCREMENT   (3+ADD_WORD_OFFSET*2)    // Insert additional parameters before
+#endif
 
 #define P_SCHEDULE_DSTVAR1     0
 #define P_SCHEDULE_DSTVARN     1

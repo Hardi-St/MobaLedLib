@@ -121,8 +121,12 @@
 #define  RandWelding(   LED, InCh, Var, MinTime, MaxTime, MinOn, MaxOn)     Random(Var, InCh, RM_NORMAL, MinTime, MaxTime, MinOn, MaxOn) Welding(LED, Var)
 
 
-
+#if _USE_COPY_N_LEDS                                                                                          // 18.09.23:
+  #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   1,       _CHKL(LED), InCh, _CHKL(SrcLED),
+  #define  CopyNLEDs(     LED_Cnt, LED, InCh, SrcLED)                       COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), InCh, _CHKL(SrcLED),
+#else
 #define  CopyLED(       LED, InCh, SrcLED)                                  COPYLED_T,   _CHKL(LED), InCh, _CHKL(SrcLED),
+#endif
 #define  Schedule(      DstVar1, DstVarN, EnableCh, Start, End)             SCHEDULE_T,  DstVar1+RAM3, DstVarN, EnableCh, Start, End,  // Zeit- oder Helligkeitsgesteuertes Ein- und Ausschalten von Variablen.
 #define  New_HSV_Group()                                                    NEW_HSV_GROUP_T+RAM3,
 #define  New_Local_Var()                                                    NEW_LOCAL_VAR_T+RAM2,             // 07.11.18:
@@ -1316,11 +1320,11 @@ public:
 
 public:  // Variables
  uint8_t            Trigger20fps; // <> 0 every 50 ms for one cycle    //  1 Byte
+ CRGB*              leds;                                              //  2 Byte                             // 23.05.23:  Moved to public from private to be able to acces it from the MML extention
+ uint16_t           Num_Leds;                                          //  2 Byte                             //   "
 
 private: // Variables
  const uint8_t     *cp;          // Pointer to the Config[]            //  2 Byte
- CRGB*              leds;                                              //  2 Byte
- uint16_t           Num_Leds;                                          //  2 Byte
  const uint8_t     *Config;                                            //  2 Byte
  bool               Initialize;                                        //  1 Byte
  uint8_t           *RAM;                                               //  2 Byte

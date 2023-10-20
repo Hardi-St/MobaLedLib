@@ -83,6 +83,7 @@
 #define _USE_EXT_PROC       1           // 26.09.21:     48    4                                              // 26.09.21: Juergen
                                         //             8800    Sum
 
+#define _USE_COPY_N_LEDS    1           // 18.09.23:
 // Hardware pin definitions
 
 // Only used if _TEST_BUTTONS is enabled:
