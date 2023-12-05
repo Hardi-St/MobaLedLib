@@ -39,8 +39,8 @@ All software and hardware parts are free of license and available for download.
 
 Several videos demonstrate the possibilities of the library. You will find a lot of articles when searching for MobaLedLib in the internet.
 
-ATTENTION: Always use the actual Arduino IDE
-(Old versions 1.6.x and below don't support the directory structure used in the library examples)
+ATTENTION: Always use the Arduino IDE 1.8.x
+(Old versions 1.6.x and below or versions 2.x don't support the directory structure used in the library examples)
 
 
 Installation from the Arduino IDE:
