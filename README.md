@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.2.1: LED simulator, Selectrix support for ESP32, bugfixes**
+**New in release 3.3: LNet protocol, new macros: Set_LEDNr, CopyNLEDs, Include, SingleLedSignal, SingleLedSignalEx**
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
@@ -22,6 +22,8 @@ into the "Run" dialog and press enter:
   - Servo and stepper motors
   - Charlieplexing light signals
   - Power devices
+  - DMX 
+- Control with DCC, CAN, Selectrix or LNet protocol 
 - Additional module to read 80 and more switches with 10 signal wires
 - Stand-alone operation or networked with other components possible
 
@@ -37,8 +39,8 @@ All software and hardware parts are free of license and available for download.
 
 Several videos demonstrate the possibilities of the library. You will find a lot of articles when searching for MobaLedLib in the internet.
 
-ATTENTION: Always use the actual Arduino IDE
-(Old versions 1.6.x and below don't support the directory structure used in the library examples)
+ATTENTION: Always use the Arduino IDE 1.8.x
+(Old versions 1.6.x and below or versions 2.x don't support the directory structure used in the library examples)
 
 
 Installation from the Arduino IDE:
@@ -59,6 +61,26 @@ Questions / suggestions / praise / ...
 
 
 **Revision History:**
+
+**Ver.: 3.3.0** 12.12.23:
+
+*Features*
+- LNet support for Arduino platform (main board >= 1.8.0 mandatory)
+- New macros: Set_LEDNr, CopyNLEDs, Include, SingleLedSignal, SingleLedSignalEx
+- New icons
+- Support of input type "feedback", process CAN messages from ATTiny_CAN_GBM module
+- Store_Status: support SwitchB, extend max. InCnt to 63
+- Support of DCC/CAN/LNet momentary buttons (GEN_BUTTON_RELASE mode are now setable in config sheet)
+- Experimental support of MobaLedLib stored in OneDrive folder
+- ATMega328PB support
+
+*Bugfixes*
+- fix SwitchC issue with ESP32
+- fix issue that AVR build fails caused by vbcr in LEDs_Autoprog.h -> replace by vbcrlf
+- add missing macros InCh_to_LocalVar, InCh_to_LocalVar1 and Bin_InCh_to_TmpVar1 to sheet Lib_Macros
+- fix #10763: include marco counts LEDNr wrong
+- fix #10159: wrong line endings in fastbuild.cmd
+- ensure that included sheet uses same protocol as the main sheet
 
 **Ver.: 3.2.1** 09.08.22:
 

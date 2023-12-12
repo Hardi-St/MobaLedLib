@@ -334,7 +334,6 @@ void SX20::isr() {
 	//     2. ADDR = (after SYNC received) look for base address (0..15)
 	//     3. DATA = (after ADDR decoded) decode the 7 data-bytes
 
-
 	bitClear(SX_OUT_DDR, SX_OUT_PORTPIN);				// tri-state output for writing
 
     _bit = bitRead(SX_DATA_PINREG, SX_DATA_PORTPIN);    // reading the T1 data pin

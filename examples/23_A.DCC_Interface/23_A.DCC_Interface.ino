@@ -18,6 +18,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2021 - 2023  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -189,15 +190,19 @@ Revision History :
            Versions 1.4
 18.12.21:  - Add DCC Signal detection on Signal loss indication
            Versions 1.5
+13.12.22: - Add GEN_BUTTON_RELEASE_COM feature that generates a "Button Release" in case the DCC central doesn't do it e.g. Lenz LZV100
+           Versions 1.6
+27.04.23: - Improve signal loss detection
+           Versions 1.61
 
 */
-#define SKETCH_VERSION "1.5"
+#define SKETCH_VERSION "1.61"
 
 #include "MobaLedLib.h"
 
 #include "23_A.DCC_Interface.h" // Is written by the Excel Tool Program_Generator to set compiler switches
 
-#if USE_SPI_SLAVE                                                                                             // 13.05.20:
+#if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0                                                                                             // 13.05.20:
   #include<SPI.h>
   #define STATUSLED_PIN  8
   #define STATUSLED_MOD  !  // LED is connected to GND => It has to be inverted
@@ -212,6 +217,10 @@ Revision History :
 #define HEARTBEAT_PIN    3
 #define BUF_GATE_PIN     A5                                                                                   // 18.10.20:
 
+#ifndef DCC_SIGNAL_DETECTION_SECONDS
+#define DCC_SIGNAL_DETECTION_SECONDS 1                                                                        // set to 1 second by default
+#endif
+
 NmraDcc  Dcc ;                                // Instance of the NmraDcc class
 
 LED_Heartbeat_C LED_HeartBeat(HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
@@ -225,14 +234,18 @@ volatile char    *EndSendBuffer   = SendBuffer+sizeof(SendBuffer);
 uint8_t           Error           = 0;
 uint32_t          NextStatusFlash = 0;
 uint8_t           SPI_is_Active   = 1;
-static uint32_t   LastSignalTime  = 0;
+static uint32_t   LastSyncTime  = 0;
+static bool       DCCMsgTimeout;
+static uint32_t   LastMsgTime = 0;
 
-//                                       States On    Off   On  Off  On   Off
+
+//                                       States On    Off   On  Off  On   Off  On   Off
 uint16_t RS232_Flash_Table[]         = { 2,     1500, 1500                     };
 uint16_t SPI_Act_Flash_Table[]       = { 4,     500,  500, 500, 1500           };
 uint16_t SPI_Deact_Flash_Table[]     = { 6,     500,  500, 500, 500, 500, 1500 };
 uint16_t BufferFull_Flash_Table[]    = { 2,     250,  250                      };
 uint16_t PriorBuddFull_Flash_Table[] = { 2,     50,   450                      };
+uint16_t NoSSync_Flash_Table[]       = { 8,     0,    200,  50, 200, 50, 200 , 50,  800   };        // start with off to see 3 blinks also on trnasistion to NoSync
 uint16_t NoSignal_Flash_Table[]      = { 2,     50,   450                      };
 uint8_t  FlashState = 1;
 
@@ -250,24 +263,53 @@ uint32_t DisableSerial = SERIAL_DISABLED; // Disable the serial port x seconds a
 
 #define sizemask    (QUEUESIZE-1)         // Bitmask for queue
 #define QueueFill() ((sizemask + 1 + wp - rp) & sizemask)
+/*
+  Problem:
+  Bei der Lenz Zentrale LZV100 von Rolf wird keine Message beim
+  loslassen des Tasters geschickt ;-(
+  Das fuehrt dazu, dass die mit den Tasten verknuepften Ausgaenge nicht mehr aus gehen.
+  Als Abhilfe wird die letzte Taste und der Zeitpunkt zu dem sie empfangen wurde
+  gespeichert. Nach 400ms wird automatisch das Taste losgelassen Ereignis generiert.
+  Wenn eine andere Taste empfangen wird wird die alte Taste ebenfalls "losgelassen".
+*/
+uint16_t LastAddr;
+uint8_t  LastDirection;
+uint32_t LastTime = 0;
+uint8_t release_mode;   // 0 = off, 1=automatic detection, 2 = on
+// possible behavior of sending a button release
+#define GEN_OFF  0      // never simulate a button release
+#define GEN_AUTOMATIC 1 // automatic detect necessity to simulate a button release
+#define GEN_ON 2        // always simulate a button release
+// set default value of GEN_BUTTON_RELEASE_COM to off
+#ifndef GEN_BUTTON_RELEASE_COM  
+  #define GEN_BUTTON_RELEASE_COM GEN_OFF
+#endif 
+#ifndef GEN_BUTTON_RELEASE_DETECTION_SECONDS
+  #define GEN_BUTTON_RELEASE_DETECTION_SECONDS 30
+#endif 
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+  #include <EEPROM.h>
+  static uint32_t   recentButtonPressTime  = 0;
+  static bool releaseModeChangeDetection = false;
+#endif
 
 uint8_t Use_RS232 = 1;                    // Flag which enables the RS232 to send the DCC states to the LED Arduino
-void setLastSignalTime(uint32_t lastSignalTime) 
+void setLastSyncTime(uint32_t lastSyncTime)
 {
-  if ((millis()-lastSignalTime) > 1000)
+  if ((millis() - lastSyncTime) > 1000)
   {
-    LastSignalTime = 0;
+    LastSyncTime = 0;
     LED_Arduino_signal_detected &= ~2;
     Error = 0;              // don't show an error when SX signal comes back
   }
   else
   {
     LED_Arduino_signal_detected |= 2;
-    LastSignalTime = lastSignalTime;
+    LastSyncTime = lastSyncTime;
   }
 }
 
-#if USE_SPI_SLAVE
+#if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0
   #define SPI_RCV_BUF_SIZE 10
   volatile char SPI_Rcv_Buff[SPI_RCV_BUF_SIZE];
   volatile char *SPI_Rcv_Ptr = SPI_Rcv_Buff;
@@ -291,7 +333,7 @@ void setLastSignalTime(uint32_t lastSignalTime)
               }
          else SPDR = 0;
          }
-    setLastSignalTime(millis());
+    setLastSyncTime(millis());
     LED_Arduino_signal_detected |= 2;
   }
 #endif // USE_SPI_SLAVE
@@ -328,7 +370,7 @@ void printf_proc(const __FlashStringHelper *format, ...)
 {
   if (Use_RS232 || (millis() - Last_SPI_Signal < 100))
      {
-     char buf[50];
+     char buf[100];           // increase buffer size                                                         // 16.12.2022
      va_list ap;
      va_start(ap, format);
      #ifdef __AVR__
@@ -370,15 +412,63 @@ void Transmit_Sendchar_if_waiting()
              if (rp >= EndSendBuffer) rp = SendBuffer;
              }
          }
-    if (digitalRead(SEND_DISABLE_PIN) == 0) LED_Arduino_signal_detected |= 1;
+    if (digitalRead(SEND_DISABLE_PIN) == 0)
+      {
+      setLastSyncTime(millis());
+      LED_Arduino_signal_detected |= 1;
+      }
 }
 
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+void StoreReleaseMode(bool isOn)
+{
+  EEPROM.write(0, isOn?0xaa:0x55);
+}
+#endif
 //-------------------------------------------------------------------------------------
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
 //-------------------------------------------------------------------------------------
 // This function is called whenever a normal DCC Turnout Packet is received
 {
-  //if (!OutputPower) return ; // debug: Simulate the Lenz LZV100 behavior which doesn't send the button release signal
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+    // automatic detection
+    if (OutputPower==0)   // got a turn off
+    {
+      // turn off one time detectection
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+      if (releaseModeChangeDetection) printf("GEN_BUTTON_RELEASE automatic mode change detection turned OFF\n");
+#endif
+      releaseModeChangeDetection = false;
+      // turn OFF the automatic generation of button release  
+      if (release_mode!=0)
+      {
+        release_mode = 0;
+        StoreReleaseMode(false);
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+      printf("button release detected, GEN_BUTTON_RELEASE turned OFF\n");
+#endif
+      }
+    }
+    else
+    {
+      // store last Button On Time
+      if (recentButtonPressTime==0) recentButtonPressTime = millis();
+    }
+#endif        
+  sendToLEDArduino(Addr, Direction, OutputPower);
+}
+void sendToLEDArduino( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
+{
+  if (OutputPower)
+  {
+    if (LastTime && (LastAddr != Addr || LastDirection != Direction)) 
+    {
+      if (release_mode!=0) sendToLEDArduino(LastAddr, LastDirection, 0);
+    }
+    LastTime = millis();
+    LastAddr = Addr;
+    LastDirection = Direction;
+  }
 
   char s[20];
   sprintf(s, "@%4i %02X %02X\n", Addr, Direction, OutputPower);
@@ -402,8 +492,10 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 void notifyDccMsg( DCC_MSG * Msg )
 //---------------------------------------------------------
 {
-  setLastSignalTime(millis());
+  DCCMsgTimeout = false;
+  LastMsgTime = millis();
 }
+
 #if USE_SPI_SLAVE                                                                                             // 13.05.20:
    //-----------------
    void Activate_SPI()
@@ -424,9 +516,8 @@ void notifyDccMsg( DCC_MSG * Msg )
    }
 #endif // USE_SPI_SLAVE
 
-
 //-----------
-void setup(){
+void setup() {
 //-----------
   pinMode(13, INPUT); // IF the D13 pins are connected together they must be used as inputs. The pin is activated as OUTPUT in the boot loader ?!?
 
@@ -446,11 +537,58 @@ void setup(){
                                                                      // disabled if the RGB LEDs are updated.
                                                                      // The next message is only shown if the SEND_DISABLE signal
                                                                      // connected to ground by the LED-Arduino..
-  #if USE_SPI_SLAVE
+  #if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0
       printf("SPI Mode supported.\n");
       printf("Connect J13 and remove TX pin from DCC/Selectrix Nano\n");
       Activate_SPI();
   #endif
+  #if GEN_BUTTON_RELEASE_COM==GEN_OFF
+    release_mode = 0;
+  #elif GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+    releaseModeChangeDetection = true;
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+    printf("GEN_BUTTON_RELEASE automatic mode change detection turned ON (%i seconds)\n", GEN_BUTTON_RELEASE_DETECTION_SECONDS);
+#endif
+    switch(EEPROM.read(0))
+    {
+      case 0x55: // automatic send is OFF
+        release_mode = 0;
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE mode from EEPROM is OFF\n");
+#endif
+        break;
+      case 0xAA: // automatic send is ON
+        release_mode = 2;
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE mode from EEPROM is ON\n");
+#endif
+        break;
+      default:
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE mode from EEPROM is undefined\n");
+#endif
+        release_mode = 1;  // automatic discover phase
+        break;
+    }
+  #else
+    release_mode = 2;  // automatic release fixed to ON
+  #endif
+  #ifdef DEBUG_GEN_BUTTON_RELEASE
+    switch(release_mode)
+    {
+      case 0: 
+        printf("GEN_BUTTON_RELEASE mode is OFF\n");
+        break;
+      case 1: 
+        printf("GEN_BUTTON_RELEASE mode is AUTOMATIC\n");
+        break;
+      case 2: 
+        printf("GEN_BUTTON_RELEASE mode is ON\n");
+        break;
+    }
+  #endif
+
+  DCCMsgTimeout = false;
 
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
   Dcc.pin(0, DCC_SIGNAL_PIN, 1);
@@ -460,7 +598,8 @@ void setup(){
 
   AddToSendBuffer("Init Done\n"); // This message is send to the LED Arduino over RS232 or SPI (If the Arduino is already active)
 
-  pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin. This is importand to disable the communikation while the LED Arduino is flashed
+  pinMode(SEND_DISABLE_PIN, INPUT_PULLUP); // Activate an internal pullup resistor for the input pin. 
+                                           // This is important to disable the communication while the LED Arduino is flashed
   pinMode(STATUSLED_PIN, OUTPUT);
 }
 
@@ -482,26 +621,31 @@ void Process_Status_and_Error_LED()                                             
                Flash_Table_p = BufferFull_Flash_Table;
           else 
             Flash_Table_p = PriorBuddFull_Flash_Table; // Prior error detected but not longer activ
-          if (Error > 1 && LED_Arduino_signal_detected) Error--; // Decrement the error counter if the communication is working again
+          if (Error > 0 && LED_Arduino_signal_detected) Error--; // Decrement the error counter if the communication is working again
           }
     else 
     {
-          if (Use_RS232)
+      if (DCCMsgTimeout)
+        {
+          Error = 0;              // don't show an error when signal comes back
+          Flash_Table_p = NoSignal_Flash_Table;
+        }
+      else if (Use_RS232)
 	    {
-	    if ((millis()-LastSignalTime) > 1000)
+	    if ((millis()-LastSyncTime) > 1000)
 	      {
-	      LastSignalTime = 0;
+	      LastSyncTime = 0;
 	      Error = 0;              // don't show an error when signal comes back
 	      }
-	    if (LastSignalTime==0)   // no SX signal
+        if (LastSyncTime == 0)   // no signal
 	      {
-	      Flash_Table_p = NoSignal_Flash_Table;
+          Flash_Table_p = NoSSync_Flash_Table;
   	      }
 	    else
 	      {
               Flash_Table_p = RS232_Flash_Table;
 	      }
-          #if USE_SPI_SLAVE
+          #if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0
           else {
                if (SPI_is_Active)
                      Flash_Table_p = SPI_Act_Flash_Table;
@@ -517,16 +661,17 @@ void Process_Status_and_Error_LED()                                             
         NextStatusFlash = 0;
         FlashState = 1;
         }
-    #ifdef USE_SPI_SLAVE
      LED_Arduino_signal_detected = 0;
-    #endif
      }
   if (t >= NextStatusFlash) // Flash the status LED
      {
      if (FlashState > Flash_Table_p[0]) FlashState = 1;
      NextStatusFlash = t + Flash_Table_p[FlashState];
+    if (Flash_Table_p[FlashState]>0)
+      {
      digitalWrite(STATUSLED_PIN, STATUSLED_MOD (FlashState%2));
-     #if USE_SPI_SLAVE                                                                                        // 15.05.20:
+      }
+#if USE_SPI_SLAVE                                                                                        // 15.05.20:
         if (!Use_RS232)
            { // SPI Mode is active
            if (DisableSerial == SERIAL_DISABLED) // Flash also the RX LED if the SPI mode is used in case the user has no LED connected to pin D8
@@ -540,14 +685,14 @@ void Process_Status_and_Error_LED()                                             
      }
 }
 
-#if USE_SPI_SLAVE                                                                                           // 15.05.20:
+#if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0                                                                                           // 15.05.20:
   //-------------------------
   void SPI_Sleep_and_Wakeup()
   //-------------------------
   {
     if (LED_Arduino_signal_detected & 2)
        {
-       Use_RS232 = 0;               // Disable the RS232 communikation
+       Use_RS232 = 0;               // Disable the RS232 communication
        Last_SPI_Signal = millis();
        }
 
@@ -578,11 +723,65 @@ void Process_Status_and_Error_LED()                                             
 //-----------
 void loop(){
 //-----------
+    if (release_mode!=0)
+    {
+      if (LastTime && millis()-LastTime > 400) // Use 1100 if no repeat is wanted
+      {
+#ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("GEN_BUTTON_RELEASE sends release for %4i %i\n", LastAddr, LastDirection);
+#endif
+        sendToLEDArduino(LastAddr, LastDirection, 0);
+        LastTime = 0;
+        // Serial.print(F("Release Button Addr ")); Serial.print(LastAddr); Serial.print("/");Serial.println(LastDirection); // Debug
+      }
+    }
+  /* one time detection after process startup
+     applies only if automatic detection is enabled 
+     use-case: a customer may change the DCC central, and the changed central
+     may have a different behavior for sending button releases
+     so EEPROM stored value may no longer be correct
+     after program restart it still operates in mode stored in EEPROM
+     but a one-time mode detection is active, that looks for a button release DCC packet 
+     within 30 seconds after the first button press
+     Note: this must be a on time detection, because a customer may use DCC switches,
+     e.g. for turning a light on (for long time). In this case no button release will occur 
+     as long the function is turned on.
+     Side effect: in case you use a central that generates a button release, but the first and ONLY
+     DCC packet after startup is a Switch turned on, without a release within 30 seconds
+     the mode is set to automatic generation of button release and the switch is turned off. This wrong
+     situation is fixed with the first button release DCC packet
+     */
+#if GEN_BUTTON_RELEASE_COM==GEN_AUTOMATIC
+  if (releaseModeChangeDetection)      
+  {
+    if (recentButtonPressTime && millis()-recentButtonPressTime > (1000*GEN_BUTTON_RELEASE_DETECTION_SECONDS)) // no button release within 30 seconds
+    {
+      recentButtonPressTime = 0;
+      // turn ON the automatic generation of button release  
+      if (release_mode!=2)
+      {
+        release_mode = 2;
+        StoreReleaseMode(true);
+        releaseModeChangeDetection = false;
+  #ifdef DEBUG_GEN_BUTTON_RELEASE
+        printf("no button release within %i seconds, GEN_BUTTON_RELEASE turned ON\n", GEN_BUTTON_RELEASE_DETECTION_SECONDS);
+        printf("GEN_BUTTON_RELEASE automatic mode change detection turned OFF\n");
+#endif
+        // and turn off the switch
+        if (LastTime) 
+        {
+          sendToLEDArduino(LastAddr, LastDirection, 0);
+          LastTime = 0;
+        }
+      }
+    }
+  }
+#endif  
   Dcc.process(); // You MUST call the NmraDcc.process() method frequently from the Arduino loop() function for correct library operation
 
   if (Use_RS232) Transmit_Sendchar_if_waiting();
 
-  #if USE_SPI_SLAVE                                                                                           // 15.05.20:
+  #if defined(USE_SPI_SLAVE) && USE_SPI_SLAVE>0                                                                                           // 15.05.20:
     static uint8_t Show_Message_Once = 1;
     if (Use_RS232 == 0 && Show_Message_Once)
        {
@@ -593,6 +792,11 @@ void loop(){
 
     SPI_Sleep_and_Wakeup();
   #endif
+
+  if ((millis() - LastMsgTime) > (uint32_t)DCC_SIGNAL_DETECTION_SECONDS * 1000)
+  {
+    DCCMsgTimeout = true;
+  }
 
   Process_Status_and_Error_LED();                                                                             // 13.05.20:
 

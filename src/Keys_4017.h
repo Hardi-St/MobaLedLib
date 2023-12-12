@@ -52,6 +52,7 @@
  24.11.18:  - It doesn't matter which CTR_CHANNELS is greater
  20.11.20:  - Juergen - add ESP32 Support
  24.04.21:  - Juergen - add PICO Support
+ 03.11.22:  - Juergen - fix ESP32 problem with SwitchC
 
  ToDo:
  ~~~~~
@@ -90,7 +91,12 @@
 #endif
 
 
+#ifdef ESP32  
+// SPI flash access not allowed while interrupt, but array in RAM
+uint8_t Button_Pins[] = { BUTTON_INP_LIST_1 };                      // Array of pins which read the pressed buttons
+#else
 const PROGMEM uint8_t Button_Pins[] = { BUTTON_INP_LIST_1 };        // Array of pins which read the pressed buttons
+#endif
 #define BUTTON_INP_CNT sizeof(Button_Pins)
 
 #define KEYS_COUNT_1           (CTR_CHANNELS_1*BUTTON_INP_CNT)
@@ -107,7 +113,12 @@ uint8_t Keys_Array_1[KEYS_ARRAY_BYTE_SIZE_1];                       // Array whi
 #if CTR_CHANNELS_2 > 0 && defined BUTTON_INP_LIST_2
   #define  KEYMATRIX_2
 
+#ifdef ESP32  
+  // SPI flash access not allowed while interrupt, but array in RAM
+  uint8_t Button_Pins_2[] = { BUTTON_INP_LIST_2 };                  // Array of pins which read the pressed buttons
+#else    
   const PROGMEM uint8_t Button_Pins_2[] = { BUTTON_INP_LIST_2 };    // Array of pins which read the pressed buttons
+#endif    
   #define BUTTON_INP_CNT_2 sizeof(Button_Pins_2)
 
   #define KEYS_COUNT_2           (CTR_CHANNELS_2*BUTTON_INP_CNT_2)
@@ -130,7 +141,11 @@ void IRAM_ATTR WriteData_to_Keys_Array_1()
   for (uint8_t i = 0; ; )
     {
     uint8_t Mask = 1 << Bit;
+#ifdef ESP32    
+    if (digitalRead2(Button_Pins[i]))
+#else
     if (digitalRead2(pgm_read_byte_near(&Button_Pins[i])))
+#endif      
           Keys_Array_1[Byte] |=  Mask;
     else  Keys_Array_1[Byte] &= ~Mask;
     if (++i < BUTTON_INP_CNT)
@@ -158,7 +173,11 @@ void IRAM_ATTR WriteData_to_Keys_Array_2()
   for (uint8_t i = 0; ; )
     {
     uint8_t Mask = 1 << Bit;
+#ifdef ESP32    
+    if (digitalRead2(Button_Pins_2[i]))
+#else
     if (digitalRead2(pgm_read_byte_near(&Button_Pins_2[i])))
+#endif      
           Keys_Array_2[Byte] |=  Mask;
     else  Keys_Array_2[Byte] &= ~Mask;
     if (++i < BUTTON_INP_CNT_2)
@@ -221,7 +240,7 @@ void Keys_4017_Setup()
   pinMode(RESET_PIN,  OUTPUT);
   digitalWrite2(RESET_PIN, 1); // Reset
 #if defined(ESP32)                               // Add ESP32 Support, 20.11.2020 Juergen 
-  for (uint8_t pin = 0; pin < BUTTON_INP_CNT; pin++)		// Pins are not INPUTS by default -> set it to intput
+  for (uint8_t pin = 0; pin < BUTTON_INP_CNT; pin++)		// Pins are not INPUTS by default -> set it to input
     pinMode(Button_Pins[pin],INPUT);													
   timer = timerBegin(0, 80, true);								// divide with Clock freq (returned in MHz) -> so timer runs with 1MHz by default
   timerAttachInterrupt(timer, TimerInt1, false);	

@@ -3,6 +3,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2021  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -380,6 +381,7 @@
  04.03.21:	- Jürgen adds ESP32 Support for Analog and 16384 Leds
  29.09.21:  - Jürgen add new feature to enable processing of extra commands outside the core library
  13.10.21:  - Hardi added new Sound_New_... functions for new and old MP3-TF-16P Sound modules (use 4.7uF instead of 22uF and 2 new 2 KHz WS2811)
+ 22.05.23:  - Hardi: Changed behavior of the CopyLED function. Now the LEDs are only set to 0 once when the input is turned off.
 
  RAM Bedarf (NUM_LEDS 32 = 96):             http://jheyman.github.io/blog/pages/ArduinoTipsAndTricks/#figuring-out-where-memory-went
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1165,12 +1167,36 @@ void MobaLedLib_C::Proc_CopyLED()
 {
   uint8_t Inp = Get_Input(pgm_read_byte_near(cp+P_COPYLED_INP));
   CRGB *lp = &leds[pgm_read_led_nr(cp+P_COPYLED_LED)];
+  #if _USE_COPY_N_LEDS                                                                                        // 18.09.23:
+      int8_t CntI = pgm_read_byte_near(cp+P_COPYLED_CNT);
+      uint8_t Cnt = abs(CntI);
+      bool IncSrc = CntI < 0;
+  #endif
 
   if (Inp_Is_On(Inp))
        {
+       #if _USE_COPY_N_LEDS                                                                                   // 18.09.23:
+         uint16_t SrcLedNr = pgm_read_led_nr(cp+P_COPYLED_SRCLED);
+         for (uint8_t i = 0; i < Cnt; i++, lp++)
+            {
+            *lp = leds[SrcLedNr];
+            if (IncSrc) SrcLedNr++;
+            }
+       #else
        *lp = leds[pgm_read_led_nr(cp+P_COPYLED_SRCLED)];
+       #endif
        }
-  else lp->r = lp->g = lp->b = 0;
+#if COPYLED_OFF == 1               // Defined to 0 in LEDs_AutoProg.h, could be activated in the excel table  // 23.05.23:
+  else
+         #if COPYLED_OFF_ONCE == 1 // Defined to 1 in LEDs_AutoProg.h, could be activated in the excel table  // 23.05.23:
+           if (Inp == INP_TURNED_OFF)
+         #endif
+              #if _USE_COPY_N_LEDS                                                                            // 18.09.23:
+                 for (uint8_t i = 0; i < Cnt; i++,lp++) lp->r = lp->g = lp->b = 0;
+              #else
+                 lp->r = lp->g = lp->b = 0;
+              #endif
+#endif
 }
 
 //---------------------------------------
@@ -1637,6 +1663,7 @@ void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
   if (On)
        InpStructArray[ByteNr] |=  BitMask;
   else InpStructArray[ByteNr] &= ~BitMask;
+  //if (channel == 21) { Dprintf("Hallo"); Serial.print("Set_Input(21):"); Serial.println(On);}
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
   //Dprintf("Set_Input Inp[%d] changed from %d to %d (On=%d/%d)\n", channel, oldValue2, (InpStructArray[ByteNr]), On, BitMask);
   Do_Callback(CT_CHANNEL_CHANGED, channel, oldValue, &On);
@@ -1648,6 +1675,7 @@ void MobaLedLib_C::Inp_Processed()
 //--------------------------------
 // Must be called after the Update loop to store the old input values
 {
+  //static uint8_t Old = 33; if (Get_Input(21) != Old) { Serial.print("Inp(21):"); Serial.println(Get_Input(21)); Old = Get_Input(21);}
   for (uint8_t *p = InpStructArray, *e = p + _INP_STRUCT_ARRAY_SIZE; p < e; p++)
     {
     uint8_t Act = *p & _ALL_NEW_BITS;
