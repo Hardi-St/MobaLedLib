@@ -62,7 +62,7 @@ Questions / suggestions / praise / ...
 
 **Revision History:**
 
-**Ver.: 3.3.0** 12.12.23:
+**Ver.: 3.3.1** 18.12.23:
 
 *Features*
 - LNet support for Arduino platform (main board >= 1.8.0 mandatory)

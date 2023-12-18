@@ -98,23 +98,23 @@
 
  The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
 
-                                                 .----------------.
-                                                 |     +5V        |
-  Communication-Arduino:   +-----+               |      | | | |   |
-              +------------| USB |------------+  |    .---------. |
-              |            +-----+            |  |    | 8   LM  | |
-              | [ ]D13/SCK        MISO/D12[ ] |  |    | 1   393 | |            1
- SEND_DISABLE | [ ]3.3V           MOSI/D11[ ]~|  |    '---------' |           O
- LINE |       | [ ]V.ref     ___    SS/D10[ ]~|  |      | | | |   |           O
-      v       | [ ]A0       / N \       D9[ ]~|  |      | | | GND |       .---O  LOCO
-    .---------| [ ]A1      /  A  \      D8[ ] |--+------' | +-----+-[47K]-+---O  -NET
-    |         | [ ]A2      \  N  /      D7[ ] |           | '-[150K]-.        O
-    |         | [ ]A3       \_O_/       D6[ ]~|           |          |        O
-    |         | [ ]A4/SDA               D5[ ]~| +5V-[10K]-+--[22K]--GND        6
-    |         | [ ]A5/SCL               D4[ ] |
-    |    +5V  | [ ]A6              INT1/D3[ ]~|-HB LED | with 470 ohm resistor (Opt.)
-    |     ^   | [ ]A7              INT0/D2[ ] |
-    |     '---| [ ]5V                  GND[ ] |
+                                                           .----------------.
+                                                           |     +5V        |
+  Communication-Arduino:   +-----+                         |      | | | |   |
+              +------------| USB |------------+            |    .---------. |
+              |            +-----+            |            |    | 8   LM  | |
+              | [ ]D13/SCK        MISO/D12[ ] |            |    | 1   393 | |            1
+ SEND_DISABLE | [ ]3.3V           MOSI/D11[ ]~|            |    '---------' |           O
+ LINE |       | [ ]V.ref     ___    SS/D10[ ]~|            |      | | | |   |           O
+      v       | [ ]A0       / N \       D9[ ]~|            |      | | | GND |       .---O  LOCO
+    .---------| [ ]A1      /  A  \      D8[ ] |------+-----+------' | +-----+-[47K]-+---O  -NET
+    |         | [ ]A2      \  N  /      D7[ ] |---.--~---> LnTx     | '-[150K]-.        O
+    |         | [ ]A3       \_O_/       D6[ ]~|   |  |              |          |        O
+    |         | [ ]A4/SDA               D5[ ]~|   |  |    +5V-[10K]-+--[22K]--GND        6
+    |         | [ ]A5/SCL               D4[ ] |---~--.  
+    |    +5V  | [ ]A6              INT1/D3[ ]~|---+--------< LnTX from ESP32 (optional heartbeat LED on TMaa MLL shield)
+    |     ^   | [ ]A7              INT0/D2[ ] |              
+    |     '---| [ ]5V                  GND[ ] |           
     |         | [ ]RST                 RST[ ] |
     |  .-GND--| [ ]GND   5V MOSI GND   TX1[ ] |--------.
     |  |      | [ ]Vin   [ ] [ ] [ ]   RX1[ ] |        |
@@ -217,7 +217,7 @@ uint16_t SPI_Act_Flash_Table[]       = { 4,     500,  500, 500, 1500           }
 uint16_t SPI_Deact_Flash_Table[]     = { 6,     500,  500, 500, 500, 500, 1500 };
 uint16_t BufferFull_Flash_Table[]    = { 2,     250,  250                      };
 uint16_t PriorBuddFull_Flash_Table[] = { 2,     50,   450                      };
-uint16_t NoSSync_Flash_Table[]       = { 8,     0,    200,  50, 200, 50, 200 , 50,  800   };        // start with off to see 3 blinks also on trnasistion to NoSync
+uint16_t NoSSync_Flash_Table[]       = { 8,     0,    200,  50, 200, 50, 200 , 50,  800   };        // start with off to see 3 blinks also on transition to NoSync
 uint16_t NoCable_Flash_Table[]       = { 4,     50,  200,  50, 1000            };
 uint16_t NoSignal_Flash_Table[]      = { 2,     50,   450                      };
 uint8_t  FlashState = 1;
