@@ -283,11 +283,17 @@
   #include <EEPROM.h>
   #define EEPROM_SIZE 512			// maximum size of the eeprom
   //#define EEPROM_OFFSET 0			// (the first 96 byte are reserved for WIFI configuration)  // 28.11.2020 comment out -> WIFI config no longer stored in EEPROM
-  #ifdef USE_SX_INTERFACE
+  #if defined(USE_PROTOCOL_SELECTRIX)
     #define SX_SIGNAL_PIN 4
     #define SX_CLOCK_PIN 13
     #define SX_STATUS_PIN  2  // Built in LED
     #include "SXInterface.h"
+    #define USE_COMM_INTERFACE
+  #elif defined(USE_PROTOCOL_LNET)
+    #define LNET_RX_PIN 4
+    #define LNET_TX_PIN 13
+    #define LNET_STATUS_PIN  2  // Built in LED
+    #include "LNetInterface.h"
     #define USE_COMM_INTERFACE
   #else
     #define USE_DCC_INTERFACE
@@ -497,7 +503,7 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20: Juergen
   void On_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue);
 #endif
-#if _USE_EXT_PROC && defined(_ENABLE_EXT_PROC)                                                                    // 26.09.21: Juergen
+#if _USE_EXT_PROC && defined(_ENABLE_EXT_PROC)                                                                // 26.09.21: Juergen
   uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process);
 #endif
 
@@ -508,7 +514,7 @@ MobaLedLib_Prepare();
   LED_Heartbeat_C LED_HeartBeat(LED_HEARTBEAT_PIN); // Initialize the heartbeat LED which is flashing if the program runs.
 #endif
 
-#if defined USE_SPI_COM || defined USE_LOCONET_INTERFACE || defined USE_COMM_INTERFACE                        // 12.11.20 Juergen use second buffer for DCC interface communication
+#if defined USE_SPI_COM || defined USE_COMM_INTERFACE                                                         // 12.11.20 Juergen use second buffer for DCC interface communication
   char Buffer[2][13] = {"",""};
 #else
   char Buffer[1][13] = {""};
@@ -519,7 +525,7 @@ MobaLedLib_Prepare();
   #include "esp_log.h"
 #endif
 
-#if defined USE_COMM_INTERFACE || defined USE_LOCONET_INTERFACE
+#if defined USE_COMM_INTERFACE
 #if !defined(__AVR__)
 InMemoryStream stream(256);
 #endif
@@ -1191,11 +1197,11 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 		}
 	#endif
 
-#if defined USE_COMM_INTERFACE || defined USE_LOCONET_INTERFACE                                                // Juergen: get Data from DCCInterface
+#if defined USE_COMM_INTERFACE                                         // Juergen: get Data from DCCInterface
 #if !defined(__AVR__)											       // 02.01.22: Juergen add support for DCC receive on LED Arduino
     if (stream.available())
     {
-      Buff_Nr = 1;                                                                                             // Juergen: ESP32 doesn't use SPI buffer, so re-use Buffe1
+      Buff_Nr = 1;                                                     // Juergen: ESP32 doesn't use SPI buffer, so re-use Buffe1
       c = stream.read();
       return 1;
     }
@@ -1786,6 +1792,14 @@ void setup(){
     interf->setup(SX_SIGNAL_PIN, SX_CLOCK_PIN, SX_STATUS_PIN, stream);
   #endif  
   
+  #ifdef USE_PROTOCOL_LNET
+    #ifndef LNET_STATUS_PIN
+      #define LNET_STATUS_PIN -1
+    #endif
+    LNetInterface* interf = new LNetInterface();
+    commInterface = interf;
+    interf->setup(LNET_RX_PIN, LNET_TX_PIN, LNET_STATUS_PIN, stream, 1);
+  #endif
   #if !defined(Mainboard_LED1)																				  // 12.11.20: Juergen initialize Mainboard leds
 	#if defined(USE_NEW_LED_ARRAY)																			  // if mainboard led isn't configured at all just clear the output
 		FastPin<LED1_PIN>::setInput();

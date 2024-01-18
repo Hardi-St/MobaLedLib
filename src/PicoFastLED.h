@@ -20,6 +20,11 @@ struct CHSV;
 typedef uint8_t   fract8;   ///< ANSI: unsigned short _Fract
 typedef uint32_t TProgmemRGBPalette16[16];
 
+#include <hardware/clocks.h>
+#include <hardware/pio.h>
+#include "ws2812.pio.h"
+
+
 void hsv2rgb_rainbow( const CHSV& hsv, CRGB& rgb);
 
 /// ease8InOutApprox: fast, rough 8-bit ease-in/ease-out function
@@ -252,19 +257,42 @@ public:
     virtual void show(const struct CRGB *data, int nLeds, uint8_t brightness) = 0;
 };
 
-class CPicoController : public CLEDController {
-	
+template<uint8_t DATA_PIN> class CPicoController : public CLEDController {
 public:
-	  CPicoController();
-		
-    /// show function using the "attached to this controller" led data
+    CPicoController()
+    {
+      int sm=0;
+      uint offset = pio_add_program(pio1, &ws2812_program);
+      ws2812_program_init(pio1, sm, offset, DATA_PIN, 800000, true);
+    }
+
     void showLeds(uint8_t brightness=255) {
         show(m_Data, m_nLeds, brightness);
     }
-    void show(const struct CRGB *data, int nLeds, uint8_t brightness);
+    void show(const struct CRGB *data, int nLeds, uint8_t brightness)
+    {
+      uint32_t val = 0;
+      uint32_t offset;
+      uint16_t pixels = nLeds*3;
+      uint16_t max = ((pixels+3)/4)*4;
+      for (uint i = 0; i < max; ++i) {
+          switch(i%3)
+          {
+            case 0: offset = 1; break;
+            case 1: offset = -1; break;
+            default: offset = 0;
+          }
+          val = val << 8;
+          if (i<pixels) val = val + *(((const uint8_t*)data)+i+offset);
+          if ((i&0x03)==3) {
+              pio_sm_put_blocking(pio1, 0, val);
+              val = 0;
+          }
+      }
+    }
 };
 
-template<uint8_t DATA_PIN> class NEOPIXEL : public CPicoController {
+template<uint8_t DATA_PIN> class NEOPIXEL :  public CPicoController<DATA_PIN> {
 };
 
 class CFastLED
