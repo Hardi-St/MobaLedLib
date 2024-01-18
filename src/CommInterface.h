@@ -52,6 +52,8 @@ public:
   static void   addToSendBuffer(const char *s);
 #endif
   static void   setLastSignalTime(unsigned long lastSignalTime);
+  static void   setSignalLossTimeout(unsigned long millis);
+  static void   setPluggedIn(bool plugged);
 
 protected:
 // dual core CPUs use a stream to exchange data between cores

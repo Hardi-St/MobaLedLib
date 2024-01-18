@@ -40,6 +40,8 @@ Revision History :
 static uint8_t       Error               = 0;             
 static unsigned long NextStatusFlash     = 0;
 static unsigned long LastSignalTime      = 0;
+static unsigned long SignalLossTimeout   = 1000;
+static bool          PluggedIn           = true;
 static int           StatusLedPin        = -1;
 
 //                                       States On    Off   On  Off  On   Off
@@ -48,6 +50,8 @@ static uint16_t OK_Flash_Table[]          = { 2,     1500, 1500                 
 static uint16_t BufferFull_Flash_Table[]  = { 6,     100,  100, 100, 100, 100, 400  };
 #endif
 static uint16_t NoSignal_Flash_Table[]    = { 2,     50,   450                      };
+static uint16_t NoCable_Flash_Table[]     = { 4,     50,  200,  50, 1000            };
+
 static uint8_t  FlashState = 1;
 
 #ifndef __AVR__                                                                             // AVR doesn't use a send buffer
@@ -94,12 +98,18 @@ void CommInterface::processErrorLed()
   if (t >= NextCheck) // Check the Status and the error every 100 ms
   {
     NextCheck = t + 100;
-    if ((millis()-LastSignalTime) > 1000)
+    if ((millis()-LastSignalTime) > SignalLossTimeout)
     {
       LastSignalTime = 0;
       Error = 0;              // don't show an error when signal comes back
     }
-    if (LastSignalTime==0)   // no SX signal
+    if (!PluggedIn)
+    {
+      Error = 0;              // don't show an error when signal comes back
+      Flash_Table_p = NoCable_Flash_Table;
+      LastSignalTime = 0;     // after cable is reconnected stay in "NoMessage" until next telegram received
+    }
+    else if (LastSignalTime==0)   // no signal
     {
       Flash_Table_p = NoSignal_Flash_Table;
     }
@@ -138,7 +148,7 @@ void CommInterface::process(){
 
 void CommInterface::setLastSignalTime(unsigned long lastSignalTime) 
 {
-  if ((millis()-lastSignalTime) > 1000)
+  if ((millis()-lastSignalTime) > SignalLossTimeout)
   {
     LastSignalTime = 0;
     Error = 0;              // don't show an error when signal comes back
@@ -147,4 +157,15 @@ void CommInterface::setLastSignalTime(unsigned long lastSignalTime)
   {
     LastSignalTime = lastSignalTime;
   }
+}
+
+//-----------
+void CommInterface::setSignalLossTimeout(unsigned long millis)
+{
+    SignalLossTimeout = millis;
+}
+
+void CommInterface::setPluggedIn(bool plugged)
+{
+  PluggedIn = plugged;    
 }

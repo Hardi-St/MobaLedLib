@@ -33,7 +33,6 @@
 
 //#define USE_WIFI
 //#define USE_OTA
-//#define USE_LOCONET
 //#define USE_UI
 
 #ifdef USE_OTA
@@ -55,10 +54,6 @@
 //#include "RASCIIInterface.h"
 //RASCIIInterface interface;
 
-#ifdef USE_LOCONET
-#include "LocoNetInterface.h"
-LocoNetInterface interface;
-#endif
 #endif
 
 #define DEBUG Serial
@@ -194,9 +189,6 @@ void setupESP32Extensions() {
 		Serial.println("local AP started");
 	}
 #endif
-#ifdef USE_LOCONET
-	interface.setup(2 /*Built in LED*/, stream);
-#endif
 #endif
 }
 
@@ -221,10 +213,6 @@ void loopESP32Extensions() {
     while(isInOTA);
   }
 	#endif
-
-	#ifdef USE_LOCONET
-	interface.process();
-	#endif	
 #endif	
 
 #ifdef USE_UI
