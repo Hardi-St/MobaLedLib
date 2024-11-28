@@ -284,8 +284,8 @@
   #define EEPROM_SIZE 512			// maximum size of the eeprom
   //#define EEPROM_OFFSET 0			// (the first 96 byte are reserved for WIFI configuration)  // 28.11.2020 comment out -> WIFI config no longer stored in EEPROM
   #if defined(USE_PROTOCOL_SELECTRIX)
-    #define SX_SIGNAL_PIN 4
-    #define SX_CLOCK_PIN 13
+    #define SX_SIGNAL_PIN 13   // 22.09.24:  Old: 4
+    #define SX_CLOCK_PIN  4    // 22.09.24:  Old: 13
     #define SX_STATUS_PIN  2  // Built in LED
     #include "SXInterface.h"
     #define USE_COMM_INTERFACE
