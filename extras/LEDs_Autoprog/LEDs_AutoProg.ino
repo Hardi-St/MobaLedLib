@@ -259,6 +259,8 @@
  21.03.23:  - if SEND_INPUTS is enabled also SwitchA, SwitchD and Variable changes are notified	
  26.04.23:  - Avoid loosing triggers if on/off message comes very fast (LNet)
  08.04.23:  - Improve detection of change switches/variables for SEND_INPUTS feature
+ 12.12.24:  - fix issue: "ESP32 und Hieroglyphen bei der MLL-Uhrzeit" To-Dos#20
+            - reset the ESP32 watchdog while in Farb-Test loop
 */
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
@@ -623,7 +625,7 @@ void Receive_LED_Color_per_RS232()                                              
      #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0                                                  // 13.05.20:
        LED_HeartBeat.Update(300); // Fast Flash
      #endif
-     if (Serial.available() > 0)
+     while (Serial.available() > 0)
         {
         char c = Serial.read();
         switch (c)
@@ -655,6 +657,9 @@ void Receive_LED_Color_per_RS232()                                              
                                        return;									       // 02.01.22: Juergen avoid hangup
                              }
                            }
+#ifdef ESP32
+         esp_task_wdt_reset();                                                                                // 14.08.24: Juergen -  reset watchdog timer, even if serial data is always available
+#endif
                       break;
            default:   { // Add character to Buffer
                       uint8_t len = strlen(Buffer);
@@ -666,6 +671,9 @@ void Receive_LED_Color_per_RS232()                                              
                       else {
                            *Buffer = '\0';
                            Serial.println(F("Buffer overflow")); // Debug
+#ifdef ESP32
+         esp_task_wdt_reset();                                                                                // 14.08.24: Juergen -  reset watchdog timer, even if serial data is always available
+#endif
                            }
                       }
            }
@@ -2143,7 +2151,7 @@ void Set_Mainboard_LEDs()
          if (DayState <= SunSet)
               Minutes =  12*60 + Minutes;
          else Minutes =  12*60 - Minutes;
-         char TimeStr[6];
+         char TimeStr[11];
          sprintf(TimeStr, "%3i: %2i:%02i", Darkness, Minutes/60, Minutes%60);
          Serial.println(TimeStr);
        #endif

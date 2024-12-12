@@ -72,8 +72,17 @@
 #if !defined(ARDUINO_RASPBERRY_PI_PICO) 	
 #include <DIO2.h>     // The library for I/O 2 functions must be installed also
                       // "Blink" without delay 400 kHz (Normal digitalWrite: 145 kHz => 2.8 times faster
-// The following #defines could be changed before this modul module is included in the main moudule
+    
+  // workaround for DIO2 issue, 03.11.2024 Juergen 
+  // 
+  // see https://github.com/Locoduino/DIO2/issues/4
+  // and https://www.stummiforum.de/t165060f7-MobaLedLib-LEDs-Servos-Sound-Naechster-Stammtisch-Do-Uhr.html#msg2736686
+  #ifdef __FlashStringHelper
+    #undef __FlashStringHelper
+  #endif
+  // end workaround
 #endif
+// The following #defines could be changed before this modul module is included in the main module
 #ifndef CTR_CHANNELS_1
   #define  CTR_CHANNELS_1    10       // Number of used counter channels for keyboard 1. Up to 10 if one CD4017 is used, Up to 19 if two 4017 are used, ...
 #endif
