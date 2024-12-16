@@ -258,12 +258,30 @@ public:
 };
 
 template<uint8_t DATA_PIN> class CPicoController : public CLEDController {
+private:
+    int sm;
+    pio_hw_t* pio;
+    
+    bool initPioProgram()
+    {
+      for (int i=0;i<2;i++)
+      {
+        pio = i==0 ? pio0 : pio1;
+        sm = pio_claim_unused_sm(pio, false);
+        if (sm>=0)
+        {
+          uint offset = pio_add_program(pio, &ws2812_program);
+          ws2812_program_init(pio, sm, offset, DATA_PIN, 800000, true);
+          return true;
+        }
+      }
+      sm = -1;
+      return false;
+    }
 public:
     CPicoController()
     {
-      int sm=0;
-      uint offset = pio_add_program(pio1, &ws2812_program);
-      ws2812_program_init(pio1, sm, offset, DATA_PIN, 800000, true);
+      initPioProgram();
     }
 
     void showLeds(uint8_t brightness=255) {
@@ -271,6 +289,8 @@ public:
     }
     void show(const struct CRGB *data, int nLeds, uint8_t brightness)
     {
+      // no pio program available, do nothing
+      if (sm<0) return;
       uint32_t val = 0;
       uint32_t offset;
       uint16_t pixels = nLeds*3;
@@ -285,7 +305,7 @@ public:
           val = val << 8;
           if (i<pixels) val = val + *(((const uint8_t*)data)+i+offset);
           if ((i&0x03)==3) {
-              pio_sm_put_blocking(pio1, 0, val);
+              pio_sm_put_blocking(pio, sm, val);
               val = 0;
           }
       }
