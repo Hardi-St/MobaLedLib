@@ -39,6 +39,7 @@ static volatile char    *wp;        // Queue Write Pointer
 static volatile char    *pEndSendBuffer;
 
 #if defined(ESP32)
+	#include "esp_version.h"
 	static portMUX_TYPE			stream_mutex;
 	#define STREAM_MUTEX_ENTER   portENTER_CRITICAL(&stream_mutex);
 	#define STREAM_MUTEX_EXIT    portEXIT_CRITICAL(&stream_mutex);
@@ -54,7 +55,11 @@ InMemoryStream::InMemoryStream(int queueSize) {
 	wp = pSendBuffer;
 	pEndSendBuffer = pSendBuffer+queueSize;
 #if defined(ESP32)
-  vPortCPUInitializeMutex(&stream_mutex);
+  #if ESP_IDF_VERSION_MAJOR<4
+    vPortCPUInitializeMutex(&stream_mutex);
+  #else
+    stream_mutex=portMUX_INITIALIZER_UNLOCKED;
+  #endif
 #endif
 }
 int InMemoryStream::available() {

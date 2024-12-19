@@ -261,12 +261,9 @@
  08.04.23:  - Improve detection of change switches/variables for SEND_INPUTS feature
  12.12.24:  - fix issue: "ESP32 und Hieroglyphen bei der MLL-Uhrzeit" To-Dos#20
             - reset the ESP32 watchdog while in Farb-Test loop
+ 18.12.24:  - for Pico change DCC_SIGNAL_PIN from 22 to 28, DCC_SIGNAL_PIN may also be set externally
+ 
 */
-
-#ifdef ARDUINO_RASPBERRY_PI_PICO
-  #include "pico/stdlib.h"
-  #include <pico/multicore.h>
-#endif
 
 #include <Arduino.h>
 #include "MP3.h"
@@ -301,7 +298,9 @@
     #define USE_DCC_INTERFACE
     #define DCC_STATUS_PIN  2  // Built in LED
     #include "DCCInterface.h"
-    #define DCC_SIGNAL_PIN   13
+    #ifndef DCC_SIGNAL_PIN                                                                // 18.12.2024 DCC_SIGNAL_PIN may be set externally
+      #define DCC_SIGNAL_PIN   13
+    #endif
     #define USE_COMM_INTERFACE
   #endif
   #include "InMemoryStream.h"
@@ -323,10 +322,6 @@
 #endif
 
 #ifdef ARDUINO_RASPBERRY_PI_PICO
-  const uint DATA_IN_PIN = 29;
-  const uint DATA_OUT_PIN = 28;
-  const uint NUM_LEDS_TO_EMULATE = 1;
-  #include "ws2811.hpp"
   #define USE_DCC_INTERFACE
   #define USE_COMM_INTERFACE
   #define DCC_STATUS_PIN  LED_BUILTIN
@@ -335,9 +330,9 @@
   #ifdef USE_SPI_COM
   #error "USE_SPI_COM can't be used on ESP32 platform"
   #endif
-  #define DCC_SIGNAL_PIN   22
-  void ws281x_receive_thread();
-  WS2811Client<NUM_LEDS_TO_EMULATE, GRB>* pWS2811;
+  #ifndef DCC_SIGNAL_PIN                                                                // 18.12.2024 DCC_SIGNAL_PIN may be set externally
+    #define DCC_SIGNAL_PIN   28                                                         // 18.12.2024 change default pin from 22 to 28, good for PICO and PICO zero
+  #endif
 #endif
 
 
@@ -570,7 +565,7 @@ void Set_Input(uint8_t channel, uint8_t On)                                     
 // it has not been reported, but it may also occur with DCC or CAN
 
     byte inp = MobaLedLib.Get_Input(channel);
-    if (inp==INP_TURNED_OFF && On ||inp==INP_TURNED_ON && !On)
+    if ((inp==INP_TURNED_OFF && On) || (inp==INP_TURNED_ON && !On))
         {
         MobaLedLib.Update();
         }
