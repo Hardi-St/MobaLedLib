@@ -28,7 +28,7 @@
 
 #ifdef ESP32
 #include <driver/uart.h>
-#define URAT_USED UART_NUM_1			// use UART1 
+#define UART_USED UART_NUM_1			// use UART1 
 #endif
 
 #if !defined(__AVR__) && !defined(ESP32) && !defined(__arm__)

@@ -65,15 +65,13 @@ void DMXInterface::setup(uint8_t DMXSignalPin, uint8_t* buffer, uint16_t numberO
   uart_config.stop_bits = UART_STOP_BITS_2,
   uart_config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
   uart_config.rx_flow_ctrl_thresh = 122,
-	uart_param_config(URAT_USED, &uart_config);
+  uart_param_config(UART_USED, &uart_config);
 
   // The RX queue size must be greater than UART_FIFO_LEN
   // The TX queue size must be UART_FIFO_LEN + expected data to send
-  //uart_driver_install(URAT_USED, UART_FIFO_LEN+1, UART_FIFO_LEN+numberOfChannels, 0, NULL, 0);
-  uart_driver_install(URAT_USED, UART_FIFO_LEN+1, UART_FIFO_LEN+numberOfChannels, 0, NULL, 0);
+  uart_driver_install(UART_USED, UART_FIFO_LEN+1, UART_FIFO_LEN+numberOfChannels, 0, NULL, 0);
 
-  Serial1.begin(250000, SERIAL_8N2,9,DMXSignalPin);
-  //uart_set_pin(URAT_USED, 19, 18, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+  Serial1.begin(250000, SERIAL_8N2,-1,DMXSignalPin);
 #endif
 }
 
@@ -116,9 +114,9 @@ void DMXInterface::sendSynchron(uint8_t* buffer, uint16_t len)
 	// we set the protocol to 8 bit even parity 1 stop -> together with start bit it gives a total of 10 low bits when sending the '0' byte
 	// so one bit must be (88 / 10) us long
 
-	uart_set_baudrate(URAT_USED, ((1000000*10)/88));
-	uart_set_parity(URAT_USED, UART_PARITY_EVEN);
-    uart_write_bytes(URAT_USED, &nullChar, 1);
+	uart_set_baudrate(UART_USED, ((1000000*10)/88));
+	uart_set_parity(UART_USED, UART_PARITY_EVEN);
+	uart_write_bytes(UART_USED, &nullChar, 1);
 
 	delayMicroseconds(88+10);		// 88us break + some time to be sure that byte is fully sent
 
@@ -127,11 +125,11 @@ void DMXInterface::sendSynchron(uint8_t* buffer, uint16_t len)
 	unsigned long startBreak = micros();
 
 	// switching the baudrate costs ~ 17us
-	uart_set_baudrate(URAT_USED, 250000);
-	uart_set_parity(URAT_USED, UART_PARITY_DISABLE);
+	uart_set_baudrate(UART_USED, 250000);
+	uart_set_parity(UART_USED, UART_PARITY_DISABLE);
 
-  uart_write_bytes(URAT_USED, &nullChar, 1);
-  uart_write_bytes(URAT_USED, (const char*)buffer, numberOfChannels);
+	uart_write_bytes(UART_USED, &nullChar, 1);
+	uart_write_bytes(UART_USED, (const char*)buffer, numberOfChannels);
 }
 #elif defined(__AVR__)
 void DMXInterface::sendSynchron(uint8_t* buffer, uint16_t len)

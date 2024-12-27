@@ -4,7 +4,14 @@
 // 10.07.22:  - Corrected the baud rate prescaler if ESP32 with chip revision >= 2 is used.
 #ifdef ARDUINO_ARCH_ESP32
 
-#include "esp_intr.h"
+
+#include "esp_version.h"
+#if ESP_IDF_VERSION_MAJOR<4
+  #include "esp_intr.h"
+#else  
+  #include "rom/gpio.h"
+  #include "esp_chip_info.h"
+#endif  
 #include "soc/dport_reg.h"
 #include "driver/gpio.h"
 
