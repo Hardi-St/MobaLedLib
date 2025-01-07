@@ -24,7 +24,7 @@
  MobaLedLib.h
  ~~~~~~~~~~~~
 
- This is the main headder file for the MobaLedLib.
+ This is the main header file for the MobaLedLib.
 
 */
 #ifndef _MOBALEDLIB_H_
@@ -352,27 +352,27 @@
 //            To Use a RS-flip-flop with DCC the "GREEN" channel has to be assigned to
 
 // Single DstVar (Q)
-#define  MonoFlop(                  DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop1,               InCh,   SI_0,   Duration, DstVar)  // Retrigger with rising endge (Like ButtonFunc, but edge triggered)
-#define  MonoFlopReset(             DstVar, InCh, R_InCh, Duration)              Counter(_CM_RS_FlipFlop1,               InCh,   R_InCh, Duration, DstVar)  // Retrigger with rising endge with additional Reset input
-#define  MonoFlopLongReset(         DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop1|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar)  // Retrigger with rising endge, Long press disables
-#define  RS_FlipFlop(               DstVar, R_InCh, S_InCh)                      Counter(_CM_RS_FlipFlop1,               S_InCh, R_InCh, 0,        DstVar)  // Edge tiggered RS Flip Flop
-#define  RS_FlipFlopTimeout(        DstVar, R_InCh, S_InCh, Timeout)             Counter(_CM_RS_FlipFlop1,               S_InCh, R_InCh, Timeout,  DstVar)  // Edge tiggered RS Flip Flop and timeout
+#define  MonoFlop(                  DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop1,               InCh,   SI_0,   Duration, DstVar)  // Re-trigger with rising edge (Like ButtonFunc, but edge triggered)
+#define  MonoFlopReset(             DstVar, InCh, R_InCh, Duration)              Counter(_CM_RS_FlipFlop1,               InCh,   R_InCh, Duration, DstVar)  // Re-trigger with rising edge with additional Reset input
+#define  MonoFlopLongReset(         DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop1|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar)  // Re-trigger with rising edge, Long press disables
+#define  RS_FlipFlop(               DstVar, R_InCh, S_InCh)                      Counter(_CM_RS_FlipFlop1,               S_InCh, R_InCh, 0,        DstVar)  // Edge triggered RS Flip Flop
+#define  RS_FlipFlopTimeout(        DstVar, R_InCh, S_InCh, Timeout)             Counter(_CM_RS_FlipFlop1,               S_InCh, R_InCh, Timeout,  DstVar)  // Edge triggered RS Flip Flop and timeout
 #define  T_FlipFlopReset(           DstVar, T_InCh, R_InCh)                      Counter(_CM_T_FlipFlop1,                T_InCh, R_InCh, 0,        DstVar)  // Toggle Flip Flop with reset
 #define  T_FlipFlopResetTimeout(    DstVar, T_InCh, R_InCh, Timeout)             Counter(_CM_T_FlipFlop1,                T_InCh, R_InCh, Timeout,  DstVar)  // Toggle Flip Flop with restart and timeout
 
-// Single DstVar which is controlled inverse (Q')  => DstVar is active at the begining and when a timeout timeout occoures. It's deactivated with the trigger
-#define  MonoFlopInv(               DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop2,               InCh,   SI_0,   Duration, DstVar,  DstVar)  // Retrigger with rising endge (Like ButtonFunc, but edge triggered)
-#define  MonoFlopInvLongReset(      DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop2|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar,  DstVar)  // Retrigger with rising endge, Long press disables
-#define  RS_FlipFlopInv(            DstVar, R_InCh, S_InCh)                      Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, 0,        DstVar,  DstVar)  // Edge tiggered RS Flip Flop
-#define  RS_FlipFlopInvTimeout(     DstVar, R_InCh, S_InCh, Timeout)             Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, Timeout,  DstVar,  DstVar)  // Edge tiggered RS Flip Flop and timeout
+// Single DstVar which is controlled inverse (Q')  => DstVar is active at the beginning and when a timeout timeout occurs. It's deactivated with the trigger
+#define  MonoFlopInv(               DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop2,               InCh,   SI_0,   Duration, DstVar,  DstVar)  // Re-trigger with rising edge (Like ButtonFunc, but edge triggered)
+#define  MonoFlopInvLongReset(      DstVar, InCh, Duration)                      Counter(_CM_RS_FlipFlop2|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar,  DstVar)  // Re-trigger with rising edge, Long press disables
+#define  RS_FlipFlopInv(            DstVar, R_InCh, S_InCh)                      Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, 0,        DstVar,  DstVar)  // Edge triggered RS Flip Flop
+#define  RS_FlipFlopInvTimeout(     DstVar, R_InCh, S_InCh, Timeout)             Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, Timeout,  DstVar,  DstVar)  // Edge triggered RS Flip Flop and timeout
 #define  T_FlipFlopInvReset(        DstVar, T_InCh, R_InCh)                      Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, 0,        DstVar,  DstVar)  // Toggle Flip Flop with reset Q'
 #define  T_FlipFlopInvResetTimeout( DstVar, T_InCh, R_InCh, Timeout)             Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, Timeout,  DstVar,  DstVar)  // Toggle Flip Flop with restart and timeout Q'
 
 // Dual DstVar (Q and Q')
-#define  MonoFlop2(                 DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2,               InCh,   SI_0,   Duration, DstVar0, DstVar1)  // Two Outputs, retrigger with rising endge (Like ButtonFunc, but edge triggered)
-#define  MonoFlop2LongReset(        DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar0, DstVar1)  // Two Outputs, retrigger with rising endge, Long press disables
-#define  RS_FlipFlop2(              DstVar0, DstVar1, R_InCh, S_InCh)            Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, 0,        DstVar0, DstVar1)  // Edge tiggered RS Flip Flop
-#define  RS_FlipFlop2Timeout(       DstVar0, DstVar1, R_InCh, S_InCh, Timeout)   Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, Timeout,  DstVar0, DstVar1)  // Edge tiggered RS Flip Flop and timeout
+#define  MonoFlop2(                 DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2,               InCh,   SI_0,   Duration, DstVar0, DstVar1)  // Two Outputs, re-trigger with rising edge (Like ButtonFunc, but edge triggered)
+#define  MonoFlop2LongReset(        DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar0, DstVar1)  // Two Outputs, re-trigger with rising edge, Long press disables
+#define  RS_FlipFlop2(              DstVar0, DstVar1, R_InCh, S_InCh)            Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, 0,        DstVar0, DstVar1)  // Edge triggered RS Flip Flop
+#define  RS_FlipFlop2Timeout(       DstVar0, DstVar1, R_InCh, S_InCh, Timeout)   Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, Timeout,  DstVar0, DstVar1)  // Edge triggered RS Flip Flop and timeout
 #define  T_FlipFlop2Reset(          DstVar0, DstVar1, T_InCh, R_InCh)            Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, 0,        DstVar0, DstVar1)  // Toggle Flip Flop with reset
 #define  T_FlipFlop2ResetTimeout(   DstVar0, DstVar1, T_InCh, R_InCh, Timeout)   Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, Timeout,  DstVar0, DstVar1)  // Toggle Flip Flop with restart and timeout
 
@@ -390,6 +390,13 @@
              New_HSV_Group()                                          \
              APatternT1(LED,224,SI_1,1,Color,Color,0,PM_HSV,0 ms,1)  \
              APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,Duration,1)       
+      
+#define  RGB_Ring(LED, InCh, Brightness, Duration) \
+            APatternT1(LED,4,InCh,36,0,Brightness,0,0,Duration,137,98,8,162,28,195,52,142,34,72,162,  \
+            24,130,40,199,48,141,163,40,146,40,134,32,202,49,76,227,56,138,36,138,33,136,114,12,211,  \
+            52,142,34,137,98,8,162,28,195,48,141,163,72,162,24,130,40,199,49,76,227,40,146,40,134,32, \
+            202,114,12,211,56,138,36,138,33,136,162,28,195,52,142,34,137,98,8,130,40,199,48,141,163,  \
+            72,162,24,134,32,202,49,76,227,40,146,40,138,33,136,114,12,211,56,138,36)                        // 07.01.25: Juergen include Raily's LED ring macro  
 
 // Push Button functions which count the button press and activates temporary variables
 // The button flashes n times if the button was pressed n times.
@@ -397,8 +404,8 @@
 //   B_LED:    LED Number of the LED in the PUSH button (Example NUM_LEDS_1)
 //   B_LED_Cx: Channel of the LED (C1..C3)
 //   InCh:     Number of the input channel which is used to read in the button
-//   TmpNr:    First temporaty variable. There function PushButton_w_LED_0_2 uses 3 temporary variables. PushButton_w_LED_0_3 uses 4, ...
-//   Rotate:   If the buton is pressed n+1 times the first temporary variable is activated again
+//   TmpNr:    First temporary variable. There function PushButton_w_LED_0_2 uses 3 temporary variables. PushButton_w_LED_0_3 uses 4, ...
+//   Rotate:   If the button is pressed n+1 times the first temporary variable is activated again
 //   Timeout:  Time when the push button action is disabled again
 //
 
