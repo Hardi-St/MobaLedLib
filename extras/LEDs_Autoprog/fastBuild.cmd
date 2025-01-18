@@ -189,6 +189,7 @@ if errorlevel 1 (
 )
 
 echo Creating binary files
+"%hardware%\tools\gen_esp32part.exe" -q "%hardware%\tools\partitions\default.csv" "%buildDir%//LEDs_AutoProg.ino.partitions.bin"
 "%tools%\esptool_py\2.6.1/esptool.exe" --chip esp32 elf2image --flash_mode dio --flash_freq 80m --flash_size 4MB -o "%buildDir%/LEDs_AutoProg.ino.bin" "%buildDir%/LEDs_AutoProg.ino.elf"
 if errorlevel 1 (
 	echo create binary files failed
