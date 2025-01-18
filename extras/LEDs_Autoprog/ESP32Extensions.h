@@ -216,6 +216,9 @@ void loopESP32Extensions() {
 #endif	
 
 #ifdef USE_UI
+  #ifdef DISPLAY_FASTLED_FAULTS
+    ui.setFaultCount(faultCount);
+  #endif
 	ui.loop();
 #endif	
 }

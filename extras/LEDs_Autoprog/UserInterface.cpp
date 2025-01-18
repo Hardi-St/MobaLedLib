@@ -59,4 +59,8 @@ void UserInterface::setIPAddress(String adress)
 	if (ui) ui->setIPAddress(adress);
 }
 
+void UserInterface::setFaultCount(int value)
+{
+	if (ui) ui->setFaultCount(value);
+}
 #endif

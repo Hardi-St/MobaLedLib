@@ -30,7 +30,8 @@
  
 Revision History :
 ~~~~~~~~~~~~~~~~~
-10.11.20:  Versions 1.0 (Jürgen)
+10.11.20:  Version 1.0 (Jürgen)
+18.01.25:  Version 1.1 (Jürgen)
 	 
 */
 #ifdef ESP32
@@ -49,6 +50,9 @@ class SSD1306UI : public UserInterface
 	bool connected = false;
 	bool update = false;
 	String ipAddress;
+	uint32_t lastUIUpdate = 0;
+	uint32_t lastFaultCount = -1; 
+	int faultCount = -1;    // display of faults is turned off
 public:		
 	SSD1306UI() {};
 	
@@ -76,8 +80,31 @@ public:
 		update = true;
 	}
 
+  void setFaultCount(int value)
+  {
+    this->faultCount = value;
+    update = true;
+  }
 	void loop() 
 	{
+    if (faultCount!=-1)     // display of fault count is on?
+    {
+      if (lastUIUpdate==0 || ((millis()-lastUIUpdate)>60*1000) || lastFaultCount!=faultCount)
+      {
+        char buffer[20];
+        lastUIUpdate = millis();
+        lastFaultCount = faultCount;        
+        sprintf(&buffer[0], "%04d:%02d %02d    ", lastUIUpdate/(60*60*1000), (lastUIUpdate/(60*1000)%60), faultCount);
+        dsp.clearBuffer();
+        dsp.setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
+        dsp.drawStr(4, 16, "Uptime/Fail");	
+        dsp.drawStr(34, 40, &buffer[0]);	
+        dsp.sendBuffer();
+      }
+      return;
+    }
+    else
+    {  
 		if (!update) return;
 		
 		update = false;
@@ -86,6 +113,7 @@ public:
 		dsp.drawStr(0, 0, connected ? "WIFI connected" : "network error");
 		dsp.drawStr(0, 16, ipAddress.c_str());
 		dsp.sendBuffer();
+    }
 	}
 };
 

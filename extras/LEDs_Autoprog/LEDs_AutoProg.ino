@@ -308,7 +308,11 @@
   #ifdef USE_SPI_COM
 	#error "USE_SPI_COM can't be used on ESP32 platform"
   #endif
-  
+  uint32_t lastFastledSend = 0;                                                          // 18.01.24 Juergen add FastLED revive feature
+  extern void IRAM_ATTR GiveGTX_sem();
+  #ifdef DISPLAY_FASTLED_FAULTS                                                          // 18.01.24 Juergen add fault display feature   
+    uint32_t faultCount = 0;
+  #endif  
 #endif
 #ifdef USE_DCC_INTERFACE
   #ifndef USE_COMM_INTERFACE
@@ -1454,7 +1458,7 @@ void setup(){
 #ifdef ESP32
   if (!EEPROM.begin(EEPROM_SIZE))                                                                             // 19.01.21: Juergen: Old: 100
   {
-    Serial.println("failed to initialise EEPROM");
+    Serial.println("failed to initialize EEPROM");
   }
   esp_log_level_set("*", ESP_LOG_NONE);
 #endif
@@ -1495,9 +1499,6 @@ void setup(){
     RestoreStatus();
   #endif
 
-  #ifdef _NEW_INITIALIZE                                                                                      // 18.12.2021 moved initialisation out of constructor
-    MobaLedLib.Update();   // Must be called once before the inputs are read.
-  #endif
   
   #ifdef SETUP_FASTLED // Use a special FastLED Setup macro defined in the LEDs_AutoProg.h                    // 26.04.20:
     SETUP_FASTLED();
@@ -1517,6 +1518,15 @@ void setup(){
     #ifdef COLOR_CORRECTION                                                                                   // 17.04.20:  New feature from Juergen
       controller.setCorrection(COLOR_CORRECTION); // Attention: Can't be used with Servos, Sound Modules, Charliplexing, ...
     #endif
+  #endif
+  // 18.01.2025 moved initilisation of FASTLed AFTER initialisation of FastLED
+  //            since FastLED 3.9.8 the LED array is cleared when initializing the controllers.
+  //            which also clears initial LED values set by first MobaLedLib.update()
+  #ifdef _NEW_INITIALIZE                                                                                      // 18.12.2021 moved initialisation out of constructor
+    MobaLedLib.Update();   // Must be called once before the inputs are read.
+  #endif
+  #ifdef ESP32
+    FastLED.show();                                                                                           // 18.01.24 Juergen reduced time wrong "green" leds are displayed after boot
   #endif
 
   #ifdef START_MSG
@@ -1649,7 +1659,9 @@ void setup(){
     Serial.println();
   #endif
 
+#ifdef __AVR__                                                                                                // 18.01.24 Juergen speed up ESP boot time
   if (millis() < 1500) delay(1500 - millis()); // Wait to prevent flickering if the Arduino is detected from the excel program  // 05.05.20:
+#endif  
 
 #if  USE_NEW_LED_ARRAY                                                                                        // 30.10.20:
   #if defined(Mainboard_LED0) || defined(Mainboard_LED_D2)
@@ -2219,11 +2231,22 @@ void loop(){
   #endif    
 #endif
 
+#ifdef ESP32                                                            // 18.01.25: Juergen workaround for blocking of FastLED.show()
+if (lastFastledSend!=0 && (millis()-lastFastledSend)>100)               // FASTLed is blocked?
+{
+    GiveGTX_sem();
+    lastFastledSend = 0;
+#ifdef DISPLAY_FASTLED_FAULTS                                           // 18.01.24 Juergen add fault display feature   
+    faultCount++;
+    Serial.printf("**** FASTLed hang detected: failure Time %4d:%02d:%02d.%02d, FASTLed failures %ld *******\r\n", (int)(millis()/(1000*60*60*24)), (int)(millis()/(1000*60*60) % 24), (int)(millis()/(1000*60) % 60), (int)(millis()/1000 % 60), faultCount);
+#endif
+}
+#endif
 #ifdef USE_ESP32_EXTENSIONS
   loopESP32Extensions();
 #endif
   
-#ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low prority loop, on multicore platforms running on seperate core 
+#ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low priority loop, on multi core platforms running on separate core 
   Additional_Loop_Proc2();                                                                                        // 26.09.21: Juergen
 #endif
 #if defined(MLL_EXTENSIONS_COUNT)
@@ -2305,7 +2328,9 @@ void MLLMainLoop(){
   #endif
 
   Set_Mainboard_LEDs();                 // Turn on/off the LEDs on the mainboard if configured
-
+#ifdef ESP32
+  lastFastledSend = millis();
+#endif
   FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
 
 #if defined(USE_DMX_PIN)                                                                                      // 19.01.21: Juergen
@@ -2329,28 +2354,18 @@ void MLLMainLoop(){
      Send_Inputs('*', false);
   #endif
   
-  #if 0 // Debug
+  #if defined(DISPLAY_FASTLED_FAULTS) && defined(ESP32)                                                       // 18.01.24 Juergen add fault display feature   
     static unsigned long lastMillis = 0;
-    static unsigned long lastMillis2 = 0;
     static int cnt=0;
     cnt++;
-    if ((millis()-lastMillis)>=1000)
+    if ((millis()-lastMillis)>=10000)
        {
-       if (cnt<90)
+       lastMillis=millis();
           {
-          Serial.print("updates in 1000ms: ");
-          Serial.println(cnt);
+          Serial.printf("Uptime %4d:%02d:%02d, FASTLed failures %ld, updates in 10 seconds: %ld\r\n", (int)(lastMillis/(1000*60*60*24)), (int)(lastMillis/(1000*60*60) % 24), (int)(lastMillis/(1000*60) % 60), faultCount, cnt);
        }
        cnt=0;
 
-       lastMillis=millis();
-       //for (int i=0;i<NUM_LEDS;i++){ leds[i].r = random(0,255);leds[i].g = random(0,255);leds[i].b = random(0,255); }
-       }
-    if ((millis()-lastMillis2)>=100)
-       {
-       lastMillis2=millis();
-       //for (int i=0;i<NUM_LEDS;i++){ leds[i].r = random(0,255);leds[i].g = random(0,255);leds[i].b = random(0,255); }
-       //for (int i=42;i<NUM_LEDS;i++){ leds[i].r++;leds[i].g++;leds[i].b++;   }
        }
   #endif
 }
