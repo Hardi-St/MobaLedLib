@@ -2247,8 +2247,8 @@ if (lastFastledSend!=0 && delay>100)                                    // FASTL
     if (lastFastledSend!=lastFastledFail)
     {
         lastFastledFail = lastFastledSend;
-        delayCount++;
     #ifdef DISPLAY_FASTLED_FAULTS                                       // 18.01.24 Juergen add fault display feature   
+        delayCount++;
         Serial.printf("**** FASTLed delay (%d) detected: Time %4d:%02d:%02d.%02d, FASTLed delays %d revives %d *******\r\n", delay, (int)(millis()/(1000*60*60*24)), (int)(millis()/(1000*60*60) % 24), (int)(millis()/(1000*60) % 60), (int)(millis()/1000 % 60), delayCount, reviveCount);
     #endif
     }
