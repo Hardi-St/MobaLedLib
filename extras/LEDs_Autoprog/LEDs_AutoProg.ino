@@ -45,18 +45,18 @@
    ~~~~~~~~~~~~~~~~~
    The project is used with two two Arduino compatible boards (Uno, Nano, Mega, ...) if the
    commands are read from DCC or Selectrix.
-   For DCC an opto coppler (6N137), a diode (1n148) and a 1K resistor is needed.
+   For DCC an opto coupler (6N137), a diode (1n148) and a 1K resistor is needed.
    For Selectrix two 22K resistors and a DIN5 connector is needed.
 
    The two Arduinos are connected by three wires (TX1-RX1, GND, A1).
    The A1 line is used to disable the serial transmission while the LEDs are updated.
 
    The DIN pin of the first LED is connected to pin D6 (LED_DO_PIN).
-   An optional heartbeat LED could be connected to pin D3 togeter with a 470 ohm resistor.
+   An optional heartbeat LED could be connected to pin D3 together with a 470 ohm resistor.
 
                        .-----------------------------------------------------.
                        |         DCC or Selectrix                            |  The DCC or Selectrix program
- Optocopler is         |           Arduino Nano: +-----+                     |  must be sendto the Arduino
+ Optocoupler is        |           Arduino Nano: +-----+                     |  must be sent to the Arduino
  used for DCC          |            +------------| USB |------------+        |  at first to make sure that the
  only              +5V |            |            +-----+            |        |  TX line is disabled. Otherwise
                     ^  |            | [ ]D13/SCK        MISO/D12[ ] |        |  the LED Arduino can't be flashed
@@ -102,7 +102,7 @@
                                     |          MISO SCK RST         |
                                     | NANO-V3                       |
                                     +-------------------------------+
-   The +5V supply lines of both arduinos could be connected together if they are powerd from one power supply (one USB).
+   The +5V supply lines of both arduinos could be connected together if they are powered from one power supply (one USB).
 
 
  - CAN Bus:
@@ -151,7 +151,7 @@
  19       D12        LED Bus 5
  23       D11        LED Bus 6
  0        D5         LED Bus 7  (not available on 30 pin ESP32 module)
- 13       D2         DCC Signal   with voltage divider 510/1K if Selctrix is used
+ 13       D2         DCC Signal   with voltage divider 510/1K if Selectrix is used
  15       A0         CLOCK_K    (RX2), with 3,3V -> 5V level shifter
  34       A2         BUTTONS         , with 1K/2K voltage divider
  33       A3         RESET_K         , with 3,3V -> 5V level shifter
@@ -198,7 +198,7 @@
  13       D3         LED 1 (Left   switch) 
  12       D4         LED 2 (Middle switch) 
  11       D5         LED 3 (Right  switch)  
- 28       D2         DCC Signal   with voltage divider 510/1K if Selctrix is used
+ 28       D2         DCC Signal   with voltage divider 510/1K if Selectrix is used
  14       A0         CLOCK_K    (RX2), with 3,3V -> 5V level shifter
  16       A2         BUTTONS         , with 1K/2K voltage divider
  15       A3         RESET_K         , with 3,3V -> 5V level shifter
@@ -247,7 +247,7 @@
  23.04.21:  - ubit: Added ServoMP3 commands
  24.04.21:  - Juergen: add Pico support 
  25.04.21:  - Juergen: improve signaling of DCC status using onboard led (ESP & PICO)
- 14.09.21:  - Juergen: add signalling of DCC status with ESP32 onboard led
+ 14.09.21:  - Juergen: add signaling of DCC status with ESP32 onboard led
  29.09.21:  - Juergen: add new feature to enable processing of extra commands outside the core library
  12.10.21:  - Juergen: add new feature to control sound modules attached to the mainboard  (currently limited to Arduino Nano and JQ6500)
  02.01.22:  - Juergen add support for DCC receive on LED Arduino
@@ -259,13 +259,14 @@
  21.03.23:  - if SEND_INPUTS is enabled also SwitchA, SwitchD and Variable changes are notified	
  26.04.23:  - Avoid loosing triggers if on/off message comes very fast (LNet)
  08.04.23:  - Improve detection of change switches/variables for SEND_INPUTS feature
- 12.12.24:  - fix issue: "ESP32 und Hieroglyphen bei der MLL-Uhrzeit" To-Dos#20
-            - reset the ESP32 watchdog while in Farb-Test loop
+ 12.12.24:  - fix issue: "ESP32 and hieroglyphics for MLL time" To-Dos#20
+            - reset the ESP32 watchdog while in color-test loop
  18.12.24:  - for Pico change DCC_SIGNAL_PIN from 22 to 28, DCC_SIGNAL_PIN may also be set externally
  18.01.25:  - add FastLED revive and fault display feature
             - improve ESP32 startup time
- 19.01.25:  - limit ESP32 RMT channes to 6
-
+ 19.01.25:  - limit ESP32 RMT channels to 6
+ 23.01.25:  - improve counting and display of freezes/delays
+            - remove limit ESP32 RMT channels
 */
 
 #include <Arduino.h>
@@ -356,7 +357,7 @@
 #define SERIAL_BAUD     115200 // Should be equal to the DCC_Rail_Decoder_Transmitter.ino program
 
 #define DISABLE_SPI_DELAY 3000 // After this time the SPI pins are disabled if they are not used
-                               // The programm also sends a command to the DCC/SX slave to deactivate his pins
+                               // The program also sends a command to the DCC/SX slave to deactivate his pins
 
 #if defined(ESP32)                                                                                                  // 30.10.20: Juergen
   #define LED0_PIN    2          // Onboard Led
@@ -369,10 +370,10 @@
   #define LED7_PIN    12         // KEY_80, Pin 2 AND left   button
   #define LED8_PIN    26         // KEY_80, Pin 3 AND middle button
   #define LED9_PIN    25         // KEY_80, Pin 4 AND right  button
-  #define LED10_PIN   18         // KEY_80, Pin 5 (Can't be used togther with the CAN)
+  #define LED10_PIN   18         // KEY_80, Pin 5 (Can't be used together with the CAN)
   #define LED11_PIN   23         // KEY_80, Pin 6          "
   #define LED12_PIN   19         // KEY_80, Pin 7          "
-  #define LED13_PIN   5          // CLK Pin CAN Modul      "
+  #define LED13_PIN   5          // CLK Pin CAN module     "
   #define LED14_PIN   32         // KEY_80, Pin 11
   #define LED15_PIN   39         // KEY_80, Pin 12
   #define LED16_PIN   15         // KEYBRD, Pin 5
@@ -391,10 +392,10 @@
   #define LED7_PIN    7          // KEY_80, Pin 2 AND left   button
   #define LED8_PIN    8          // KEY_80, Pin 3 AND middle button
   #define LED9_PIN    9          // KEY_80, Pin 4 AND right  button
-  #define LED10_PIN   10         // KEY_80, Pin 5 (Can't be used togther with the CAN)
+  #define LED10_PIN   10         // KEY_80, Pin 5 (Can't be used together with the CAN)
   #define LED11_PIN   11         // KEY_80, Pin 6          "
   #define LED12_PIN   12         // KEY_80, Pin 7          "
-  #define LED13_PIN   13         // CLK Pin CAN Modul      "
+  #define LED13_PIN   13         // CLK Pin CAN module     "
   #define LED14_PIN   A4         // KEY_80, Pin 11
   #define LED15_PIN   A5         // KEY_80, Pin 12
   #define LED16_PIN   A0         // KEYBRD, Pin 5
@@ -445,7 +446,7 @@ Benoetig als 142 byte
 
 #ifdef USE_CAN_AS_INPUT
   #ifdef ESP32
-	  #include "MLL_CAN/CAN.h"			   // It's a pachted copy of the Sandeep Mistry library (0.3.1)
+	  #include "MLL_CAN/CAN.h"			   // It's a patched copy of the Sandeep Mistry library (0.3.1)
 	  
 	  
 	  
@@ -1342,7 +1343,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    {
      uint8_t Pos     = rxBuf[4];  // 0 = Aus, Rund, Rot, Rechts, HP0 / 1 = Ein, Gruen, Gerade, HP1 / 2 = Gelb, Links, HP2 / 3 = Weiss, SH0
      uint8_t Current = rxBuf[5];  // 0 = Ausschalten, 1-31 Einschalten mit Dimmwert (sofern Protokoll dies unterstuetzt), 1 = ein
-     uint16_t Loc_ID = ((rxBuf[2]<<8) + rxBuf[3]) & 0x7FF;  // Adresses from 0 - 0x7FF are possible (2048 adresses)
+     uint16_t Loc_ID = ((rxBuf[2]<<8) + rxBuf[3]) & 0x7FF;  // Addresses from 0 - 0x7FF are possible (2048 addresses)
      //Serial.print("Loc_ID:"); Serial.print(Loc_ID+1); Serial.print(" Pos:"); Serial.print(Pos); Serial.print(" Current:"); Serial.println(Current); // Debug
      Update_InputCh_if_Addr_exists(Loc_ID+1, Pos, Current);
    }
@@ -1354,7 +1355,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      // The ATTiny GBM (https://github.com/Hardi-St/MobaLedLib_Docu/blob/master/Platinen/GBM_o_LED_CAN.zip)
      // Sends a CAN message with two bytes:
      //  Example: 0x300: 03 00
-     // The first bytes contains the bitmask of the channels (Example 03 => Channel 1 and 2 are activ)
+     // The first bytes contains the bitmask of the channels (Example 03 => Channel 1 and 2 are active)
      // The second byte contains the error mask (line broken)
      // Each module has an own individual message ID. The first MsgId is 300.
      {
@@ -1527,14 +1528,14 @@ void setup(){
       controller.setCorrection(COLOR_CORRECTION); // Attention: Can't be used with Servos, Sound Modules, Charliplexing, ...
     #endif
   #endif
-  // 18.01.2025 moved initilisation of FASTLed AFTER initialisation of FastLED
+  // 18.01.2025 moved initialization of FASTLed AFTER initialization of FastLED
   //            since FastLED 3.9.8 the LED array is cleared when initializing the controllers.
   //            which also clears initial LED values set by first MobaLedLib.update()
-  #ifdef _NEW_INITIALIZE                                                                                      // 18.12.2021 moved initialisation out of constructor
+  #ifdef _NEW_INITIALIZE                                                                                      // 18.12.2021 moved initialization out of constructor
     MobaLedLib.Update();   // Must be called once before the inputs are read.
   #endif
   #ifdef ESP32
-    FastLED.show();                                                                                           // 18.01.24 Juergen reduced time wrong "green" leds are displayed after boot
+    FastLED.show();                                                                                           // 18.01.24 Juergen reduced time wrong "green" LEDs are displayed after boot
   #endif
 
   #ifdef START_MSG
@@ -1620,9 +1621,9 @@ void setup(){
   #endif
 
   #ifdef USE_SPI_COM                                                                                          // 13.05.20:
-    SPI.begin();                         // Begins the SPI commnuication
+    SPI.begin();                         // Begins the SPI communication
     SPI.setClockDivider(SPI_CLOCK_DIV8); // Sets clock for SPI communication at 8 (16/8=2Mhz)
-    digitalWrite(SS,HIGH);               // Setting SlaveSelect as HIGH (So master doesnt connnect with slave)
+    digitalWrite(SS,HIGH);               // Setting SlaveSelect as HIGH (So master doesn't connect with slave)
     digitalWrite(SS, LOW);               // Starts communication with the SPI slave (DCC/Selectrix Arduino)   // 11.11.20: Juergen
 
   #endif
@@ -1823,7 +1824,7 @@ void setup(){
     commInterface = interf;
     interf->setup(LNET_RX_PIN, LNET_TX_PIN, LNET_STATUS_PIN, stream, 1);
   #endif
-  #if !defined(Mainboard_LED1)																				  // 12.11.20: Juergen initialize Mainboard leds
+  #if !defined(Mainboard_LED1)																				  // 12.11.20: Juergen initialize Mainboard LEDs
 	#if defined(USE_NEW_LED_ARRAY)																			  // if mainboard led isn't configured at all just clear the output
 		FastPin<LED1_PIN>::setInput();
 	#else
@@ -1896,9 +1897,9 @@ void setup(){
     // Fast way to write the mainboard LEDs
     // It's not possible to use the INP_TURNED_ON / ..OFF because the variables are cleared at the end of
     // the Set_Mainboard_LEDs()
-    // => Implement a special callback if the LEDs should be written onli in case of a change of the input variable
+    // => Implement a special callback if the LEDs should be written only in case of a change of the input variable
     //
-    // The fast methode uses 11 Bytes more
+    // The fast method uses 11 Bytes more
     #define FAST_SET_MAINBOARDLED(LEDNr, PortLetter, Mask)                     \
         {                                                                      \
         uint8_t Inp = MobaLedLib.Get_Input(Mainboard_LED##LEDNr);              \
