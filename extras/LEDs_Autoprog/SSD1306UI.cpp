@@ -51,8 +51,10 @@ class SSD1306UI : public UserInterface
 	bool update = false;
 	String ipAddress;
 	uint32_t lastUIUpdate = 0;
-	uint32_t lastFaultCount = -1; 
-	int faultCount = -1;    // display of faults is turned off
+	int delayCount = -1;    // display of faults is turned off
+	int reviveCount = 0;    
+	int lastDelayCount = -1;
+	int lastReviveCount = 0;    
 public:		
 	SSD1306UI() {};
 	
@@ -80,25 +82,28 @@ public:
 		update = true;
 	}
 
-  void setFaultCount(int value)
+  void setCounters(int delayCount, int reviveCount)
   {
-    this->faultCount = value;
+    this->delayCount = delayCount;
+    this->reviveCount = reviveCount;
     update = true;
   }
 	void loop() 
 	{
-    if (faultCount!=-1)     // display of fault count is on?
+    if (delayCount!=-1)     // display of fault count is on?
     {
-      if (lastUIUpdate==0 || ((millis()-lastUIUpdate)>60*1000) || lastFaultCount!=faultCount)
+      if (lastUIUpdate==0 || ((millis()-lastUIUpdate)>60*1000) || lastDelayCount!=delayCount || lastReviveCount!=reviveCount)
       {
+        lastDelayCount=delayCount;
+        lastReviveCount=reviveCount;
+        
         char buffer[20];
         lastUIUpdate = millis();
-        lastFaultCount = faultCount;        
-        sprintf(&buffer[0], "%04d:%02d %02d    ", lastUIUpdate/(60*60*1000), (lastUIUpdate/(60*1000)%60), faultCount);
+        sprintf(&buffer[0], "%03d:%02d %d %d", lastUIUpdate/(60*60*1000), (lastUIUpdate/(60*1000)%60), reviveCount, delayCount);
         dsp.clearBuffer();
         dsp.setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
-        dsp.drawStr(4, 16, "Uptime/Fail");	
-        dsp.drawStr(34, 40, &buffer[0]);	
+        dsp.drawStr(4, 0, "Uptime/Fail");	
+        dsp.drawStr(4,40, &buffer[0]);	
         dsp.sendBuffer();
       }
       return;
