@@ -315,7 +315,7 @@
   #endif
   uint32_t lastFastledSend = 0;                                                          // 18.01.24 Juergen add FastLED revive feature
   uint32_t lastFastledFail = 0;                                                          // 18.01.24 Juergen add FastLED revive feature
-  extern void IRAM_ATTR GiveGTX_sem();
+  extern void GiveGTX_sem() __attribute__((weak));
   #ifdef DISPLAY_FASTLED_FAULTS                                                          // 18.01.24 Juergen add fault display feature   
     uint32_t delayCount = 0;
     uint32_t reviveCount = 0;
@@ -2254,7 +2254,7 @@ if (lastFastledSend!=0 && delay>100)                                    // FASTL
     }
     if ((millis()-lastFastledSend)>500)
     {
-        GiveGTX_sem();
+        if (GiveGTX_sem!=NULL) GiveGTX_sem();
         lastFastledSend = 0;
     #ifdef DISPLAY_FASTLED_FAULTS                                       // 18.01.24 Juergen add fault display feature   
         reviveCount++;

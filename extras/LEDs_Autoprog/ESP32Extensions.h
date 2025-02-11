@@ -59,6 +59,10 @@
 #define DEBUG Serial
 
 #ifdef USE_UI
+#ifndef OLED_TYP
+  #define OLED_TYP 2
+#endif
+#include "U8G2UserInterface.h"
 UserInterface ui(getUserInterface);
 #endif
 

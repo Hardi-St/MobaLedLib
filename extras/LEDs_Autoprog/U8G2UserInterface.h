@@ -43,9 +43,7 @@ Revision History :
 
 #include "UserInterface.h"
 
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C dsp(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // All Boards without Reset of the Display
-
-class SSD1306UI : public UserInterface
+class U8G2UserInterface : public UserInterface
 {
 	bool connected = false;
 	bool update = false;
@@ -55,19 +53,24 @@ class SSD1306UI : public UserInterface
 	int reviveCount = 0;    
 	int lastDelayCount = -1;
 	int lastReviveCount = 0;    
+  U8G2* dsp;
+  
 public:		
-	SSD1306UI() {};
+	U8G2UserInterface(U8G2* display)
+  {
+    dsp = display;
+  }
 	
 	void setup() 
 	{
-		dsp.begin();
+		dsp->begin();
 
-		dsp.clearBuffer();
-		dsp.setFont(u8g2_font_logisoso18_tf);	// choose a suitable font
-		dsp.setFontPosTop();
-		dsp.drawStr(4, 16, "MobaLedLib");	// write something to the internal memory
-		dsp.drawStr(34, 40, "ESP32");	// write something to the internal memory
-		dsp.sendBuffer();					// transfer internal memory to the display
+		dsp->clearBuffer();
+		dsp->setFont(u8g2_font_logisoso18_tf);	// choose a suitable font
+		dsp->setFontPosTop();
+		dsp->drawStr(4, 16, "MobaLedLib");	// write something to the internal memory
+		dsp->drawStr(34, 40, "ESP32");	// write something to the internal memory
+		dsp->sendBuffer();					// transfer internal memory to the display
 	}
 
 	void setConnected(bool connected) 
@@ -100,11 +103,11 @@ public:
         char buffer[20];
         lastUIUpdate = millis();
         sprintf(&buffer[0], "%03d:%02d %d %d", lastUIUpdate/(60*60*1000), (lastUIUpdate/(60*1000)%60), reviveCount, delayCount);
-        dsp.clearBuffer();
-        dsp.setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
-        dsp.drawStr(4, 0, "Uptime/Fail");	
-        dsp.drawStr(4,40, &buffer[0]);	
-        dsp.sendBuffer();
+        dsp->clearBuffer();
+        dsp->setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
+        dsp->drawStr(4, 0, "Uptime/Fail");	
+        dsp->drawStr(4,40, &buffer[0]);	
+        dsp->sendBuffer();
       }
       return;
     }
@@ -113,19 +116,24 @@ public:
 		if (!update) return;
 		
 		update = false;
-		dsp.clearBuffer();
-		dsp.setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
-		dsp.drawStr(0, 0, connected ? "WIFI connected" : "network error");
-		dsp.drawStr(0, 16, ipAddress.c_str());
-		dsp.sendBuffer();
+		dsp->clearBuffer();
+		dsp->setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
+		dsp->drawStr(0, 0, connected ? "WIFI connected" : "network error");
+		dsp->drawStr(0, 16, ipAddress.c_str());
+		dsp->sendBuffer();
     }
 	}
 };
 
-static SSD1306UI ssd1306UI;
-
 UserInterface* getUserInterface() 
 {
-	return &ssd1306UI;
+#if OLED_TYP==1         // 1.3"  I2C - for ESP32 adapter board
+  return new U8G2UserInterface(new U8G2_SSD1306_128X64_NONAME_F_SW_I2C(U8G2_R0, SCL, SDA));
+#elif OLED_TYP==2        // 0.96" I2C - for ESP32 mainboard
+  return new U8G2UserInterface(new U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, SCL, SDA));
+#else
+   #error "OLED_TYP not supported yet ;-("
+  return NULL;
+#endif
 }
 #endif
