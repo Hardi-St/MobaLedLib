@@ -32,6 +32,7 @@ Revision History :
 ~~~~~~~~~~~~~~~~~
 10.11.20:  Version 1.0 (Jürgen)
 18.01.25:  Version 1.1 (Jürgen)
+30.03.25:  Version 1.2 (Peter)
 	 
 */
 #ifdef ESP32
@@ -53,6 +54,7 @@ class U8G2UserInterface : public UserInterface
 	int reviveCount = 0;    
 	int lastDelayCount = -1;
 	int lastReviveCount = 0;    
+	int lastDarkness = -1;    // Peter
   U8G2* dsp;
   
 public:		
@@ -93,6 +95,82 @@ public:
   }
 	void loop() 
 	{
+// Peter Beginn
+#if UI_MLLTime == 1 				// MLL-Uhrzeit anzeigen
+    if (lastDarkness != Darkness) 
+    {
+      char timeStr[20];
+      lastDarkness = Darkness;
+      uint16_t Minutes = ((uint32_t)lastDarkness * 12*60) / 255;
+      if (DayState <= SunSet)
+      {
+        Minutes =  12*60 + Minutes;
+      } else {
+        Minutes =  12*60 - Minutes;
+      }
+      sprintf(timeStr, "%2i:%02i", Minutes/60, Minutes%60);
+      dsp->clearBuffer();
+      dsp->setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
+      dsp->drawStr(10, 0, "MobaLedLib");
+      dsp->drawStr(42, 20, "Zeit");
+      dsp->drawStr(36, 40, timeStr);
+      dsp->sendBuffer();	
+    } 
+#elif UI_MLLTime == 2					// LDR-Wert anzeigen
+    if (lastDarkness != Darkness) 
+    {
+      char timeStr[20];
+      lastDarkness = Darkness;
+      dsp->clearBuffer();
+      switch (DayState)
+      {
+        case Unknown: sprintf(timeStr, "LDR Unknown"); break;
+        case SunRise: sprintf(timeStr, "LDR SunRise"); break;
+        case SunSet:  sprintf(timeStr, "LDR SunSet"); break;
+      }				
+      dsp->setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
+      dsp->drawStr(10, 0, "MobaLedLib");
+      dsp->drawStr(10, 20, timeStr);
+      #ifdef READ_LDR
+        sprintf(timeStr, "I: %3i   D: %3i",Get_Act_Darkness(),Darkness );
+      #else
+        sprintf(timeStr, "No Read_LDR"); 	// 30.03.35
+      #endif
+      dsp->drawStr(10, 40, timeStr); // 30.03.25
+      dsp->sendBuffer();	
+		}
+#elif UI_MLLTime == 3					// LDR-Wert und Zeit anzeigen
+    if (lastDarkness != Darkness) 
+    {
+      char timeStr[20];
+      lastDarkness = Darkness;
+      uint16_t Minutes = ((uint32_t)Darkness * 12*60) / 255;
+      if (DayState <= SunSet)
+      {
+        Minutes =  12*60 + Minutes;
+      } else {
+        Minutes =  12*60 - Minutes;
+      }
+      dsp->clearBuffer();
+      switch (DayState)
+      {
+        case Unknown: sprintf(timeStr, "?? %2i:%02i", Minutes/60, Minutes%60); break;
+        case SunRise: sprintf(timeStr, "AM %2i:%02i", Minutes/60, Minutes%60); break;
+        case SunSet:  sprintf(timeStr, "PM %2i:%02i", Minutes/60, Minutes%60); break;
+      }				
+      dsp->setFont(u8g2_font_ncenB10_tr);	// choose a suitable font
+      dsp->drawStr(10, 0, "MobaLedLib");
+      dsp->drawStr(10, 20, timeStr);
+      #ifdef READ_LDR
+        sprintf(timeStr, "I: %3i   D: %3i",Get_Act_Darkness(),Darkness );
+      #else
+        sprintf(timeStr, "No Read_LDR"); // 30.03.25
+      #endif
+      dsp->drawStr(10, 40, timeStr);	// 30.03.25
+      dsp->sendBuffer();	
+    }
+// Peter Ende
+#else
     if (delayCount!=-1)     // display of fault count is on?
     {
       if (lastUIUpdate==0 || ((millis()-lastUIUpdate)>60*1000) || lastDelayCount!=delayCount || lastReviveCount!=reviveCount)
@@ -111,8 +189,7 @@ public:
       }
       return;
     }
-    else
-    {  
+
 		if (!update) return;
 		
 		update = false;
@@ -121,8 +198,8 @@ public:
 		dsp->drawStr(0, 0, connected ? "WIFI connected" : "network error");
 		dsp->drawStr(0, 16, ipAddress.c_str());
 		dsp->sendBuffer();
-    }
-	}
+#endif    
+  }
 };
 
 UserInterface* getUserInterface() 
