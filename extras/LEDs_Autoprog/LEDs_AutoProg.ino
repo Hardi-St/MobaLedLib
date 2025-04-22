@@ -267,6 +267,7 @@
  19.01.25:  - limit ESP32 RMT channels to 6
  23.01.25:  - improve counting and display of freezes/delays
             - remove limit ESP32 RMT channels
+ 22.04.25:  - fix bug with wrong send buffer size for SEND_INPUTS
 */
 
 #include <Arduino.h>
@@ -1041,7 +1042,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 	{
 		#if TOTAL_SEND_INPUTS!= 0
 			#define SEND_LEN (uint8_t)((((TOTAL_SEND_INPUTS+6)/7))+1)                                   // add one byte for checksum
-            static uint8_t send_buffer[SEND_LEN+1];
+            static uint8_t send_buffer[SEND_LEN+2];
 			uint8_t outByte = 0;
 			uint8_t chkSum = (uint8_t)~(SEND_LEN^0xD0);												    // compiler will make correct value out of it (saves memory)
 
