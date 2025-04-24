@@ -59,4 +59,8 @@ void UserInterface::setIPAddress(String adress)
 	if (ui) ui->setIPAddress(adress);
 }
 
+void UserInterface::setCounters(int delayCount, int reviveCount)
+{
+	if (ui) ui->setCounters(delayCount, reviveCount);
+}
 #endif

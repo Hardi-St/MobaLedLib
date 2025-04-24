@@ -32,9 +32,6 @@
 #ifdef ARDUINO_RASPBERRY_PI_PICO
 #include <Arduino.h>
 #include "PicoFastLED.h"
-#include <hardware/clocks.h>
-#include <hardware/pio.h>
-#include "ws2812.pio.h"
 
 /// add one byte to another, saturating at 0xFF
 /// @param i - first byte to add
@@ -484,34 +481,4 @@ void CFastLED::show()
 	delayMicroseconds(500);
 }
 
-const int PIN_TX = 0;
-
-CPicoController::CPicoController()
-{
-	int sm=0;
-	uint offset = pio_add_program(pio1, &ws2812_program);
-  ws2812_program_init(pio1, sm, offset, PIN_TX, 800000, true);
-}
-
-void CPicoController::show(const struct CRGB *data, int nLeds, uint8_t brightness)
-{
-	uint32_t val = 0;
-	uint32_t offset;
-	uint16_t pixels = nLeds*3;
-	uint16_t max = ((pixels+3)/4)*4;
-	for (uint i = 0; i < max; ++i) {
-			switch(i%3)
-			{
-				case 0: offset = 1; break;
-				case 1: offset = -1; break;
-				default: offset = 0;
-			}
-			val = val << 8;
-			if (i<pixels) val = val + *(((const uint8_t*)data)+i+offset);
-			if ((i&0x03)==3) {
-					pio_sm_put_blocking(pio1, 0, val);
-					val = 0;
-			}
-	}
-}
 #endif

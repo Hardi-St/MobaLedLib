@@ -25,13 +25,13 @@
  Check_UpdateTime.h
  ~~~~~~~~~~~~~~~~~~
 
- Include this headder file to measure the update rate including the calculation time
+ Include this header file to measure the update rate including the calculation time
  The function Check_UpdateTime() must be added to the loop() function in the .ino file
 
 
- 25.08.18:  Updaterate: 200 LEDs 130/s, 100 LEDs 218/s, 60 LEDs:299/s, 30 LEDs:399/s
+ 25.08.18:  Update-rate: 200 LEDs 130/s, 100 LEDs 218/s, 60 LEDs:299/s, 30 LEDs:399/s
  Update time for one LED (Theoretical) 30us  => 100 LEDs = 3 ms
- An update rate > 50/s is not necessary because our eys are to slow ;-(
+ An update rate > 50/s is not necessary because our eyes are to slow ;-(
 */
 
 //---------------------

@@ -50,6 +50,7 @@ public:
 	virtual void loop();
 	virtual void setConnected(bool connected);
 	virtual void setIPAddress(String adress);
+	virtual void setCounters(int delayCount, int reviveCount);
 };
 
 UserInterface* getUserInterface() __attribute__((weak));

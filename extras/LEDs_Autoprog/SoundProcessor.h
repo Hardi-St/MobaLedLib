@@ -43,12 +43,14 @@ Global variables use 712 bytes
  Revision History :
 ~~~~~~~~~~~~~~~~~
 07.10.21:  Versions 1.0 (Jürgen)
+23.01.25:  Versions 1.1 (Jürgen) ESP_IDF_VERSION 4 support
 
 TODO: why does MP3-TF-16P doesn't work on Pin D13?
 
 */
 
 #if defined(ESP32)
+  #include "esp_version.h"
   #include <SoftwareSerial.h>
   #define SOFTWARE_SERIAL_TYPE SoftwareSerial
   #define SOFTWARE_SERIAL(pin) new SOFTWARE_SERIAL_TYPE(-1, txPin)
@@ -144,7 +146,12 @@ class SoundProcessor
     this->capacity = capacity;
     this->soundPlayers = soundPlayers;
 #if defined(ESP32)
+  #if ESP_IDF_VERSION_MAJOR<4
     vPortCPUInitializeMutex(&soundProcessor_mutex);
+  #else
+    soundProcessor_mutex=portMUX_INITIALIZER_UNLOCKED;
+  #endif
+  
 #endif
   }
 

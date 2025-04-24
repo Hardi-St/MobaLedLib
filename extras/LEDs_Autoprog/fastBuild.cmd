@@ -4,7 +4,7 @@ goto :start
 
  Fast Build Script for building ESP32 version of LEDs_AutoProg
 
- Copyright (C) 2020-2021  Jürgen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2020-2025 Jürgen Winkler: MobaLedLib@gmx.at
 
  This script is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -189,6 +189,7 @@ if errorlevel 1 (
 )
 
 echo Creating binary files
+"%hardware%\tools\gen_esp32part.exe" -q "%hardware%\tools\partitions\default.csv" "%buildDir%//LEDs_AutoProg.ino.partitions.bin"
 "%tools%\esptool_py\2.6.1/esptool.exe" --chip esp32 elf2image --flash_mode dio --flash_freq 80m --flash_size 4MB -o "%buildDir%/LEDs_AutoProg.ino.bin" "%buildDir%/LEDs_AutoProg.ino.elf"
 if errorlevel 1 (
 	echo create binary files failed

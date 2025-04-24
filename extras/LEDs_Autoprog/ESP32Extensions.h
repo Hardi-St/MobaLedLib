@@ -33,7 +33,6 @@
 
 //#define USE_WIFI
 //#define USE_OTA
-//#define USE_LOCONET
 //#define USE_UI
 
 #ifdef USE_OTA
@@ -55,15 +54,18 @@
 //#include "RASCIIInterface.h"
 //RASCIIInterface interface;
 
-#ifdef USE_LOCONET
-#include "LocoNetInterface.h"
-LocoNetInterface interface;
-#endif
 #endif
 
 #define DEBUG Serial
 
 #ifdef USE_UI
+#ifndef OLED_TYP
+  #define OLED_TYP 2
+#endif
+#ifndef UI_MLLTime					// Peter
+  #define UI_MLLTime 0				// Peter   0 = keine Anzeige, 1 = MLL-Zeit, 2 = LDR-Wert, 3 = Zeit und LDR-Wert
+#endif								// Peter
+#include "U8G2UserInterface.h"
 UserInterface ui(getUserInterface);
 #endif
 
@@ -194,9 +196,6 @@ void setupESP32Extensions() {
 		Serial.println("local AP started");
 	}
 #endif
-#ifdef USE_LOCONET
-	interface.setup(2 /*Built in LED*/, stream);
-#endif
 #endif
 }
 
@@ -221,13 +220,12 @@ void loopESP32Extensions() {
     while(isInOTA);
   }
 	#endif
-
-	#ifdef USE_LOCONET
-	interface.process();
-	#endif	
 #endif	
 
 #ifdef USE_UI
+  #ifdef DISPLAY_FASTLED_FAULTS
+    ui.setCounters(delayCount, reviveCount);
+  #endif
 	ui.loop();
 #endif	
 }
