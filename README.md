@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.3: LNet protocol, new macros: Set_LEDNr, CopyNLEDs, Include, SingleLedSignal, SingleLedSignalEx**
+**New in release 3.4: support LichtMaschine Pro hardware, Stabilize and speed up FastLED on ESP32, new macros: RGB_Ring**
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
@@ -33,13 +33,13 @@ This makes the wiring extremely easy.
 
 A lot of **examples** show the usage of the library. They could be use as startup for own programs.
 
-A huge wiki describes the complete MobaLedLib in detail: https://wiki.mobaledlib.de/doku.php<br/>
-This library is used and supported by a big community, see https://www.stummiforum.de/viewtopic.php?f=7&t=165060.
+A huge wiki describes the complete MobaLedLib in detail: https://wiki.mobaledlib.de/<br/>
+This library is used and supported by a big community, see https://forum.mobaledlib.de/ and https://www.stummiforum.de/viewtopic.php?f=7&t=165060.
 All software and hardware parts are free of license and available for download.
 
 Several videos demonstrate the possibilities of the library. You will find a lot of articles when searching for MobaLedLib in the internet.
 
-ATTENTION: Always use the Arduino IDE 1.8.x
+ATTENTION: Always use the Arduino IDE 1.8.19
 (Old versions 1.6.x and below or versions 2.x don't support the directory structure used in the library examples)
 
 
@@ -54,6 +54,7 @@ Installation in der deutschen Arduino IDE:
   "FastLED" in das "Grenzen Sie ihre Suche ein" Feld eingeben
   Gefundenen Eintrag auswaehlen und "Install" anklicken
 
+see also https://wiki.mobaledlib.de/anleitungen/quickstart
 
 Questions / suggestions / praise / ...
   MobaLedLib@gmx.de
@@ -61,6 +62,49 @@ Questions / suggestions / praise / ...
 
 
 **Revision History:**
+
+**Ver.: 3.4.0** 24.04.25:
+
+*Features*
+- ESP32: Parallel output of LED data on up to 6 channels
+- change FastLED to a stable version 3.9.12 coming from MobaLedLib github repository
+- change source for library ATTinyCore:avr to MobaLedLib github repo
+- support of the new color test
+- support of the ESP32 1,3" OLED display
+- add MobaLedLib RGB-LED ring macro
+- rp2040 support up to 8 parallel LED channels
+- improve determination of OneDrive local path
+- optional display of MobaLedLib time/LDR values on the display
+- improved selection of old ProgGenerator filename when updating to new release/beta
+- on "Import from old program" the Arduino type setting is retained
+- acceleration of ESP32 start time
+- add SI_LocalVar to predefined system variables
+- add replacement of "$" in macro arguments         see https://www.stummiforum.de/t165060f7-MobaLedLib-LEDs-Servos-Sound.html#msg2643729
+- force a rebuild if ALT key is pressed
+- empty compiler cache if last ATMega build failed  see https://www.stummiforum.de/t222466f195-MobaLedLib-Arduino-Upload-geht-nicht.html#msg2649211
+- update rp2040 board version to 4.4.0
+- improvement of overall PlatformIO build process
+- support PlatformIO build for rp2040
+- experimental support of ESP32 board version 2.0.17
+
+*Bugfixes*
+- ATMega: bug with wrong send buffer size for SEND_INPUTS fixed
+- fix detection of first RGB_Heartbeat line while import
+- "ESP32 and hieroglyphics for MLL time" see To-Dos#21
+- unnecessary memory consumption due to extensions  see To-Dos#20
+- error handling didn't work when downloading libraries/boards
+- upgrade PlatformIO to 6.9.0 to fix build problem with DMX512
+- fix problem with StartLedNumber update on invisible sheets
+- improvement of start LED calculation in include sheets
+- remove wrong platformIO beta warning
+- fix problem with wrong MP3_Command value MP3_STOP which should be MP3_ADVERT_STOP
+- fix problem with PatternConfigurator icons
+
+*Changes*
+- Selectrix pin definition changed to SX_SIGNAL_PIN 13 and SX_CLOCK_PIN 4 to support both ESP32 Adapter and the new ESP32 main board
+- when using PlatformIO don't turn compile window to red in case of build errors to keep colored error output
+- changed version string schema to provide platform name
+
 
 **Ver.: 3.3.2** 19.12.23:
 
