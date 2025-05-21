@@ -1,7 +1,7 @@
 /*
 SoftwareSerialTX.h (from SoftSerial.h) - 
 Multi-instance software serial library for Arduino/Wiring
--- Transmit-only imoplementation
+-- Transmit-only implementation
 -- reduce footprint in code memory and RAM compared to SoftwareSerial
    ~ 668 byte code
    ~ 68 byte RAM
@@ -140,15 +140,17 @@ uint16_t SoftwareSerialTX::subtract_cap(uint16_t num, uint16_t sub) {
 
 void SoftwareSerialTX::setTX(uint8_t tx)
 {
+#ifdef ARDUINO_RASPBERRY_PI_PICO
+  pinMode(tx, OUTPUT);
+  digitalWrite(tx, HIGH);
+  _transmitPin = tx;
+#else
   // First write, then set output. If we do this the other way around,
   // the pin would be output low for a short while before switching to
   // output high. Now, it is input with pullup for a short while, which
   // is fine. With inverse logic, either order is fine.
   digitalWrite(tx, HIGH);
   pinMode(tx, OUTPUT);
-#ifdef ARDUINO_RASPBERRY_PI_PICO
-  _transmitPin = tx;
-#else
   _transmitBitMask = digitalPinToBitMask(tx);
   _transmitPortRegister = portOutputRegister(digitalPinToPort(tx));
 #endif  

@@ -29,8 +29,8 @@
 #ifndef __OUTPUT_FUNCT_INTDEFS_H__
 #define __OUTPUT_FUNCT_INTDEFS_H__
 
-#ifdef ESP32
-	// enable the feature to use two byte for LED adress
+#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
+	// enable the feature to use two byte for LED address
 	#define LONG_LED_ADDR
 #endif
 
