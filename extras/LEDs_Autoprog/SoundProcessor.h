@@ -53,11 +53,11 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
   #include "esp_version.h"
   #include <SoftwareSerial.h>
   #define SOFTWARE_SERIAL_TYPE SoftwareSerial
-  #define SOFTWARE_SERIAL(pin) new SOFTWARE_SERIAL_TYPE(-1, txPin)
+  #define SOFTWARE_SERIAL(pin) new SOFTWARE_SERIAL_TYPE(-1, pin)
 #else
   #include "SoftwareSerialTX.h"
   #define SOFTWARE_SERIAL_TYPE SoftwareSerialTX
-  #define SOFTWARE_SERIAL(pin) new SOFTWARE_SERIAL_TYPE(txPin)
+  #define SOFTWARE_SERIAL(pin) new SOFTWARE_SERIAL_TYPE(pin)
 #endif
 
 #if defined(ESP32)

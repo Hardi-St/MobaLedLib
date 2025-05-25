@@ -441,7 +441,13 @@ Benoetig als 142 byte
 #ifdef READ_LDR                // Enable the darkness detection functions
   #include "Read_LDR.h"        // process the darkness sensor
   #ifndef LDR_PIN              // The LDR pin could be defined in the Prog_Generator
-    #define LDR_PIN      A7    // Use A7 if the MobaLedLib "LEDs Main Module" is used
+    #if defined(ESP32)
+      #define LDR_PIN      35    // Use 35 if the MobaLedLib "LEDs Main Module" is used
+    #elif defined(ARDUINO_RASPBERRY_PI_PICO)
+      #define LDR_PIN      26    // Use 26 if the MobaLedLib "LEDs Main Module" is used
+    #else
+      #define LDR_PIN      A7    // Use A7 if the MobaLedLib "LEDs Main Module" is used
+    #endif
   #endif
 #endif
 
