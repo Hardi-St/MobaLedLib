@@ -2194,7 +2194,11 @@ void Set_Mainboard_LEDs()
            {
            const LED2Var_Tab_T *p = &LED2Var_Tab[i];
            uint8_t Var_Nr         = pgm_read_byte_near(&p->Var_Nr);
+#ifdef LONG_LED_ADDR
+           uint16_t LED_Nr        = pgm_read_word_near(&p->LED_Nr);
+#else
            uint8_t LED_Nr         = pgm_read_byte_near(&p->LED_Nr);
+#endif
            uint8_t Offset_and_Typ = pgm_read_byte_near(&p->Offset_and_Typ);
            uint8_t Val            = pgm_read_byte_near(&p->Val);
            uint8_t Offset         = Offset_and_Typ >> 3;
