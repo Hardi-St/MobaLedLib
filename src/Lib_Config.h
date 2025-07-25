@@ -22,7 +22,7 @@
  Lib_Config.h
  ~~~~~~~~~~~~
 
- This file contains configuration variables to change the bahavior of the MobaLedLib.
+ This file contains configuration variables to change the behavior of the MobaLedLib.
 
 */
 #ifndef __LIB_CONFIG_H__
