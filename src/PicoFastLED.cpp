@@ -3,7 +3,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
- this file: Copyright (C) 2021 Jürgen Winkler: MobaLedLib@gmx.at
+ this file: Copyright (C) 2021-2025 Jürgen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,8 @@
 
  a minimum implementation for Raspberry Pico being compatible to FastLED library
  only implementing FastLED functions needed for MobaLedLib to work
+Changes:
+2025-09-15: increase reset time because newer WS2812B need at least 280us reset time, older one just needed 50us
  
 */
 
@@ -478,7 +480,12 @@ void CFastLED::show()
 		pCur->showLeds(100);
 		pCur = pCur->next();
 	}
-	delayMicroseconds(500);
+  // after the last showLeds max. 32 bytes are in the PIO buffers
+  // and will be pushed asynchronously by the PIO's
+  // = 32 * 8 * 1,25 = 320us
+  // + 280us reset time 
+  // = 600us minimum delay
+  delayMicroseconds(600);
 }
 
 #endif
