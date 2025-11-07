@@ -1,7 +1,7 @@
 /*
 SoftwareSerialTX.h (from SoftSerial.h) - 
 Multi-instance software serial library for Arduino/Wiring
--- Transmit-only imoplementation
+-- Transmit-only implementation
 -- reduce footprint in code memory and RAM compared to SoftwareSerial
    ~ 686 byte code
    ~ 68 byte RAM

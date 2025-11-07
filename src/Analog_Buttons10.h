@@ -5,6 +5,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2025  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -45,16 +46,19 @@
 
 */
 
-#ifdef ESP32
+#if defined(ESP32)
 	#include "AnalogScannerESP32.h"
   extern AnalogScannerESP32 scanner;
+#elif defined(ARDUINO_RASPBERRY_PI_PICO)
+	#include "AnalogScannerPico.h"
+  extern AnalogScannerPico scanner;
 #else
 	#include <AnalogScanner.h>
   extern AnalogScanner scanner;
 #endif
 
 // Table containing the delta from one compare value to the next. We don't store the 16 bit values to save memory.
-#ifdef ESP32
+#if defined(ESP32)
 //const PROGMEM uint8_t DeltaTab[10] = { 33, 76, 101, 123, 114, 102, 95, 70, 114, 98};
 const PROGMEM uint8_t DeltaTab[10] = { 30, 74, 96, 120, 114, 98, 88, 80, 145, 80 };
 /*
@@ -72,7 +76,26 @@ Key	Jürgen 	Dominik
 09	828		717
 10	910		856
 */ 
+#elif defined(ARDUINO_RASPBERRY_PI_PICO)
+/*
+PCIO ADC Values - minimum per key
+	
+Key	Jürgen 	
+01	4
+02	99
+03	184
+04	293
+05	423
+06	516
+07	627
+08	700
+09	779
+10	892
 
+nothing pressed 983
+*/ 
+
+const PROGMEM uint8_t DeltaTab[10] = { 52, 90, 97, 119, 112, 102, 92, 76, 96, 102 };
 #else
 const PROGMEM uint8_t DeltaTab[10] = { 88, 86, 89, 113, 112, 96, 88, 77, 94, 101};
 #endif

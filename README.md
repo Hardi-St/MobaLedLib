@@ -1,7 +1,9 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.4: support LichtMaschine Pro hardware, Stabilize and speed up FastLED on ESP32, new macros: RGB_Ring**
+**New in release 3.5: support LichtMaschine Pico Zero hardware, multiplexer support multiple LED channels, speed up application startup
+
+**New in release 3.4: support LichtMaschine Pro hardware, stabilize and speed up FastLED on ESP32, new macros: RGB_Ring**
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
@@ -62,6 +64,24 @@ Questions / suggestions / praise / ...
 
 
 **Revision History:**
+
+**Ver.: 3.5.0** 05.11.25:
+
+*Features*
+- support RP2040 Raspberrry PICO platform
+- speed up application loading
+- allow led channel selection with multiplexer
+- LED2Var uses long addresses on ESP32/PICO platform
+- support German names in USB device detection
+
+*Bugfixes*
+- fix export to file issue "Error... when saving an MLL file (.pgf)" see https://forum.mobaledlib.de/viewtopic.php?t=134
+- fix rebuild failed - Tastendruck erforderlich see https://forum.mobaledlib.de/viewtopic.php?t=182
+- fix Error message when creating a pushbutton function see https://forum.mobaledlib.de/viewtopic.php?t=193
+- fix Error message for random commands see https://forum.mobaledlib.de/viewtopic.php?t=161
+- fix issue that simulator is not starting
+- mail address changed to forum
+
 
 **Ver.: 3.4.0** 24.04.25:
 

@@ -441,7 +441,13 @@ Benoetig als 142 byte
 #ifdef READ_LDR                // Enable the darkness detection functions
   #include "Read_LDR.h"        // process the darkness sensor
   #ifndef LDR_PIN              // The LDR pin could be defined in the Prog_Generator
-    #define LDR_PIN      A7    // Use A7 if the MobaLedLib "LEDs Main Module" is used
+    #if defined(ESP32)
+      #define LDR_PIN      35    // Use 35 if the MobaLedLib "LEDs Main Module" is used
+    #elif defined(ARDUINO_RASPBERRY_PI_PICO)
+      #define LDR_PIN      26    // Use 26 if the MobaLedLib "LEDs Main Module" is used
+    #else
+      #define LDR_PIN      A7    // Use A7 if the MobaLedLib "LEDs Main Module" is used
+    #endif
   #endif
 #endif
 
@@ -2188,7 +2194,11 @@ void Set_Mainboard_LEDs()
            {
            const LED2Var_Tab_T *p = &LED2Var_Tab[i];
            uint8_t Var_Nr         = pgm_read_byte_near(&p->Var_Nr);
+#ifdef LONG_LED_ADDR
+           uint16_t LED_Nr        = pgm_read_word_near(&p->LED_Nr);
+#else
            uint8_t LED_Nr         = pgm_read_byte_near(&p->LED_Nr);
+#endif
            uint8_t Offset_and_Typ = pgm_read_byte_near(&p->Offset_and_Typ);
            uint8_t Val            = pgm_read_byte_near(&p->Val);
            uint8_t Offset         = Offset_and_Typ >> 3;

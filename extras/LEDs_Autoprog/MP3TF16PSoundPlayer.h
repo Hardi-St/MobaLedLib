@@ -39,7 +39,7 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
 
 /*
   
-  MP3-TF-16P Integration  - work ongoing - not released so far 
+  MP3-TF-16P Integration
   
   Module also know as DFPlayer
   
@@ -53,7 +53,7 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
   
   4 & 5 seam to work with MLL Analog control, 3 works with MLL with some hardware and software adaptions  (3.0.0 Beta >D3)
   
-  1 and 2 are not tested yet, but they  ones seem to work just fine with the standard commands.
+  1 and 2 are not tested yet, but that one's seem to work just fine with the standard commands.
   (http://www.thebackshed.com/forum/ViewTopic_mobile.php?FID=16&TID=11977)
   
   5 has a problem with the serial interface, some messages fail when sending it with the correct protocol (PlayIndex, SetVolume..). 
