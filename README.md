@@ -3,8 +3,6 @@
 
 **New in release 3.5: support LichtMaschine Pico Zero hardware, multiplexer support multiple LED channels, speed up application startup**
 
-**New in release 3.4: support LichtMaschine Pro hardware, stabilize and speed up FastLED on ESP32, new macros: RGB_Ring**
-
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
 To start the excel program press the Win+r key together and copy the following line
