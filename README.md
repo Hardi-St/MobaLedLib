@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.5: support LichtMaschine Pico Zero hardware, multiplexer support multiple LED channels, speed up application startup
+**New in release 3.5: support LichtMaschine Pico Zero hardware, multiplexer support multiple LED channels, speed up application startup**
 
 **New in release 3.4: support LichtMaschine Pro hardware, stabilize and speed up FastLED on ESP32, new macros: RGB_Ring**
 
