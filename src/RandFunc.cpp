@@ -93,7 +93,7 @@ void MobaLedLib_C::Proc_Random()
   TimerData16_T *dp = (TimerData16_T*)rp; // Set the time pointer to the reserved RAM
   rp += sizeof(TimerData16_T);
 
-  uint8_t Inp  = Get_Input(pgm_read_byte_near(cp+P_RANDOM_INP));
+  inch_t Inp  = Get_Input(pgm_read_inch(cp+P_RANDOM_INP));
   uint8_t Mode = pgm_read_byte_near(cp+P_RANDOM_MODE);
   CALCULATE_t4w; // Calculate the local variable t4w if _USE_LOCAL_TX is defined                              // 22.11.18:
   uint16_t Timer = Mode & RF_SLOW ? t4w : t;
@@ -118,29 +118,30 @@ void MobaLedLib_C::Proc_Random()
             Set_Timer4Random(Timer, dp, P_RANDOM_MINON_L);   // Set time to turn off
             //Dprintf("%8lu Inp turned off. Next Change in %lu ms\n", millis(), (Mode & RF_SLOW)?16L*dp->dt:dp->dt); // Debug
             }
-       else Set_Input(pgm_read_byte_near(cp+P_RANDOM_DSTVAR), 0);
+       else Set_Input(pgm_read_inch(cp+P_RANDOM_DSTVAR), 0);
        }
   else {
        if ((uint16_t)(Timer - dp->Last_t) >= dp->dt)
           {
           if (Mode & RF_STAY_ON) // DstVar is turned on delayed and turned off after the input is turnd off with the times MinOn, MaxOn
                {
-               uint8_t DstVar = Get_Input(pgm_read_byte_near(cp+P_RANDOM_DSTVAR));
-               bool Is_On = Inp_Is_On(DstVar);
+               inch_t Var = pgm_read_inch(cp+P_RANDOM_DSTVAR);
+               int8_t DstVarValue = Get_Input(Var);
+               bool Is_On = Inp_Is_On(DstVarValue);
                if (Inp == INP_ON)
-                    { if (!Is_On) Set_Input(pgm_read_byte_near(cp+P_RANDOM_DSTVAR), true);  }
-               else { if ( Is_On) Set_Input(pgm_read_byte_near(cp+P_RANDOM_DSTVAR), false); }
+                    { if (!Is_On) Set_Input(Var, true);  }
+               else { if ( Is_On) Set_Input(Var, false); }
                }
           else { // Normal mode: While the input is on DstVar is periodic turned on and off
                if (Inp == INP_ON)
                   {
-                  uint8_t DstVar = Get_Input(pgm_read_byte_near(cp+P_RANDOM_DSTVAR));
-                  bool Is_On = Inp_Is_On(DstVar);
+                  uint8_t DstVarValue = Get_Input(pgm_read_inch(cp+P_RANDOM_DSTVAR));
+                  bool Is_On = Inp_Is_On(DstVarValue);
                   if (Is_On)
                        Set_Timer4Random(Timer, dp, P_RANDOM_MINTIME_L); // Set time to turn on again
                   else Set_Timer4Random(Timer, dp, P_RANDOM_MINON_L);   // Set time to turn off
                   //Dprintf("%8lu Turn %s", millis(), Is_On ? "on":"off"); Dprintf(" in %lu ms\n", (Mode & RF_SLOW)?16L*dp->dt:dp->dt); // Debug
-                  Set_Input(pgm_read_byte_near(cp+P_RANDOM_DSTVAR), !Is_On);
+                  Set_Input(pgm_read_inch(cp+P_RANDOM_DSTVAR), !Is_On);
                   }
                }
           }
@@ -153,13 +154,13 @@ void MobaLedLib_C::Set_Dest_RandMux(uint8_t Act, uint8_t Mode)
 // Set the DestVar2 .. DestVarN
 // DestVar1 is activated if the input is disabled !
 {
-  uint8_t DstVar1 = pgm_read_byte_near(cp+P_RANDMUX_DSTVAR1);
-  uint8_t DstVarN = pgm_read_byte_near(cp+P_RANDMUX_DSTVARN);
+  inch_t DstVar1 = pgm_read_inch(cp+P_RANDMUX_DSTVAR1);
+  inch_t DstVarN = pgm_read_inch(cp+P_RANDMUX_DSTVARN);
   if (Act == 255) // Activate the next (random) output.
      {
      if (Mode & RF_SEQ)
           {
-          for (uint8_t Nr = DstVar1, i = 0; Nr <= DstVarN; Nr++, i++)
+          for (inch_t Nr = DstVar1, i = 0; Nr <= DstVarN; Nr++, i++)
               {
               if (Inp_Is_On(Get_Input(Nr)))
                  {
@@ -178,7 +179,7 @@ void MobaLedLib_C::Set_Dest_RandMux(uint8_t Act, uint8_t Mode)
      }
 
   //Dprintf("RandMux set %i DstVar1=%i DstVarN=%i\n", Act, DstVar1, DstVarN);// Debug
-  for (uint8_t Nr = DstVar1, i = 0; Nr <= DstVarN; Nr++, i++)
+  for (inch_t Nr = DstVar1, i = 0; Nr <= DstVarN; Nr++, i++)
       {
       Set_Input(Nr, Act == i);
       //Dprintf("Get_Input(%i): %i\n", Nr, Get_Input(Nr)); // Debug
@@ -192,7 +193,7 @@ void MobaLedLib_C::Proc_RandMux()
   TimerData16_T *dp = (TimerData16_T*)rp; // Set the time pointer to the reserved RAM
   rp += sizeof(TimerData16_T);
 
-  uint8_t  Inp   = Get_Input(pgm_read_byte_near(cp+P_RANDMUX_INP));
+  inch_t  Inp   = Get_Input(pgm_read_inch(cp+P_RANDMUX_INP));
   uint8_t  Mode  = pgm_read_byte_near(cp+P_RANDMUX_MODE);
   CALCULATE_t4w; // Calculate the local variable t4w if _USE_LOCAL_TX is defined                              // 22.11.18:
   uint16_t Timer = Mode & RF_SLOW ? t4w : t;

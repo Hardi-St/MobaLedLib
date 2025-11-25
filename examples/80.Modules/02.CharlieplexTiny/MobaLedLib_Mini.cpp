@@ -94,10 +94,15 @@ int8_t MobaLedLib_C::Get_Input(uint8_t channel)
 //   - ByteNr berechnung in die [] => Kein Unterschied
 //   => Keine weitere Idee zur Verbesserung
 
-
+#ifdef LONG_INP_ADDR
 //-------------------------------------------------------
 void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
 //-------------------------------------------------------
+#else
+//-------------------------------------------------------
+void MobaLedLib_C::Set_Input(uint16_t channel, uint8_t On)
+//-------------------------------------------------------
+#endif
 {
   //if (channel>2) Dprintf("Set_Input %i=%i\n", channel, On?1:0);
   uint8_t ByteNr  = channel>>2;  // / 4;

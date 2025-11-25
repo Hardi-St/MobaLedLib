@@ -86,8 +86,8 @@ void MobaLedLib_C::Proc_Counter()
   else MaxCnt = DestCnt - 1;         // 1         2^1 = 2          1
                                      // 2         2^2 = 4          3
 
-  uint8_t Inp     = Get_Input(pgm_read_byte_near(cp+P_COUNT_INP));
-  uint8_t Enable  = Get_Input(pgm_read_byte_near(cp+P_COUNT_ENABLE));
+  uint8_t Inp     = Get_Input(pgm_read_inch(cp+P_COUNT_INP));
+  uint8_t Enable  = Get_Input(pgm_read_inch(cp+P_COUNT_ENABLE));
   if (ModeL & CF_INV_INPUT)  Inp    = Invert_Inp(Inp);    // Invert the input
   if (ModeL & CF_INV_ENABLE) Enable = Invert_Inp(Enable); // Invert the enable
 
@@ -199,7 +199,7 @@ void MobaLedLib_C::Proc_Counter()
           ip += e-1;
           for (uint8_t i = e-1; i != 255; i--, ip--)
                {
-               uint8_t InpNr = pgm_read_byte_near(ip);
+               inch_t InpNr = pgm_read_inch(ip);
                //Dprintf("Counter Inp[%i]=%i\n", InpNr, Get_Input(InpNr));
                #pragma GCC diagnostic push                                                                    // 17.11.20:  Disable compiler warning
                #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -218,6 +218,6 @@ void MobaLedLib_C::Proc_Counter()
 void MobaLedLib_C::IncCP_Counter()
 //--------------------------------
 {
-  cp += P_COUNT_FIRST_DEST + pgm_read_byte_near(cp+P_COUNT_DEST_COUNT);
+  cp += P_COUNT_FIRST_DEST + (pgm_read_byte_near(cp+P_COUNT_DEST_COUNT)*INCH_LEN);
 }
 

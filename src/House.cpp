@@ -586,7 +586,7 @@ void MobaLedLib_C::Proc_House()
 //
 {
   TimerData_T *tp = (TimerData_T*)rp; rp += sizeof(TimerData_T);
-  uint8_t  Inp    = Get_Input(pgm_read_byte_near(cp+P_HOUSE_INCH));
+  uint8_t  Inp    = Get_Input(pgm_read_inch(cp+P_HOUSE_INCH));
   if (!Initialize && pgm_read_byte_near(cp+P_HOUSE_ON_MIN) & 0x80) Inp = Invert_Inp(Inp);                     // 13.01.20:
   uint8_t LED_cnt = pgm_read_byte_near(cp+P_HOUSE_CNT);
   ledNr_t Led0    = pgm_read_led_nr(cp+P_HOUSE_LED);

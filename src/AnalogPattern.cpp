@@ -378,16 +378,17 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
   uint8_t ModeAFlag = pgm_read_byte_near(cp+P_PATERN_MODE);
   CALCULATE_t4w; // Calculate the local variable t4w if _USE_LOCAL_TX is defined                              // 22.11.18:
   uint16_t Timer    = ModeAFlag & PF_SLOW ? t4w : t; // Slow timer (divided by 16) to be able to use longer durations
-  uint8_t InCh      = pgm_read_byte_near(cp+P_PATERN_INCH);                                                   // 09.11.18:
+  inch_t InCh      = pgm_read_inch(cp+P_PATERN_INCH);                                                   // 09.11.18:
   uint8_t Inp;
   bool GotoMode;
   if ((GotoMode = (InCh == SI_LocalVar)))                                                                     // 09.11.18:
        Inp = INP_ON;   // Don't use the normal input if "Goto Mode" is active
   else {
        Inp = Get_Input(InCh);
+       //DPrintf("Get_Input(%d) = %d, offset %d SI_1=%d max=%d\n", InCh, Inp, P_PATERN_INCH, SI_1, _MAX_INP_CHANNEL);
        if (ModeAFlag & PF_INVERT_INP) Inp = Invert_Inp(Inp); // Invert the input.
        }
-  uint8_t Enable = Get_Input(pgm_read_byte_near(cp+P_PATERN_ENABLE));                                         // 05.11.18:
+  uint8_t Enable = Get_Input(pgm_read_inch(cp+P_PATERN_ENABLE));                                         // 05.11.18:
   switch (Enable)
     {
     case INP_OFF:        return ;
@@ -723,5 +724,6 @@ void MobaLedLib_C::IncCP_Pattern(uint8_t TimeCnt)                               
 {
   uint16_t BitMaskCnt = pgm_read_word_near(cp+P_PATERN_T1_L + 2*TimeCnt);                                    // 23.10.18:
   cp += P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2;
+  //DPrintf("cp += %d P_PATERN_T1_L=%d, TimeCnt=%d BitMaskCnt=%d\n", P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2, P_PATERN_T1_L, TimeCnt, BitMaskCnt );
 }
 
