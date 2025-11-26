@@ -374,12 +374,12 @@
 #define  T_FlipFlopInvResetTimeout( DstVar, T_InCh, R_InCh, Timeout)             Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, Timeout,  DstVar,  DstVar)  // Toggle Flip Flop with restart and timeout Q'
 
 // Dual DstVar (Q and Q')
-#define  MonoFlop2(                 DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2,               InCh,   SI_0,   Duration, DstVar, DstVar)  // Two Outputs, re-trigger with rising edge (Like ButtonFunc, but edge triggered)
-#define  MonoFlop2LongReset(        DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar, DstVar)  // Two Outputs, re-trigger with rising edge, Long press disables
-#define  RS_FlipFlop2(              DstVar0, DstVar1, R_InCh, S_InCh)            Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, 0,        DstVar, DstVar)  // Edge triggered RS Flip Flop
-#define  RS_FlipFlop2Timeout(       DstVar0, DstVar1, R_InCh, S_InCh, Timeout)   Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, Timeout,  DstVar, DstVar)  // Edge triggered RS Flip Flop and timeout
-#define  T_FlipFlop2Reset(          DstVar0, DstVar1, T_InCh, R_InCh)            Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, 0,        DstVar, DstVar)  // Toggle Flip Flop with reset
-#define  T_FlipFlop2ResetTimeout(   DstVar0, DstVar1, T_InCh, R_InCh, Timeout)   Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, Timeout,  DstVar, DstVar)  // Toggle Flip Flop with restart and timeout
+#define  MonoFlop2(                 DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2,               InCh,   SI_0,   Duration, DstVar0, DstVar1)  // Two Outputs, re-trigger with rising edge (Like ButtonFunc, but edge triggered)
+#define  MonoFlop2LongReset(        DstVar0, DstVar1, InCh, Duration)            Counter(_CM_RS_FlipFlop2|CF_RESET_LONG, InCh,   SI_0,   Duration, DstVar0, DstVar1)  // Two Outputs, re-trigger with rising edge, Long press disables
+#define  RS_FlipFlop2(              DstVar0, DstVar1, R_InCh, S_InCh)            Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, 0,        DstVar0, DstVar1)  // Edge triggered RS Flip Flop
+#define  RS_FlipFlop2Timeout(       DstVar0, DstVar1, R_InCh, S_InCh, Timeout)   Counter(_CM_RS_FlipFlop2,               S_InCh, R_InCh, Timeout,  DstVar0, DstVar1)  // Edge triggered RS Flip Flop and timeout
+#define  T_FlipFlop2Reset(          DstVar0, DstVar1, T_InCh, R_InCh)            Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, 0,        DstVar0, DstVar1)  // Toggle Flip Flop with reset
+#define  T_FlipFlop2ResetTimeout(   DstVar0, DstVar1, T_InCh, R_InCh, Timeout)   Counter(_CM_T_FlipFlopReset2,           T_InCh, R_InCh, Timeout,  DstVar0, DstVar1)  // Toggle Flip Flop with restart and timeout
 
 #define  RGB_Heartbeat(LED)                                           \
              New_HSV_Group()                                          \
@@ -438,49 +438,49 @@
 
 // 28.04.20:
 #define PushButton_0_1(InCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                                \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1))                                        \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, TmpNr+0, TmpNr+1)                                        \
             InCh_to_TmpVar(TmpNr, 1+1)
 
 #define PushButton_0_2(InCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                               \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2))                              \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2)                              \
             InCh_to_TmpVar(TmpNr, 2+1)
 
 #define PushButton_0_3(InCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                               \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2), _ChkIn(TmpNr+3))                     \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3)                     \
             InCh_to_TmpVar(TmpNr, 3+1)
 
 #define PushButton_0_4(InCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                               \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2), _ChkIn(TmpNr+3), _ChkIn(TmpNr+4))            \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4)            \
             InCh_to_TmpVar(TmpNr, 4+1)
 
 #define PushButton_0_5(InCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                               \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2), _ChkIn(TmpNr+3), _ChkIn(TmpNr+4), _ChkIn(TmpNr+5))   \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar, InCh, SI_1, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4, TmpNr+5)   \
             InCh_to_TmpVar(TmpNr, 5+1)
 
 // 21.05.20:
 #define PushButton2I_0_1(InCh, InCh2, LocInCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                              \
             Logic(LocInCh, InCh+1 OR InCh2==SI_0?InCh+1:InCh2)                                                                                                                                  \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1))                                       \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, TmpNr+0, TmpNr+1)                                       \
             InCh_to_TmpVar(TmpNr, 1+1)
 
 #define PushButton2I_0_2(InCh, InCh2, LocInCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                              \
             Logic(LocInCh, InCh+1 OR InCh2==SI_0?InCh+1:InCh2)                                                                                                                                  \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2))                              \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, TmpNr+0, TmpNr+1, TmpNr+2)                              \
             InCh_to_TmpVar(TmpNr, 2+1)
 
 #define PushButton2I_0_3(InCh, InCh2, LocInCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                              \
             Logic(LocInCh, InCh+1 OR InCh2==SI_0?InCh+1:InCh2)                                                                                                                                  \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2), _ChkIn(TmpNr+3))                     \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3)                     \
             InCh_to_TmpVar(TmpNr, 3+1)
 
 #define PushButton2I_0_4(InCh, InCh2, LocInCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                              \
             Logic(LocInCh, InCh+1 OR InCh2==SI_0?InCh+1:InCh2)                                                                                                                                  \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2), _ChkIn(TmpNr+3), _ChkIn(TmpNr+4))            \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4)            \
             InCh_to_TmpVar(TmpNr, 4+1)
 
 #define PushButton2I_0_5(InCh, InCh2, LocInCh, TmpNr, Rotate, Use0, ResetLong, OptCtrPar, Timeout)                                                                                              \
             Logic(LocInCh, InCh+1 OR InCh2==SI_0?InCh+1:InCh2)                                                                                                                                  \
-            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, _ChkIn(TmpNr+0), _ChkIn(TmpNr+1), _ChkIn(TmpNr+2), _ChkIn(TmpNr+3), _ChkIn(TmpNr+4), _ChkIn(TmpNr+5))   \
+            Counter((Rotate?CF_ROTATE:0)|(Use0?0:CF_SKIP0)|(ResetLong?CF_RESET_LONG:0)|OptCtrPar|CF_INV_ENABLE, LocInCh, InCh, Timeout, TmpNr+0, TmpNr+1, TmpNr+2, TmpNr+3, TmpNr+4, TmpNr+5)   \
             InCh_to_TmpVar(TmpNr, 5+1)
 
 // 01.04.20:  Added: PushButton_w_LED_0_1
@@ -745,12 +745,12 @@
 
 #define Sound_PlayRandom(LED, InCh, MaxSoundNr)                                                                      \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, _ChkIn(MaxSoundNr+1))            \
+              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, MaxSoundNr+1)                    \
               _LocalVar_Sound(LED)
 
 #define Sound_Next_of_N_Reset(LED, InCh, InReset, MaxSoundNr)                                                        \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, _ChkIn(MaxSoundNr+1)) \
+              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, MaxSoundNr+1) \
               _LocalVar_Sound(LED)
 
 #define Sound_Next_of_N(LED, InCh, MaxSoundNr)                                                                       \
@@ -806,12 +806,12 @@
 
 #define Sound_New_PlayRandom(LED, InCh, MaxSoundNr)                                                                      \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, _ChkIn(MaxSoundNr+1))           \
+              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, MaxSoundNr+1)                    \
               _LocalVar_New_Sound(LED)
 
 #define Sound_New_Next_of_N_Reset(LED, InCh, InReset, MaxSoundNr)                                                        \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, _ChkIn(MaxSoundNr+1))\
+              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, MaxSoundNr+1) \
               _LocalVar_New_Sound(LED)
 
 #define Sound_New_Next_of_N(LED, InCh, MaxSoundNr)                                                                       \
@@ -881,12 +881,12 @@
 
 #define Sound_JQ6500_PlayRandom(LED, InCh, MaxSoundNr)                                                               \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, _ChkIn(MaxSoundNr+1))            \
+              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, MaxSoundNr+1)                    \
               _LocalVar_Sound_JQ6500(LED)
 
 #define Sound_JQ6500_Next_of_N_Reset(LED, InCh, InReset, MaxSoundNr)                                                 \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, _ChkIn(MaxSoundNr+1)) \
+              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, MaxSoundNr+1) \
               _LocalVar_Sound_JQ6500(LED)
 
 #define Sound_JQ6500_Next_of_N(LED, InCh, MaxSoundNr)                                                                \
@@ -895,12 +895,12 @@
 
 #define Sound_JQ6500_BG_PlayRandom(LED, InCh, MaxSoundNr)                                                            \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, _ChkIn(MaxSoundNr+1))            \
+              Counter(CF_ONLY_LOCALVAR | CF_RANDOM | CF_SKIP0,   InCh, SI_1, 0 Sec, MaxSoundNr+1)                    \
               _LocalVar_Sound_JQ6500_BG(LED)
 
 #define Sound_JQ6500_BG_Next_of_N_Reset(LED, InCh, InReset, MaxSoundNr)                                              \
               New_Local_Var()                                                                                        \
-              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, _ChkIn(MaxSoundNr+1)) \
+              Counter(CF_ONLY_LOCALVAR | CF_ROTATE | CF_SKIP0 | CF_INV_ENABLE,   InCh, InReset, 0 Sec, MaxSoundNr+1) \
               _LocalVar_Sound_JQ6500_BG(LED)
 
 #define Sound_JQ6500_BG_Next_of_N(LED, InCh, MaxSoundNr)                                                             \
