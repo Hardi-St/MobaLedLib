@@ -196,8 +196,8 @@ void MobaLedLib_C::Proc_Counter()
           uint8_t e = pgm_read_byte_near(cp+P_COUNT_DEST_COUNT);
           uint32_t Mask;
           if (ModeL & CF_BINARY) Mask = 1<<(DestCnt-1);                                                       // 05.01.19: Old: = 1;
-          ip += e-1;
-          for (uint8_t i = e-1; i != 255; i--, ip--)
+          ip += (e-1)*INCH_LEN;
+          for (uint8_t i = e-1; i != 255; i--, ip-= INCH_LEN)
                {
                inch_t InpNr = pgm_read_inch(ip);
                //Dprintf("Counter Inp[%i]=%i\n", InpNr, Get_Input(InpNr));
