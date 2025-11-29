@@ -128,17 +128,17 @@
 
 
 #define P_RANDOM_DSTVAR        0
-#define P_RANDOM_INP           (P_INPCHANEL_NO_CM+ADD_INCH_OFFSET)  // 1
-#define P_RANDOM_MODE          (2+ADD_INCH_OFFSET)
-#define P_RANDOM_MINTIME_L     (3+ADD_INCH_OFFSET)
-#define P_RANDOM_MINTIME_H     (4+ADD_INCH_OFFSET)
-#define P_RANDOM_MAXTIME_L     (5+ADD_INCH_OFFSET)    // must be direct after P_RANDOM_MINTIME_H
-#define P_RANDOM_MAXTIME_H     (6+ADD_INCH_OFFSET)
-#define P_RANDOM_MINON_L       (7+ADD_INCH_OFFSET)
-#define P_RANDOM_MINON_H       (8+ADD_INCH_OFFSET)
-#define P_RANDOM_MAXON_L       (9+ADD_INCH_OFFSET)    // must be direct after P_RANDOM_MINON_H
-#define P_RANDOM_MAXON_H       (10+ADD_INCH_OFFSET)
-#define EP_RANDOM_INCREMENT    (11+ADD_INCH_OFFSET)   // Insert additional parameters before
+#define P_RANDOM_INP           (P_INPCHANEL_NO_CM+ADD_INCH_OFFSET)  
+#define P_RANDOM_MODE          (2+ADD_INCH_OFFSET*2)
+#define P_RANDOM_MINTIME_L     (3+ADD_INCH_OFFSET*2)
+#define P_RANDOM_MINTIME_H     (4+ADD_INCH_OFFSET*2)
+#define P_RANDOM_MAXTIME_L     (5+ADD_INCH_OFFSET*2)    // must be direct after P_RANDOM_MINTIME_H
+#define P_RANDOM_MAXTIME_H     (6+ADD_INCH_OFFSET*2)
+#define P_RANDOM_MINON_L       (7+ADD_INCH_OFFSET*2)
+#define P_RANDOM_MINON_H       (8+ADD_INCH_OFFSET*2)
+#define P_RANDOM_MAXON_L       (9+ADD_INCH_OFFSET*2)    // must be direct after P_RANDOM_MINON_H
+#define P_RANDOM_MAXON_H       (10+ADD_INCH_OFFSET*2)
+#define EP_RANDOM_INCREMENT    (11+ADD_INCH_OFFSET*2)   // Insert additional parameters before
 
 #define P_RANDMUX_DSTVAR1      0
 #define P_RANDMUX_DSTVARN      (1+ADD_INCH_OFFSET)

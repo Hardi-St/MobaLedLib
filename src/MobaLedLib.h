@@ -1296,7 +1296,7 @@ extern uint8_t    TestMode;
 #define COLOR_SINGLE_D 16                                                                                     //   "
 
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
-   typedef void(*Callback_t) (uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t* NewValue);
+   typedef void(*Callback_t) (uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t* NewValue);
 #endif
 #if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
    typedef uint8_t(*ExtProc_t) (uint8_t Type, const uint8_t* progmemAddress, bool process);
