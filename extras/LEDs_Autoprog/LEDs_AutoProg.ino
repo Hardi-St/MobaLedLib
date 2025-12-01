@@ -519,6 +519,7 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20: Juergen
   void On_Callback(uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t *NewValue);
+  typedef bool(*HandleValueEx_t) (uint8_t CallbackType, inch_t ValueId, uint8_t* Value, uint16_t EEPromAddr, inch_t TargetValueId, uint8_t Options);
 #endif
 #if _USE_EXT_PROC && defined(_ENABLE_EXT_PROC)                                                                // 26.09.21: Juergen
   uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process);
@@ -832,10 +833,11 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 #endif
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                     // 19.05.20: Juergen
+
 // if function returns TRUE the calling loop stops
 
    //-----------------------------------------------------------------------------------------------
-   void ForAllStoreValues(uint8_t ValueType, inch_t ValueId, uint8_t* Value, HandleValue_t handler)
+   void ForAllStoreValues(uint8_t ValueType, inch_t ValueId, uint8_t* Value, HandleValueEx_t handler)
    //-----------------------------------------------------------------------------------------------
    {
      uint16_t EEPromAddr = EEPROM_START;
