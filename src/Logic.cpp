@@ -97,14 +97,14 @@ void MobaLedLib_C::Proc_Logic()
                       break;
         default:      uint8_t Act;
                       uint8_t Inp = Get_Input(d);
-                      //Dprintf("Inp%i:%i ", d, Inp);      // Test mehrfach verwenung der Logic Ausgaenge
+                      //Dprintf("Inp%i:%i ", d, Inp);      // Test mehrfach Verwendung der Logic Ausgaenge
                       if (Inp_Is_On(Inp))
                            Act = _BIT_NEW;
                       else Act = 0;
                       if (Invert) Act ^= _BIT_NEW;  // Invert the bit
                       if (ChkEnable)
                            {
-                           if (!Act) Val = Cnt = 0; // Not enabled => Stop procesing the other inputs
+                           if (!Act) Val = Cnt = 0; // Not enabled => Stop processing the other inputs
                            ChkEnable = false;
                            }
                       else Val &= Act;
@@ -118,7 +118,7 @@ void MobaLedLib_C::Proc_Logic()
 #else
   Set_Input(DstVar, Res);
 #endif
-  // Dprintf("\nRes %i %s", Res, pgm_read_byte_near(cp-2) == 1 ? "\n":"   "); // Test mehrfach verwenung der Logic Ausgaenge
+  // Dprintf("\nRes %i %s", Res, pgm_read_byte_near(cp-2) == 1 ? "\n":"   "); // Test mehrfach Verwendung der Logic Ausgaenge
 }
 
 //------------------------------------------------------

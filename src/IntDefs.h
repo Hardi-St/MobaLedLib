@@ -48,9 +48,9 @@
 #else					    // use one byte for adressing the LED, allows up to 256 Leds
 // number of extra bytes to count for each Led adress
 #define ADD_WORD_OFFSET 0
-// a led nubmer is store in an 8 bit variable
+// a led number is store in an 8 bit variable
 #define ledNr_t uint8_t
-// marco for reading the led number from configuration array
+// macro for reading the led number from configuration array
 // read one byte
 #define pgm_read_led_nr pgm_read_byte_near
 #endif
@@ -169,6 +169,10 @@
 #define P_COUNT_TIMEOUT_H      5
 #define P_COUNT_DEST_COUNT     6
 #define P_COUNT_FIRST_DEST     7
+#define P_LED_TO_TMPVAR_INCH       0
+#define P_LED_TO_TMPVAR_ARGS       1
+#define P_LED_TO_TMPVAR_LED        2
+#define EP_LED_TO_TMPVAR_INCREMENT (3+ADD_WORD_OFFSET)    // Insert additional parameters before
 
 // Callback types for Callback_t                                                                              // 01.05.20:
 #define CT_CHANNEL_CHANGED 0
