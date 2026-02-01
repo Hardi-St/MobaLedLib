@@ -192,7 +192,7 @@
               input is turne off.
  21.10.18:  - Set better default values for RoomCol[]
             - New Room types:
-              - NEON_LIGHTM: Medium brightnes
+              - NEON_LIGHTM: Medium brightness
               - NEON_LIGHTL: Large rooms with several neon lights is simumated with one LED
                              => At first a dark light starts,
                                 then a bright light starts in addition.
@@ -688,7 +688,7 @@ MobaLedLib_C::MobaLedLib_C(
  #endif
 {
   // Serial printing in the constructor could generate problems.
-  // - Initialisation of the serial port in the constructor could hang up the program for some reasons ;-(
+  // - Initialization of the serial port in the constructor could hang up the program for some reasons ;-(
   // - Some characters may get lost
   // - If the baudrate is equal to the Flash Tool it seams to be better
    #ifdef _PRINT_DEBUG_MESSAGES
@@ -717,7 +717,7 @@ MobaLedLib_C::MobaLedLib_C(
   Set_Input(SI_1, 1);            // Special input which is always 1                                           // 20.05.20:  New Location
 
   // Initialize the random numbers with the "uninitialized RAM"
-#ifdef RAMEND                                                                                                 // 17.10.20: Jürgen - not all platforms provide a static RAMEND define
+#ifdef RAMEND                                                                                                 // 17.10.20: Juergen - not all platforms provide a static RAMEND define
   srandom(random_seed);
   random16_set_seed(random());
 #endif
@@ -803,7 +803,7 @@ Globale Variablen verwenden 657 Bytes (32%) des dynamischen Speichers, 1391 Byte
 // ~~~~~~~~~~~~~~~~
 // Copied from:
 // https://learn.adafruit.com/led-campfire/introduction
-// Sieht erst im Modellhaus reallistisch aus, nicht wenn die LEDs frei da liegen.
+// Sieht erst im Modellhaus realistisch aus, nicht wenn die LEDs frei da liegen.
 
 // There are two main parameters you can play with to control the look and
 // feel of your fire: COOLING (used in step 1 above), and SPARKING (used
@@ -996,7 +996,7 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
 // If no input variable is changed the ActualVar_p->Changed = 0
 //
 // The new function supports 4 different modes which are controlled by the second argument.
-// - InCh_to_TempVar     Using the global TempVar to store the result (ActualVar_p) for the folloring function
+// - InCh_to_TempVar     Using the global TempVar to store the result (ActualVar_p) for the following function
 // - InCh_to_TempVar1    Like above, but the result starts with 1 (Start=1)
 // - InCh_to_LocalVar    Using a individual local variable to store the last state. The Changed flag in the result is only set if number is changed
 // - InCh_to_LocalVar1   Like above, but the result starts with 1 (Start=1)
@@ -1005,7 +1005,7 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
 // Here the blanking should be prevented when the same DCC command is send again.
 // These modes use 1 (Old 2) additional bytes RAM die store the last state and the Changed flag.
 //
-// The modes are coded into the upper two bitts of the argument:
+// The modes are coded into the upper two bits of the argument:
 // args bits:
 // 0..5         number of channels to read  (currently max 6 bits, allows up to 64 gotos)
 // 6            start offset                                                                   (I2X_USE_START1)
@@ -1242,28 +1242,28 @@ void MobaLedLib_C::Update_TV_Data()
             uint8_t TVNr = p - TV_Dat;
             //if (Debug_read_byte) { Serial.print("Update_TV_Data "); Serial.print(TVNr); Serial.print(": ");} // Debug
             const uint8_t *tp = TV_Dat_p[TVNr];
-            uint8_t r1 = pgm_read_byte_near_Debug(tp++); // Use temp variables to make shure that the sequence is correct
+            uint8_t r1 = pgm_read_byte_near_Debug(tp++); // Use temp variables to make sure that the sequence is correct
             uint8_t r2 = pgm_read_byte_near_Debug(tp++);
             p->dt = random8(r1, r2);              // Naechsten update Zeitpunkt bestimmen
             //if (p==TV_Dat) Dprintf("%i\n", p->dt); // Debug
             r1 = pgm_read_byte_near_Debug(tp++);
             r2 = pgm_read_byte_near_Debug(tp++);
-            uint8_t brightnes = random8(r1, r2);  // sorgt fuer das schwanken der Helligkeit
-            //if (p==TV_Dat) Dprintf("%i\n", brightnes); // Debug
+            uint8_t brightness = random8(r1, r2);  // sorgt fuer das schwanken der Helligkeit
+            //if (p==TV_Dat) Dprintf("%i\n", brightness); // Debug
             for (uint8_t i = 0; i < 3; i++)
                 {
                 r1 = pgm_read_byte_near_Debug(tp++);
                 r2 = pgm_read_byte_near_Debug(tp++);
-                p->raw[i] = ((int)brightnes * random8(r1, r2)) / 256;                                         // 24.05.20:  Old: 265
+                p->raw[i] = ((int)brightness * random8(r1, r2)) / 256;                                         // 24.05.20:  Old: 265
                 }
-            //if (p==TV_Dat) Dprintf("%i: %i %i %i\n", brightnes, p->r, p->g, p->b); // Debug
+            //if (p==TV_Dat) Dprintf("%i: %i %i %i\n", brightness, p->r, p->g, p->b); // Debug
             //if (Debug_read_byte) { Debug_read_byte--; Serial.println(""); } // Debug
          #else
             p->dt = random8(500/16, 2500/16);           // Naechsten update Zeitpunkt bestimmen
-            uint8_t brightnes = random8(40, 65);        // sorgt fuer das schwanken der Helligkeit      Old: 40, 65
-            p->r  = brightnes * random8(0, 85)   / 256; // Diese Einstellung erzeugt weitgehend
-            p->g  = brightnes * random8(70, 210) / 256; // ein Weisses Licht mit Blau und Gruen Stich   Old: 70, 210
-            p->b  = brightnes * random8(60, 150) / 256; // Rot tritt eher selten auf                    Old: 60, 150
+            uint8_t brightness = random8(40, 65);        // sorgt fuer das schwanken der Helligkeit      Old: 40, 65
+            p->r  = brightness * random8(0, 85)   / 256; // Diese Einstellung erzeugt weitgehend
+            p->g  = brightness * random8(70, 210) / 256; // ein Weisses Licht mit Blau und Gruen Stich   Old: 70, 210
+            p->b  = brightness * random8(60, 150) / 256; // Rot tritt eher selten auf                    Old: 60, 150
          #endif
          if (p->r >= p->b)      // r < b indicates TV activ. => Make sure that r < b (Fire uses r > b)
             {                   // If the TV color matches with the room color the TV is disabled and the room is constant lightned ;-(
@@ -1295,7 +1295,7 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
   #endif
   if ((uint8_t)((t & 0xFF) - Last_20) >= 50)
        { // is called every 50 ms = 20 Hz
-#ifdef RAMEND																								  // 17.10.20: Jürgen - not all platforms provide a static RAMEND define
+#ifdef RAMEND																								  // 17.10.20: Juergen - not all platforms provide a static RAMEND define
        random16_add_entropy(random_seed = random()); // Add entropy to random number generator                // 27.08.18:  Old position outside the if
 #endif
        Trigger20fps = TriggerCnt++;
@@ -1308,7 +1308,7 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
     Room_ColP = Default_Room_Col_Tab;
   #endif
 
-  Update_TV_Data();																							  // 17.10.20: must be called AFTER Room_ColP is initialized - Jürgen
+  Update_TV_Data();																							  // 17.10.20: must be called AFTER Room_ColP is initialized - Juergen
 
   #if _USE_CANDLE                                                                                             // 10.06.20:
     Candle_DatP = &Default_Candle_Dat;
@@ -1590,7 +1590,7 @@ uint8_t MobaLedLib_C::Find_Next_Priv_InpChannel(uint8_t Channel, int8_t Directio
      Direction = +1;
      }
   int cnt = 0;
-  while (!InpChannel_used((Channel += Direction)) && cnt++ < 256) ; // Find the next / privios Channel
+  while (!InpChannel_used((Channel += Direction)) && cnt++ < 256) ; // Find the next / previous Channel
   return Channel;
 }
 
@@ -1687,7 +1687,7 @@ void MobaLedLib_C::Inp_Processed()
 //-------------------------
 void MobaLedLib_C::Update()
 //-------------------------
-// This function has to be called periodicly in the loop() function
+// This function has to be called periodically in the loop() function
 // to update all LEDs
 {
   #ifdef _TEST_BUTTONS
