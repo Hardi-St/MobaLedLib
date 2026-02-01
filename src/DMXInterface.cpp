@@ -2,8 +2,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2020  Hardi Stengelin: MobaLedLib@gmx.de
- this file: Copyright (C) 2020 Jürgen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2020-2025 Jürgen Winkler: MobaLedLib@gmx.at
  DMX send code is published here https://code.google.com/archive/p/tinkerit/
  Copyright (c) 2008-2009 Peter Knight, Tinker.it!, License: GNU Lesser GPL
 
@@ -35,6 +34,8 @@
 Revision History :
 ~~~~~~~~~~~~~~~~~
 12.12.20:  Versions 1.0 (Jürgen)
+29.12.25:  fix warning issue (Juergen)
+
 */
 
 #if  defined(__AVR__) ||  defined(ESP32)
@@ -121,8 +122,6 @@ void DMXInterface::sendSynchron(uint8_t* buffer, uint16_t len)
 	delayMicroseconds(88+10);		// 88us break + some time to be sure that byte is fully sent
 
 	// now we need 12us mark, don't delay here, because the baud rate switch takes some time anyway
-
-	unsigned long startBreak = micros();
 
 	// switching the baudrate costs ~ 17us
 	uart_set_baudrate(UART_USED, 250000);
