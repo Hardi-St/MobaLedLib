@@ -1012,6 +1012,7 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
 // 7            Use local var: if set to 1 then changed flag is only set if the state changes  (I2X_USE_LOCALVAR)
 {
   uint16_t InCh = pgm_read_inch(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  if (InCh == 0) return;                                                         // 08.12.2025: Juergen don't overwrite TmpVar is InCh = 0, allow usage of LED_to_TmpVar for complex macros  
   uint8_t  arg = pgm_read_byte_near(cp+INCH_LEN);
   uint8_t  Nr      = (arg & I2X_USE_START1) ? 1:0;  // Does ">> 6" instead of "?1:0" save memory? No, it uses exact the same amount of FLASH
   uint16_t EndInCh = InCh + (arg & (I2X_USE_START1-1));                                                       // 05.06.20:  Changed to 16 Bit in case InCh = 255
@@ -1065,6 +1066,7 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()
 // New function which treats the input variables as binary number
 {
   uint16_t InCh = pgm_read_inch(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  if (InCh==0) return;                                                           // 08.12.2025: Juergen don't overwrite TmpVar is InCh = 0, allow usage of LED_to_TmpVar for complex macros
 
   // args bits:
   // 0..2         number of channels to read  (currently max 3 bits, see code below (Mask is 8 bit)

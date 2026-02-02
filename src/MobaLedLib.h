@@ -129,6 +129,8 @@
 #if _USE_COPY_N_LEDS                                                                                          // 18.09.23:
   #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
   #define  CopyNLEDs(     LED_Cnt, LED, InCh, SrcLED)                       COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
+  #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), (SrcLED+ChannelOffset),
+  #define  CopyNLEDsEx(   LED_Cnt, LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), (SrcLED+ChannelOffset),
 #else
 #define  CopyLED(       LED, InCh, SrcLED)                                  COPYLED_T,   _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
 #endif
