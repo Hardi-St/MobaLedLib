@@ -268,6 +268,7 @@
  23.01.25:  - improve counting and display of freezes/delays
             - remove limit ESP32 RMT channels
  22.04.25:  - fix bug with wrong send buffer size for SEND_INPUTS
+ 08.02.26:  - keep the LED bus alive even if external program doesn't send any data
 */
 
 #include <Arduino.h>
@@ -610,7 +611,6 @@ void Proc_Color_Cmd(const char *Buffer)                                         
            leds[i].g = g;
            leds[i].b = b;
            }
-       FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
        }
   else { Serial.print(F("#Wrong Cnt:'")); Serial.print(Buffer); Serial.print(F("':")); Serial.println(cnt); }
 
@@ -633,6 +633,7 @@ void Receive_LED_Color_per_RS232()                                              
   if (Send_Disable_Pin_Active) digitalWrite(SEND_DISABLE_PIN, 1); // Tell the DCC Arduino to be quiet         // 13.05.20:  Added: if (Send_Disable_Pin_Active)
 #endif
   char Buffer[20] = "";
+  unsigned long lastLEDUpdate = 0;
 #ifndef LEDS_PER_CHANNEL							 
   uint8_t JustStarted = 1;
 #endif
@@ -641,6 +642,15 @@ void Receive_LED_Color_per_RS232()                                              
      #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0                                                  // 13.05.20:
        LED_HeartBeat.Update(300); // Fast Flash
      #endif
+         
+     // 08.02.26 Juergen
+     // keep the LED bus alive even if external program doesn't send any data
+     if ((millis()-lastLEDUpdate) > 250) 
+     {
+        FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
+        lastLEDUpdate = millis();
+     }
+
      while (Serial.available() > 0)
         {
         char c = Serial.read();
@@ -668,7 +678,11 @@ void Receive_LED_Color_per_RS232()                                              
 #else						
                              case 'E': ResetArduino(); // Restart the Arduino
 #endif
-                             case 'L': Proc_Color_Cmd(Buffer); break;
+                             case 'L': Proc_Color_Cmd(Buffer); 
+                             {
+                               lastLEDUpdate = 0;   // force an update
+                               break;
+                             }
                              default:  Serial.print(F("#Unknown cmd:'")); Serial.print(Buffer); Serial.println(F("'"));// Debug
                                        return;									       // 02.01.22: Juergen avoid hangup
                              }
