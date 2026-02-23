@@ -129,10 +129,11 @@
 #if _USE_COPY_N_LEDS                                                                                          // 18.09.23:
   #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
   #define  CopyNLEDs(     LED_Cnt, LED, InCh, SrcLED)                       COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
-  #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), (SrcLED+ChannelOffset),
-  #define  CopyNLEDsEx(   LED_Cnt, LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), (SrcLED+ChannelOffset),
+  #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED+ChannelOffset),
+  #define  CopyNLEDsEx(   LED_Cnt, LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED+ChannelOffset),
 #else
-#define  CopyLED(       LED, InCh, SrcLED)                                  COPYLED_T,   _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
+  #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
+  #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED+ChannelOffset),
 #endif
 #define  Schedule(      DstVar1, DstVarN, EnableCh, Start, End)             SCHEDULE_T,  _ChkIn(DstVar1)+RAM3, _ChkIn(DstVarN), _ChkIn(EnableCh), Start, End,  // Zeit- oder Helligkeitsgesteuertes Ein- und Ausschalten von Variablen.
 #define  New_HSV_Group()                                                    NEW_HSV_GROUP_T+RAM3,
