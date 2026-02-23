@@ -834,7 +834,7 @@ void MobaLedLib_C::Proc_Fire()
 
   uint8_t LED_cnt  = pgm_read_byte_near(cp+P_FIRE_LEDCNT);
 
-  if ((uint8_t)((t & 0xFF) - *Last_t) >= 50) // Update everey 50 ms => 20 Frames/sec
+  if ((uint8_t)((t & 0xFF) - *Last_t) >= 50) // Update every 50 ms => 20 Frames/sec
      {
      *Last_t = t & 0xFF;
      uint8_t Inp    = Get_Input(pgm_read_byte_near(cp+P_FIRE_INCH));
@@ -858,7 +858,7 @@ void MobaLedLib_C::Proc_Fire()
           // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
           if (random8() < SPARKING )
              {
-             uint8_t y = random8(min((uint8_t)7,LED_cnt));                                           // Adapt the 7 for // 17.10.20 Jürgen - cast uint8_t for >8bit platforms
+             uint8_t y = random8(min((uint8_t)7,LED_cnt));                                           // Adapt the 7 for // 17.10.20 Juergen - cast uint8_t for >8bit platforms
              heat[y] = qadd8(heat[y], random8(160,255));
              }
           }
@@ -1068,9 +1068,9 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()
 
   // args bits:
   // 0..2         number of channels to read  (currently max 3 bits, see code below (Mask is 8 bit)
-  // 3...5        reserverd
+  // 3...5        reserved
   // 6            start offset
-  // 7            retrigger bit: if set to 1 also set Changed flag if state didn't change
+  // 7            re-trigger bit: if set to 1 also set Changed flag if state didn't change
   uint8_t  arg     = pgm_read_byte_near(cp+1);
   uint16_t EndInCh = InCh + (arg & 0x07);                                        // 31.05.20:  J: max 3 bits, see code below (Mask is 8 bit)  // 05.06.20:  Changed to 16 Bit in case InCh = 255
   uint8_t  Start   = (arg & 0x40) >> 6;                                          // 31.05.20:  J: start offset taken from arg
