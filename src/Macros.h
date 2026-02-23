@@ -664,11 +664,13 @@ Ueberlegung zur Erweiterung der Anzahl der Timing Parameter                     
 #if _USE_INCH_TRIGGER                                                                                         // 02.06.20: New trigger method from Juergen
   #define INCH_TO_X_VAR_T       173                                                                           // 25.11.18:
   #define BIN_INCH_TO_TMPVAR_T  174                                                                           // 18.01.19:
+  #define LED_TO_TMPVAR_T       175                                                                           // 07.12.25: Juergen
 #else
   #define INCH_TO_TMPVAR_T      173                                                                           // 25.11.18:
   #define INCH_TO_TMPVAR1_T     174                                                                           // 07.05.20:
   #define BIN_INCH_TO_TMPVAR_T  175                                                                           // 18.01.19:
   #define BIN_INCH_TO_TMPVAR1_T 176                                                                           // 07.05.20:
+  #define LED_TO_TMPVAR_T       177                                                                           // 07.12.25: Juergen
 #endif
 
 #ifdef _NEW_ROOM_COL
