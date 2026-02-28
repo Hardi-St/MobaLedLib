@@ -269,6 +269,7 @@
             - remove limit ESP32 RMT channels
  22.04.25:  - fix bug with wrong send buffer size for SEND_INPUTS
  08.02.26:  - keep the LED bus alive even if external program doesn't send any data
+ 28.02.26:  - Norbert: Added define CAN_BAUD_RATE to allow setting CAN bit rate vie entry in Prog Generator
 */
 
 #include <Arduino.h>
@@ -456,9 +457,9 @@ Benoetig als 142 byte
   #ifdef ESP32
 	  #include "MLL_CAN/CAN.h"			   // It's a patched copy of the Sandeep Mistry library (0.3.1)
 	  
-	  
-	  
-	  
+      #ifndef CAN_BAUD_RATE
+        #define CAN_BAUD_RATE 250E3
+      #endif
 	  
   #else
 	  #include "mcp_can_nd.h"      // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can_nd.h: No such file or directory"
@@ -475,6 +476,9 @@ Benoetig als 142 byte
 	  #ifndef LED_HEARTBEAT_PIN
 		 #define LED_HEARTBEAT_PIN A3 // The built in LED can't be use because the pin is used as clock port for the SPI bus
 	  #endif
+      #ifndef CAN_BAUD_RATE
+        #define CAN_BAUD_RATE CAN_250KBPS
+      #endif
    #endif
 #else // not USE_CAN_AS_INPUT
   #ifndef LED_HEARTBEAT_PIN
@@ -1584,7 +1588,7 @@ void setup(){
 	// *** Initialize the CAN bus ***
     #ifdef ESP32																							
 		CAN.setPins(4, 5);																						// 08.03.21 Juergen
-		if (CAN.begin(250E3)) 
+		if (CAN.begin(CAN_BAUD_RATE)) 
 			 {
 			 if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 13.07.22 Juergen: use library function again
 			     {
@@ -1602,7 +1606,7 @@ void setup(){
                #error "ATTINY_GBM_FILTER1 Filters are not implemented for the ESP at the moment"
              #endif
 	#else
-		if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
+		if (CAN.begin(MCP_STDEXT, CAN_BAUD_RATE, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
 			 {
 			 Serial.println(F("CAN Init OK!"));
 			 CAN_ok = true;
