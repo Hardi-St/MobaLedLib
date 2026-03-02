@@ -64,10 +64,12 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
 	static portMUX_TYPE			soundProcessor_mutex;
 	#define SOUNDPROCESSOR_MUTEX_ENTER   portENTER_CRITICAL(&soundProcessor_mutex);
 	#define SOUNDPROCESSOR_MUTEX_EXIT    portEXIT_CRITICAL(&soundProcessor_mutex);
+  #define ENABLE_SOUND_PRO
 #elif defined(ARDUINO_RASPBERRY_PI_PICO)
 	auto_init_mutex(soundProcessor_mutex);
 	#define SOUNDPROCESSOR_MUTEX_ENTER   mutex_enter_blocking(&soundProcessor_mutex);
 	#define SOUNDPROCESSOR_MUTEX_EXIT    mutex_exit(&soundProcessor_mutex);
+  #define ENABLE_SOUND_PRO
 #else  
 	#define SOUNDPROCESSOR_MUTEX_ENTER   
 	#define SOUNDPROCESSOR_MUTEX_EXIT    
@@ -83,6 +85,7 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
 /* 0x02 show sound command executing    */
 /* 0x04 show sound command details      */
 /* 0x08 show bytes sent to serial line  */
+/* 0x10 show verbose                    */
 /* 0x80 show all command handling calls */
 /****************************************/
 
@@ -92,40 +95,12 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
 
 extern MobaLedLib_C* pMobaLedLib;
 
-class SoundPlayer 
-{
-  public:
-  virtual void process(const uint8_t command, const uint8_t* arguments) = 0;
-  bool available() 
-  {
-#if (DEBUG_SOUND_CHANNEL&0x01)==0x01
-        { char s[80]; sprintf(s, "available wait %dms %d", waitUntil==0 ? 0 : waitUntil-millis(),millis()>=waitUntil); Serial.println(s); Serial.flush();} // Debug
-#endif        
+#include "SoundPlayer.h"
     
-    return waitUntil==0 || millis()>=waitUntil; 
-  }
-  SOFTWARE_SERIAL_TYPE* serialLine;
 
-  protected:
-  unsigned long waitUntil = 0;
     
   
-#if (DEBUG_SOUND_CHANNEL&0x08)==0x08
-  void dump(const uint8_t *buffer, size_t size)
-  {
-    while(size--)
-    {
-      uint8_t by = *(buffer++);
-      if (by<16) 
-        Serial.print(" 0");
-      else
-        Serial.print(" ");
         
-      Serial.print(by,HEX);
-    } 
-  }
-#endif  
-};
 
 #include "JQ6500SoundPlayer.h"
 #include "MP3TF16PSoundPlayer.h"
@@ -137,14 +112,19 @@ class SoundProcessor
   uint8_t* commandBuffer;
   uint8_t  capacity;
   uint8_t  count = 0;
+  uint8_t  playerCount;
   SoundPlayer** soundPlayers;
   
+#ifdef ENABLE_SOUND_PRO
+  unsigned long lastMillis = 0;
+#endif
   public:
-  SoundProcessor(uint8_t* commandBuffer, uint8_t capacity, SoundPlayer* soundPlayers[])
+  SoundProcessor(uint8_t* commandBuffer, uint8_t capacity, SoundPlayer* soundPlayers[], uint8_t playerCount)
   {
     this->commandBuffer = commandBuffer; 
     this->capacity = capacity;
     this->soundPlayers = soundPlayers;
+    this->playerCount = playerCount;
 #if defined(ESP32)
   #if ESP_IDF_VERSION_MAJOR<4
     vPortCPUInitializeMutex(&soundProcessor_mutex);
@@ -170,10 +150,6 @@ class SoundProcessor
     uint16_t cmdAndIndex = tmp>>8;
     uint8_t len = GetSoundCommandLength(cmdAndIndex&0x0f);
     
-    while (count+len>=capacity)
-    {
-       if (!process()) delay(1);
-    }
     
 #if (DEBUG_SOUND_CHANNEL&0x80)==0x80
     { char s[80]; sprintf(s, "Command %d on module %d.", cmdAndIndex&0x0f, (cmdAndIndex >>4)&0x0f); Serial.println(s); } // Debug
@@ -182,6 +158,17 @@ class SoundProcessor
     {
       if (pMobaLedLib!=NULL && pMobaLedLib->Get_Input(tmp&0xff)==INP_TURNED_ON)
       {
+        if (soundPlayers[(cmdAndIndex>>4)&0x0f]->GetType() == 0)    // not a pro player
+        {
+          while (count+len>=capacity)
+          {
+    #if defined(MLL_MULTITHREADING)    
+            if (!process()) delay(1);
+    #else
+             // in single threading environment these data are lost :-( sorry
+             return len;
+    #endif       
+          }
 #if (DEBUG_SOUND_CHANNEL&0x01)==0x01
         { char s[80]; sprintf(s, "Command %d on module %d added to queue.", cmdAndIndex&0x0f, (cmdAndIndex>>4)&0x0f); Serial.println(s); Serial.flush();} // Debug
 #endif        
@@ -192,11 +179,26 @@ class SoundProcessor
         }
         SOUNDPROCESSOR_MUTEX_EXIT;
       }
+        else
+        {
+          uint16_t args = 0;
+          if (len>2) args |= pgm_read_byte_near(arguments+2);
+          if (len>3) args |= (pgm_read_byte_near(arguments+3)<<8);
+#if (DEBUG_SOUND_CHANNEL&0x01)==0x01
+          { char s[80]; sprintf(s, "Command %d/%d) on module %d forwarded to device.", cmdAndIndex&0x0f, args, (cmdAndIndex>>4)&0x0f); Serial.println(s); Serial.flush();} // Debug
+#endif        
+          if ((cmdAndIndex&0x0f)==SOUND_CHANNEL_CMD_PLAY_RANDOM)   // play random track
+          {
+            args += (random8((args>>8)+1)) & 0xff;    // the first argument contain the trackNumber add seconds the max random number
+            cmdAndIndex = SOUND_CHANNEL_CMD_PLAY_TRACK | (cmdAndIndex&0xF0);
+    }      
+          soundPlayers[(cmdAndIndex>>4)&0x0f]->process(cmdAndIndex&0x0f, (uint8_t*)&args);
+        }
+      }
     }      
     return len;
   }
   
-  private:
     
   static uint8_t GetSoundCommandLength(uint8_t cmd)
   {
@@ -206,12 +208,22 @@ class SoundProcessor
     return 2;
   }
   
-  public:
   
     
   // check the command queue and send out max. one message per process call
   bool process()
   {
+#ifdef ENABLE_SOUND_PRO      // todo what happens if process is called many times while waiting for buffer free
+      // first process SoundPlayerPro's
+      if ((millis()-lastMillis)>=10)
+      {
+        lastMillis = millis();
+        for ( uint8_t idx=0; idx<playerCount; idx++)
+        {
+            soundPlayers[idx]->loop();
+        }
+      }
+#endif
       // check for commands in queue
       if (!count) return true;
       
@@ -224,7 +236,7 @@ class SoundProcessor
       // create a "PlayTrackIndex" message out of the PlayRandom
       if (cmd==SOUND_CHANNEL_CMD_PLAY_RANDOM)   // play random track
       {
-        commandBuffer[1] += random8(commandBuffer[2]);      // the argument contain the trackNumber -> add the random number
+        commandBuffer[1] += random8(commandBuffer[2]+1);      // the argument contain the trackNumber -> add the random number
         cmd = SOUND_CHANNEL_CMD_PLAY_TRACK;
       }
       

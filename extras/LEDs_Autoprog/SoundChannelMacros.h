@@ -61,6 +61,7 @@
 #define SOUND_CHANNEL_CMD_PLAY_TRACK      8
 #define SOUND_CHANNEL_CMD_SET_VOLUME      9
 #define SOUND_CHANNEL_CMD_LOOP_MODE       10
+#define SOUND_CHANNEL_CMD_PLAY_ADVERT     11
 #define SOUND_CHANNEL_CMD_PLAY_RANDOM     15
 
 /*************************************/
@@ -85,6 +86,8 @@
 #define SOUND_CHANNEL_SET_VOLUME(Module, InCh, VolumePercent) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_SET_VOLUME,VolumePercent,   
 // command 10: Set loop mode
 #define SOUND_CHANNEL_LOOP_MODE(Module, InCh, LoopMode) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_LOOP_MODE,LoopMode,   
+// command 11: PlayAdvert, one argument TrackNumber
+#define SOUND_CHANNEL_PLAY_ADVERT(Module, InCh, Track) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PLAY_ADVERT,Track,
 
 /***************************************/
 /*  Command with two arguments (14-15) */
