@@ -3,7 +3,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2023  Hardi Stengelin: MobaLedLib@gmx.de
- Copyright (C) 2020 - 2023  Juergen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2020 - 2026  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -345,6 +345,10 @@
 #define SingleLedSignalEx(LED,InCh,Single_Cx, FadeTime, State0_0, State0_1, State1_0, State1_1, State2_0, State2_1, State3_0, State3_1) InCh_to_LocalVar(InCh, 4) \
                                                    XPatternT1(LED,_Cx2StCh(Single_Cx)+28,SI_LocalVar,2,0,255,0,0,FadeTime,0,0,State0_0,State0_1,0,0,State1_0,State1_1,0,0,State2_0,State2_1,0,0, \
                                                    State3_0,State3_1  ,0,63,128,63,128,63,128,63)
+#define Signal2(LED, InCh, Single_Cx, MaxB128)    InCh_to_TmpVar(InCh, 2) \
+                                                  XPatternT1(LED,_Cx2StCh(Single_Cx)+128,SI_LocalVar,2,0,MaxB128,0,0,125 ms,9  ,63,191)                                                   
+#define Signal2_RGB(LED, InCh, MaxB128)           InCh_to_TmpVar(InCh, 2) \
+                                                  XPatternT1(LED,128,SI_LocalVar,6,0,MaxB128,0,0,125 ms,1,4  ,63,191)
 
 #define  ButtonFunc(                DstVar, InCh, Duration)                      Random(DstVar, InCh, RF_STAY_ON, 0, 0, (Duration), (Duration))             // DstVar is turned on if InCh is activated and stays on for duration (Static (Not Edge) retiggerable mono flop)
 
