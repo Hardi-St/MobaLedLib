@@ -147,7 +147,7 @@
  32       A4         LED Bus 1
  16       D3         LED 1 (Left   switch) or LED Bus 2
  14       D4         LED 2 (Middle switch) or LED Bus 3
- 18       D13        LED 3 (Right  switch) or LED Bus 4 
+ 18       D13        LED 3 (Right  switch) or LED Bus 4
  19       D12        LED Bus 5
  23       D11        LED Bus 6
  0        D5         LED Bus 7  (not available on 30 pin ESP32 module)
@@ -166,14 +166,14 @@
  5        -          CAN Tx
  1        D0         USB Tx
  3        D1         USB Rx
- 
+
    Voltage divider
         R1
 5V   --[1K]--*---->-  ESP (3.3V)
              |
-            |2| R2      
-            |K|         
-             |          
+            |2| R2
+            |K|
+             |
             _|_
 
 
@@ -195,9 +195,9 @@
 (5)       D12        LED Bus 5
 (6)       D11        LED Bus 6
 (7)       -          LED Bus 7
- 13       D3         LED 1 (Left   switch) 
- 12       D4         LED 2 (Middle switch) 
- 11       D5         LED 3 (Right  switch)  
+ 13       D3         LED 1 (Left   switch)
+ 12       D4         LED 2 (Middle switch)
+ 11       D5         LED 3 (Right  switch)
  28       D2         DCC Signal   with voltage divider 510/1K if Selectrix is used
  14       A0         CLOCK_K    (RX2), with 3,3V -> 5V level shifter
  16       A2         BUTTONS         , with 1K/2K voltage divider
@@ -213,14 +213,14 @@
           D0         USB Tx
           D1         USB Rx
  40       5V         5V Supply
- 
+
    Voltage divider
         R1
 5V   --[1K]--*---->-  PICO (3.3V)
              |
-            |2| R2      
-            |K|         
-             |          
+            |2| R2
+            |K|
+             |
             _|_
 
  Revision History:
@@ -242,10 +242,10 @@
  11.10.20:  - New Mainboard_LED defines which end with the pin number (Example: Mainboard_LED_A0)
  14.11.20:  - Added the experimental ESP32 support
  19.01.21:  - Added DMX support by Juergen
- 10.04.21:  - add new FarbTest protocol without need to reset CPU 
+ 10.04.21:  - add new FarbTest protocol without need to reset CPU
  21.04.21:  - Juergen: release ESP32 and DMX512 support
  23.04.21:  - ubit: Added ServoMP3 commands
- 24.04.21:  - Juergen: add Pico support 
+ 24.04.21:  - Juergen: add Pico support
  25.04.21:  - Juergen: improve signaling of DCC status using onboard led (ESP & PICO)
  14.09.21:  - Juergen: add signaling of DCC status with ESP32 onboard led
  29.09.21:  - Juergen: add new feature to enable processing of extra commands outside the core library
@@ -256,7 +256,7 @@
               - Tested with
                 - Single switch macro: Const(#LED, C2, #InCh, 0, 127)
                 - 3 input macro: EntrySignal3_RGB(#LED, #InCh)
- 21.03.23:  - if SEND_INPUTS is enabled also SwitchA, SwitchD and Variable changes are notified	
+ 21.03.23:  - if SEND_INPUTS is enabled also SwitchA, SwitchD and Variable changes are notified
  26.04.23:  - Avoid loosing triggers if on/off message comes very fast (LNet)
  08.04.23:  - Improve detection of change switches/variables for SEND_INPUTS feature
  12.12.24:  - fix issue: "ESP32 and hieroglyphics for MLL time" To-Dos#20
@@ -270,6 +270,7 @@
  22.04.25:  - fix bug with wrong send buffer size for SEND_INPUTS
  08.02.26:  - keep the LED bus alive even if external program doesn't send any data
  28.02.26:  - Norbert: Added define CAN_BAUD_RATE to allow setting CAN bit rate vie entry in Prog Generator
+ 17.03.26:  - Hardi: New compiler switch NO_SERIAL_OPTPUT which saves 175 bytes RAN and 980 bytes FLASH
 */
 
 #include <Arduino.h>
@@ -319,12 +320,12 @@
   uint32_t lastFastledSend = 0;                                                          // 18.01.24 Juergen add FastLED revive feature
   uint32_t lastFastledFail = 0;                                                          // 18.01.24 Juergen add FastLED revive feature
   extern void GiveGTX_sem() __attribute__((weak));
-  #ifdef DISPLAY_FASTLED_FAULTS                                                          // 18.01.24 Juergen add fault display feature   
+  #ifdef DISPLAY_FASTLED_FAULTS                                                          // 18.01.24 Juergen add fault display feature
     uint32_t delayCount = 0;
     uint32_t reviveCount = 0;
     static unsigned long lastMillis = 0;
     static int updateCount=0;
-  #endif  
+  #endif
 #endif
 #ifdef USE_DCC_INTERFACE
   #ifndef USE_COMM_INTERFACE
@@ -456,11 +457,11 @@ Benoetig als 142 byte
 #ifdef USE_CAN_AS_INPUT
   #ifdef ESP32
 	  #include "MLL_CAN/CAN.h"			   // It's a patched copy of the Sandeep Mistry library (0.3.1)
-	  
+
       #ifndef CAN_BAUD_RATE
         #define CAN_BAUD_RATE 250E3
       #endif
-	  
+
   #else
 	  #include "mcp_can_nd.h"      // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can_nd.h: No such file or directory"
 								   // Here we use a local version where the debug mode is disabled (#define DEBUG_MODE 0).
@@ -552,7 +553,7 @@ MobaLedLib_Prepare();
 InMemoryStream stream(256);
 #endif
 #endif
-#if defined USE_COMM_INTERFACE 
+#if defined USE_COMM_INTERFACE
 CommInterface* commInterface;
 #endif
 
@@ -585,7 +586,7 @@ void MLLMainLoop();
 void Set_Input(uint8_t channel, uint8_t On)                                                   // 18.04.23: additional helper function
 //-------------------------------------
 {
-// the LNet protocol sends on/off messages only once. If off message comes very fast after an on, e.g. if messages are buffered by the communication arduino, 
+// the LNet protocol sends on/off messages only once. If off message comes very fast after an on, e.g. if messages are buffered by the communication arduino,
 // MobaLedLib will miss the trigger. So we need to do an extra MobaLedLib.update() to handle INP_TURNED_ON and INP_TURNED_OFF cases.
 // it has not been reported, but it may also occur with DCC or CAN
 
@@ -627,7 +628,7 @@ void Proc_Color_Cmd(const char *Buffer)                                         
 #else
   void (* ResetArduino)(void) = 0; // Restart the Arduino
 #endif
-    
+
 //--------------------------------
 void Receive_LED_Color_per_RS232()                                                                            // 03.11.19:
 //--------------------------------
@@ -637,7 +638,7 @@ void Receive_LED_Color_per_RS232()                                              
 #endif
   char Buffer[20] = "";
   unsigned long lastLEDUpdate = 0;
-#ifndef LEDS_PER_CHANNEL							 
+#ifndef LEDS_PER_CHANNEL
   uint8_t JustStarted = 1;
 #endif
   while (1)
@@ -645,10 +646,10 @@ void Receive_LED_Color_per_RS232()                                              
      #if defined LED_HEARTBEAT_PIN && LED_HEARTBEAT_PIN >= 0                                                  // 13.05.20:
        LED_HeartBeat.Update(300); // Fast Flash
      #endif
-         
+
      // 08.02.26 Juergen
      // keep the LED bus alive even if external program doesn't send any data
-     if ((millis()-lastLEDUpdate) > 250) 
+     if ((millis()-lastLEDUpdate) > 900) 
      {
         FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
         lastLEDUpdate = millis();
@@ -661,27 +662,27 @@ void Receive_LED_Color_per_RS232()                                              
            {
            case '#': *Buffer = '\0'; break;
            case '\n': // Proc buffer       (For tests with the serial console of Arduino use "Neue Zeile" and not "..(CR)" )
-#ifndef LEDS_PER_CHANNEL							 
+#ifndef LEDS_PER_CHANNEL
                       if (JustStarted)
                            JustStarted = 0;
-                      else 
-#endif					  
+                      else
+#endif
 					       {
                            switch (*Buffer)
                              {
-#ifdef LEDS_PER_CHANNEL							 
-							 case '?': 
+#ifdef LEDS_PER_CHANNEL
+							 case '?':
 //                       char s[100]; sprintf(s, "#?%s%s", START_MSG,LEDS_PER_CHANNEL); Serial.println(s);  // Debug
-                             
-                             Serial.print("#?");															   // 13.03.21 Juergen inform farbtest about led count per channel	
+
+                             Serial.print("#?");															   // 13.03.21 Juergen inform farbtest about led count per channel
 										Serial.print(START_MSG);
 										 Serial.println(LEDS_PER_CHANNEL);
 										break;
                              case 'X': return;						                                                   // 13.03.21 Juergen stop Receive_LED_Color_per_RS232 without rebooting
-#else						
+#else
                              case 'E': ResetArduino(); // Restart the Arduino
 #endif
-                             case 'L': Proc_Color_Cmd(Buffer); 
+                             case 'L': Proc_Color_Cmd(Buffer);
                              {
                                lastLEDUpdate = 0;   // force an update
                                break;
@@ -770,9 +771,9 @@ void Receive_LED_Color_per_RS232()                                              
                        #endif
                       )
                        {
-#ifdef COMMANDS_DEBUG					   
+#ifdef COMMANDS_DEBUG
                        char s[48]; sprintf(s, "OnOff: Addr %i Channel[%i]=%i Pow=%i", Addr, Channel, Direction, OutputPower); Serial.println(s);  // Debug
-#endif					   
+#endif
                        if (OutputPower > 0)
                             {
                             Set_Input(Channel, Direction > 0);                                                // 18.04.23: Juergen call helper function
@@ -788,9 +789,9 @@ void Receive_LED_Color_per_RS232()                                              
                              // => In this case no "if()" is needed
                        #endif
                              {
-#ifdef COMMANDS_DEBUG					   
+#ifdef COMMANDS_DEBUG
                              char s[48]; sprintf(s, "%s Button Addr %i: Channel[%i]=%i", ChkBut==B_RED?"Red":"Green", Addr, Channel,OutputPower); Serial.println(s); // Debug
-#endif						
+#endif
                              Set_Input(Channel, OutputPower);                                                   // 18.04.23: Juergen call helper function
                              #if defined(GEN_BUTTON_RELEASE) && defined(USE_EXT_ADDR)                           // 16.04.23: Juergen - add check for USE_EXT_ADDR
                                if (OutputPower)
@@ -827,21 +828,21 @@ void Receive_LED_Color_per_RS232()                                              
              else break; // Exit the for loop
              }
          }
-#ifdef COMMANDS_DEBUG					   
+#ifdef COMMANDS_DEBUG
      char s[35];sprintf(s, "Addr %i not found Dir:%i", ReceivedAddr, Direction); Serial.println(s);  // Debug
-#endif	 
+#endif
    }
 
 #endif // USE_EXT_ADDR
 
-     
+
 #if defined(_ENABLE_EXT_PROC) && _USE_EXT_PROC                                                                     // 26.09.21: Juergen
-   
+
 
 uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 {
   //{ char s[80]; sprintf(s, "Handle Command type %d argumentsMem %d.", Type, arguments); Serial.println(s); Serial.flush();} // Debug
-  
+
 #ifdef _ENABLE_EXT_PROC
   if (Type==SOUND_CHANNEL_TYPE_T) return soundProcessor.handle(arguments, process);
 #endif
@@ -901,7 +902,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         bool IsToggle = (Options & IS_PULSE) != IS_PULSE;
         uint8_t InCnt = Options & InCnt_MSK;
         #if defined(DEBUG_STORE_STATUS) && 0
-           Serial.print("Store Channel:"); Serial.print(StoreChannel); // Debug
+           Serial.print("Store Channel:"); Serial.print(ValueId);      // Debug
            Serial.print(" IsToggle:");     Serial.print(IsToggle);     // Debug
            Serial.print(" InCnt:");        Serial.print(InCnt);        // Debug
            Serial.print(" Tmp:");          Serial.println(tmp);        // Debug
@@ -917,12 +918,12 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
                byte tmp = MobaLedLib.Get_Input(TargetValueId + cnt);
                tmp = (tmp == INP_ON || tmp == INP_TURNED_ON) ? 1 : 0;
                #if defined(DEBUG_STORE_STATUS) && 0
-                   char s[80]; sprintf(s, "State of InCh %d=%d", InCh+cnt, tmp); Serial.println(s);  // Debug
+                   char s[80]; sprintf(s, "State of InCh %d=%d", TargetValueId+cnt, tmp); Serial.println(s);  // Debug
                #endif
                status = (status << 1) + tmp;
                }
            #if defined(DEBUG_STORE_STATUS) && 0
-               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
+               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
         else // pulse type
@@ -930,7 +931,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
            if (*Value != INP_ON && *Value != INP_TURNED_ON) return false;
            status = ValueId - TargetValueId;
            #if defined(DEBUG_STORE_STATUS) && 0
-               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
+               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
         StoreStatus(EEPromAddr, status);
@@ -1049,10 +1050,10 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 #endif // ENABLE_STORE_STATUS                                                                                 // 01.05.20:
 
 
-#if defined SEND_INPUTS 
+#if defined SEND_INPUTS
 	#ifndef START_SEND_INPUTS                                                                            // 27.04.23 Juergen
         #define START_SEND_INPUTS 0
-    #endif  
+    #endif
     #ifndef TOTAL_SEND_INPUTS
         #define TOTAL_SEND_INPUTS 0
 	#endif
@@ -1246,7 +1247,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
       c = stream.read();
       return 1;
     }
-#endif    
+#endif
 #endif
 	if (Serial.available() > 0)
 		{
@@ -1421,9 +1422,9 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
       if ( CAN.readMsgBuf(&rxId, &len, rxBuf) == CAN_OK)
          {
    #endif
-#ifdef COMMANDS_DEBUG
+#if defined(COMMANDS_DEBUG) && !defined(NO_SERIAL_OPTPUT)
          Serial.print("CAN: "); Serial.print(rxId,HEX); Serial.print(" Len:"); Serial.print(len); // Debug
-		 for (uint8_t i=0;i<len;i++) 
+		 for (uint8_t i=0;i<len;i++)
 		 {
 			if (i==0) Serial.print(" Data ");
 			if (rxBuf[i]<16) Serial.print("0");
@@ -1442,7 +1443,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    }
 #endif // USE_CAN_AS_INPUT
 
-#if !defined(ESP32) && !defined(ARDUINO_AVR_NANO_EVERY) && !defined(ARDUINO_RASPBERRY_PI_PICO)                // 19.01.21: Juergen: Added Every
+#if !defined(ESP32) && !defined(ARDUINO_AVR_NANO_EVERY) && !defined(ARDUINO_RASPBERRY_PI_PICO)  && !defined(NO_SERIAL_OPTPUT) // 19.01.21: Juergen: Added Every
   #include <avr/boot.h>
   //----------------------
   void Debug_Print_Fuses()                                                                                    // 29.10.20:
@@ -1488,11 +1489,15 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 //-----------
 void setup(){
 //-----------
+  #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
   Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
+  #endif
 #ifdef ESP32
   if (!EEPROM.begin(EEPROM_SIZE))                                                                             // 19.01.21: Juergen: Old: 100
   {
+  #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
     Serial.println("failed to initialize EEPROM");
+  #endif
   }
   esp_log_level_set("*", ESP_LOG_NONE);
 #endif
@@ -1533,7 +1538,7 @@ void setup(){
     RestoreStatus();
   #endif
 
-  
+
   #ifdef SETUP_FASTLED // Use a special FastLED Setup macro defined in the LEDs_AutoProg.h                    // 26.04.20:
     SETUP_FASTLED();
 
@@ -1563,13 +1568,13 @@ void setup(){
     FastLED.show();                                                                                           // 18.01.24 Juergen reduced time wrong "green" LEDs are displayed after boot
   #endif
 
-  #ifdef START_MSG
+  #if defined(START_MSG) && !defined(NO_SERIAL_OPTPUT)
     Serial.println(F(START_MSG));
   #endif
   // Debug_Print_Fuses();
 
   #ifdef RECEIVE_LED_COLOR_PER_RS232                                     // Send the number of available LEDs to the Python program
-    #ifndef LEDS_PER_CHANNEL
+    #if !defined(LEDS_PER_CHANNEL) && !defined(NO_SERIAL_OPTPUT)
 	  Serial.print(F("#Color Test LED cnt:")); Serial.println(NUM_LEDS); // Without this message the program fails with the message
 	#endif
   #endif                                                                 //   "Error ARDUINO is not answering"
@@ -1586,19 +1591,23 @@ void setup(){
   #ifdef USE_CAN_AS_INPUT
 
 	// *** Initialize the CAN bus ***
-    #ifdef ESP32																							
+    #ifdef ESP32
 		CAN.setPins(4, 5);																						// 08.03.21 Juergen
-		if (CAN.begin(CAN_BAUD_RATE)) 
+		if (CAN.begin(CAN_BAUD_RATE))
 			 {
 			 if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 13.07.22 Juergen: use library function again
 			     {
-			 	 Serial.println(F("Filter OK!"));
-    		     Serial.println(F("CAN Init OK!"));
+                 #if !defined(NO_SERIAL_OPTPUT)
+                   Serial.println(F("Filter OK!"));
+                   Serial.println(F("CAN Init OK!"));
+                 #endif
                  CAN_ok = true;
 			     }
 			 else
 			     {
-			 	 Serial.println(F("Filter failed!"));
+                 #if !defined(NO_SERIAL_OPTPUT)
+                   Serial.println(F("Filter failed!"));
+                 #endif
                  CAN_ok = false;
 			     }
 			 }
@@ -1608,7 +1617,9 @@ void setup(){
 	#else
 		if (CAN.begin(MCP_STDEXT, CAN_BAUD_RATE, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
 			 {
-			 Serial.println(F("CAN Init OK!"));
+             #if !defined(NO_SERIAL_OPTPUT)
+               Serial.println(F("CAN Init OK!"));
+             #endif
 			 CAN_ok = true;
 			 CAN.setMode(MCP_NORMAL); // Important to use the filters
              // Der MSP2515 hat zwei Eingangsbuffer.                                                          13.02.23:
@@ -1642,7 +1653,9 @@ void setup(){
              #endif
 			 }                                                       // => Filter is addapte to pass both messages
 	#endif
+    #if !defined(NO_SERIAL_OPTPUT)
     else Serial.println(F("CAN Init Fail!"));                    //    => Messages matching 0x0016???? are passed
+    #endif
   #endif
 
   #ifdef USE_SPI_COM                                                                                          // 13.05.20:
@@ -1669,7 +1682,7 @@ void setup(){
     #endif
   //#endif
 
-  #ifdef DUMP_EEPROM_ON_START                                                                                 // 01.05.20:
+  #if defined(DUMP_EEPROM_ON_START) && !defined(NO_SERIAL_OPTPUT)                                             // 01.05.20:
     char tmp[5];
 
     Serial.println("Dump off EEProm content");
@@ -1695,7 +1708,7 @@ void setup(){
 
 #ifdef __AVR__                                                                                                // 18.01.24 Juergen speed up ESP boot time
   if (millis() < 1500) delay(1500 - millis()); // Wait to prevent flickering if the Arduino is detected from the excel program  // 05.05.20:
-#endif  
+#endif
 
 #if  USE_NEW_LED_ARRAY                                                                                        // 30.10.20:
   #if defined(Mainboard_LED0) || defined(Mainboard_LED_D2)
@@ -1807,27 +1820,27 @@ void setup(){
   #ifndef DCC_STATUS_PIN
     #ifdef __AVR__											     // 02.01.22: Juergen add support for DCC receive on LED Arduino
       #define DCC_STATUS_PIN 13
-    #else      
+    #else
       #define DCC_STATUS_PIN -1
     #endif
   #endif
   DCCInterface* interf = new DCCInterface();
 #ifdef USE_COMM_INTERFACE  										    // 02.01.22: Juergen add support for DCC receive on LED Arduino
   commInterface = interf;
-#endif  
+#endif
   interf->setup(
-    DCC_SIGNAL_PIN, 
-    DCC_STATUS_PIN, 
+    DCC_SIGNAL_PIN,
+    DCC_STATUS_PIN,
 // dual core CPUs use a stream to exchange data between cores
 #if !defined(__AVR__)                                                                                      // 02.01.22: Juergen add support for DCC receive on LED Arduino
-    stream, 
-#endif    
+    stream,
+#endif
 #ifdef NO_DCC_PULLUP
     false,
 #else
     true,
-#endif    
-    GEN_BUTTON_RELEASE_COM                                                                                    // 09.04.23: possible behavior of sending a button release    
+#endif
+    GEN_BUTTON_RELEASE_COM                                                                                    // 09.04.23: possible behavior of sending a button release
   );
 #endif
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
@@ -1839,8 +1852,8 @@ void setup(){
     SXInterface* interf = new SXInterface();
     commInterface = interf;
     interf->setup(SX_SIGNAL_PIN, SX_CLOCK_PIN, SX_STATUS_PIN, stream);
-  #endif  
-  
+  #endif
+
   #ifdef USE_PROTOCOL_LNET
     #ifndef LNET_STATUS_PIN
       #define LNET_STATUS_PIN -1
@@ -1885,11 +1898,11 @@ void setup(){
 
 #if defined(MLL_EXTENSIONS_COUNT)
   extensions.setup(MobaLedLib);
-#endif  
+#endif
   //Eigene_setup();
 }
 
-#if defined READ_LDR && defined READ_LDR_DEBUG
+#if defined READ_LDR && defined READ_LDR_DEBUG && !defined(NO_SERIAL_OPTPUT)
   //---------------------------
   void Debug_Print_LDR_Values()
   //---------------------------
@@ -2187,7 +2200,7 @@ void Set_Mainboard_LEDs()
             #endif
             }
        // Serial.print(Darkness); Serial.print(DayState==SunSet?" SunSet  ":" SunRise "); Serial.print(DayState); Serial.print(" ");// Debug
-       #ifdef DayAndNightTimer_Debug
+       #if defined(DayAndNightTimer_Debug) && !defined(NO_SERIAL_OPTPUT)
          uint16_t Minutes = ((uint32_t)Darkness * 12*60) / 255;
          if (DayState <= SunSet)
               Minutes =  12*60 + Minutes;
@@ -2235,7 +2248,7 @@ void Set_Mainboard_LEDs()
               case T_NOT_BIN_MASK:   Res = !(LED_Val &  Val); break;
               }
            MobaLedLib.Set_Input(Var_Nr, Res);
-           #if 0 // Debug
+           #if 0 && !defined(NO_SERIAL_OPTPUT) // Debug
               uint32_t PERIOD = 500;
               static uint32_t Disp = PERIOD;
               if (millis() >= Disp)
@@ -2262,11 +2275,11 @@ void loop(){
   MLLMainLoop();
   #if defined(__AVR__) && defined(USE_DCC_INTERFACE)                    // 02.01.22: Juergen add support for DCC receive on LED Arduino
     // give DCC interface some time to handle interrupts
-    // target 50 LED updates per second 
+    // target 50 LED updates per second
     int elapsed = millis()-dccLastIdleMs;
     if (elapsed<20) delay(20-elapsed);
     dccLastIdleMs = millis();
-  #endif    
+  #endif
 #endif
 
 #ifdef ESP32                                                            // 18.01.25: Juergen workaround for blocking of FastLED.show()
@@ -2276,7 +2289,7 @@ if (lastFastledSend!=0 && delay>100)                                    // FASTL
     if (lastFastledSend!=lastFastledFail)
     {
         lastFastledFail = lastFastledSend;
-    #ifdef DISPLAY_FASTLED_FAULTS                                       // 18.01.24 Juergen add fault display feature   
+    #if defined(DISPLAY_FASTLED_FAULTS) && !defined(NO_SERIAL_OPTPUT)         // 18.01.24 Juergen add fault display feature
         delayCount++;
         Serial.printf("**** FASTLed delay (%d) detected: Time %4d:%02d:%02d.%02d, FASTLed delays %d revives %d *******\r\n", delay, (int)(millis()/(1000*60*60*24)), (int)(millis()/(1000*60*60) % 24), (int)(millis()/(1000*60) % 60), (int)(millis()/1000 % 60), delayCount, reviveCount);
     #endif
@@ -2285,14 +2298,14 @@ if (lastFastledSend!=0 && delay>100)                                    // FASTL
     {
         if (GiveGTX_sem!=NULL) GiveGTX_sem();
         lastFastledSend = 0;
-    #ifdef DISPLAY_FASTLED_FAULTS                                       // 18.01.24 Juergen add fault display feature   
+    #if defined(DISPLAY_FASTLED_FAULTS) && !defined(NO_SERIAL_OPTPUT)         // 18.01.24 Juergen add fault display feature
         reviveCount++;
         Serial.printf("**** FASTLed hang detected: Time %4d:%02d:%02d.%02d, FASTLed delays %d revives %d *******\r\n", (int)(millis()/(1000*60*60*24)), (int)(millis()/(1000*60*60) % 24), (int)(millis()/(1000*60) % 60), (int)(millis()/1000 % 60), delayCount, reviveCount);
     #endif
     }
 }
 
-#if defined(DISPLAY_FASTLED_FAULTS)                                     // 18.01.24 Juergen add fault display feature   
+#if defined(DISPLAY_FASTLED_FAULTS) && !defined(NO_SERIAL_OPTPUT)       // 18.01.24 Juergen add fault display feature
 if ((millis()-lastMillis)>=10000)
 {
    lastMillis=millis();
@@ -2305,13 +2318,13 @@ if ((millis()-lastMillis)>=10000)
 #ifdef USE_ESP32_EXTENSIONS
   loopESP32Extensions();
 #endif
-  
-#ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low priority loop, on multi core platforms running on separate core 
+
+#ifdef Additional_Loop_Proc2						// 08.10.21: Juergen: add low priority loop, on multi core platforms running on separate core
   Additional_Loop_Proc2();                                                                                        // 26.09.21: Juergen
 #endif
 #if defined(MLL_EXTENSIONS_COUNT)
   extensions.loop(MobaLedLib);
-#endif  
+#endif
 }
 
 #ifdef ESP32
@@ -2327,7 +2340,7 @@ void MLLTask( void * parameter ) {
     delay (1);
 #if defined(MLL_EXTENSIONS_COUNT)
     extensions.loop2(MobaLedLib);
-#endif  
+#endif
   }
 }
 #endif
@@ -2390,9 +2403,9 @@ void MLLMainLoop(){
   Set_Mainboard_LEDs();                 // Turn on/off the LEDs on the mainboard if configured
 #ifdef ESP32
   lastFastledSend = millis();
-#if defined(DISPLAY_FASTLED_FAULTS)                                                                           // 18.01.24 Juergen add fault display feature   
+#if defined(DISPLAY_FASTLED_FAULTS)                                                                           // 18.01.24 Juergen add fault display feature
   updateCount++;
-#endif 
+#endif
 #endif
   FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
 

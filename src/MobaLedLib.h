@@ -1146,10 +1146,13 @@
 #define SINGLE_LED2D       59        // Single dark LED connected with a WS2811 module to channel (G)
 #define SINGLE_LED3D       60        // Single dark LED connected with a WS2811 module to channel (B)         // 06.09.19:  End of new block
 #define SKIP_ROOM          61        // Room which is not controlled with by the house() function (Usefull for Shops in a house becaue this lights are always on at night)
-#define CANDLE            (62+RAM1)  // RGB Candle                                                            // 09.06.20:
-#define CANDLE1            63        // Single Candle LED connected with a WS2811 module to channel (R)
-#define CANDLE2            64        // Single Candle LED connected with a WS2811 module to channel (G)
-#define CANDLE3            65        // Single Candle LED connected with a WS2811 module to channel (B)
+#define SKIP_ROOM1         62        // Single LED Room which is not controlled with by the house() function  // 14.03.26:
+#define SKIP_ROOM2         63        //   "
+#define SKIP_ROOM3         64        //   "
+#define CANDLE            (65+RAM1)  // RGB Candle                                                            // 09.06.20:
+#define CANDLE1            66        // Single Candle LED connected with a WS2811 module to channel (R)
+#define CANDLE2            67        // Single Candle LED connected with a WS2811 module to channel (G)
+#define CANDLE3            68        // Single Candle LED connected with a WS2811 module to channel (B)
 
 #if ((FIRE              & 0x03) != 0) || ((FIRED             & 0x03) != 1) || ((FIREB             & 0x03) != 2) ||   \
     ((ROOM_CHIMNEY      & 0x03) != 0) || ((ROOM_CHIMNEYD     & 0x03) != 1) || ((ROOM_CHIMNEYB     & 0x03) != 2) ||   \
