@@ -199,10 +199,10 @@ uint8_t MobaLedLib_C::Get_RawNr(uint8_t Room_Typ)
 // For all other Room_Typ's 4 is returned
 {
   switch (Room_Typ)
-    {                                                                                            // 06.09.19:  Added SINGLE_LEDxy                        // 14.03.26:  Added SKIP_ROOM1..
-    case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: case NEON_LIGHT1L: case SINGLE_LED1: case SINGLE_LED1D: case SKIP_ROOM1: return 0;
-    case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: case NEON_LIGHT2L: case SINGLE_LED2: case SINGLE_LED2D: case SKIP_ROOM2: return 1;
-    case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case NEON_LIGHT3L: case SINGLE_LED3: case SINGLE_LED3D: case SKIP_ROOM3: return 2;
+    {                                                                                            // 06.09.19:  Added SINGLE_LEDxy
+    case GAS_LIGHT1:  case GAS_LIGHT1D: case NEON_LIGHT1:  case NEON_LIGHT1D: case NEON_LIGHT1M: case NEON_LIGHT1L: case SINGLE_LED1: case SINGLE_LED1D: return 0;
+    case GAS_LIGHT2:  case GAS_LIGHT2D: case NEON_LIGHT2:  case NEON_LIGHT2D: case NEON_LIGHT2M: case NEON_LIGHT2L: case SINGLE_LED2: case SINGLE_LED2D: return 1;
+    case GAS_LIGHT3:  case GAS_LIGHT3D: case NEON_LIGHT3:  case NEON_LIGHT3D: case NEON_LIGHT3M: case NEON_LIGHT3L: case SINGLE_LED3: case SINGLE_LED3D: return 2;
 #if _USE_DEF_NEON                                                                                             // 13.01.20:
     case NEON_DEF1D:  case NEON_DEF2D:  case NEON_DEF3D:  return Room_Typ - NEON_DEF1D; // ToDo: Integerate to the lines above if _USE_DEF_NEON is always active
 #endif
@@ -514,9 +514,6 @@ void MobaLedLib_C::TurnOnRoom(CRGB* lp, uint8_t Room_Typ)
     case SINGLE_LED1D    :
     case SINGLE_LED2D    :
     case SINGLE_LED3D    : Copy_Single_Room_Col(lp, Room_Typ-SINGLE_LED1D, COLOR_SINGLE_D); break;
-    case SKIP_ROOM1      :                                                                                    // 14.03.26:
-    case SKIP_ROOM2      :
-    case SKIP_ROOM3      : break;
     }
 }
 
@@ -530,9 +527,6 @@ void MobaLedLib_C::TurnOffRoom(CRGB* lp, uint8_t RawNr, uint8_t Room_Typ)
     case GAS_LIGHT1:  case GAS_LIGHT1D: if (lp->r % 2) lp->r--;    break; // Ungerade Werte bedeuten LED wird heller, Gerade LED wird dunkler
     case GAS_LIGHT2:  case GAS_LIGHT2D: if (lp->g % 2) lp->g--;    break; // => Wert gerade machen damit die LED dunkler wird
     case GAS_LIGHT3:  case GAS_LIGHT3D: if (lp->b % 2) lp->b--;    break;
-    case SKIP_ROOM1:                                                                                          // 14.03.26:
-    case SKIP_ROOM2:
-    case SKIP_ROOM3: break;
     default: if (RawNr == ALL_CHANNELS)
                   lp->r = lp->g = lp->b = 0;
              else lp->raw[RawNr] = 0;
@@ -627,10 +621,7 @@ void MobaLedLib_C::Proc_House()
      for (uint8_t r = 0; r < LED_cnt; r++)
          {
          if (Room_Typ != SKIP_ROOM)
-              {
-              if (Room_Typ != SKIP_ROOM1 && Room_Typ != SKIP_ROOM2 && Room_Typ != SKIP_ROOM3)  // 14.03.26:  Added SKIP_ROOM1...
               On_LEDs += Is_Room_On(lp, RawNr);
-              }
          else SkipCnt++;
 //       if ((RawNr & 0x03) == 0) lp++; // 05.10.19:  Old position
          Room_Typ = pgm_read_byte_near(++cpr); // Get the Room_Typ an RawNr of the next LED
