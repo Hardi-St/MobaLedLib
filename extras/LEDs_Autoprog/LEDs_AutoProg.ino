@@ -271,6 +271,7 @@
  08.02.26:  - keep the LED bus alive even if external program doesn't send any data
  28.02.26:  - Norbert: Added define CAN_BAUD_RATE to allow setting CAN bit rate vie entry in Prog Generator
  17.03.26:  - Hardi: New compiler switch NO_SERIAL_OPTPUT which saves 175 bytes RAN and 980 bytes FLASH
+ 07.05.26:  - Juergen: fixed not working status storage on PICO platform
 */
 
 #include <Arduino.h>
@@ -286,11 +287,14 @@
   #define SEND_DISABLE_PIN    A1 // Pin A1 is used to stop the DCC, Selectrix, ... Arduino from sending RS232 characters
 #endif
 
-#ifdef ESP32                                                                                                  // 30.10.20: Juergen
-  #include "esp_task_wdt.h"																					  // 05.03.21: Juergen - needed to reset watchdog timer while Farbtest is active
+#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
   #include <EEPROM.h>
   #define EEPROM_SIZE 512			// maximum size of the eeprom
   //#define EEPROM_OFFSET 0			// (the first 96 byte are reserved for WIFI configuration)  // 28.11.2020 comment out -> WIFI config no longer stored in EEPROM
+#endif
+
+#ifdef ESP32                                                                                                  // 30.10.20: Juergen
+  #include "esp_task_wdt.h"																					  // 05.03.21: Juergen - needed to reset watchdog timer while Farbtest is active
   #if defined(USE_PROTOCOL_SELECTRIX)
     #define SX_SIGNAL_PIN 13   // 22.09.24:  Old: 4
     #define SX_CLOCK_PIN  4    // 22.09.24:  Old: 13
@@ -1492,14 +1496,18 @@ void setup(){
   #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
   Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
   #endif
-#ifdef ESP32
+#if defined(ESP32)
   if (!EEPROM.begin(EEPROM_SIZE))                                                                             // 19.01.21: Juergen: Old: 100
   {
   #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
     Serial.println("failed to initialize EEPROM");
   #endif
-  }
   esp_log_level_set("*", ESP_LOG_NONE);
+  }
+#endif
+  
+#if defined(ARDUINO_RASPBERRY_PI_PICO)  
+  EEPROM.begin(EEPROM_SIZE);
 #endif
 
 #if defined(CLEAR_STORE_STATUS)                                                                               // 20.05.23: Juergen
