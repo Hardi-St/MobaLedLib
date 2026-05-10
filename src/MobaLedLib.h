@@ -339,14 +339,14 @@
 #define HP_2_2Bin_RGB(LED, InCh, MaxB16)           Bin_InCh_to_TmpVar(InCh, 1) \
                                                    XPatternT1(LED,12,SI_LocalVar,12,0,MaxB16,0,0,500 ms,0,0,0,0,0,0,0,128,0,8,0,0,0,0,0,0,0,0,128,0,0,0,0,8  ,0,63,128,63)
 
-// 14.01.23: A signal consisting of one 2-color red/green LED 
+// 14.01.23: A signal consisting of one 2-color red/green LED
 #define SingleLedSignal(LED,InCh,Single_Cx, FadeTime) InCh_to_LocalVar(InCh, 4) \
                                                    XPatternT1(LED,_Cx2StCh(Single_Cx)+64,SI_LocalVar,2,0,128,0,0,FadeTime,132,12  ,0,63,128,63,128,63,191)
 #define SingleLedSignalEx(LED,InCh,Single_Cx, FadeTime, State0_0, State0_1, State1_0, State1_1, State2_0, State2_1, State3_0, State3_1) InCh_to_LocalVar(InCh, 4) \
                                                    XPatternT1(LED,_Cx2StCh(Single_Cx)+28,SI_LocalVar,2,0,255,0,0,FadeTime,0,0,State0_0,State0_1,0,0,State1_0,State1_1,0,0,State2_0,State2_1,0,0, \
                                                    State3_0,State3_1  ,0,63,128,63,128,63,128,63)
 #define Signal2(LED, InCh, Single_Cx, MaxB128)    InCh_to_TmpVar(InCh, 2) \
-                                                  XPatternT1(LED,_Cx2StCh(Single_Cx)+128,SI_LocalVar,2,0,MaxB128,0,0,125 ms,9  ,63,191)                                                   
+                                                  XPatternT1(LED,_Cx2StCh(Single_Cx)+128,SI_LocalVar,2,0,MaxB128,0,0,125 ms,9  ,63,191)
 #define Signal2_RGB(LED, InCh, MaxB128)           InCh_to_TmpVar(InCh, 2) \
                                                   XPatternT1(LED,128,SI_LocalVar,6,0,MaxB128,0,0,125 ms,1,4  ,63,191)
 
@@ -396,14 +396,19 @@
 #define  RGB_Heartbeat_Color(LED, MinBrightness, MaxBrightness, Color, Duration) \
              New_HSV_Group()                                          \
              APatternT1(LED,224,SI_1,1,Color,Color,0,PM_HSV,0 ms,1)  \
-             APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,Duration,1)       
-      
+             APatternT1(LED, 194,SI_1,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,Duration,1)
+
+#define  RGB_Heartbeat_Color_Switch(LED, InCh, MinBrightness, MaxBrightness, Color, Duration) \
+             New_HSV_Group()                                          \
+             APatternT1(LED,224,InCh,1,Color,Color,0,PM_HSV,0 ms,1)  \
+             APatternT1(LED, 194,InCh,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,Duration,1)
+             
 #define  RGB_Ring(LED, InCh, Brightness, Duration) \
             APatternT1(LED,4,InCh,36,0,Brightness,0,0,Duration,137,98,8,162,28,195,52,142,34,72,162,  \
             24,130,40,199,48,141,163,40,146,40,134,32,202,49,76,227,56,138,36,138,33,136,114,12,211,  \
             52,142,34,137,98,8,162,28,195,48,141,163,72,162,24,130,40,199,49,76,227,40,146,40,134,32, \
             202,114,12,211,56,138,36,138,33,136,162,28,195,52,142,34,137,98,8,130,40,199,48,141,163,  \
-            72,162,24,134,32,202,49,76,227,40,146,40,138,33,136,114,12,211,56,138,36)                        // 07.01.25: Juergen include Raily's LED ring macro  
+            72,162,24,134,32,202,49,76,227,40,146,40,138,33,136,114,12,211,56,138,36)                        // 07.01.25: Juergen include Raily's LED ring macro
 
 // Push Button functions which count the button press and activates temporary variables
 // The button flashes n times if the button was pressed n times.
@@ -926,8 +931,8 @@
 #endif
 
 #define MobaLedLib_Prepare()             MobaLedLib_C* pMobaLedLib; \
-                                         uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/                                         
-                                             
+                                         uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/
+
 #if _USE_STORE_STATUS && _USE_EXT_PROC                                                                                       // 26.09.21: Juergen
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL, NULL)
 #define MobaLedLib_CreateEx(leds, callback, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
@@ -935,14 +940,14 @@
 #define MobaLedLibPtr_Create(leds)   MobaLedLib_CreatePtrEx(leds, NULL, NULL)
 #define MobaLedLibPtr_CreateEx(leds, callback, processor) \
                                             pMobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback, processor); // MobaLedLib_C class definition
-#elif _USE_STORE_STATUS 
+#elif _USE_STORE_STATUS
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, callback)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
 #define MobaLedLibPtr_Create(leds)   MobaLedLib_CreatePtrEx(leds, NULL)
 #define MobaLedLibPtr_CreateEx(leds, callback) \
                                             pMobaLedLib = new MobaLedLib_C(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), callback); // MobaLedLib_C class definition
-#elif _USE_EXT_PROC 
+#elif _USE_EXT_PROC
 #define MobaLedLib_Create(leds)   MobaLedLib_CreateEx(leds, NULL)
 #define MobaLedLib_CreateEx(leds, processor)   uint8_t Config_RAM[__COUNTER__/2]; /* RAM used for the configuration functions. The size is calculated in the macros which are used in the Config[] table.*/ \
                                             MobaLedLib_C MobaLedLib(leds, sizeof(leds)/sizeof(CRGB), Config, Config_RAM, sizeof(Config_RAM), processor); // MobaLedLib_C class definition
@@ -1313,15 +1318,15 @@ public:
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
   #if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
                     MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize, Callback_t Function, ExtProc_t Processor); // Konstruktor mit 2xcallback
-  #else                       
+  #else
                     MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize, Callback_t Function); // Konstruktor mit callback
-  #endif                        
+  #endif
 #else
   #if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
                     MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize, ExtProc_t Processor); // Konstruktor mit callback
-  #else                       
+  #else
                     MobaLedLib_C(struct CRGB* _leds, uint16_t Num_Leds, const uint8_t Config[], uint8_t RAM[], uint16_t RamSize); // Konstruktor OHNE callback
-  #endif                        
+  #endif
 #endif
 #if _USE_USE_GLOBALVAR
  void               Assigne_GlobalVar(ControlVar_t *GlobalVar, uint8_t GlobalVar_Cnt);
@@ -1364,7 +1369,7 @@ private: // Variables
  Callback_t         CallbackFunc;                                      //  4 Byte
  uint8_t            ProcCounterId;                                     //  1 Byte
 #endif
-#if _USE_EXT_PROC                                                                                             // 26.09.21: JÃ¼rgen
+#if _USE_EXT_PROC                                                                                             // 26.09.21: Juergen
  ExtProc_t          CommandProcessorFunc;                              //  4 Byte
 #endif
                                                                        // 47 Byte RoomCol[]
