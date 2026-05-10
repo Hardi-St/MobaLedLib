@@ -50,12 +50,44 @@ class MLLExtension
     // On multicore CPUs the additional loop. FastLED and MobaLedLib is always processed in main (=other) loop
     virtual void loop2(MobaLedLib_C& mobaLedLib) {};
 #endif    
+    // the callback is called every time an accessory command should be processed
+    // receivedAddr: 1-2048
+    // direction:    0:Thrown 1:Closed
+    // outputPower:  0:Off 1:On
+    // channel:      the first channel in the extAddrTable to be checked
+    // extAddrTable: the table with the action definition
+    // extAddrCount: number of actions in table
+    //
+    // returns 
+    // 0  .. the command was processed, no further handling in core needed
+    // >0 .. continue core processing
+    virtual uint16_t onAccessoryCommand(MobaLedLib_C& mobaLedLib, uint16_t receivedAddr, uint8_t direction, uint8_t outputPower, uint16_t channel, const Ext_Addr_T extAddrTable[], uint16_t extAddrCount) { return receivedAddr; }
+    
   protected:
     CRGB* Get_LEDPtr(MobaLedLib_C& mobaLedLib, ledNr_t ledNr)
     {
         return &mobaLedLib.leds[ledNr];
     };
 };
+
+#ifdef USE_EXTENSIONS_V2
+class MLLExtensionV2 : public MLLExtension
+{
+	public:
+    // the callback is called every time an accessory command should be processed
+    // receivedAddr: 1-2048
+    // direction:    0:Thrown 1:Closed
+    // outputPower:  0:Off 1:On
+    // channel:      the first channel in the extAddrTable to be checked
+    // extAddrTable: the table with the action definition
+    // extAddrCount: number of actions in table
+    //
+    // returns 
+    // 0  .. the command was processed, no further handling in core needed
+    // >0 .. continue core processing
+    virtual uint16_t onAccessoryCommand(MobaLedLib_C& mobaLedLib, uint16_t receivedAddr, uint8_t direction, uint8_t outputPower, uint16_t channel, const Ext_Addr_T extAddrTable[], uint16_t extAddrCount) { return receivedAddr; }
+};
+#endif
 
 class ExtensionProcessor
 {
@@ -81,7 +113,7 @@ class ExtensionProcessor
     {
       extensions[i]->setup(mobaLedLib);
     }
-#if (DEBUG_MLL_EXTENSIONS&0x01)==0x01
+#if (DEBUG_MLL_EXTENSIONS&0x81)==0x81
     { char s[80]; sprintf(s, "%s setup done", DebugName); Serial.println(s); Serial.flush();} // Debug
 #endif      
   }
@@ -93,7 +125,7 @@ class ExtensionProcessor
 #endif      
     for (int i=0;i<count; i++)
     {
-#if (DEBUG_MLL_EXTENSIONS&0x04)==0x04
+#if (DEBUG_MLL_EXTENSIONS&0x82)==0x82
     { char s[80]; sprintf(s, "%s calls loop for extension %d", DebugName, i); Serial.println(s); Serial.flush();} // Debug
 #endif      
       extensions[i]->loop(mobaLedLib);
@@ -103,16 +135,34 @@ class ExtensionProcessor
 #if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
   void loop2(MobaLedLib_C& mobaLedLib)
   {
-#if (DEBUG_MLL_EXTENSIONS&0x02)==0x02
+#if (DEBUG_MLL_EXTENSIONS&0x04)==0x04
     { char s[80]; sprintf(s, "ExtensionProcessor calls loop2 for %d extensions", count); Serial.println(s); Serial.flush();} // Debug
 #endif      
     for (int i=0;i<count; i++)
     {
-#if (DEBUG_MLL_EXTENSIONS&0x04)==0x04
+#if (DEBUG_MLL_EXTENSIONS&0x84)==0x84
     { char s[80]; sprintf(s, "ExtensionProcessor calls loop2 for extension %d", i); Serial.println(s); Serial.flush();} // Debug
 #endif      
       extensions[i]->loop2(mobaLedLib);
     } 
+  }
+#endif
+  
+#ifdef USE_EXTENSIONS_V2  
+  uint16_t onAccessoryCommand(MobaLedLib_C& mobaLedLib, uint16_t receivedAddr, uint8_t direction, uint8_t outputPower, uint16_t channel, const Ext_Addr_T extAddrTable[], uint16_t extAddrCount)
+  {
+#if (DEBUG_MLL_EXTENSIONS&0x08)==0x08
+    { char s[80]; sprintf(s, "%s calls onAccessoryCommand for %d extensions", DebugName, count); Serial.println(s); Serial.flush();} // Debug
+#endif    
+    for (int i=0;i<count; i++)
+    {
+#if (DEBUG_MLL_EXTENSIONS&0x88)==0x88
+      { char s[80]; sprintf(s, "%s calls onAccessoryCommand(%d,%d,%d,%d,*,%d) for extension %d", DebugName, receivedAddr, direction, outputPower, channel, extAddrCount, i); Serial.println(s); Serial.flush();} // Debug
+#endif      
+      receivedAddr = extensions[i]->onAccessoryCommand(mobaLedLib, receivedAddr, direction, outputPower, channel, extAddrTable, extAddrCount);
+      if (receivedAddr==0) return 0;
+    } 
+    return receivedAddr;
   }
 #endif
   

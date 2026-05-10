@@ -2,8 +2,8 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2025  Hardi Stengelin: MobaLedLib@gmx.de
- Copyright (C) 2020 - 2025  Juergen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2018 - 2026  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2026  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -272,10 +272,13 @@
  28.02.26:  - Norbert: Added define CAN_BAUD_RATE to allow setting CAN bit rate vie entry in Prog Generator
  17.03.26:  - Hardi: New compiler switch NO_SERIAL_OPTPUT which saves 175 bytes RAN and 980 bytes FLASH
  07.05.26:  - Juergen: fixed not working status storage on PICO platform
+              extract platform dependent persistence code into separate header file "persistence.h"
+	      add support of extensions interface V2
 */
 
 #include <Arduino.h>
 #include "MP3.h"
+#include "persistence.h"
 
 #ifndef __LEDS_AUTOPROG_H__
   //#define FASTLED_RMT_MAX_CHANNELS 6
@@ -285,12 +288,6 @@
 
 #ifndef ESP32  // The pin is not used by the ESP                                                              // 30.10.20: Juergen
   #define SEND_DISABLE_PIN    A1 // Pin A1 is used to stop the DCC, Selectrix, ... Arduino from sending RS232 characters
-#endif
-
-#if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
-  #include <EEPROM.h>
-  #define EEPROM_SIZE 512			// maximum size of the eeprom
-  //#define EEPROM_OFFSET 0			// (the first 96 byte are reserved for WIFI configuration)  // 28.11.2020 comment out -> WIFI config no longer stored in EEPROM
 #endif
 
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
@@ -566,9 +563,7 @@ ExtensionProcessor extensions(mllExtensions,MLL_EXTENSIONS_COUNT);
 #endif
 bool Send_Disable_Pin_Active = 1;                                                                             // 13.05.20:
 
-
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20:  New feature from Juergen
-    #define EEPROM_START 64                                                                                   // 18.05.23:  reserve first 32 byte for global storage
     void StoreStatus(uint16_t EEPromAddr, uint8_t status);                                                    // 01.05.20:
 #endif
 
@@ -753,7 +748,11 @@ void Receive_LED_Color_per_RS232()                                              
         ReceivedAddr += ADDR_OFFSET;
      #endif
      //Serial.print(F("Update_InputCh_if_Addr_exists ")); Serial.println(ReceivedAddr); // Debug
+
      uint16_t Channel = DCC_INPSTRUCT_START;
+#if defined(MLL_EXTENSIONS_COUNT) && defined (USE_EXTENSIONS_V2)
+     ReceivedAddr = extensions.onAccessoryCommand(MobaLedLib, ReceivedAddr, Direction, OutputPower, Channel, Ext_Addr, sizeof(Ext_Addr)); if (ReceivedAddr==0) return;
+#endif
      for (const uint8_t *p = (const uint8_t*)Ext_Addr, *e = p + sizeof(Ext_Addr); p < e; )
          {
          uint16_t Raw_Addr = pgm_read_word_near(p); p+=2;
@@ -884,12 +883,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         if (ValueId != TargetValueId) return false;
         if (CallbackType == CT_COUNTER_INITIAL)
            {
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-           eeprom_busy_wait();
-           *Value = eeprom_read_byte((const uint8_t*)EEPromAddr);
-#else
-           *Value = EEPROM.read(EEPromAddr);
-#endif
+           *Value = PERSISTENCE_READ(EEPromAddr);
            #if defined(DEBUG_STORE_STATUS) && 1
              { char s[80]; sprintf(s, "Initialize Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
            #endif
@@ -978,12 +972,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #endif
      if ((Options & IS_COUNTER) == IS_COUNTER) return false;
 
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-     eeprom_busy_wait();
-     uint8_t status = eeprom_read_byte((const uint8_t*)EEPromAddr);
-#else
-	 uint8_t status = EEPROM.read(EEPromAddr);
-#endif
+     uint8_t status = PERSISTENCE_READ(EEPromAddr);
      uint8_t InCnt = Options & InCnt_MSK;
      if (status > (1 << InCnt))
         {
@@ -1028,12 +1017,8 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    {
      #if defined(DEBUG_STORE_STATUS) && 0
        { char s[80];sprintf(s, "store status for EEAdr %i value:%i", EEPromAddr, value); Serial.println(s);}  // Debug
-	#endif
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-     uint8_t eeValue = eeprom_read_byte((const uint8_t*)EEPromAddr);
-#else
-	 uint8_t eeValue = EEPROM.read(EEPromAddr);
-#endif
+     #endif
+     uint8_t eeValue = PERSISTENCE_READ(EEPromAddr);
      #if defined(DEBUG_STORE_STATUS) && 0
        { char s[80]; sprintf(s, " read ActualVal for EEAdr%i=%d", EEPromAddr, eeValue); Serial.println(s); }  // Debug
      #endif
@@ -1042,13 +1027,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         #if defined(DEBUG_STORE_STATUS) && 1
            { char s[80]; sprintf(s, " updating status for EEAdr %d=%d", EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
         #endif
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-        eeprom_busy_wait();
-        eeprom_write_byte((uint8_t*)EEPromAddr, status);
-#else
-        EEPROM.write(EEPromAddr, status);
-		EEPROM.commit();
-#endif
+        PERSISTENCE_WRITE(EEPromAddr, status);
         }
    }
 #endif // ENABLE_STORE_STATUS                                                                                 // 01.05.20:
@@ -1447,7 +1426,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    }
 #endif // USE_CAN_AS_INPUT
 
-#if !defined(ESP32) && !defined(ARDUINO_AVR_NANO_EVERY) && !defined(ARDUINO_RASPBERRY_PI_PICO)  && !defined(NO_SERIAL_OPTPUT) // 19.01.21: Juergen: Added Every
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO) && !defined(NO_SERIAL_OPTPUT) 
   #include <avr/boot.h>
   //----------------------
   void Debug_Print_Fuses()                                                                                    // 29.10.20:
@@ -1496,33 +1475,18 @@ void setup(){
   #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
   Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
   #endif
+  PERSISTENCE_SETUP(EEPROM_SIZE);
 #if defined(ESP32)
-  if (!EEPROM.begin(EEPROM_SIZE))                                                                             // 19.01.21: Juergen: Old: 100
-  {
-  #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
-    Serial.println("failed to initialize EEPROM");
-  #endif
   esp_log_level_set("*", ESP_LOG_NONE);
-  }
-#endif
-  
-#if defined(ARDUINO_RASPBERRY_PI_PICO)  
-  EEPROM.begin(EEPROM_SIZE);
 #endif
 
 #if defined(CLEAR_STORE_STATUS)                                                                               // 20.05.23: Juergen
   #ifndef EEPROM_SIZE
-  #define EEPROM_SIZE 512
+  #define EEPROM_SIZE 1024
   #endif
   for (uint16_t EEPromAddr = 0; EEPromAddr<EEPROM_SIZE; EEPromAddr++)
   {
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-    eeprom_busy_wait();
-    eeprom_write_byte((uint8_t*)EEPromAddr, 0);
-#else
-    EEPROM.write(EEPromAddr, 0);
-    EEPROM.commit();
-#endif
+    PERSISTENCE_WRITE(EEPromAddr, 0);
   }
 #endif
 
@@ -1702,12 +1666,7 @@ void setup(){
             sprintf(tmp, "%04x", eeAddr);
             Serial.print(tmp);
         }
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-        eeprom_busy_wait();
-        uint8_t value = eeprom_read_byte((const uint8_t*)eeAddr);
-#else
-        uint8_t value = EEPROM.read(EEPromAddr);
-#endif
+        uint8_t value = PERSISTENCE_READ(eeAddr);
         sprintf(tmp, " %02x", value);
         Serial.print(tmp);
     }
@@ -1823,7 +1782,6 @@ void setup(){
     pinMode(LED16_PIN, OUTPUT);
   #endif
 #endif
-
 #ifdef USE_DCC_INTERFACE
   #ifndef DCC_STATUS_PIN
     #ifdef __AVR__											     // 02.01.22: Juergen add support for DCC receive on LED Arduino
@@ -1851,6 +1809,10 @@ void setup(){
     GEN_BUTTON_RELEASE_COM                                                                                    // 09.04.23: possible behavior of sending a button release
   );
 #endif
+#ifdef ARDUINO_ARCH_RP2040
+  PERSISTENCE_SETUP(EEPROM_SIZE);  // need to re-init EEPROM because NmraDcc::init does some kind of de-init
+#endif
+
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
 
   #ifdef USE_SX_INTERFACE
@@ -2337,8 +2299,10 @@ if ((millis()-lastMillis)>=10000)
 
 #ifdef ESP32
 //--------------------------------
-void MLLTask( void * parameter ) {
+void MLLTask( void * parameter ) 
+{
 //--------------------------------
+  PERSISTENCE_SETUP(EEPROM_SIZE);
   while(1) {
     MLLMainLoop();
 #ifdef USE_ESP32_EXTENSIONS
