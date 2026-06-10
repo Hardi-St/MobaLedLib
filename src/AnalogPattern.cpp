@@ -607,7 +607,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
               //if (!Initialize && AnalogMode) Dprintf("%i %i", (int)v0, (int)v1); // Debug 24.10.19:
               }
          // Update one LED
-         if (AnalogMode && (Inp_Is_On(Inp) || (HSV_mode && !Initialize))) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added: HSV_mode to correctly turn off the LEDs
+           if (AnalogMode && (Inp_Is_On(Inp) || (HSV_mode && !Initialize) || (Run2endAndWait && dp->State != PT_INACTIVE))) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added: HSV_mode to correctly turn off the LEDs // 26.05.26
               {                                                                                                                // 20.10.19:  Added: !Initialize because otherwise the Cave_Illumination shows random colors at startup
               #pragma GCC diagnostic push                                                                     // 17.11.20:  Disable warning "v0 uninitialized..."
               #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
