@@ -5,9 +5,7 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2022  Hardi Stengelin: MobaLedLib@gmx.de
- 
- this file: Copyright (C) 2021-2022 Jürgen Winkler: MobaLedLib@a1.net
+ Copyright (C) 2021-2026 Jürgen Winkler: MobaLedLib@a1.net
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -38,6 +36,13 @@
   const char* DebugName = "ExtensionProcessor";
 #endif  
 
+#if defined(USE_EXTENSIONS_V2) && !defined(Ext_Addr_T)
+typedef struct
+    {
+    uint16_t AddrAndTyp; // address range: 0..16383. The upper two bytes are used for the type
+    uint8_t  InCnt;
+    } __attribute__ ((packed)) Ext_Addr_T;
+#endif
 
 class MLLExtension
 {
@@ -50,6 +55,7 @@ class MLLExtension
     // On multicore CPUs the additional loop. FastLED and MobaLedLib is always processed in main (=other) loop
     virtual void loop2(MobaLedLib_C& mobaLedLib) {};
 #endif    
+#ifdef USE_EXTENSIONS_V2
     // the callback is called every time an accessory command should be processed
     // receivedAddr: 1-2048
     // direction:    0:Thrown 1:Closed
@@ -62,6 +68,7 @@ class MLLExtension
     // 0  .. the command was processed, no further handling in core needed
     // >0 .. continue core processing
     virtual uint16_t onAccessoryCommand(MobaLedLib_C& mobaLedLib, uint16_t receivedAddr, uint8_t direction, uint8_t outputPower, uint16_t channel, const Ext_Addr_T extAddrTable[], uint16_t extAddrCount) { return receivedAddr; }
+#endif
     
   protected:
     CRGB* Get_LEDPtr(MobaLedLib_C& mobaLedLib, ledNr_t ledNr)
