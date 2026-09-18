@@ -966,7 +966,7 @@
   #define MobaLedLib_Assigne_GlobalVar(GlobalVar)  MobaLedLib.Assigne_GlobalVar(GlobalVar, (uint8_t)(sizeof(GlobalVar)/sizeof(ControlVar_t)))
 #endif
 
-#define _ConvChannelNr2Byte(ChannelNr) (ChannelNr%4 == 0 ? (ChannelNr)/4 : 512 + (ChannelNr)/4) // Generates a warning if the channel number can not be divided by 4
+#define _ConvChannelNr2Byte(ChannelNr) (ChannelNr%4 == 0 ? (ChannelNr)/4 : (_ERR_INPUT_RANGE*2 + (ChannelNr)/4)) // Generates a warning if the channel number can not be divided by 4
 
 // Attention: The function writes  8*ByteCnt input channels !!!
 #define MobaLedLib_Copy_to_InpStruct(Src, ByteCnt, ChannelNr)  \
@@ -1334,7 +1334,7 @@ public:
  void               Update();
  void               Set_Input(inch_t channel, uint8_t On);
  int8_t             Get_Input(inch_t channel);
- void               Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, uint8_t InpStructArrayNr);
+ void               Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, inch_t InpStructArrayNr);
  void               Print_Config(); // FLASH usage ~4258 Byte RAM 175 (16.12.18), #define _PRINT_DEBUG_MESSAGES must be enabled in "Lib_Config.h"
 
 public:  // Variables
@@ -1356,7 +1356,7 @@ private: // Variables
  uint8_t            t10;         // time>>10  = / 1024                 //  1 Byte
 #endif
  TV_Dat_T           TV_Dat[_TV_CHANNELS];                              // 10 Byte
- uint8_t            InpStructArray[_INP_STRUCT_ARRAY_SIZE];            // 64 Byte   Array which contains two bits for each input. One bit for the actual state and a second for the new state. (See INP_TURNED_ON)
+ uint8_t            InpStructArray[_INP_STRUCT_ARRAY_SIZE];            // Array which contains two bits for each input. One bit for the actual state and a second for the new state. (See INP_TURNED_ON)  Size: _INP_STRUCT_ARRAY_SIZE (64 or 512)
  HSV_T             *HSV_p;                                             //  2 Byte
  ControlVar_t      *ActualVar_p;                                       //  2 Byte                                                                  // 07.11.18:
 #if _USE_USE_GLOBALVAR
