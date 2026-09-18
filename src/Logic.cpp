@@ -131,8 +131,9 @@ bool MobaLedLib_C::Inp_is_Used_in_Logic(inch_t Channel)
   const uint8_t *p = cp + P_LOGIC_ARGS;
   while (Cnt--)
     {
-    inch_t d = pgm_read_inch(p++);
+    inch_t d = pgm_read_inch(p);
     if (d == Channel) return true;
+    p+=INCH_LEN;
     }
   return false;
 }
