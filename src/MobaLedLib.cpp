@@ -774,7 +774,7 @@ inline uint8_t* MobaLedLib_C::Get_LEDPtr(uint8_t &cnt)
 void MobaLedLib_C::Proc_Const()
 //-----------------------------
 {
-  uint8_t Inp = Get_Input(pgm_read_byte_near(cp+P_INPCHANEL));
+  uint8_t Inp = Get_Input(pgm_read_inch(cp+P_INPCHANEL));
   if (Inp == INP_TURNED_ON || Inp == INP_TURNED_OFF || Initialize)
      {
      const uint8_t pos = Inp_Is_On(Inp) ? P_CONST_VAL1 : P_CONST_VAL0;
@@ -837,8 +837,8 @@ void MobaLedLib_C::Proc_Fire()
   if ((uint8_t)((t & 0xFF) - *Last_t) >= 50) // Update every 50 ms => 20 Frames/sec
      {
      *Last_t = t & 0xFF;
-     uint8_t Inp    = Get_Input(pgm_read_byte_near(cp+P_FIRE_INCH));
-     ledNr_t Led0   = pgm_read_byte_near(cp+P_FIRE_LED0);
+     uint8_t Inp    = Get_Input(pgm_read_inch(cp+P_FIRE_INCH));
+     ledNr_t Led0   = pgm_read_led_nr(cp+P_FIRE_LED0);
      uint8_t Bright = pgm_read_byte_near(cp+P_FIRE_BRIGHT);
 
      // Array of temperature readings at each simulation cell
@@ -905,7 +905,7 @@ void MobaLedLib_C::Proc_Set_CandleTab()
 void MobaLedLib_C::Proc_Set_TV_Tab()
 //----------------------------------
 {
-  uint8_t Inp = Get_Input(pgm_read_byte_near(cp));
+  uint8_t Inp = Get_Input(pgm_read_inch(cp));
   if (Inp)
      {
      uint8_t Channel = pgm_read_byte_near(cp+1);
@@ -926,7 +926,7 @@ void MobaLedLib_C::IncCP_Set_TV_Tab()
 void MobaLedLib_C::Proc_Set_Def_Neon()
 //------------------------------------
 {
-  uint8_t Inp = Get_Input(pgm_read_byte_near(cp));
+  uint8_t Inp = Get_Input(pgm_read_inch(cp));
   if (Inp)
      {
      Rand_On_DefNeon = pgm_read_byte_near(cp+1); // (Def=10)  probability that the neon light starts.             0 = don't start, 1 start seldom, 255 = Start immediately
@@ -1011,8 +1011,8 @@ void MobaLedLib_C::Proc_InCh_to_X_Var()
 // 6            start offset                                                                   (I2X_USE_START1)
 // 7            Use local var: if set to 1 then changed flag is only set if the state changes  (I2X_USE_LOCALVAR)
 {
-  uint16_t InCh = pgm_read_byte_near(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
-  uint8_t   arg = pgm_read_byte_near(cp+1);
+  uint16_t InCh = pgm_read_inch(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  uint8_t  arg = pgm_read_byte_near(cp+INCH_LEN);
   uint8_t  Nr      = (arg & I2X_USE_START1) ? 1:0;  // Does ">> 6" instead of "?1:0" save memory? No, it uses exact the same amount of FLASH
   uint16_t EndInCh = InCh + (arg & (I2X_USE_START1-1));                                                       // 05.06.20:  Changed to 16 Bit in case InCh = 255
   /*
@@ -1064,14 +1064,14 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar()
 //-------------------------------------------------------
 // New function which treats the input variables as binary number
 {
-  uint16_t InCh = pgm_read_byte_near(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
+  uint16_t InCh = pgm_read_inch(cp);                                        // 05.06.20:  Changed to 16 Bit in case InCh = 255
 
   // args bits:
   // 0..2         number of channels to read  (currently max 3 bits, see code below (Mask is 8 bit)
   // 3...5        reserved
   // 6            start offset
   // 7            re-trigger bit: if set to 1 also set Changed flag if state didn't change
-  uint8_t  arg     = pgm_read_byte_near(cp+1);
+  uint8_t  arg     = pgm_read_byte_near(cp+INCH_LEN);
   uint16_t EndInCh = InCh + (arg & 0x07);                                        // 31.05.20:  J: max 3 bits, see code below (Mask is 8 bit)  // 05.06.20:  Changed to 16 Bit in case InCh = 255
   uint8_t  Start   = (arg & 0x40) >> 6;                                          // 31.05.20:  J: start offset taken from arg
 
@@ -1104,8 +1104,8 @@ void MobaLedLib_C::Proc_InCh_to_TmpVar(uint8_t Start)                           
 //  ...
 // If no input variable is changed the ActualVar_p->Changed = 0
 {
-  uint8_t InCh    = pgm_read_byte_near(cp);
-  uint8_t EndInCh = InCh + pgm_read_byte_near(cp+1);
+  inch_t InCh    = pgm_read_inch(cp);
+  inch_t EndInCh = InCh + pgm_read_byte_near(cp+INCH_LEN);
 
   /*
   static uint32_t Next_t = 0;                                                    // Debug
@@ -1141,8 +1141,8 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar(uint8_t Start)                       
 //-------------------------------------------------------
 // New function which treats the input variables as binary number
 {
-  uint8_t InCh    = pgm_read_byte_near(cp);
-  uint8_t EndInCh = InCh + pgm_read_byte_near(cp+1);
+  inch_t InCh    = pgm_read_inch(cp);
+  inch_t EndInCh = InCh + pgm_read_byte_near(cp+INCH_LEN);
   ActualVar_p = &TempVar;
   ActualVar_p->Changed = 0;
   uint8_t Nr  = 0;
@@ -1165,7 +1165,7 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar(uint8_t Start)                       
 void MobaLedLib_C::Proc_CopyLED()
 //-------------------------------
 {
-  uint8_t Inp = Get_Input(pgm_read_byte_near(cp+P_COPYLED_INP));
+  uint8_t Inp = Get_Input(pgm_read_inch(cp+P_COPYLED_INP));
   CRGB *lp = &leds[pgm_read_led_nr(cp+P_COPYLED_LED)];
   #if _USE_COPY_N_LEDS                                                                                        // 18.09.23:
       int8_t CntI = pgm_read_byte_near(cp+P_COPYLED_CNT);
@@ -1543,7 +1543,7 @@ void MobaLedLib_C::Inc_cp(uint8_t Type)
 }
 
 //----------------------------------------------------
-uint8_t MobaLedLib_C::InpChannel_used(uint8_t Channel)
+uint8_t MobaLedLib_C::InpChannel_used(inch_t Channel)
 //----------------------------------------------------
 // Check if the given input channel is used in the configuration
 {
@@ -1576,7 +1576,7 @@ uint8_t MobaLedLib_C::InpChannel_used(uint8_t Channel)
 
 
 //--------------------------------------------------------------------------------
-uint8_t MobaLedLib_C::Find_Next_Priv_InpChannel(uint8_t Channel, int8_t Direction)
+inch_t MobaLedLib_C::Find_Next_Priv_InpChannel(inch_t Channel, int8_t Direction)
 //--------------------------------------------------------------------------------
 // Find the next or prior used InpChannel in the configuration starting with "Channel".
 // If "Direction" is +1 the next channel is returned.
@@ -1590,7 +1590,7 @@ uint8_t MobaLedLib_C::Find_Next_Priv_InpChannel(uint8_t Channel, int8_t Directio
      Direction = +1;
      }
   int cnt = 0;
-  while (!InpChannel_used((Channel += Direction)) && cnt++ < 256) ; // Find the next / previous Channel
+  while (!InpChannel_used((Channel += Direction)) && cnt++ <= _MAX_INP_CHANNEL) ; // Find the next / previous Channel
   return Channel;
 }
 
@@ -1627,7 +1627,7 @@ void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, ui
 */
 
 //----------------------------------------------------
-inline int8_t MobaLedLib_C::Get_Input(uint8_t channel)
+inline int8_t MobaLedLib_C::Get_Input(inch_t channel)
 //----------------------------------------------------
 // Return the state of one input channel
 //  INP_OFF
@@ -1635,7 +1635,7 @@ inline int8_t MobaLedLib_C::Get_Input(uint8_t channel)
 //  INP_TURNED_ON
 //  INP_TURNED_OFF
 {
-  uint8_t ByteNr = channel>>2;       // channel / 4;
+  inch_t ByteNr = channel>>2;       // channel / 4;
   uint8_t Shift  = (channel % 4)<<1;
   return (InpStructArray[ByteNr]>>Shift) & 0b00000011;
 }
@@ -1650,11 +1650,11 @@ inline int8_t MobaLedLib_C::Get_Input(uint8_t channel)
 
 
 //-------------------------------------------------------
-void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
+void MobaLedLib_C::Set_Input(inch_t channel, uint8_t On)
 //-------------------------------------------------------
 {
   //if (channel>2) Dprintf("Set_Input %i=%i\n", channel, On?1:0);
-  uint8_t ByteNr  = channel>>2;  // / 4;
+  inch_t ByteNr  = channel>>2;  // / 4;
   uint8_t BitMask = 1 << ((channel % 4)<<1);  // 2^((channel%4)*2)
 #if _USE_STORE_STATUS                                                                                         // 01.05.20:
   uint8_t oldValue = InpStructArray[ByteNr]>>((channel % 4)<<1) & 0x03;
@@ -1702,7 +1702,7 @@ void MobaLedLib_C::Update()
 }
 
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
-void MobaLedLib_C::Do_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue)
+void MobaLedLib_C::Do_Callback(uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t *NewValue)
 {
     //Dprintf("Do_Callback CallbackType %d ValueId %i OldValue %i NewValue %i\n", CallbackType, ValueId, OldValue, *NewValue);
     if (CallbackFunc!=NULL) CallbackFunc(CallbackType, ValueId, OldValue, NewValue);

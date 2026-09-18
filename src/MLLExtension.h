@@ -36,11 +36,11 @@
   const char* DebugName = "ExtensionProcessor";
 #endif  
 
-#if defined(USE_EXTENSIONS_V2) && !defined(Ext_Addr_T)
+#if defined(USE_EXTENSIONS_V2) && !defined(USE_EXT_ADDR)
 typedef struct
     {
     uint16_t AddrAndTyp; // address range: 0..16383. The upper two bytes are used for the type
-    uint8_t  InCnt;
+    inch_t   InCnt;
     } __attribute__ ((packed)) Ext_Addr_T;
 #endif
 
@@ -55,6 +55,7 @@ class MLLExtension
     // On multicore CPUs the additional loop. FastLED and MobaLedLib is always processed in main (=other) loop
     virtual void loop2(MobaLedLib_C& mobaLedLib) {};
 #endif    
+
 #ifdef USE_EXTENSIONS_V2
     // the callback is called every time an accessory command should be processed
     // receivedAddr: 1-2048

@@ -525,7 +525,8 @@ CRGB leds[NUM_LEDS];           // Define the array of leds
 //int dcc=0; // Debug                                                                                           // 19.01.21: Juergen
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20: Juergen
-  void On_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue);
+  void On_Callback(uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t *NewValue);
+  typedef bool(*HandleValueEx_t) (uint8_t CallbackType, inch_t ValueId, uint8_t* Value, uint16_t EEPromAddr, inch_t TargetValueId, uint8_t Options);
 #endif
 #if _USE_EXT_PROC && defined(_ENABLE_EXT_PROC)                                                                // 26.09.21: Juergen
   uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process);
@@ -582,7 +583,7 @@ void MLLMainLoop();
 
 
 //-------------------------------------
-void Set_Input(uint8_t channel, uint8_t On)                                                   // 18.04.23: additional helper function
+void Set_Input(inch_t channel, uint8_t On)                                                   // 18.04.23: additional helper function
 //-------------------------------------
 {
 // the LNet protocol sends on/off messages only once. If off message comes very fast after an on, e.g. if messages are buffered by the communication arduino,
@@ -735,7 +736,7 @@ void Receive_LED_Color_per_RS232()                                              
   */
   //#define GEN_BUTTON_RELEASE                                                        // 13.12.22: Juergen - disable GEN_BUTTON_RELEASE by default
   #ifdef GEN_BUTTON_RELEASE
-    uint8_t  LastChannel;
+    inch_t   LastChannel;
     uint32_t LastTime = 0;
   #endif
 
@@ -857,7 +858,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 // if function returns TRUE the calling loop stops
 
    //-----------------------------------------------------------------------------------------------
-   void ForAllStoreValues(uint8_t ValueType, uint8_t ValueId, uint8_t* Value, HandleValue_t handler)
+   void ForAllStoreValues(uint8_t ValueType, inch_t ValueId, uint8_t* Value, HandleValue_t handler)
    //-----------------------------------------------------------------------------------------------
    {
      uint16_t EEPromAddr = EEPROM_START;
@@ -871,7 +872,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    }
 
    //--------------------------------------------------------------------------------------------------------------------------------------
-   bool Handle_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t* Value, uint16_t EEPromAddr, uint8_t TargetValueId, uint8_t Options)
+   bool Handle_Callback(uint8_t CallbackType, inch_t ValueId, uint8_t* Value, uint16_t EEPromAddr, inch_t TargetValueId, uint8_t Options)
    //--------------------------------------------------------------------------------------------------------------------------------------
    {
      #if defined(DEBUG_STORE_STATUS) && 1
@@ -940,7 +941,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    }
 
    //------------------------------------------------------------------------------------------
-   void On_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue)
+   void On_Callback(uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t *NewValue)
    //------------------------------------------------------------------------------------------
    {
      if (     (CallbackType == CT_CHANNEL_CHANGED && ((OldValue > 0) != (*NewValue > 0)))
@@ -964,7 +965,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    };
 
    //-----------------------------------------------------------------------------------------------------------------------------------------
-   bool Handle_Restore_Status(uint8_t ValueType, uint8_t ValueId, uint8_t* Value, uint16_t EEPromAddr, uint8_t TargetValueId, uint8_t Options)
+   bool Handle_Restore_Status(uint8_t ValueType, inch_t ValueId, uint8_t* Value, uint16_t EEPromAddr, inch_t TargetValueId, uint8_t Options)
    //-----------------------------------------------------------------------------------------------------------------------------------------
    {
      #if defined(DEBUG_STORE_STATUS) && 1

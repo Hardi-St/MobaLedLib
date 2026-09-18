@@ -71,7 +71,7 @@
 void MobaLedLib_C::Proc_Logic()
 //-----------------------------
 {
-  uint8_t DstVar = pgm_read_byte_near(cp);
+  inch_t DstVar = pgm_read_inch(cp);
   uint8_t Cnt    = pgm_read_byte_near(cp+1);
   const uint8_t *p = cp + 2;
   bool Invert    = false;
@@ -80,10 +80,11 @@ void MobaLedLib_C::Proc_Logic()
   uint8_t Val    = _BIT_NEW; // Local result of one AND group
   uint8_t Res    = 0;
 
-  // Dprintf("DstVar %i (%i) ", DstVar, Get_Input(DstVar)); // Test mehrfach verwenung der Logic Ausgaenge
+  //Dprintf("DstVar %i (%i) ", DstVar, Get_Input(DstVar)); // Test mehrfach Verwendung der Logic Ausgaenge
   while (Cnt--)
     {
-    uint8_t d = pgm_read_byte_near(p++);
+    inch_t d = pgm_read_inch(p);
+    p += INCH_LEN;
     switch (d)
         {
         case _NOT_NR: Invert = !Invert; break;
@@ -122,7 +123,7 @@ void MobaLedLib_C::Proc_Logic()
 }
 
 //------------------------------------------------------
-bool MobaLedLib_C::Inp_is_Used_in_Logic(uint8_t Channel)
+bool MobaLedLib_C::Inp_is_Used_in_Logic(inch_t Channel)
 //------------------------------------------------------
 {
   if (Channel == _OR_NR || Channel == _NOT_NR) return false;
@@ -130,8 +131,9 @@ bool MobaLedLib_C::Inp_is_Used_in_Logic(uint8_t Channel)
   const uint8_t *p = cp + 2;
   while (Cnt--)
     {
-    uint8_t d = pgm_read_byte_near(p++);
+    inch_t d = pgm_read_inch(p);
     if (d == Channel) return true;
+    p+=INCH_LEN;
     }
   return false;
 }
@@ -140,5 +142,7 @@ bool MobaLedLib_C::Inp_is_Used_in_Logic(uint8_t Channel)
 void MobaLedLib_C::IncCP_Logic()
 //------------------------------
 {
+  //uint8_t Cnt = pgm_read_byte_near(cp+P_LOGIC_CNT);
+  //Dprintf("cp += %d Cnt=%d P_LOGIC_CNT=%d INCH_LEN=%d\n",  Cnt*INCH_LEN + INCH_LEN + 1, Cnt, P_LOGIC_CNT, INCH_LEN);
   cp += pgm_read_byte_near(cp+1) + 2;
 }

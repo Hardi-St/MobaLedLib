@@ -103,9 +103,12 @@ class SoundProcessorPro
   uint8_t handle(const uint8_t* arguments, bool doProcess)
   {
       
-    // upper 8 = cmdAndIndex, lower 8 = InCh
-    uint16_t tmp = pgm_read_word_near(arguments);
-    uint16_t cmdAndIndex = tmp>>8;
+    // 10.09.26 jueff support of long addresses in sound handler                                            
+    inch_t InCh      = pgm_read_inch(arguments);                                           // 10.9.26
+#if ADD_INCH_OFFSET>0
+    arguments += ADD_INCH_OFFSET;                                                          // 10.9.26
+#endif
+    uint8_t cmdAndIndex = pgm_read_byte_near(arguments+1);                                 // 10.9.26
     uint8_t len = GetSoundCommandLength(cmdAndIndex&0x0f);
     
 #if (DEBUG_SOUND_CHANNEL&0x80)==0x80
@@ -113,7 +116,7 @@ class SoundProcessorPro
 #endif      
     if (doProcess)
     {
-      if (pMobaLedLib!=NULL && pMobaLedLib->Get_Input(tmp&0xff)==INP_TURNED_ON)
+      if (pMobaLedLib!=NULL && pMobaLedLib->Get_Input(InCh)==INP_TURNED_ON)
       {
 #if (DEBUG_SOUND_CHANNEL&0x01)==0x01
         { char s[80]; sprintf(s, "Command %d on module %d added to queue.", cmdAndIndex&0x0f, (cmdAndIndex>>4)&0x0f); Serial.println(s); Serial.flush();} // Debug
@@ -121,7 +124,11 @@ class SoundProcessorPro
         soundPlayers[(cmdAndIndex>>4)&0x0f]->handle(cmdAndIndex&0x0f, arguments+2);        
       }
     }      
+#if ADD_INCH_OFFSET>0
+    return len+ADD_INCH_OFFSET;                                                          // 10.9.26
+#else
     return len;
+#endif
   }
   
   // check the command queue and send out max. one message per process call

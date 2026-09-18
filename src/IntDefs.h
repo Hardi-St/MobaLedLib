@@ -30,15 +30,26 @@
 #define __OUTPUT_FUNCT_INTDEFS_H__
 
 #if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO)
-	// enable the feature to use two byte for LED address
-	#define LONG_LED_ADDR
+  // enable the feature to use two byte for LED address
+  #define LONG_LED_ADDR
+#endif
+#ifdef LONG_INP_ADDR
+  #define inch_t uint16_t
+  #define pgm_read_inch pgm_read_word_near
+  #define INCH_LEN 2
+  #define ADD_INCH_OFFSET 1
+#else
+  #define inch_t uint8_t
+  #define pgm_read_inch pgm_read_byte_near
+  #define INCH_LEN 1
+  #define ADD_INCH_OFFSET 0
 #endif
 
 #ifdef LONG_LED_ADDR		// use two byte for addressing the LED, allows up to 16384 LEDs :-)
 							// still two bits reserved for future use
 							
-// number of extra bytes to count for each Led adress
-#define ADD_WORD_OFFSET 1
+// number of extra bytes to count for each Led address
+#define ADD_LED_OFFSET 1
 // a led number is store in a 16 bit variable
 #define ledNr_t uint16_t
 // macro for reading the led number from configuration array
@@ -47,7 +58,7 @@
 
 #else					    // use one byte for addressing the LED, allows up to 256 Leds
 // number of extra bytes to count for each Led address
-#define ADD_WORD_OFFSET 0
+#define ADD_LED_OFFSET 0
 // a led number is store in an 8 bit variable
 #define ledNr_t uint8_t
 // macro for reading the led number from configuration array
@@ -61,53 +72,53 @@
 
 
 #define P_LEDNR                0
-#define P_CHANELMSK            (1+ADD_WORD_OFFSET)
-#define P_INPCHANEL            (P_INPCHANEL_W_CM+ADD_WORD_OFFSET)  // 2
+#define P_CHANELMSK            (1+ADD_LED_OFFSET)
+#define P_INPCHANEL            (P_INPCHANEL_W_CM+ADD_LED_OFFSET)  // 2
 
-#define P_CONST_VAL0           (3+ADD_WORD_OFFSET)   // Const
-#define P_CONST_VAL1           (4+ADD_WORD_OFFSET)   //  "
+#define P_CONST_VAL0           (3+ADD_LED_OFFSET)   // Const
+#define P_CONST_VAL1           (4+ADD_LED_OFFSET)   //  "
 
-#define P_DFLASH_PAUSE         (3+ADD_WORD_OFFSET)
-#define P_DFLASH_TON           (4+ADD_WORD_OFFSET)
-#define P_DFLASH_TOFF          (5+ADD_WORD_OFFSET)
-#define P_DFLASH_VAL0          (6+ADD_WORD_OFFSET)
-#define P_DFLASH_VAL1          (7+ADD_WORD_OFFSET)
-#define P_DFLASH_OFF           (8+ADD_WORD_OFFSET)
+#define P_DFLASH_PAUSE         (3+ADD_LED_OFFSET)
+#define P_DFLASH_TON           (4+ADD_LED_OFFSET)
+#define P_DFLASH_TOFF          (5+ADD_LED_OFFSET)
+#define P_DFLASH_VAL0          (6+ADD_LED_OFFSET)
+#define P_DFLASH_VAL1          (7+ADD_LED_OFFSET)
+#define P_DFLASH_OFF           (8+ADD_LED_OFFSET)
 
 
 #define P_HOUSE_LED            0
-#define P_HOUSE_INCH           (P_INPCHANEL_NO_CM+ADD_WORD_OFFSET)  // 1
-#define P_HOUSE_ON_MIN         (2+ADD_WORD_OFFSET)
-#define P_HOUSE_ON_MAX         (3+ADD_WORD_OFFSET)
-#define P_HOUSE_MIN_T          (4+ADD_WORD_OFFSET)
-#define P_HOUSE_MAX_T          (5+ADD_WORD_OFFSET)
-#define P_HOUSE_CNT            (6+ADD_WORD_OFFSET)
-#define P_HOUSE_ROOM_0         (7+ADD_WORD_OFFSET)
+#define P_HOUSE_INCH           (P_INPCHANEL_NO_CM+ADD_LED_OFFSET)  // 1
+#define P_HOUSE_ON_MIN         (2+ADD_LED_OFFSET)
+#define P_HOUSE_ON_MAX         (3+ADD_LED_OFFSET)
+#define P_HOUSE_MIN_T          (4+ADD_LED_OFFSET)
+#define P_HOUSE_MAX_T          (5+ADD_LED_OFFSET)
+#define P_HOUSE_CNT            (6+ADD_LED_OFFSET)
+#define P_HOUSE_ROOM_0         (7+ADD_LED_OFFSET)
 
 #define P_FIRE_LED0            0
-#define P_FIRE_INCH            (P_INPCHANEL_NO_CM+ADD_WORD_OFFSET) // 1
-#define P_FIRE_LEDCNT          (2+ADD_WORD_OFFSET)
-#define P_FIRE_BRIGHT          (3+ADD_WORD_OFFSET)
+#define P_FIRE_INCH            (P_INPCHANEL_NO_CM+ADD_LED_OFFSET) // 1
+#define P_FIRE_LEDCNT          (2+ADD_LED_OFFSET)
+#define P_FIRE_BRIGHT          (3+ADD_LED_OFFSET)
 
 #define P_BUTTON_LED           0
-#define P_BUTTON_CHMSK         (1+ADD_WORD_OFFSET)
-#define P_BUTTON_INCH          (P_INPCHANEL_W_CM+ADD_WORD_OFFSET)   // 2
-#define P_BUTTON_DURLO         (3+ADD_WORD_OFFSET)
-#define P_BUTTON_DURHI         (4+ADD_WORD_OFFSET)
-#define P_BUTTON_VAL0          (5+ADD_WORD_OFFSET)
-#define P_BUTTON_VAL1          (6+ADD_WORD_OFFSET)
+#define P_BUTTON_CHMSK         (1+ADD_LED_OFFSET)
+#define P_BUTTON_INCH          (P_INPCHANEL_W_CM+ADD_LED_OFFSET)   // 2
+#define P_BUTTON_DURLO         (3+ADD_LED_OFFSET)
+#define P_BUTTON_DURHI         (4+ADD_LED_OFFSET)
+#define P_BUTTON_VAL0          (5+ADD_LED_OFFSET)
+#define P_BUTTON_VAL1          (6+ADD_LED_OFFSET)
 
 #define P_PATERN_LED           0
-#define P_PATERN_NSTRU         (1+ADD_WORD_OFFSET)
-#define P_PATERN_INCH          (P_INPCHANEL_W_CM+ADD_WORD_OFFSET)   // 2
-#define P_PATERN_ENABLE        (3+ADD_WORD_OFFSET)
-#define P_PATERN_LEDS          (4+ADD_WORD_OFFSET) //  -+
-#define P_PATERN_VAL0          (5+ADD_WORD_OFFSET) //   +  Attention: LEDs, Val0, Val1, Off are read at once.
-#define P_PATERN_VAL1          (6+ADD_WORD_OFFSET) //   +  => Don't change the sequence of the parameters
-#define P_PATERN_OFF           (7+ADD_WORD_OFFSET) //  -+
-#define P_PATERN_MODE          (8+ADD_WORD_OFFSET)
-#define P_PATERN_T1_L          (9+ADD_WORD_OFFSET)
-#define P_PATERN_T1_H          (10+ADD_WORD_OFFSET)
+#define P_PATERN_NSTRU         (1+ADD_LED_OFFSET)
+#define P_PATERN_INCH          (P_INPCHANEL_W_CM+ADD_LED_OFFSET)   // 2
+#define P_PATERN_ENABLE        (3+ADD_LED_OFFSET)
+#define P_PATERN_LEDS          (4+ADD_LED_OFFSET) //  -+
+#define P_PATERN_VAL0          (5+ADD_LED_OFFSET) //   +  Attention: LEDs, Val0, Val1, Off are read at once.
+#define P_PATERN_VAL1          (6+ADD_LED_OFFSET) //   +  => Don't change the sequence of the parameters
+#define P_PATERN_OFF           (7+ADD_LED_OFFSET) //  -+
+#define P_PATERN_MODE          (8+ADD_LED_OFFSET)
+#define P_PATERN_T1_L          (9+ADD_LED_OFFSET)
+#define P_PATERN_T1_H          (10+ADD_LED_OFFSET)
 
 //#define Random(    DestVar, Inp, MinTime, MaxTime, MinOn, MaxOn) RANDOM_T,  DestVar, Inp, _T2B(MinTime), _T2B(MaxTime), _T2B(MinOn), _T2B(MaxOn),
 //#define RandMux(   DestVar1, DestVarN, Inp, MinTime, MaxTime)    RANDMUX_T, DestVar1, DestVarN, Inp, _T2B(MinTime), _T2B(MaxTime),
@@ -138,20 +149,20 @@
 
 
 #define P_WELDING_LED          0
-#define P_WELDING_INP          (1+ADD_WORD_OFFSET)
-#define EP_WELDING_INCREMENT   (2+ADD_WORD_OFFSET)    // Insert additional parameters before
+#define P_WELDING_INP          (1+ADD_LED_OFFSET)
+#define EP_WELDING_INCREMENT   (2+ADD_LED_OFFSET)    // Insert additional parameters before
 
 #if _USE_COPY_N_LEDS                                                                                          // 18.09.23:
   #define P_COPYLED_CNT        0
   #define P_COPYLED_LED        1
-  #define P_COPYLED_INP        (2+ADD_WORD_OFFSET)
-  #define P_COPYLED_SRCLED     (3+ADD_WORD_OFFSET)
-  #define EP_COPYLED_INCREMENT (4+ADD_WORD_OFFSET*2)    // Insert additional parameters before
+  #define P_COPYLED_INP        (2+ADD_LED_OFFSET)
+  #define P_COPYLED_SRCLED     (3+ADD_LED_OFFSET)
+  #define EP_COPYLED_INCREMENT (4+ADD_LED_OFFSET*2)    // Insert additional parameters before
 #else
 #define P_COPYLED_LED          0
-#define P_COPYLED_INP          (1+ADD_WORD_OFFSET)
-#define P_COPYLED_SRCLED       (2+ADD_WORD_OFFSET)
-#define EP_COPYLED_INCREMENT   (3+ADD_WORD_OFFSET*2)    // Insert additional parameters before
+#define P_COPYLED_INP          (1+ADD_LED_OFFSET)
+#define P_COPYLED_SRCLED       (2+ADD_LED_OFFSET)
+#define EP_COPYLED_INCREMENT   (3+ADD_LED_OFFSET*2)    // Insert additional parameters before
 #endif
 
 #define P_SCHEDULE_DSTVAR1     0

@@ -96,15 +96,9 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
 extern MobaLedLib_C* pMobaLedLib;
 
 #include "SoundPlayer.h"
-    
-
-    
-  
-        
 
 #include "JQ6500SoundPlayer.h"
 #include "MP3TF16PSoundPlayer.h"
-
 
 class SoundProcessor
 {
@@ -119,6 +113,12 @@ class SoundProcessor
   unsigned long lastMillis = 0;
 #endif
   public:
+  template <size_t N_PLAYERS>
+  SoundProcessor(uint8_t* commandBuffer, uint8_t capacity, SoundPlayer* (&soundPlayers)[N_PLAYERS])
+      : SoundProcessor(commandBuffer, capacity, soundPlayers, static_cast<uint8_t>(N_PLAYERS))
+  {
+  }
+
   SoundProcessor(uint8_t* commandBuffer, uint8_t capacity, SoundPlayer* soundPlayers[], uint8_t playerCount)
   {
     this->commandBuffer = commandBuffer; 
@@ -144,10 +144,12 @@ class SoundProcessor
   
   uint8_t handle(const uint8_t* arguments, bool doProcess)
   {
-      
-    // upper 8 = cmdAndIndex, lower 8 = InCh
-    uint16_t tmp = pgm_read_word_near(arguments);
-    uint16_t cmdAndIndex = tmp>>8;
+    // 10.09.26 jueff support of long addresses in sound handler                                            
+    inch_t InCh      = pgm_read_inch(arguments);                                           // 10.9.26
+#if ADD_INCH_OFFSET>0
+    arguments += ADD_INCH_OFFSET;                                                          // 10.9.26
+#endif
+    uint8_t cmdAndIndex = pgm_read_byte_near(arguments+1);                                 // 10.9.26
     uint8_t len = GetSoundCommandLength(cmdAndIndex&0x0f);
     
     
@@ -156,7 +158,7 @@ class SoundProcessor
 #endif      
     if (doProcess)
     {
-      if (pMobaLedLib!=NULL && pMobaLedLib->Get_Input(tmp&0xff)==INP_TURNED_ON)
+      if (pMobaLedLib!=NULL && pMobaLedLib->Get_Input(InCh)==INP_TURNED_ON)
       {
         if (soundPlayers[(cmdAndIndex>>4)&0x0f]->GetType() == 0)    // not a pro player
         {
@@ -196,10 +198,13 @@ class SoundProcessor
         }
       }
     }      
+#if ADD_INCH_OFFSET>0
+    return len+ADD_INCH_OFFSET;                                                          // 10.9.26
+#else
     return len;
+#endif
   }
-  
-    
+
   static uint8_t GetSoundCommandLength(uint8_t cmd)
   {
     // commands 0..7 have no argument, command 8..13 have one argument, others have two arguments

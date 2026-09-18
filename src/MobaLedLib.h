@@ -99,55 +99,55 @@
 #endif
 
 #if _USE_SET_TVTAB                                                                                            // 10.01.20:
-  #define Set_TV_COL1(  InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max)   SET_TV_TAB_T, InCh, 0x00, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max,
-  #define Set_TV_COL2(  InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max)   SET_TV_TAB_T, InCh, 0x01, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max,
-  #define Set_TV_BW1(   InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,            G,            B)              SET_TV_TAB_T, InCh, 0x00, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,     R,     G,     G,     B,     B,
-  #define Set_TV_BW2(   InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,            G,            B)              SET_TV_TAB_T, InCh, 0x01, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,     R,     G,     G,     B,     B,
+  #define Set_TV_COL1(  InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max)   SET_TV_TAB_T, _ChkIn(InCh), 0x00, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max,
+  #define Set_TV_COL2(  InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max)   SET_TV_TAB_T, _ChkIn(InCh), 0x01, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R_Min, R_Max, G_Min, G_Max, B_Min, B_Max,
+  #define Set_TV_BW1(   InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,            G,            B)              SET_TV_TAB_T, _ChkIn(InCh), 0x00, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,     R,     G,     G,     B,     B,
+  #define Set_TV_BW2(   InCh, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,            G,            B)              SET_TV_TAB_T, _ChkIn(InCh), 0x01, Update_t_Min, Update_t_Max, Min_Brightness, Max_Brightness, R,     R,     G,     G,     B,     B,
 #endif
 
 #if _USE_DEF_NEON                                                                                             // 12.01.20:
-  #define Set_Def_Neon( InCh, Rand_On, RandOff, Min_Def)                    SET_DEF_NEON_T, InCh, Rand_On, RandOff, Min_Def,
+  #define Set_Def_Neon( InCh, Rand_On, RandOff, Min_Def)                    SET_DEF_NEON_T, _ChkIn(InCh), Rand_On, RandOff, Min_Def,
 #endif
 
 #define _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) (((Mode)&RF_NOT_SAME) && (DstVarN) - (DstVar1) == 0) ? ((Mode) & ~RF_NOT_SAME) : (Mode) // Prevent endless loop if DstVar1 == DstVarN     // 13.01.20:
 
-#define  Logic(         DstVar, ...)                                        LOGIC_T,     DstVar, COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,
-#define  Counter(       Mode, InCh, Enable, TimeOut, ...)                   COUNTER_T,   _W2B(Mode), InCh+RAM3, Enable, _T2B((TimeOut)/16), COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,      // TimeOut maximal 17 Min
-#define  RandMux(       DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RANDMUX_T,   DstVar1+RAM4, DstVarN, InCh, _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) | _RAND_MODE2((MinTime), (MaxTime)),                   _Tx2B2(MinTime, MaxTime),               _Tx2B2(MaxTime, MinTime),
-#define  RandCntMux(    DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RandMux(DstVar1, DstVarN, InCh, Mode|RF_SEQ, MinTime, MaxTime)
-#define  Random(        DstVar, InCh, Mode, MinTime, MaxTime, MinOn, MaxOn) RANDOM_T,    DstVar +RAM4,          InCh, (Mode) | _RAND_MODE4((MinTime), (MaxTime), (MinOn), (MaxOn)), _Tx2B4(MinTime, MaxTime, MinOn, MaxOn), _Tx2B4(MaxTime, MinTime, MinOn, MaxOn), _Tx2B4(MinOn, MaxOn, MinTime, MaxTime), _Tx2B4(MaxOn, MinOn, MinTime, MaxTime),
-#define  WeldingCont(   LED, InCh)                                          WELDING_CONT_T, _CHKL(LED)+RAM5, InCh,
-#define  Welding(       LED, InCh)                                          WELDING_T,      _CHKL(LED)+RAM5, InCh,
+#define  Logic(         DstVar, ...)                                        LOGIC_T,     DstVar, _ChkByte(COUNT_VARARGS(__VA_ARGS__)), __VA_ARGS__,
+#define  Counter(       Mode, InCh, Enable, TimeOut, ...)                   COUNTER_T,   _W2B(Mode), _ChkIn(InCh)+RAM3, _ChkIn(Enable), _T2B((TimeOut)/16), COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,      // TimeOut maximal 17 Min
+#define  RandMux(       DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RANDMUX_T,   _ChkIn(DstVar1)+RAM4, _ChkIn(DstVarN), _ChkIn(InCh), _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) | _RAND_MODE2((MinTime), (MaxTime)),                   _Tx2B2(MinTime, MaxTime),               _Tx2B2(MaxTime, MinTime),
+#define  RandCntMux(    DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RandMux(_ChkIn(DstVar1), _ChkIn(DstVarN), _ChkIn(InCh), Mode|RF_SEQ, MinTime, MaxTime)
+#define  Random(        DstVar, InCh, Mode, MinTime, MaxTime, MinOn, MaxOn) RANDOM_T,    _ChkIn(DstVar)+RAM4,          _ChkIn(InCh), (Mode) | _RAND_MODE4((MinTime), (MaxTime), (MinOn), (MaxOn)), _Tx2B4(MinTime, MaxTime, MinOn, MaxOn), _Tx2B4(MaxTime, MinTime, MinOn, MaxOn), _Tx2B4(MinOn, MaxOn, MinTime, MaxTime), _Tx2B4(MaxOn, MinOn, MinTime, MaxTime),
+#define  WeldingCont(   LED, InCh)                                          WELDING_CONT_T, _CHKL(LED)+RAM5, _ChkIn(InCh),
+#define  Welding(       LED, InCh)                                          WELDING_T,      _CHKL(LED)+RAM5, _ChkIn(InCh),
 #define  RandWelding(   LED, InCh, Var, MinTime, MaxTime, MinOn, MaxOn)     Random(Var, InCh, RM_NORMAL, MinTime, MaxTime, MinOn, MaxOn) Welding(LED, Var)
 
 
 #if _USE_COPY_N_LEDS                                                                                          // 18.09.23:
-  #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   1,       _CHKL(LED), InCh, _CHKL(SrcLED),
-  #define  CopyNLEDs(     LED_Cnt, LED, InCh, SrcLED)                       COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), InCh, _CHKL(SrcLED),
+  #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
+  #define  CopyNLEDs(     LED_Cnt, LED, InCh, SrcLED)                       COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
   #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   1,       _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED+ChannelOffset),
   #define  CopyNLEDsEx(   LED_Cnt, LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   (uint8_t)LED_Cnt, _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED+ChannelOffset),
 #else
-  #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   _CHKL(LED), InCh, _CHKL(SrcLED),
-  #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   _CHKL(LED), InCh, _CHKL(SrcLED+ChannelOffset),
+  #define  CopyLED(                LED, InCh, SrcLED)                       COPYLED_T,   _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED),
+  #define  CopyLEDEx(              LED, InCh, SrcLED, ChannelOffset)        COPYLED_T,   _CHKL(LED), _ChkIn(InCh), _CHKL(SrcLED+ChannelOffset),
 #endif
-#define  Schedule(      DstVar1, DstVarN, EnableCh, Start, End)             SCHEDULE_T,  DstVar1+RAM3, DstVarN, EnableCh, Start, End,  // Zeit- oder Helligkeitsgesteuertes Ein- und Ausschalten von Variablen.
+#define  Schedule(      DstVar1, DstVarN, EnableCh, Start, End)             SCHEDULE_T,  _ChkIn(DstVar1)+RAM3, _ChkIn(DstVarN), _ChkIn(EnableCh), Start, End,  // Zeit- oder Helligkeitsgesteuertes Ein- und Ausschalten von Variablen.
 #define  New_HSV_Group()                                                    NEW_HSV_GROUP_T+RAM3,
 #define  New_Local_Var()                                                    NEW_LOCAL_VAR_T+RAM2,             // 07.11.18:
 #define  Use_GlobalVar( GlobVarNr)                                          USE_GLOBALVAR_T, GlobVarNr,
 #if _USE_INCH_TRIGGER                                                                                         // 02.06.20:
   #define  I2X_USE_LOCALVAR    0x80
   #define  I2X_USE_START1      0x40
-  #define  InCh_to_TmpVar(FirstInCh, InCh_Cnt)                              INCH_TO_X_VAR_T,      FirstInCh, (InCh_Cnt-1),                   // 31.05.20:  J: EndInCh is now 0..63 instead of 1..64
-  #define  InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                             INCH_TO_X_VAR_T,      FirstInCh, (InCh_Cnt-1)|I2X_USE_START1,    // 07.05.20: // 31.05.20:  J: EndInCh is now 0..63 instead of 1..64
-  #define  InCh_to_LocalVar(FirstInCh, InCh_Cnt)                            INCH_TO_X_VAR_T+RAM1, FirstInCh, (InCh_Cnt-1)|I2X_USE_LOCALVAR,
-  #define  InCh_to_LocalVar1(FirstInCh, InCh_Cnt)                           INCH_TO_X_VAR_T+RAM1, FirstInCh, (InCh_Cnt-1)|I2X_USE_LOCALVAR|I2X_USE_START1,
-  #define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                          BIN_INCH_TO_TMPVAR_T,  FirstInCh, (InCh_Cnt-1),     // 18.01.19: // 31.05.20:  J: EndInCh is now 0..7 instead of 1..8
-  #define  Bin_InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                         BIN_INCH_TO_TMPVAR_T,  FirstInCh, (InCh_Cnt-1)|0x40,// 07.05.20: // 31.05.20:  J: EndInCh is now 0..7 instead of 1..8
+  #define  InCh_to_TmpVar(FirstInCh, InCh_Cnt)                              INCH_TO_X_VAR_T,      _ChkIn(FirstInCh), (InCh_Cnt-1),                   // 31.05.20:  J: EndInCh is now 0..63 instead of 1..64
+  #define  InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                             INCH_TO_X_VAR_T,      _ChkIn(FirstInCh), (InCh_Cnt-1)|I2X_USE_START1,    // 07.05.20: // 31.05.20:  J: EndInCh is now 0..63 instead of 1..64
+  #define  InCh_to_LocalVar(FirstInCh, InCh_Cnt)                            INCH_TO_X_VAR_T+RAM1, _ChkIn(FirstInCh), (InCh_Cnt-1)|I2X_USE_LOCALVAR,
+  #define  InCh_to_LocalVar1(FirstInCh, InCh_Cnt)                           INCH_TO_X_VAR_T+RAM1, _ChkIn(FirstInCh), (InCh_Cnt-1)|I2X_USE_LOCALVAR|I2X_USE_START1,
+  #define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                          BIN_INCH_TO_TMPVAR_T,  _ChkIn(FirstInCh), (InCh_Cnt-1),     // 18.01.19: // 31.05.20:  J: EndInCh is now 0..7 instead of 1..8
+  #define  Bin_InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                         BIN_INCH_TO_TMPVAR_T,  _ChkIn(FirstInCh), (InCh_Cnt-1)|0x40,// 07.05.20: // 31.05.20:  J: EndInCh is now 0..7 instead of 1..8
 #else
-  #define  InCh_to_TmpVar(FirstInCh, InCh_Cnt)                              INCH_TO_TMPVAR_T,  FirstInCh, InCh_Cnt,
-  #define  InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                             INCH_TO_TMPVAR1_T, FirstInCh, InCh_Cnt,     // 07.05.20:
-  #define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                          BIN_INCH_TO_TMPVAR_T,  FirstInCh, InCh_Cnt, // 18.01.19:
-  #define  Bin_InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                         BIN_INCH_TO_TMPVAR1_T, FirstInCh, InCh_Cnt, // 07.05.20:
+  #define  InCh_to_TmpVar(FirstInCh, InCh_Cnt)                              INCH_TO_TMPVAR_T,  _ChkIn(FirstInCh), InCh_Cnt,
+  #define  InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                             INCH_TO_TMPVAR1_T, _ChkIn(FirstInCh), InCh_Cnt,     // 07.05.20:
+  #define  Bin_InCh_to_TmpVar(FirstInCh, InCh_Cnt)                          BIN_INCH_TO_TMPVAR_T,  _ChkIn(FirstInCh), InCh_Cnt, // 18.01.19:
+  #define  Bin_InCh_to_TmpVar1(FirstInCh, InCh_Cnt)                         BIN_INCH_TO_TMPVAR1_T, _ChkIn(FirstInCh), InCh_Cnt, // 07.05.20:
 #endif
 #define  Button(        LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_W_ABORT+PF_SLOW,Duration/16,   _Cx2P_BLINK(Cx))
 #define  ButtonNOff(    LED,Cx,InCh,Duration,Val0, Val1)      PatternT1(LED,_NStru(Cx,   2,1),InCh,_Cx2LedCnt(Cx),Val0,Val1,Val0,PM_SEQUENZ_NO_RESTART+PF_SLOW,Duration/16,_Cx2P_BLINK(Cx)) // 12.03.19:
@@ -402,7 +402,7 @@
              New_HSV_Group()                                          \
              APatternT1(LED,224,InCh,1,Color,Color,0,PM_HSV,0 ms,1)  \
              APatternT1(LED, 194,InCh,1,MinBrightness,MaxBrightness,0,PM_HSV|PF_EASEINOUT,Duration,1)
-             
+
 #define  RGB_Ring(LED, InCh, Brightness, Duration) \
             APatternT1(LED,4,InCh,36,0,Brightness,0,0,Duration,137,98,8,162,28,195,52,142,34,72,162,  \
             24,130,40,199,48,141,163,40,146,40,134,32,202,49,76,227,56,138,36,138,33,136,114,12,211,  \
@@ -1303,7 +1303,7 @@ extern uint8_t    TestMode;
 #define COLOR_SINGLE_D 16                                                                                     //   "
 
 #if _USE_STORE_STATUS                                                                                         // 19.05.20: Juergen
-   typedef void(*Callback_t) (uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t* NewValue);
+   typedef void(*Callback_t) (uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t* NewValue);
 #endif
 #if _USE_EXT_PROC                                                                                         // 19.05.20: Juergen
    typedef uint8_t(*ExtProc_t) (uint8_t Type, const uint8_t* progmemAddress, bool process);
@@ -1332,8 +1332,8 @@ public:
  void               Assigne_GlobalVar(ControlVar_t *GlobalVar, uint8_t GlobalVar_Cnt);
 #endif
  void               Update();
- void               Set_Input(uint8_t channel, uint8_t On);
- int8_t             Get_Input(uint8_t channel);
+ void               Set_Input(inch_t channel, uint8_t On);
+ int8_t             Get_Input(inch_t channel);
  void               Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, uint8_t InpStructArrayNr);
  void               Print_Config(); // FLASH usage ~4258 Byte RAM 175 (16.12.18), #define _PRINT_DEBUG_MESSAGES must be enabled in "Lib_Config.h"
 
@@ -1409,7 +1409,7 @@ private: // Variables
  void               Print_Comment(uint8_t Type);
  void               Int_Update(uint32_t Time);
  void               Inc_cp(uint8_t Type);
- uint8_t            Find_Next_Priv_InpChannel(uint8_t Channel, int8_t Direction);
+ inch_t             Find_Next_Priv_InpChannel(inch_t Channel, int8_t Direction);
 
 
  // Test_buttons
@@ -1476,11 +1476,11 @@ private: // Variables
  void               IncCP_Schedule()      { cp += EP_SCHEDULE_INCREMENT; }
  void               IncCP_Counter();
 
- uint8_t            InpChannel_used(uint8_t Channel);
- bool               Inp_is_Used_in_Logic(uint8_t Channel);
+ uint8_t            InpChannel_used(inch_t Channel);
+ bool               Inp_is_Used_in_Logic(inch_t Channel);
 
 #if _USE_STORE_STATUS                                                                                         // 01.05.20:
- void               Do_Callback(uint8_t CallbackType, uint8_t ValueId, uint8_t OldValue, uint8_t *NewValue);  // 19.05.20: Juergen
+ void               Do_Callback(uint8_t CallbackType, inch_t ValueId, uint8_t OldValue, uint8_t *NewValue);  // 19.05.20: Juergen
 #endif
 
 #ifdef _NEW_ROOM_COL
