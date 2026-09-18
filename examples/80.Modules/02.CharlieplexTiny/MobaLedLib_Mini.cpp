@@ -96,11 +96,11 @@ int8_t MobaLedLib_C::Get_Input(uint8_t channel)
 
 #ifdef LONG_INP_ADDR
 //-------------------------------------------------------
-void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
+void MobaLedLib_C::Set_Input(uint16_t channel, uint8_t On)
 //-------------------------------------------------------
 #else
 //-------------------------------------------------------
-void MobaLedLib_C::Set_Input(uint16_t channel, uint8_t On)
+void MobaLedLib_C::Set_Input(uint8_t channel, uint8_t On)
 //-------------------------------------------------------
 #endif
 {

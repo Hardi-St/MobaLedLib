@@ -41,7 +41,7 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
   
   MP3-TF-16P Integration
   
-  Module also know as DFPlayer
+  Module also known as DFPlayer
   
   The module is available with different chips mounted
   
@@ -51,13 +51,13 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
   4 AA19HF8328-94
   5 MH2024K-24SS/MH2024K-16SS
   
-  4 & 5 seam to work with MLL Analog control, 3 works with MLL with some hardware and software adaptions  (3.0.0 Beta >D3)
+  4 & 5 seam to work with MLL Analog control, 3 works with MLL with some hardware and software adaption  (3.0.0 Beta >D3)
   
   1 and 2 are not tested yet, but that one's seem to work just fine with the standard commands.
   (http://www.thebackshed.com/forum/ViewTopic_mobile.php?FID=16&TID=11977)
   
   5 has a problem with the serial interface, some messages fail when sending it with the correct protocol (PlayIndex, SetVolume..). 
-  For these messages the two checksum bytes must be ommited.
+  For these messages the two checksum bytes must be omitted.
   
   
   see also https://www.stummiforum.de/t165060f7-MobaLedLib-LEDs-Servos-Sound-Stammtisch-am-5.html#msg2325467
@@ -73,7 +73,8 @@ TODO: why does MP3-TF-16P doesn't work on Pin D13?
 #define Stack_CheckSum 7
 #define Stack_End 9
 
-#define MP3TF16P_CMD_PLAY_IDX 0x03
+#define MP3TF16P_CMD_PLAY_IDX 0x03    // Play track from main folder, 16-bit parameter 
+#define MP3TF16P_CMD_ADVERT   0x13		// Insert advertisement from folder ADVERT, filename 0000... 16 bit
 #define MP3TF16P_CMD_VOL_SET  0x06
 #define MP3TF16P_CMD_VOL_UP   0x04
 #define MP3TF16P_CMD_VOL_DN   0x05
@@ -124,6 +125,12 @@ class MP3TF16PSoundPlayer : public SoundPlayer
           // 7E FF 06 12 00 00 01 FE E8 EF  Play File# in MP3 Folder
         cmd = MP3TF16P_CMD_PLAY_IDX; 
         lastTrack = argument;
+        break;
+      case SOUND_CHANNEL_CMD_PLAY_ADVERT: // command 11: PlayAdvert, argument TrackNumber
+#if (DEBUG_SOUND_CHANNEL&0x04)==0x04
+        { char s[80]; sprintf(s, "MP3TF16PSoundPlayer(%d) play advert index %d.", moduleIdAndParams&MP3TF16P_MODULE_MASK, argument); Serial.println(s); Serial.flush();} // Debug
+#endif          
+        cmd = MP3TF16P_CMD_ADVERT; 
         break;
       case SOUND_CHANNEL_CMD_SET_VOLUME: // command 9: Set Volume to percentage level
       {

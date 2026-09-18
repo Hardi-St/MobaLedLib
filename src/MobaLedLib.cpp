@@ -1142,7 +1142,7 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar(uint8_t Start)                       
 // New function which treats the input variables as binary number
 {
   inch_t InCh    = pgm_read_inch(cp);
-  inch_t EndInCh = InCh + pgm_read_byte_near(cp+1);
+  inch_t EndInCh = InCh + pgm_read_byte_near(cp+INCH_LEN);
   ActualVar_p = &TempVar;
   ActualVar_p->Changed = 0;
   uint8_t Nr  = 0;
@@ -1322,11 +1322,9 @@ void MobaLedLib_C::Int_Update(uint32_t Time)
   #if _USE_STORE_STATUS                                                                                       // 01.05.20:
     ProcCounterId = 0;
   #endif
-  //Dprintf("MobaLedLib_C::Int_Update\n");
   for (cp = Config, rp = RAM; !End; )
     {
     uint8_t Type = pgm_read_byte_near(cp++);
-    //Dprintf("Type = %d\n", Type);
     switch (Type)
       {                                                                                                            // #ifdef's to disable some features for memory consumption checks
 #                                                                                                                  ifdef _USE_SEP_CONST
@@ -1592,7 +1590,7 @@ inch_t MobaLedLib_C::Find_Next_Priv_InpChannel(inch_t Channel, int8_t Direction)
      Direction = +1;
      }
   int cnt = 0;
-  while (!InpChannel_used((Channel += Direction)) && cnt++ < _MAX_INP_CHANNEL) ; // Find the next / previous Channel
+  while (!InpChannel_used((Channel += Direction)) && cnt++ <= _MAX_INP_CHANNEL) ; // Find the next / previous Channel
   return Channel;
 }
 

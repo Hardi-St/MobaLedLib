@@ -2,8 +2,8 @@
  MobaLedLib: LED library for model railways
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Copyright (C) 2018 - 2025  Hardi Stengelin: MobaLedLib@gmx.de
- Copyright (C) 2020 - 2025  Juergen Winkler: MobaLedLib@gmx.at
+ Copyright (C) 2018 - 2026  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2026  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -269,10 +269,16 @@
             - remove limit ESP32 RMT channels
  22.04.25:  - fix bug with wrong send buffer size for SEND_INPUTS
  08.02.26:  - keep the LED bus alive even if external program doesn't send any data
+ 28.02.26:  - Norbert: Added define CAN_BAUD_RATE to allow setting CAN bit rate vie entry in Prog Generator
+ 17.03.26:  - Hardi: New compiler switch NO_SERIAL_OPTPUT which saves 175 bytes RAN and 980 bytes FLASH
+ 07.05.26:  - Juergen: fixed not working status storage on PICO platform
+              extract platform dependent persistence code into separate header file "persistence.h"
+	      add support of extensions interface V2
 */
 
 #include <Arduino.h>
 #include "MP3.h"
+#include "persistence.h"
 
 #ifndef __LEDS_AUTOPROG_H__
   //#define FASTLED_RMT_MAX_CHANNELS 6
@@ -286,9 +292,6 @@
 
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
   #include "esp_task_wdt.h"																					  // 05.03.21: Juergen - needed to reset watchdog timer while Farbtest is active
-  #include <EEPROM.h>
-  #define EEPROM_SIZE 512			// maximum size of the eeprom
-  //#define EEPROM_OFFSET 0			// (the first 96 byte are reserved for WIFI configuration)  // 28.11.2020 comment out -> WIFI config no longer stored in EEPROM
   #if defined(USE_PROTOCOL_SELECTRIX)
     #define SX_SIGNAL_PIN 13   // 22.09.24:  Old: 4
     #define SX_CLOCK_PIN  4    // 22.09.24:  Old: 13
@@ -456,9 +459,9 @@ Benoetig als 142 byte
   #ifdef ESP32
 	  #include "MLL_CAN/CAN.h"			   // It's a patched copy of the Sandeep Mistry library (0.3.1)
 	  
-	  
-	  
-	  
+      #ifndef CAN_BAUD_RATE
+        #define CAN_BAUD_RATE 250E3
+      #endif
 	  
   #else
 	  #include "mcp_can_nd.h"      // The MCP CAN library must be installed in addition if you got the error message "..fatal error: mcp_can_nd.h: No such file or directory"
@@ -474,6 +477,9 @@ Benoetig als 142 byte
 	  #include "Add_Message_to_Filter_nd.h"
 	  #ifndef LED_HEARTBEAT_PIN
 		 #define LED_HEARTBEAT_PIN A3 // The built in LED can't be use because the pin is used as clock port for the SPI bus
+	  #endif
+      #ifndef CAN_BAUD_RATE
+        #define CAN_BAUD_RATE CAN_250KBPS
 	  #endif
    #endif
 #else // not USE_CAN_AS_INPUT
@@ -560,7 +566,6 @@ bool Send_Disable_Pin_Active = 1;                                               
 
 
 #if defined(ENABLE_STORE_STATUS) && defined(_USE_STORE_STATUS)                                                // 19.05.20:  New feature from Juergen
-    #define EEPROM_START 64                                                                                   // 18.05.23:  reserve first 32 byte for global storage
     void StoreStatus(uint16_t EEPromAddr, uint8_t status);                                                    // 01.05.20:
 #endif
 
@@ -579,7 +584,7 @@ void MLLMainLoop();
 
 
 //-------------------------------------
-void Set_Input(uint8_t channel, uint8_t On)                                                   // 18.04.23: additional helper function
+void Set_Input(inch_t channel, uint8_t On)                                                   // 18.04.23: additional helper function
 //-------------------------------------
 {
 // the LNet protocol sends on/off messages only once. If off message comes very fast after an on, e.g. if messages are buffered by the communication arduino, 
@@ -645,7 +650,7 @@ void Receive_LED_Color_per_RS232()                                              
          
      // 08.02.26 Juergen
      // keep the LED bus alive even if external program doesn't send any data
-     if ((millis()-lastLEDUpdate) > 250) 
+     if ((millis()-lastLEDUpdate) > 900) 
      {
         FastLED.show();                       // Show the LEDs (send the leds[] array to the LED stripe)
         lastLEDUpdate = millis();
@@ -732,7 +737,7 @@ void Receive_LED_Color_per_RS232()                                              
   */
   //#define GEN_BUTTON_RELEASE                                                        // 13.12.22: Juergen - disable GEN_BUTTON_RELEASE by default
   #ifdef GEN_BUTTON_RELEASE
-    uint8_t  LastChannel;
+    inch_t   LastChannel;
     uint32_t LastTime = 0;
   #endif
 
@@ -746,6 +751,9 @@ void Receive_LED_Color_per_RS232()                                              
      #endif
      //Serial.print(F("Update_InputCh_if_Addr_exists ")); Serial.println(ReceivedAddr); // Debug
      uint16_t Channel = DCC_INPSTRUCT_START;
+#if defined(MLL_EXTENSIONS_COUNT) && defined (USE_EXTENSIONS_V2)
+     ReceivedAddr = extensions.onAccessoryCommand(MobaLedLib, ReceivedAddr, Direction, OutputPower, Channel, Ext_Addr, sizeof(Ext_Addr)); if (ReceivedAddr==0) return;
+#endif
      for (const uint8_t *p = (const uint8_t*)Ext_Addr, *e = p + sizeof(Ext_Addr); p < e; )
          {
          uint16_t Raw_Addr = pgm_read_word_near(p); p+=2;
@@ -851,7 +859,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 // if function returns TRUE the calling loop stops
 
    //-----------------------------------------------------------------------------------------------
-   void ForAllStoreValues(uint8_t ValueType, inch_t ValueId, uint8_t* Value, HandleValueEx_t handler)
+   void ForAllStoreValues(uint8_t ValueType, inch_t ValueId, uint8_t* Value, HandleValue_t handler)
    //-----------------------------------------------------------------------------------------------
    {
      uint16_t EEPromAddr = EEPROM_START;
@@ -877,12 +885,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         if (ValueId != TargetValueId) return false;
         if (CallbackType == CT_COUNTER_INITIAL)
            {
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-           eeprom_busy_wait();
-           *Value = eeprom_read_byte((const uint8_t*)EEPromAddr);
-#else
-           *Value = EEPROM.read(EEPromAddr);
-#endif
+           *Value = PERSISTENCE_READ(EEPromAddr);
            #if defined(DEBUG_STORE_STATUS) && 1
              { char s[80]; sprintf(s, "Initialize Counter %d@EEAdr %d=%d", ValueId, EEPromAddr, *Value); Serial.println(s); Serial.flush();} // Debug
            #endif
@@ -899,7 +902,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         bool IsToggle = (Options & IS_PULSE) != IS_PULSE;
         uint8_t InCnt = Options & InCnt_MSK;
         #if defined(DEBUG_STORE_STATUS) && 0
-           Serial.print("Store Channel:"); Serial.print(StoreChannel); // Debug
+           Serial.print("Store Channel:"); Serial.print(ValueId);      // Debug
            Serial.print(" IsToggle:");     Serial.print(IsToggle);     // Debug
            Serial.print(" InCnt:");        Serial.print(InCnt);        // Debug
            Serial.print(" Tmp:");          Serial.println(tmp);        // Debug
@@ -915,12 +918,12 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
                byte tmp = MobaLedLib.Get_Input(TargetValueId + cnt);
                tmp = (tmp == INP_ON || tmp == INP_TURNED_ON) ? 1 : 0;
                #if defined(DEBUG_STORE_STATUS) && 0
-                   char s[80]; sprintf(s, "State of InCh %d=%d", InCh+cnt, tmp); Serial.println(s);  // Debug
+                   char s[80]; sprintf(s, "State of InCh %d=%d", TargetValueId+cnt, tmp); Serial.println(s);  // Debug
                #endif
                status = (status << 1) + tmp;
                }
            #if defined(DEBUG_STORE_STATUS) && 0
-               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
+               { char s[80]; sprintf(s, "New OnOff State for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
         else // pulse type
@@ -928,7 +931,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
            if (*Value != INP_ON && *Value != INP_TURNED_ON) return false;
            status = ValueId - TargetValueId;
            #if defined(DEBUG_STORE_STATUS) && 0
-               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", InCh, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
+               { char s[80]; sprintf(s, "New Button State for InCh %d@EEAdr %d=%d", TargetValueId, EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
            #endif
            }
         StoreStatus(EEPromAddr, status);
@@ -971,12 +974,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #endif
      if ((Options & IS_COUNTER) == IS_COUNTER) return false;
 
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-     eeprom_busy_wait();
-     uint8_t status = eeprom_read_byte((const uint8_t*)EEPromAddr);
-#else
-	 uint8_t status = EEPROM.read(EEPromAddr);
-#endif
+     uint8_t status = PERSISTENCE_READ(EEPromAddr);
      uint8_t InCnt = Options & InCnt_MSK;
      if (status > (1 << InCnt))
         {
@@ -1022,11 +1020,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
      #if defined(DEBUG_STORE_STATUS) && 0
        { char s[80];sprintf(s, "store status for EEAdr %i value:%i", EEPromAddr, value); Serial.println(s);}  // Debug
 	#endif
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-     uint8_t eeValue = eeprom_read_byte((const uint8_t*)EEPromAddr);
-#else
-	 uint8_t eeValue = EEPROM.read(EEPromAddr);
-#endif
+     uint8_t eeValue = PERSISTENCE_READ(EEPromAddr);
      #if defined(DEBUG_STORE_STATUS) && 0
        { char s[80]; sprintf(s, " read ActualVal for EEAdr%i=%d", EEPromAddr, eeValue); Serial.println(s); }  // Debug
      #endif
@@ -1035,13 +1029,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
         #if defined(DEBUG_STORE_STATUS) && 1
            { char s[80]; sprintf(s, " updating status for EEAdr %d=%d", EEPromAddr, status); Serial.println(s); Serial.flush();} // Debug
         #endif
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-        eeprom_busy_wait();
-        eeprom_write_byte((uint8_t*)EEPromAddr, status);
-#else
-        EEPROM.write(EEPromAddr, status);
-		EEPROM.commit();
-#endif
+        PERSISTENCE_WRITE(EEPromAddr, status);
         }
    }
 #endif // ENABLE_STORE_STATUS                                                                                 // 01.05.20:
@@ -1419,7 +1407,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
       if ( CAN.readMsgBuf(&rxId, &len, rxBuf) == CAN_OK)
          {
    #endif
-#ifdef COMMANDS_DEBUG
+#if defined(COMMANDS_DEBUG) && !defined(NO_SERIAL_OPTPUT)
          Serial.print("CAN: "); Serial.print(rxId,HEX); Serial.print(" Len:"); Serial.print(len); // Debug
 		 for (uint8_t i=0;i<len;i++) 
 		 {
@@ -1440,7 +1428,7 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
    }
 #endif // USE_CAN_AS_INPUT
 
-#if !defined(ESP32) && !defined(ARDUINO_AVR_NANO_EVERY) && !defined(ARDUINO_RASPBERRY_PI_PICO)                // 19.01.21: Juergen: Added Every
+#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO) && !defined(NO_SERIAL_OPTPUT) 
   #include <avr/boot.h>
   //----------------------
   void Debug_Print_Fuses()                                                                                    // 29.10.20:
@@ -1486,28 +1474,21 @@ uint8_t Handle_Command(uint8_t Type, const uint8_t* arguments, bool process)
 //-----------
 void setup(){
 //-----------
+  #if !defined(NO_SERIAL_OPTPUT)                                                                              // 17.03.26:
   Serial.begin(SERIAL_BAUD); // Communication with the DCC-Arduino must be fast
-#ifdef ESP32
-  if (!EEPROM.begin(EEPROM_SIZE))                                                                             // 19.01.21: Juergen: Old: 100
-  {
-    Serial.println("failed to initialize EEPROM");
-  }
+  #endif
+  PERSISTENCE_SETUP(EEPROM_SIZE);
+#if defined(ESP32)
   esp_log_level_set("*", ESP_LOG_NONE);
 #endif
 
 #if defined(CLEAR_STORE_STATUS)                                                                               // 20.05.23: Juergen
   #ifndef EEPROM_SIZE
-  #define EEPROM_SIZE 512
+  #define EEPROM_SIZE 1024
   #endif
   for (uint16_t EEPromAddr = 0; EEPromAddr<EEPROM_SIZE; EEPromAddr++)
   {
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-    eeprom_busy_wait();
-    eeprom_write_byte((uint8_t*)EEPromAddr, 0);
-#else
-    EEPROM.write(EEPromAddr, 0);
-    EEPROM.commit();
-#endif
+    PERSISTENCE_WRITE(EEPromAddr, 0);
   }
 #endif
 
@@ -1561,13 +1542,13 @@ void setup(){
     FastLED.show();                                                                                           // 18.01.24 Juergen reduced time wrong "green" LEDs are displayed after boot
   #endif
 
-  #ifdef START_MSG
+  #if defined(START_MSG) && !defined(NO_SERIAL_OPTPUT)
     Serial.println(F(START_MSG));
   #endif
   // Debug_Print_Fuses();
 
   #ifdef RECEIVE_LED_COLOR_PER_RS232                                     // Send the number of available LEDs to the Python program
-    #ifndef LEDS_PER_CHANNEL
+    #if !defined(LEDS_PER_CHANNEL) && !defined(NO_SERIAL_OPTPUT)
 	  Serial.print(F("#Color Test LED cnt:")); Serial.println(NUM_LEDS); // Without this message the program fails with the message
 	#endif
   #endif                                                                 //   "Error ARDUINO is not answering"
@@ -1586,17 +1567,21 @@ void setup(){
 	// *** Initialize the CAN bus ***
     #ifdef ESP32																							
 		CAN.setPins(4, 5);																						// 08.03.21 Juergen
-		if (CAN.begin(250E3)) 
+		if (CAN.begin(CAN_BAUD_RATE))
 			 {
 			 if (CAN.filterExtended(0x00160000, 0x1FFF0000))													// 13.07.22 Juergen: use library function again
 			     {
+                 #if !defined(NO_SERIAL_OPTPUT)
 			 	 Serial.println(F("Filter OK!"));
     		     Serial.println(F("CAN Init OK!"));
+                 #endif
                  CAN_ok = true;
 			     }
 			 else
 			     {
+                 #if !defined(NO_SERIAL_OPTPUT)
 			 	 Serial.println(F("Filter failed!"));
+                 #endif
                  CAN_ok = false;
 			     }
 			 }
@@ -1604,9 +1589,11 @@ void setup(){
                #error "ATTINY_GBM_FILTER1 Filters are not implemented for the ESP at the moment"
              #endif
 	#else
-		if (CAN.begin(MCP_STDEXT, CAN_250KBPS, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
+		if (CAN.begin(MCP_STDEXT, CAN_BAUD_RATE, MCP_8MHZ) == CAN_OK) // init CAN bus, baudrate: 250k@8MHz
 			 {
+             #if !defined(NO_SERIAL_OPTPUT)
 			 Serial.println(F("CAN Init OK!"));
+             #endif
 			 CAN_ok = true;
 			 CAN.setMode(MCP_NORMAL); // Important to use the filters
              // Der MSP2515 hat zwei Eingangsbuffer.                                                          13.02.23:
@@ -1640,7 +1627,9 @@ void setup(){
              #endif
 			 }                                                       // => Filter is addapte to pass both messages
 	#endif
+    #if !defined(NO_SERIAL_OPTPUT)
     else Serial.println(F("CAN Init Fail!"));                    //    => Messages matching 0x0016???? are passed
+    #endif
   #endif
 
   #ifdef USE_SPI_COM                                                                                          // 13.05.20:
@@ -1667,7 +1656,7 @@ void setup(){
     #endif
   //#endif
 
-  #ifdef DUMP_EEPROM_ON_START                                                                                 // 01.05.20:
+  #if defined(DUMP_EEPROM_ON_START) && !defined(NO_SERIAL_OPTPUT)                                             // 01.05.20:
     char tmp[5];
 
     Serial.println("Dump off EEProm content");
@@ -1679,12 +1668,7 @@ void setup(){
             sprintf(tmp, "%04x", eeAddr);
             Serial.print(tmp);
         }
-#if !defined(ESP32) && !defined(ARDUINO_RASPBERRY_PI_PICO)
-        eeprom_busy_wait();
-        uint8_t value = eeprom_read_byte((const uint8_t*)eeAddr);
-#else
-        uint8_t value = EEPROM.read(EEPromAddr);
-#endif
+        uint8_t value = PERSISTENCE_READ(eeAddr);
         sprintf(tmp, " %02x", value);
         Serial.print(tmp);
     }
@@ -1828,6 +1812,9 @@ void setup(){
     GEN_BUTTON_RELEASE_COM                                                                                    // 09.04.23: possible behavior of sending a button release    
   );
 #endif
+#ifdef ARDUINO_ARCH_RP2040
+  PERSISTENCE_SETUP(EEPROM_SIZE);  // need to re-init EEPROM because NmraDcc::init does some kind of de-init
+#endif
 #ifdef ESP32                                                                                                  // 30.10.20: Juergen
 
   #ifdef USE_SX_INTERFACE
@@ -1887,7 +1874,7 @@ void setup(){
   //Eigene_setup();
 }
 
-#if defined READ_LDR && defined READ_LDR_DEBUG
+#if defined READ_LDR && defined READ_LDR_DEBUG && !defined(NO_SERIAL_OPTPUT)
   //---------------------------
   void Debug_Print_LDR_Values()
   //---------------------------
@@ -2185,7 +2172,7 @@ void Set_Mainboard_LEDs()
             #endif
             }
        // Serial.print(Darkness); Serial.print(DayState==SunSet?" SunSet  ":" SunRise "); Serial.print(DayState); Serial.print(" ");// Debug
-       #ifdef DayAndNightTimer_Debug
+       #if defined(DayAndNightTimer_Debug) && !defined(NO_SERIAL_OPTPUT)
          uint16_t Minutes = ((uint32_t)Darkness * 12*60) / 255;
          if (DayState <= SunSet)
               Minutes =  12*60 + Minutes;
@@ -2233,7 +2220,7 @@ void Set_Mainboard_LEDs()
               case T_NOT_BIN_MASK:   Res = !(LED_Val &  Val); break;
               }
            MobaLedLib.Set_Input(Var_Nr, Res);
-           #if 0 // Debug
+           #if 0 && !defined(NO_SERIAL_OPTPUT) // Debug
               uint32_t PERIOD = 500;
               static uint32_t Disp = PERIOD;
               if (millis() >= Disp)
@@ -2274,7 +2261,7 @@ if (lastFastledSend!=0 && delay>100)                                    // FASTL
     if (lastFastledSend!=lastFastledFail)
     {
         lastFastledFail = lastFastledSend;
-    #ifdef DISPLAY_FASTLED_FAULTS                                       // 18.01.24 Juergen add fault display feature   
+    #if defined(DISPLAY_FASTLED_FAULTS) && !defined(NO_SERIAL_OPTPUT)         // 18.01.24 Juergen add fault display feature
         delayCount++;
         Serial.printf("**** FASTLed delay (%d) detected: Time %4d:%02d:%02d.%02d, FASTLed delays %d revives %d *******\r\n", delay, (int)(millis()/(1000*60*60*24)), (int)(millis()/(1000*60*60) % 24), (int)(millis()/(1000*60) % 60), (int)(millis()/1000 % 60), delayCount, reviveCount);
     #endif
@@ -2283,14 +2270,14 @@ if (lastFastledSend!=0 && delay>100)                                    // FASTL
     {
         if (GiveGTX_sem!=NULL) GiveGTX_sem();
         lastFastledSend = 0;
-    #ifdef DISPLAY_FASTLED_FAULTS                                       // 18.01.24 Juergen add fault display feature   
+    #if defined(DISPLAY_FASTLED_FAULTS) && !defined(NO_SERIAL_OPTPUT)         // 18.01.24 Juergen add fault display feature
         reviveCount++;
         Serial.printf("**** FASTLed hang detected: Time %4d:%02d:%02d.%02d, FASTLed delays %d revives %d *******\r\n", (int)(millis()/(1000*60*60*24)), (int)(millis()/(1000*60*60) % 24), (int)(millis()/(1000*60) % 60), (int)(millis()/1000 % 60), delayCount, reviveCount);
     #endif
     }
 }
 
-#if defined(DISPLAY_FASTLED_FAULTS)                                     // 18.01.24 Juergen add fault display feature   
+#if defined(DISPLAY_FASTLED_FAULTS) && !defined(NO_SERIAL_OPTPUT)       // 18.01.24 Juergen add fault display feature
 if ((millis()-lastMillis)>=10000)
 {
    lastMillis=millis();
@@ -2314,8 +2301,10 @@ if ((millis()-lastMillis)>=10000)
 
 #ifdef ESP32
 //--------------------------------
-void MLLTask( void * parameter ) {
+void MLLTask( void * parameter ) 
+{
 //--------------------------------
+  PERSISTENCE_SETUP(EEPROM_SIZE);
   while(1) {
     MLLMainLoop();
 #ifdef USE_ESP32_EXTENSIONS
