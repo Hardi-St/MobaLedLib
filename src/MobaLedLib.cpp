@@ -1154,7 +1154,7 @@ void MobaLedLib_C::Proc_Bin_InCh_to_TmpVar(uint8_t Start)                       
     }
   if (ActualVar_p->Changed)
      {
-     ActualVar_p->Val = Nr+(Start*INCH_LEN);                                                                 // 07.05.20:  Added + Start
+     ActualVar_p->Val = Nr+Start;                                                                             // 07.05.20:  Added + Start
      Dprintf("ActualVar=%i\n", Nr);
      }
 }
@@ -1560,14 +1560,14 @@ uint8_t MobaLedLib_C::InpChannel_used(inch_t Channel)
 #if _USE_COUNTER
         if (Type == COUNTER_T)
              {
-             if (Channel == pgm_read_byte_near(cp+P_COUNT_INP   ) ||
-                 Channel == pgm_read_byte_near(cp+P_COUNT_ENABLE) )  return 1;
+             if (Channel == pgm_read_inch(cp+P_COUNT_INP   ) ||
+                 Channel == pgm_read_inch(cp+P_COUNT_ENABLE) )  return 1;
              }
 #endif
         if (Type < WITHOUT_INP_CH)
              {
              uint8_t InpCh_Offs = Type >= WITHOUT_CHANNEL_MASK ? P_INPCHANEL_NO_CM : P_INPCHANEL_W_CM;
-             uint8_t ActCh = pgm_read_byte_near(cp+InpCh_Offs);
+             inch_t ActCh = pgm_read_inch(cp+InpCh_Offs);
              if (ActCh == Channel) return 1;
              }
         Inc_cp(Type);
@@ -1599,11 +1599,11 @@ inch_t MobaLedLib_C::Find_Next_Priv_InpChannel(inch_t Channel, int8_t Direction)
 const PROGMEM uint8_t Bits_to_InpStruct_Tab[16] = { 0b00000000, 0b00000001, 0b00000100, 0b00000101, 0b00010000, 0b00010001, 0b00010100, 0b00010101, 0b01000000, 0b01000001, 0b01000100, 0b01000101, 0b01010000, 0b01010001, 0b01010100, 0b01010101 };
 
 //-----------------------------------------------------------------------------------------------------
-void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, uint8_t InpStructArrayNr)
+void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, inch_t InpStructArrayNr)
 //-----------------------------------------------------------------------------------------------------
 // InpStructArrayNr 0 => Channels 0 .. 3
 //                  1 =>          4 .. 7
-//                  n =>          n*8 .. n*8+3
+//                  n =>          n*4 .. n*4+3
 //
 // Attention: The function writes  8*ByteCnt input channels !!!
 {
