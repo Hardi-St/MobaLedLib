@@ -1449,8 +1449,8 @@ private: // Variables
  void               Proc_Counter();
 
  void               IncCP_House();
- void               IncCP_Const()         { cp += 5 + ADD_WORD_OFFSET; }
- void               IncCP_Fire()          { cp += 4 + ADD_WORD_OFFSET; }
+ void               IncCP_Const()         { cp += 5 + ADD_LED_OFFSET; }
+ void               IncCP_Fire()          { cp += 4 + ADD_LED_OFFSET; }
  #ifdef _NEW_ROOM_COL
    void             IncCP_Set_ColTab()    { cp += ROOM_COL_CNT*3; }
    bool             Cmp_Room_Col(CRGB *lp, uint8_t ColorNr);
