@@ -908,8 +908,8 @@ void MobaLedLib_C::Proc_Set_TV_Tab()
   uint8_t Inp = Get_Input(pgm_read_inch(cp));
   if (Inp)
      {
-     uint8_t Channel = pgm_read_byte_near(cp+1);
-     TV_Dat_p[Channel] = cp+2; // Skip InCh and Channel
+     uint8_t Channel = pgm_read_byte_near(cp+P_SET_TV_TAB_CHANNEL);
+     TV_Dat_p[Channel] = cp+P_SET_TV_TAB_T_MIN; // Skip InCh and Channel
      }
 }
 
@@ -917,7 +917,7 @@ void MobaLedLib_C::Proc_Set_TV_Tab()
 void MobaLedLib_C::IncCP_Set_TV_Tab()
 //-----------------------------------
 {
-  cp += 12;
+  cp += EP_SET_TV_TAB_INCREMENT;
 }
 #endif
 
@@ -929,9 +929,9 @@ void MobaLedLib_C::Proc_Set_Def_Neon()
   uint8_t Inp = Get_Input(pgm_read_inch(cp));
   if (Inp)
      {
-     Rand_On_DefNeon = pgm_read_byte_near(cp+1); // (Def=10)  probability that the neon light starts.             0 = don't start, 1 start seldom, 255 = Start immediately
-     RandOff_DefNeon = pgm_read_byte_near(cp+2); // (Def=200) probability that the light goes off after a while.  0 = Always on,   1 = shot flash, 255 = very long time active
-     Min_DefNeon     = pgm_read_byte_near(cp+3); // (Def=1)   red glow of the starter.                            1 = minimal value,  5 = maximal value
+     Rand_On_DefNeon = pgm_read_byte_near(cp+P_SET_DEF_NEON_RND_ON);  // (Def=10)  probability that the neon light starts.             0 = don't start, 1 start seldom, 255 = Start immediately
+     RandOff_DefNeon = pgm_read_byte_near(cp+P_SET_DEF_NEON_RND_OFF); // (Def=200) probability that the light goes off after a while.  0 = Always on,   1 = shot flash, 255 = very long time active
+     Min_DefNeon     = pgm_read_byte_near(cp+P_SET_DEF_NEON_MIN_DEF); // (Def=1)   red glow of the starter.                            1 = minimal value,  5 = maximal value
      }
 }
 
@@ -939,7 +939,7 @@ void MobaLedLib_C::Proc_Set_Def_Neon()
 void MobaLedLib_C::IncCP_Set_Def_Neon()
 //-------------------------------------
 {
-  cp += 4;
+  cp += P_SET_DEF_NEON_INCREMENT;
 }
 
 #endif
@@ -1520,6 +1520,7 @@ void MobaLedLib_C::Inc_cp(uint8_t Type)
      case RANDMUX_T             : IncCP_RandMux();       break;
 #                                                                                                                  endif
 #                                                                                                                  if _USE_WELDING
+     case WELDING_CONT_T        :                                                                                   // 26.10.26: Was missing => endless loop in InpChannel_used()
      case WELDING_T             : IncCP_Welding();       break;
 #                                                                                                                  endif
 #                                                                                                                  if _USE_COPYLED
@@ -1560,14 +1561,14 @@ uint8_t MobaLedLib_C::InpChannel_used(inch_t Channel)
 #if _USE_COUNTER
         if (Type == COUNTER_T)
              {
-             if (Channel == pgm_read_byte_near(cp+P_COUNT_INP   ) ||
-                 Channel == pgm_read_byte_near(cp+P_COUNT_ENABLE) )  return 1;
+             if (Channel == pgm_read_inch(cp+P_COUNT_INP   ) ||
+                 Channel == pgm_read_inch(cp+P_COUNT_ENABLE) )  return 1;
              }
 #endif
         if (Type < WITHOUT_INP_CH)
              {
              uint8_t InpCh_Offs = Type >= WITHOUT_CHANNEL_MASK ? P_INPCHANEL_NO_CM : P_INPCHANEL_W_CM;
-             uint8_t ActCh = pgm_read_byte_near(cp+InpCh_Offs);
+             inch_t ActCh = pgm_read_inch(cp+InpCh_Offs);
              if (ActCh == Channel) return 1;
              }
         Inc_cp(Type);
@@ -1599,11 +1600,11 @@ inch_t MobaLedLib_C::Find_Next_Priv_InpChannel(inch_t Channel, int8_t Direction)
 const PROGMEM uint8_t Bits_to_InpStruct_Tab[16] = { 0b00000000, 0b00000001, 0b00000100, 0b00000101, 0b00010000, 0b00010001, 0b00010100, 0b00010101, 0b01000000, 0b01000001, 0b01000100, 0b01000101, 0b01010000, 0b01010001, 0b01010100, 0b01010101 };
 
 //-----------------------------------------------------------------------------------------------------
-void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, uint8_t InpStructArrayNr)
+void MobaLedLib_C::Copy_Bits_to_InpStructArray(uint8_t *Src, uint8_t ByteCnt, inch_t InpStructArrayNr)
 //-----------------------------------------------------------------------------------------------------
 // InpStructArrayNr 0 => Channels 0 .. 3
 //                  1 =>          4 .. 7
-//                  n =>          n*8 .. n*8+3
+//                  n =>          n*4 .. n*4+3
 //
 // Attention: The function writes  8*ByteCnt input channels !!!
 {
