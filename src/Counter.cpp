@@ -3,6 +3,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2026  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -196,8 +197,8 @@ void MobaLedLib_C::Proc_Counter()
           uint8_t e = pgm_read_byte_near(cp+P_COUNT_DEST_COUNT);
           uint32_t Mask;
           if (ModeL & CF_BINARY) Mask = 1<<(DestCnt-1);                                                       // 05.01.19: Old: = 1;
-          ip += e-1;
-          for (uint8_t i = e-1; i != 255; i--, ip--)
+          ip += (e-1)*INCH_LEN;
+          for (uint8_t i = e-1; i != 255; i--, ip-= INCH_LEN)
                {
                inch_t InpNr = pgm_read_inch(ip);
                //Dprintf("Counter Inp[%i]=%i\n", InpNr, Get_Input(InpNr));
@@ -218,6 +219,6 @@ void MobaLedLib_C::Proc_Counter()
 void MobaLedLib_C::IncCP_Counter()
 //--------------------------------
 {
-  cp += P_COUNT_FIRST_DEST + pgm_read_byte_near(cp+P_COUNT_DEST_COUNT);
+  cp += P_COUNT_FIRST_DEST + (pgm_read_byte_near(cp+P_COUNT_DEST_COUNT)*INCH_LEN);
 }
 

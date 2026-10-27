@@ -10,12 +10,23 @@
 #endif
 // _ERR_INPUT_RANGE value must be bigger than the maximum value allowed for the target variable type
 
+#ifdef LONG_INP_ADDR
+#include "W2BHelper.h"
+#define _ERR_INPUT_RANGE 65536
+#define _INP_STRUCT_ARRAY_SIZE  512      // _INP_STRUCT_ARRAY_SIZE*4 defines the maximal number of inputs (Maximal 2048)  22.11.25: 
+#else
 #define _ERR_INPUT_RANGE 256
 #define _INP_STRUCT_ARRAY_SIZE  64       // _INP_STRUCT_ARRAY_SIZE*4 defines the maximal number of inputs (Maximal 64)    11.12.19:  Reduzieren auf 8 vergroessert den FLASH Bedarf um 6 Bytes?
+#endif
+   
 #define _MAX_INP_CHANNEL (_INP_STRUCT_ARRAY_SIZE*4-1)
 #define _ChkByte(In) ((In) < 256) ? (In) : _ERR_INPUT_RANGE
 
+#ifdef LONG_INP_ADDR
+#define _ChkIn(In) _W2B(((In) <= _MAX_INP_CHANNEL) ? (In) : _ERR_INPUT_RANGE) // Generate a compiler warning if the input channel is 
+#else
 #define _ChkIn(In) ((In) <= _MAX_INP_CHANNEL ? (In) : _ERR_INPUT_RANGE) // Generate a compiler warning if the input channel is invalid
+#endif   
                                                                                // In this case th input is mapped to 0.
                                                                                //   LEDs_Eisenbahn.ino:268:3: warning: narrowing conversion of '256' from 'int' to 'const unsigned char' inside { } [-Wnarrowing]
                                                                                //   LEDs_Eisenbahn.ino:268:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]

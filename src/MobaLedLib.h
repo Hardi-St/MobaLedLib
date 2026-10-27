@@ -111,10 +111,15 @@
 
 #define _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) (((Mode)&RF_NOT_SAME) && (DstVarN) - (DstVar1) == 0) ? ((Mode) & ~RF_NOT_SAME) : (Mode) // Prevent endless loop if DstVar1 == DstVarN     // 13.01.20:
 
-#define  Logic(         DstVar, ...)                                        LOGIC_T,     DstVar, _ChkByte(COUNT_VARARGS(__VA_ARGS__)), __VA_ARGS__,
-#define  Counter(       Mode, InCh, Enable, TimeOut, ...)                   COUNTER_T,   _W2B(Mode), _ChkIn(InCh)+RAM3, _ChkIn(Enable), _T2B((TimeOut)/16), COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,      // TimeOut maximal 17 Min
+#ifdef LONG_INP_ADDR
+  #define  Logic(         DstVar, ...)                                        LOGIC_T,     _ChkIn(DstVar), _ChkByte(COUNT_VARARGS(__VA_ARGS__)), _W2Bx(__VA_ARGS__),
+  #define  Counter(       Mode, InCh, Enable, TimeOut, ...)                   COUNTER_T,   _W2B(Mode), _ChkIn(InCh)+RAM3, _ChkIn(Enable), _T2B((TimeOut)/16), COUNT_VARARGS(__VA_ARGS__), _W2Bx(__VA_ARGS__),      // TimeOut maximal 17 Min
+#else
+  #define  Logic(         DstVar, ...)                                        LOGIC_T,     DstVar, _ChkByte(COUNT_VARARGS(__VA_ARGS__)), __VA_ARGS__,
+  #define  Counter(       Mode, InCh, Enable, TimeOut, ...)                   COUNTER_T,   _W2B(Mode), _ChkIn(InCh)+RAM3, _ChkIn(Enable), _T2B((TimeOut)/16), COUNT_VARARGS(__VA_ARGS__), __VA_ARGS__,      // TimeOut maximal 17 Min
+#endif
 #define  RandMux(       DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RANDMUX_T,   _ChkIn(DstVar1)+RAM4, _ChkIn(DstVarN), _ChkIn(InCh), _CHECK_MODE_RF_NOT_SAME(Mode, DstVar1, DstVarN) | _RAND_MODE2((MinTime), (MaxTime)),                   _Tx2B2(MinTime, MaxTime),               _Tx2B2(MaxTime, MinTime),
-#define  RandCntMux(    DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RandMux(_ChkIn(DstVar1), _ChkIn(DstVarN), _ChkIn(InCh), Mode|RF_SEQ, MinTime, MaxTime)
+#define  RandCntMux(    DstVar1, DstVarN, InCh, Mode, MinTime, MaxTime)     RandMux(DstVar1, DstVarN, InCh, Mode|RF_SEQ, MinTime, MaxTime)   
 #define  Random(        DstVar, InCh, Mode, MinTime, MaxTime, MinOn, MaxOn) RANDOM_T,    _ChkIn(DstVar)+RAM4,          _ChkIn(InCh), (Mode) | _RAND_MODE4((MinTime), (MaxTime), (MinOn), (MaxOn)), _Tx2B4(MinTime, MaxTime, MinOn, MaxOn), _Tx2B4(MaxTime, MinTime, MinOn, MaxOn), _Tx2B4(MinOn, MaxOn, MinTime, MaxTime), _Tx2B4(MaxOn, MinOn, MinTime, MaxTime),
 #define  WeldingCont(   LED, InCh)                                          WELDING_CONT_T, _CHKL(LED)+RAM5, _ChkIn(InCh),
 #define  Welding(       LED, InCh)                                          WELDING_T,      _CHKL(LED)+RAM5, _ChkIn(InCh),
@@ -1166,10 +1171,10 @@
 
 
 // Special Inputs
-#define SI_Enable_Sound    253  // Wird auf 1 initialisiert, kann aber vom der Konfigurarion veraendert werden
-#define SI_LocalVar        SI_0 // Input fuer Pattern Funktion zum einlesen der Localen Variable. Diese Nummer wird verwendet weil eine Konstante 0 als Eingang keinen Sinn macht
-#define SI_0               254  // Immer 0
-#define SI_1               255  // Immer 1
+#define SI_Enable_Sound    (_MAX_INP_CHANNEL -2) // Wird auf 1 initialisiert, kann aber vom der Konfigurarion veraendert werden
+#define SI_LocalVar        SI_0 // Input fuer Pattern Funktion zum Einlesen der lokalen Variable. Diese Nummer wird verwendet weil eine Konstante 0 als Eingang keinen Sinn macht
+#define SI_0              (_MAX_INP_CHANNEL -1)  // Immer 0
+#define SI_1              (_MAX_INP_CHANNEL   )  // Immer 1
 
 /*
  Weitere Special Inputs:   ??
@@ -1449,8 +1454,8 @@ private: // Variables
  void               Proc_Counter();
 
  void               IncCP_House();
- void               IncCP_Const()         { cp += 5 + ADD_LED_OFFSET; }
- void               IncCP_Fire()          { cp += 4 + ADD_LED_OFFSET; }
+ void               IncCP_Const()         { cp += EP_CONST_INCREMENT; }
+ void               IncCP_Fire()          { cp += EP_FIRE_INCREMENT; }
  #ifdef _NEW_ROOM_COL
    void             IncCP_Set_ColTab()    { cp += ROOM_COL_CNT*3; }
    bool             Cmp_Room_Col(CRGB *lp, uint8_t ColorNr);
@@ -1468,7 +1473,7 @@ private: // Variables
  void               IncCP_New_HSV_Group() { }
  void               IncCP_New_Local_Var() { }                                                                 // 07.11.18:
  void               IncCP_Use_GlobalVar() { cp++; }
- void               IncCP_InCh_to_X_Var() { cp+=2; }                                                          // 25.11.18:
+ void               IncCP_InCh_to_X_Var() { cp += 1+INCH_LEN; }                                               // 23.11.25:
  void               IncCP_Random()        { cp += EP_RANDOM_INCREMENT;   }
  void               IncCP_RandMux()       { cp += EP_RANDMUX_INCREMENT;  }
  void               IncCP_Welding()       { cp += EP_WELDING_INCREMENT;  }
@@ -1501,3 +1506,5 @@ friend class MLLExtension;
 
 
 #endif // _MOBALEDLIB_H_
+
+

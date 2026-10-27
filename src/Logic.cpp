@@ -3,6 +3,7 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Copyright (C) 2018 - 2021  Hardi Stengelin: MobaLedLib@gmx.de
+ Copyright (C) 2020 - 2026  Juergen Winkler: MobaLedLib@gmx.at
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -72,8 +73,8 @@ void MobaLedLib_C::Proc_Logic()
 //-----------------------------
 {
   inch_t DstVar = pgm_read_inch(cp);
-  uint8_t Cnt    = pgm_read_byte_near(cp+1);
-  const uint8_t *p = cp + 2;
+  uint8_t Cnt    = pgm_read_byte_near(cp+P_LOGIC_CNT);
+  const uint8_t *p = cp + P_LOGIC_ARGS;
   bool Invert    = false;
   bool First     = true;
   bool ChkEnable = false;
@@ -127,8 +128,8 @@ bool MobaLedLib_C::Inp_is_Used_in_Logic(inch_t Channel)
 //------------------------------------------------------
 {
   if (Channel == _OR_NR || Channel == _NOT_NR) return false;
-  uint8_t Cnt    = pgm_read_byte_near(cp+1);
-  const uint8_t *p = cp + 2;
+  uint8_t Cnt    = pgm_read_byte_near(cp+P_LOGIC_CNT);
+  const uint8_t *p = cp + P_LOGIC_ARGS;
   while (Cnt--)
     {
     inch_t d = pgm_read_inch(p);
@@ -144,5 +145,5 @@ void MobaLedLib_C::IncCP_Logic()
 {
   //uint8_t Cnt = pgm_read_byte_near(cp+P_LOGIC_CNT);
   //Dprintf("cp += %d Cnt=%d P_LOGIC_CNT=%d INCH_LEN=%d\n",  Cnt*INCH_LEN + INCH_LEN + 1, Cnt, P_LOGIC_CNT, INCH_LEN);
-  cp += pgm_read_byte_near(cp+1) + 2;
+  cp += pgm_read_byte_near(cp+P_LOGIC_CNT)*INCH_LEN + INCH_LEN + 1;
 }
