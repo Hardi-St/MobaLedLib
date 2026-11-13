@@ -1,0 +1,26 @@
+Head:	Program_Generator configuration file	V1.0
+Sheet:	DCC	AddressLearn
+Line:	-													
+Line:	-													
+Line:	-					Enable next two lines for Molli								
+Line:	-					Illuminate Mollis "o"{NewLine}disable this line for other plattforms			RGB_Heartbeat_Color_Switch(#LED, #InCh, 5, 255, 160, 2 Sek)		1	1	0	6
+Line:	-					Molly: LDR pin is used for SwitchD1{NewLine}disable this line for other plattforms			// Set_SwitchD_InpLst(LDR)			0	0	
+Line:	-													
+Line:	-													
+Line:	Act					PROG/RUN Mode handling								
+Line:	-													
+Line:	Act		SwitchD1			SwitchD1 toggles between{NewLine}RUN and PROG mode			T_FlipFlopInvResetTimeout(RUN, #InCh, RES, 30 Sek)			1	0	
+Line:	Act					RUN mode			Logic(PROG, NOT RUN)			1	0	
+Line:	Act					RES set to 0			Logic(RES, RUN AND NOT RUN)			1	0	
+Line:	Act		RUN			RUN mode			RGB_Heartbeat_Color_Switch(#LED, #InCh, 60, 80, 160, 2 Sek)	0	1	1	0	0
+Line:	Act								// Next_LED(-1)	1	-1	0	0	0
+Line:	Act		PROG			PROG mode			RGB_Heartbeat_Color_Switch(#LED, #InCh, 60, 120, 224, 500)	0	1	1	0	0
+Line:	Act		PROG						EX.AddressLearnExtension(#InCh, RES)	1	0	1	0	0
+Line:	-													
+Line:	-								#define DEBUG_ADDRESSLEARN_EXTENSIONS					
+Line:	-													
+Line:	-					Add your effects below, starting with Address 1								
+Line:	Act								#define ENABLE_STORE_STATUS()			0	0	
+Line:	Act		1 - 2	Rot		Verkehrssicherungsanhaenger			// Activation: N_Buttons{NewLine}InCh_to_LocalVar(#InCh, 4){NewLine}APatternT28(#LED,4,SI_LocalVar,9,0,255,0,0,0,10,60,10,100,320,180,330,180,460,10,60,10,100,320,180,330,180,460,10,60,10,100,320,180,330,180,460,0,0,0,0,12,0,48,0,0,0,0,0,0,80,1,69,5,20,0,0,0,0,0,0,48,0,192,0,0,0,0,0,0,0,80,21,64,85,0,0,0,0,0,0,192,0,0,3,0,0,0,0,0,0,16,68,64,16,1,0,0,0,0  ,63,192,0,0,0,0,0,0,0,1,192,0,0,0,0,0,0,0,2,192,0,0,0,0,0,0,0,3)	1	3	4		
+Line:	Act		3	AnAus		Warnblinker			Blink2(#LED, C12, #InCh, 0.5 Sek, 0.5 Sek, 0, 20)	4	C1-2	1	0	0
+Line:	Act		4	AnAus		Rückleuchten			Const(#LED, C3, #InCh, 0, 30)	4	C3-3	1	0	0

@@ -98,16 +98,16 @@ void MobaLedLib_C::Proc_Schedule()
   Schedule_T *dp = (Schedule_T*)rp; // Set the time pointer to the reserved RAM
   rp += sizeof(Schedule_T);
 
-  uint8_t Inp = Get_Input(pgm_read_byte_near(cp+P_SCHEDULE_INCH));
+  uint8_t Inp = Get_Input(pgm_read_inch(cp+P_SCHEDULE_INCH));
 
   if (Inp_Is_On(Inp))
      {
      if (dp->OldDayState != DayState || Inp_Changed(Inp))
         {
-        uint8_t DstVar1 = pgm_read_byte_near(cp+P_SCHEDULE_DSTVAR1);
-        uint8_t DstVarN = pgm_read_byte_near(cp+P_SCHEDULE_DSTVARN);
-        uint8_t Cnt = 0;
-        for (uint8_t DstVar = DstVar1; DstVar <= DstVarN; DstVar++)  // Count the number of active outputs
+        inch_t DstVar1 = pgm_read_inch(cp+P_SCHEDULE_DSTVAR1);
+        inch_t DstVarN = pgm_read_inch(cp+P_SCHEDULE_DSTVARN);
+        inch_t Cnt = 0;
+        for (inch_t DstVar = DstVar1; DstVar <= DstVarN; DstVar++)  // Count the number of active outputs
            if (Inp_Is_On(Get_Input(DstVar))) Cnt++;
 
         //Dprintf("%8lu: StCh: ", millis()); // Debug
@@ -123,11 +123,11 @@ void MobaLedLib_C::Proc_Schedule()
          (DayState == SunSet  &&  Darkness >= dp->SwitchVal) ||    // Abend  und noch nicht alle Variablen an  und Schwelle erreicht
          (DayState == SunRise &&  Darkness <  dp->SwitchVal)   ))  // Morgen und noch nicht alle Variablen aus und Schwelle erreicht
         {
-        uint8_t DstVar1 = pgm_read_byte_near(cp+P_SCHEDULE_DSTVAR1);
-        uint8_t DstVarN = pgm_read_byte_near(cp+P_SCHEDULE_DSTVARN);
+        inch_t DstVar1 = pgm_read_inch(cp+P_SCHEDULE_DSTVAR1);
+        inch_t DstVarN = pgm_read_inch(cp+P_SCHEDULE_DSTVARN);
         uint8_t Nr      = random8(dp->ToDoCnt); // Eine Zufaellige Nummer aus den zu aendernden Variablen
 
-        for (uint8_t DstVar = DstVar1; DstVar <= DstVarN; DstVar++)
+        for (inch_t DstVar = DstVar1; DstVar <= DstVarN; DstVar++)
            {
            if (Inp_Is_On(Get_Input(DstVar)) != (DayState == SunSet)) // SunSet ist das Gegenteil vom Sollwert. Abends werden die ausgeschalteten Variablen betrachtet, Morgens die eingeschalteten Variablen
               {

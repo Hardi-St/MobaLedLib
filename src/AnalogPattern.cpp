@@ -378,16 +378,17 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
   uint8_t ModeAFlag = pgm_read_byte_near(cp+P_PATERN_MODE);
   CALCULATE_t4w; // Calculate the local variable t4w if _USE_LOCAL_TX is defined                              // 22.11.18:
   uint16_t Timer    = ModeAFlag & PF_SLOW ? t4w : t; // Slow timer (divided by 16) to be able to use longer durations
-  uint8_t InCh      = pgm_read_byte_near(cp+P_PATERN_INCH);                                                   // 09.11.18:
+  inch_t InCh      = pgm_read_inch(cp+P_PATERN_INCH);                                                   // 09.11.18:
   uint8_t Inp;
   bool GotoMode;
   if ((GotoMode = (InCh == SI_LocalVar)))                                                                     // 09.11.18:
        Inp = INP_ON;   // Don't use the normal input if "Goto Mode" is active
   else {
        Inp = Get_Input(InCh);
+       //DPrintf("Get_Input(%d) = %d, offset %d SI_1=%d max=%d\n", InCh, Inp, P_PATERN_INCH, SI_1, _MAX_INP_CHANNEL);
        if (ModeAFlag & PF_INVERT_INP) Inp = Invert_Inp(Inp); // Invert the input.
        }
-  uint8_t Enable = Get_Input(pgm_read_byte_near(cp+P_PATERN_ENABLE));                                         // 05.11.18:
+  uint8_t Enable = Get_Input(pgm_read_inch(cp+P_PATERN_ENABLE));                                         // 05.11.18:
   switch (Enable)
     {
     case INP_OFF:        return ;
@@ -607,7 +608,7 @@ void MobaLedLib_C::Proc_AnalogPattern(uint8_t TimeCnt, bool AnalogMode)         
               //if (!Initialize && AnalogMode) Dprintf("%i %i", (int)v0, (int)v1); // Debug 24.10.19:
               }
          // Update one LED
-         if (AnalogMode && (Inp_Is_On(Inp) || (HSV_mode && !Initialize))) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added: HSV_mode to correctly turn off the LEDs
+           if (AnalogMode && (Inp_Is_On(Inp) || (HSV_mode && !Initialize) || (Run2endAndWait && dp->State != PT_INACTIVE))) // 09.09.18:  Hier war Inp > INP_TURNED_OFF oder so  // 22.10.18:  Added: HSV_mode to correctly turn off the LEDs // 26.05.26
               {                                                                                                                // 20.10.19:  Added: !Initialize because otherwise the Cave_Illumination shows random colors at startup
               #pragma GCC diagnostic push                                                                     // 17.11.20:  Disable warning "v0 uninitialized..."
               #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -723,5 +724,6 @@ void MobaLedLib_C::IncCP_Pattern(uint8_t TimeCnt)                               
 {
   uint16_t BitMaskCnt = pgm_read_word_near(cp+P_PATERN_T1_L + 2*TimeCnt);                                    // 23.10.18:
   cp += P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2;
+  //DPrintf("cp += %d P_PATERN_T1_L=%d, TimeCnt=%d BitMaskCnt=%d\n", P_PATERN_T1_L + 2*TimeCnt + BitMaskCnt + 2, P_PATERN_T1_L, TimeCnt, BitMaskCnt );
 }
 

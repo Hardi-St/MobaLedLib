@@ -16,7 +16,7 @@ into the "Run" dialog and press enter:
   into a multiple socket
 - **Extremely affordable** - 100 LEDs for the price of three "normal" lights
 - Up to **256 RGB LEDs (768 channels)** can be controlled by an Arduino
-- Up to **16384 RGB LEDs (49152 channels)** can be controlled by an ESP32
+- Up to **10000 RGB LEDs (30000 channels)** can be controlled by an ESP32 or PICO
 - Controlling other components is just as easy
   - Sound modules
   - Servo and stepper motors
@@ -31,7 +31,7 @@ The lighting and some additional functions are controlled via the WS2812 / WS281
 For this, only a single signal is required which is forwarded from one chip to the next.
 This makes the wiring extremely easy.
 
-A lot of **examples** show the usage of the library. They could be use as startup for own programs.
+A lot of **examples** show the usage of the library. They can be used as a starting point for own programs.
 
 A huge wiki describes the complete MobaLedLib in detail: https://wiki.mobaledlib.de/<br/>
 This library is used and supported by a big community, see https://forum.mobaledlib.de/ and https://www.stummiforum.de/viewtopic.php?f=7&t=165060.
@@ -56,9 +56,7 @@ Installation in der deutschen Arduino IDE:
 
 see also https://wiki.mobaledlib.de/anleitungen/quickstart
 
-Questions / suggestions / praise / ...
-  MobaLedLib@gmx.de
-
+Questions / suggestions / praise / ... see https://forum.mobaledlib.de
 
 
 **Revision History:**

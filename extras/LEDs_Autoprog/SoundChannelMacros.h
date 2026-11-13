@@ -61,34 +61,37 @@
 #define SOUND_CHANNEL_CMD_PLAY_TRACK      8
 #define SOUND_CHANNEL_CMD_SET_VOLUME      9
 #define SOUND_CHANNEL_CMD_LOOP_MODE       10
+#define SOUND_CHANNEL_CMD_PLAY_ADVERT     11
 #define SOUND_CHANNEL_CMD_PLAY_RANDOM     15
 
 /*************************************/
 /*  Command without argument (0-7)   */
 /*************************************/
 // command 0: Increase volume
-#define SOUND_CHANNEL_INCREASE_VOLUME(Module, InCh) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_INCREASE_VOLUME,
+#define SOUND_CHANNEL_INCREASE_VOLUME(Module, InCh) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_INCREASE_VOLUME,
 // command 1: decrease volume
-#define SOUND_CHANNEL_DECREASE_VOLUME(Module, InCh) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_DECREASE_VOLUME,
+#define SOUND_CHANNEL_DECREASE_VOLUME(Module, InCh) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_DECREASE_VOLUME,
 // command 2: pause
-#define SOUND_CHANNEL_PAUSE(Module, InCh) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PAUSE,
+#define SOUND_CHANNEL_PAUSE(Module, InCh) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PAUSE,
 // command 3: continue
-#define SOUND_CHANNEL_CONTINUE(Module, InCh) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_CONTINUE,
+#define SOUND_CHANNEL_CONTINUE(Module, InCh) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_CONTINUE,
 
 
 /**************************************/
 /*  Command with one argument (8-13)  */
 /**************************************/
 // command 8: PlayTrack, one argument TrackNumber
-#define SOUND_CHANNEL_PLAY_TRACK(Module, InCh, Track) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PLAY_TRACK,Track,
+#define SOUND_CHANNEL_PLAY_TRACK(Module, InCh, Track) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PLAY_TRACK,Track,
 // command 9: Set Volume to percentage level
-#define SOUND_CHANNEL_SET_VOLUME(Module, InCh, VolumePercent) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_SET_VOLUME,VolumePercent,   
+#define SOUND_CHANNEL_SET_VOLUME(Module, InCh, VolumePercent) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_SET_VOLUME,VolumePercent,   
 // command 10: Set loop mode
-#define SOUND_CHANNEL_LOOP_MODE(Module, InCh, LoopMode) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_LOOP_MODE,LoopMode,   
+#define SOUND_CHANNEL_LOOP_MODE(Module, InCh, LoopMode) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_LOOP_MODE,LoopMode,   
+// command 11: PlayAdvert, one argument TrackNumber
+#define SOUND_CHANNEL_PLAY_ADVERT(Module, InCh, Track) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PLAY_ADVERT,Track,
 
 /***************************************/
 /*  Command with two arguments (14-15) */
 /***************************************/
-#define SOUND_CHANNEL_PLAY_RANDOM(Module, InCh, TrackMin, TrackMax) SOUND_CHANNEL_TYPE_T,InCh,(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PLAY_RANDOM,TrackMin,TrackMax-TrackMin,
+#define SOUND_CHANNEL_PLAY_RANDOM(Module, InCh, TrackMin, TrackMax) SOUND_CHANNEL_TYPE_T,_ChkIn(InCh),(SOUND_CHANNEL_##Module<<4)+SOUND_CHANNEL_CMD_PLAY_RANDOM,TrackMin,TrackMax-TrackMin,
 
 #endif

@@ -7,11 +7,11 @@
 
 // The JQ6500 sound module is delivered with various sound chips
 // the original JQ6500 Module has a JQ6500 sound chip on board
-// also we can find JQ6500 moduls with cips AA20HGN403 or AA20HFJ648 or ???
+// also we can find JQ6500 modules with chips AA20HGN403 or AA20HFJ648 or ???
 // the so fast tested modules with AA* chip behave different,  serial messages must be sent without any breaks. If the delay between two bytes exceeds 600us the packet is ignored by the chip
 //
 // by default MLL sends one byte in each main loop cycle to ensure that LED stream is not interrupted for too long. Sending all byte at once delays the main loop by ~5ms, which should be avoided
-// but with JQ6500 modules having the AA* chips onboard we need to send a full packet at once, because the main loop cylce time is >2ms.
+// but with JQ6500 modules having the AA* chips on board we need to send a full packet at once, because the main loop cycle time is >2ms.
 
 // sound chips tests so fast
 // JQ6500: works fine, even with delays

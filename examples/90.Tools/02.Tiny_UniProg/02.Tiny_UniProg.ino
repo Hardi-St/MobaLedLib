@@ -77,6 +77,9 @@
  07.08.20:  - Corrected Juergens change. I have forgotten to add a "~" in HV_Reset(uint8_t Quiet) ;-(
             - Read the Fuse status at the end of the programming to update the White/Blue LED. This is
               important because the LEDs are used to define if the HV-Reset is used or not
+ 20.01.26:  - Reduced the SPI clock to get a more stable flash process
+              => Ver. 1.3
+
 
  Todo:
  ~~~~~
@@ -170,7 +173,9 @@
 
 
 */
-#define SPI_CLOCK       (1000000/6)  // 1 or 8 MHz  Normal line
+//20.01.26:  #define SPI_CLOCK       (1000000/6)  // 166666.6   1 or 8 MHz  Normal line
+#define SPI_CLOCK       (1000000/12) // Using half of the speed to hopelully reduce the number of errors      // 20.01.26:
+
 //#define SPI_CLOCK     ( 128000/6)  // 128 kHz     Enable this line if the Target is configured to 128 kHz
 
 #if SPI_CLOCK > (F_CPU / 128) // 125 KHz
@@ -418,7 +423,8 @@ void Power_On_Func()
 // after 1 second.
 // But it's not called if serial characters are received in the first second
 {
-  Serial.println(F("ArduinoISP Tiny_UniProg by Hardi   V.1.2\t" __DATE__ " " __TIME__));
+  Serial.println(F("ArduinoISP Tiny_UniProg by Hardi   V.1.3\t" __DATE__ " " __TIME__));
+  Serial.println(F("!!! Reduced SPI Clock !!!\n");                                                            // 20.01.26:
 
   #ifdef ATTINY_FEEDBACK
     if (DebugHardwareAvailable)                                                                               // 07.01.20:
