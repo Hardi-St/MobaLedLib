@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.5: support LichtMaschine Pico Zero hardware, multiplexer support multiple LED channels, speed up application startup**
+**New in release 3.6**: Support up to 2040 vaiables on ESP32/Pico platform, servo test and configuration tool, PICO firmware download and install tool
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
@@ -59,7 +59,28 @@ see also https://wiki.mobaledlib.de/anleitungen/quickstart
 Questions / suggestions / praise / ... see https://forum.mobaledlib.de
 
 
-**Revision History:**
+**Ver.: 3.6.0** 14.11.26:
+*Features*
+- support up to 2040 input variables on ESP32 and PICO platform
+- add Servo Test and Configuration tool into Programm Generator
+- PICO firmware download and install support
+- add extensions interface V2
+- platform dependent persistence code moved to `persistence.h`
+- SoundPro macros prepared (SoundPlayerPro, SoundProcessorPro, SoundPlayerProTiny)
+- new macros: Signal2, Signal2_RGB, RGB_Heartbeat_Color_Switch, CopyLED, Name_LED_Number, Name_LED_Offset
+- AnalogScanner support for PICO
+- keep LED bus alive even if external program sends no data
+*Bugfixes*
+- fix AnalogPattern bug with PM_SEQUENZ_W_RESTART
+- fix MLLExtensionV2 when no DCC/LNet/SX inputs are defined
+- fix Logic() token parsing
+- fix missing address input in macro dialog
+- fix platformio.ini extension path with PICO platform
+- fix PICO USB id
+*Changes*
+- Code cleanup: remove Arduino "Nano Every" (4809) code which was never officially supported
+- improved processing of macro-only extensions
+
 
 **Ver.: 3.5.0** 05.11.25:
 
