@@ -1,7 +1,7 @@
 # MobaLedLib
 ## Arduino library for controlling LEDs and other components on a model railway.
 
-**New in release 3.6**: Support up to 2040 vaiables on ESP32/Pico platform, servo test and configuration tool, PICO firmware download and install tool
+**New in release 3.6**: Support up to 2000 variables on ESP32/Pico platform, servo test and configuration tool, PICO firmware download and install tool
 
 **Excel user interface to configure the LEDs without programming at all improved by the engagement of Pattern Configurator and Program Generator!**
 
@@ -62,7 +62,7 @@ Questions / suggestions / praise / ... see https://forum.mobaledlib.de
 **Ver.: 3.6.0** 23.11.26:
 
 *Features*
-- support up to 2040 input variables on ESP32 and PICO platform
+- support up to 2000 input variables on ESP32 and PICO platform
 - add Servo Test and Configuration tool into Programm Generator
 - PICO firmware download and install support
 - add extensions interface V2

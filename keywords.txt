@@ -174,6 +174,8 @@ RandMux	KEYWORD2
 Random	KEYWORD2
 Welding	KEYWORD2
 CopyLED	KEYWORD2
+Name_LED_Number	KEYWORD2
+Name_LED_Offset	KEYWORD2
 Schedule	KEYWORD2
 New_HSV_Group	KEYWORD2
 
@@ -207,6 +209,9 @@ RGB_AmpelXFade	KEYWORD2
 Flash	KEYWORD2
 ButtonFunc	KEYWORD2
 RGB_Heartbeat	KEYWORD2
+Signal2	KEYWORD2
+Signal2_RGB	KEYWORD2
+RGB_Heartbeat_Color_Switch	KEYWORD2
 
 # Sound
 Sound_Prev	KEYWORD2
