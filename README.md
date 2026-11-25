@@ -59,7 +59,8 @@ see also https://wiki.mobaledlib.de/anleitungen/quickstart
 Questions / suggestions / praise / ... see https://forum.mobaledlib.de
 
 
-**Ver.: 3.6.0** 14.11.26:
+**Ver.: 3.6.0** 23.11.26:
+
 *Features*
 - support up to 2040 input variables on ESP32 and PICO platform
 - add Servo Test and Configuration tool into Programm Generator
@@ -70,6 +71,7 @@ Questions / suggestions / praise / ... see https://forum.mobaledlib.de
 - new macros: Signal2, Signal2_RGB, RGB_Heartbeat_Color_Switch, CopyLED, Name_LED_Number, Name_LED_Offset
 - AnalogScanner support for PICO
 - keep LED bus alive even if external program sends no data
+
 *Bugfixes*
 - fix AnalogPattern bug with PM_SEQUENZ_W_RESTART
 - fix MLLExtensionV2 when no DCC/LNet/SX inputs are defined
@@ -77,6 +79,8 @@ Questions / suggestions / praise / ... see https://forum.mobaledlib.de
 - fix missing address input in macro dialog
 - fix platformio.ini extension path with PICO platform
 - fix PICO USB id
+- fix clear extra LEDs at startup
+
 *Changes*
 - Code cleanup: remove Arduino "Nano Every" (4809) code which was never officially supported
 - improved processing of macro-only extensions
